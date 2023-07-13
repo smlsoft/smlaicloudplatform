@@ -360,30 +360,14 @@ definitions:
     type: object
   models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
         type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-      languages:
-        items:
-          type: string
-        type: array
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -712,6 +696,27 @@ definitions:
   models.CommentRequest:
     properties:
       comment:
+        type: string
+    type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
         type: string
     type: object
   models.CreditorGroup:
@@ -1192,7 +1197,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1217,7 +1222,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -2254,10 +2259,12 @@ definitions:
     type: object
   models.Location:
     properties:
-      lat:
+      code:
         type: string
-      lng:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.LocationRequest:
     properties:
@@ -2917,7 +2924,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2952,25 +2959,106 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
+        minLength: 1
         type: string
-      guidfixed:
+      colorselect:
         type: string
+      colorselecthex:
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+        type: array
+      imageuri:
+        type: string
+      isalacarte:
+        type: boolean
+      isdividend:
+        type: boolean
+      isonlystaff:
+        type: boolean
+      issplitunitprint:
+        type: boolean
+      issumpoint:
+        type: boolean
+      isusesubbarcodes:
+        type: boolean
       itemcode:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      itemunitsize:
+        type: number
+      maxdiscount:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      options:
+        items:
+          $ref: '#/definitions/models.ProductOption'
+        type: array
+      ordertypes:
+        items:
+          $ref: '#/definitions/models.ProductOrderType'
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
+      qty:
+        type: number
+      refbarcodes:
+        items:
+          $ref: '#/definitions/models.RefProductBarcode'
+        type: array
+      refdividevalue:
+        type: number
+      refstandvalue:
+        type: number
+      refunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      standvalue:
+        type: number
+      stockbarcode:
+        type: string
+      taxtype:
+        type: integer
+      useimageorcolor:
+        type: boolean
+      vatcal:
+        type: integer
+      vattype:
+        type: integer
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
+    required:
+    - barcode
+    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3039,7 +3127,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       qty:
         type: number
@@ -3200,6 +3288,26 @@ definitions:
         type: array
       price:
         type: number
+    type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
+  models.ProductType:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.ProductUnit:
     properties:
@@ -3514,6 +3622,34 @@ definitions:
         type: integer
     required:
     - names
+    type: object
+  models.RefProductBarcode:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      guidfixed:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      qty:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
     type: object
   models.Reference:
     properties:
@@ -4961,27 +5097,6 @@ definitions:
       success:
         type: boolean
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   smlcloudplatform_pkg_pos_setting_models.Warehouse:
     properties:
       code:
@@ -5015,26 +5130,12 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
-    type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -5134,27 +5235,6 @@ definitions:
     required:
     - code
     - names
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -14690,6 +14770,253 @@ paths:
       - AccessToken: []
       tags:
       - Product
+  /product/type:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductType
+      parameters:
+      - description: ProductType GUIDs
+        in: body
+        name: ProductType
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+    post:
+      consumes:
+      - application/json
+      description: Create ProductType
+      parameters:
+      - description: ProductType
+        in: body
+        name: ProductType
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductType'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+  /product/type/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductType
+      parameters:
+      - description: ProductType ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+    get:
+      consumes:
+      - application/json
+      description: get ProductType info by guidfixed
+      parameters:
+      - description: ProductType guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+    put:
+      consumes:
+      - application/json
+      description: Update ProductType
+      parameters:
+      - description: ProductType ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ProductType
+        in: body
+        name: ProductType
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductType'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+  /product/type/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create ProductType
+      parameters:
+      - description: ProductType
+        in: body
+        name: ProductType
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.ProductType'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+  /product/type/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get ProductType info by Code
+      parameters:
+      - description: ProductType Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
+  /product/type/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductType
   /profile:
     get:
       consumes:

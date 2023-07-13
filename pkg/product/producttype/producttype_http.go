@@ -1,4 +1,4 @@
-package ordertype
+package producttype
 
 import (
 	"encoding/json"
@@ -7,69 +7,66 @@ import (
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/product/ordertype/models"
-	"smlcloudplatform/pkg/product/ordertype/repositories"
-	"smlcloudplatform/pkg/product/ordertype/services"
-	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
+	"smlcloudplatform/pkg/product/producttype/models"
+	"smlcloudplatform/pkg/product/producttype/repositories"
+	"smlcloudplatform/pkg/product/producttype/services"
 	"smlcloudplatform/pkg/utils"
+	"time"
 )
 
-type IOrderTypeHttp interface{}
+type IProductTypeHttp interface{}
 
-type OrderTypeHttp struct {
+type ProductTypeHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc services.IOrderTypeHttpService
+	svc services.IProductTypeHttpService
 }
 
-func NewOrderTypeHttp(ms *microservice.Microservice, cfg config.IConfig) OrderTypeHttp {
-	prod := ms.Producer(cfg.MQConfig())
+func NewProductTypeHttp(ms *microservice.Microservice, cfg config.IConfig) ProductTypeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := repositories.NewOrderTypeRepository(pst)
-	repoMessageQueue := repositories.NewOrderTypeMessageQueueRepository(prod)
-	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+	repo := repositories.NewProductTypeRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewOrderTypeHttpService(repo, repoMessageQueue, repoProductBarcode, masterSyncCacheRepo)
+	svc := services.NewProductTypeHttpService(repo, masterSyncCacheRepo, 15*time.Second)
 
-	return OrderTypeHttp{
+	return ProductTypeHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h OrderTypeHttp) RegisterHttp() {
+func (h ProductTypeHttp) RegisterHttp() {
 
-	h.ms.POST("/product/order-type/bulk", h.SaveBulk)
+	h.ms.POST("/product/type/bulk", h.SaveBulk)
 
-	h.ms.GET("/product/order-type", h.SearchOrderTypePage)
-	h.ms.GET("/product/order-type/list", h.SearchOrderTypeStep)
-	h.ms.POST("/product/order-type", h.CreateOrderType)
-	h.ms.GET("/product/order-type/:id", h.InfoOrderType)
-	h.ms.GET("/product/order-type/code/:code", h.InfoOrderTypeByCode)
-	h.ms.PUT("/product/order-type/:id", h.UpdateOrderType)
-	h.ms.DELETE("/product/order-type/:id", h.DeleteOrderType)
-	h.ms.DELETE("/product/order-type", h.DeleteOrderTypeByGUIDs)
+	h.ms.GET("/product/type", h.SearchProductTypePage)
+	h.ms.GET("/product/type/list", h.SearchProductTypeStep)
+	h.ms.POST("/product/type", h.CreateProductType)
+	h.ms.GET("/product/type/:id", h.InfoProductType)
+	h.ms.GET("/product/type/code/:code", h.InfoProductTypeByCode)
+	h.ms.PUT("/product/type/:id", h.UpdateProductType)
+	h.ms.DELETE("/product/type/:id", h.DeleteProductType)
+	h.ms.DELETE("/product/type", h.DeleteProductTypeByGUIDs)
 }
 
-// Create OrderType godoc
-// @Description Create OrderType
-// @Tags		OrderType
-// @Param		OrderType  body      models.OrderType  true  "OrderType"
+// Create ProductType godoc
+// @Description Create ProductType
+// @Tags		ProductType
+// @Param		ProductType  body      models.ProductType  true  "ProductType"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type [post]
-func (h OrderTypeHttp) CreateOrderType(ctx microservice.IContext) error {
+// @Router /product/type [post]
+func (h ProductTypeHttp) CreateProductType(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.OrderType{}
+	docReq := &models.ProductType{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -82,7 +79,7 @@ func (h OrderTypeHttp) CreateOrderType(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateOrderType(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateProductType(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -96,17 +93,17 @@ func (h OrderTypeHttp) CreateOrderType(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update OrderType godoc
-// @Description Update OrderType
-// @Tags		OrderType
-// @Param		id  path      string  true  "OrderType ID"
-// @Param		OrderType  body      models.OrderType  true  "OrderType"
+// Update ProductType godoc
+// @Description Update ProductType
+// @Tags		ProductType
+// @Param		id  path      string  true  "ProductType ID"
+// @Param		ProductType  body      models.ProductType  true  "ProductType"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type/{id} [put]
-func (h OrderTypeHttp) UpdateOrderType(ctx microservice.IContext) error {
+// @Router /product/type/{id} [put]
+func (h ProductTypeHttp) UpdateProductType(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -114,7 +111,7 @@ func (h OrderTypeHttp) UpdateOrderType(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.OrderType{}
+	docReq := &models.ProductType{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -127,7 +124,7 @@ func (h OrderTypeHttp) UpdateOrderType(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateOrderType(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdateProductType(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -142,23 +139,23 @@ func (h OrderTypeHttp) UpdateOrderType(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete OrderType godoc
-// @Description Delete OrderType
-// @Tags		OrderType
-// @Param		id  path      string  true  "OrderType ID"
+// Delete ProductType godoc
+// @Description Delete ProductType
+// @Tags		ProductType
+// @Param		id  path      string  true  "ProductType ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type/{id} [delete]
-func (h OrderTypeHttp) DeleteOrderType(ctx microservice.IContext) error {
+// @Router /product/type/{id} [delete]
+func (h ProductTypeHttp) DeleteProductType(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteOrderType(shopID, id, authUsername)
+	err := h.svc.DeleteProductType(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -173,16 +170,16 @@ func (h OrderTypeHttp) DeleteOrderType(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete OrderType godoc
-// @Description Delete OrderType
-// @Tags		OrderType
-// @Param		OrderType  body      []string  true  "OrderType GUIDs"
+// Delete ProductType godoc
+// @Description Delete ProductType
+// @Tags		ProductType
+// @Param		ProductType  body      []string  true  "ProductType GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type [delete]
-func (h OrderTypeHttp) DeleteOrderTypeByGUIDs(ctx microservice.IContext) error {
+// @Router /product/type [delete]
+func (h ProductTypeHttp) DeleteProductTypeByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
@@ -197,7 +194,7 @@ func (h OrderTypeHttp) DeleteOrderTypeByGUIDs(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.DeleteOrderTypeByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeleteProductTypeByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -211,23 +208,23 @@ func (h OrderTypeHttp) DeleteOrderTypeByGUIDs(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get OrderType godoc
-// @Description get OrderType info by guidfixed
-// @Tags		OrderType
-// @Param		id  path      string  true  "OrderType guidfixed"
+// Get ProductType godoc
+// @Description get ProductType info by guidfixed
+// @Tags		ProductType
+// @Param		id  path      string  true  "ProductType guidfixed"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type/{id} [get]
-func (h OrderTypeHttp) InfoOrderType(ctx microservice.IContext) error {
+// @Router /product/type/{id} [get]
+func (h ProductTypeHttp) InfoProductType(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get OrderType %v", id)
-	doc, err := h.svc.InfoOrderType(shopID, id)
+	h.ms.Logger.Debugf("Get ProductType %v", id)
+	doc, err := h.svc.InfoProductType(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -242,22 +239,22 @@ func (h OrderTypeHttp) InfoOrderType(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get OrderType By Code godoc
-// @Description get OrderType info by Code
-// @Tags		OrderType
-// @Param		code  path      string  true  "OrderType Code"
+// Get ProductType By Code godoc
+// @Description get ProductType info by Code
+// @Tags		ProductType
+// @Param		code  path      string  true  "ProductType Code"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type/code/{code} [get]
-func (h OrderTypeHttp) InfoOrderTypeByCode(ctx microservice.IContext) error {
+// @Router /product/type/code/{code} [get]
+func (h ProductTypeHttp) InfoProductTypeByCode(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	code := ctx.Param("code")
 
-	doc, err := h.svc.InfoOrderTypeByCode(shopID, code)
+	doc, err := h.svc.InfoProductTypeByCode(shopID, code)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -271,9 +268,9 @@ func (h OrderTypeHttp) InfoOrderTypeByCode(ctx microservice.IContext) error {
 	return nil
 }
 
-// List OrderType step godoc
+// List ProductType step godoc
 // @Description get list step
-// @Tags		OrderType
+// @Tags		ProductType
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -281,14 +278,14 @@ func (h OrderTypeHttp) InfoOrderTypeByCode(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type [get]
-func (h OrderTypeHttp) SearchOrderTypePage(ctx microservice.IContext) error {
+// @Router /product/type [get]
+func (h ProductTypeHttp) SearchProductTypePage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchOrderType(shopID, map[string]interface{}{}, pageable)
+	docList, pagination, err := h.svc.SearchProductType(shopID, map[string]interface{}{}, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -303,9 +300,9 @@ func (h OrderTypeHttp) SearchOrderTypePage(ctx microservice.IContext) error {
 	return nil
 }
 
-// List OrderType godoc
+// List ProductType godoc
 // @Description search limit offset
-// @Tags		OrderType
+// @Tags		ProductType
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -314,8 +311,8 @@ func (h OrderTypeHttp) SearchOrderTypePage(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type/list [get]
-func (h OrderTypeHttp) SearchOrderTypeStep(ctx microservice.IContext) error {
+// @Router /product/type/list [get]
+func (h ProductTypeHttp) SearchProductTypeStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -323,7 +320,7 @@ func (h OrderTypeHttp) SearchOrderTypeStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchOrderTypeStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchProductTypeStep(shopID, lang, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -338,16 +335,16 @@ func (h OrderTypeHttp) SearchOrderTypeStep(ctx microservice.IContext) error {
 	return nil
 }
 
-// Create OrderType Bulk godoc
-// @Description Create OrderType
-// @Tags		OrderType
-// @Param		OrderType  body      []models.OrderType  true  "OrderType"
+// Create ProductType Bulk godoc
+// @Description Create ProductType
+// @Tags		ProductType
+// @Param		ProductType  body      []models.ProductType  true  "ProductType"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/order-type/bulk [post]
-func (h OrderTypeHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /product/type/bulk [post]
+func (h ProductTypeHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -355,7 +352,7 @@ func (h OrderTypeHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.OrderType{}
+	dataReq := []models.ProductType{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
