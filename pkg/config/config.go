@@ -28,7 +28,6 @@ type IConfig interface {
 	JwtSecretKey() string
 	HttpConfig() IHttpConfig
 	LoggerConfig() ILoggerConfig
-	UnitServiceConfig() IUnitServiceConfig
 	ProductGroupServiceConfig() IProductGroupServiceConfig
 }
 
@@ -160,10 +159,6 @@ func (*Config) HttpConfig() IHttpConfig {
 
 func (*Config) LoggerConfig() ILoggerConfig {
 	return NewLoggerConfig()
-}
-
-func (*Config) UnitServiceConfig() IUnitServiceConfig {
-	return NewUnitServiceConfig()
 }
 
 func (*Config) ProductGroupServiceConfig() IProductGroupServiceConfig {
