@@ -18,7 +18,7 @@ type DocumentFormate struct {
 	Description              string                   `json:"description" bson:"description"`
 	Details                  *[]DocumentFormateDetail `json:"details" bson:"details"`
 	IsAutoFormat             bool                     `json:"isautoformat" bson:"isautoformat"`
-	YearType                 int8                     `json:"yeartype" bson:"yeartype" validate:"required"`
+	YearType                 int8                     `json:"yeartype" bson:"yeartype"`
 }
 
 type DocumentFormateDetail struct {
