@@ -3,6 +3,7 @@ package logger
 import (
 	"os"
 	"smlcloudplatform/pkg/config"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
@@ -71,12 +72,27 @@ type AppLogger struct {
 	logger      *zap.Logger
 }
 
-func NewAppLogger(cfg config.ILoggerConfig) ILogger {
-	return &AppLogger{
-		level:   cfg.LogLevel(),
-		devMode: cfg.DevMode(),
-		encoder: cfg.Encoder(),
-	}
+var (
+	instance *AppLogger
+	syncOnce sync.Once
+)
+
+func GetLogger() ILogger {
+	return instance
+}
+
+func NewAppLogger(cfg config.ILoggerConfig) *AppLogger {
+	syncOnce.Do(func() {
+		instance = &AppLogger{
+			level:   cfg.LogLevel(),
+			devMode: cfg.DevMode(),
+			encoder: cfg.Encoder(),
+		}
+
+		instance.InitLogger()
+	})
+
+	return instance
 }
 
 func (l *AppLogger) getLoggerLevel() zapcore.Level {
