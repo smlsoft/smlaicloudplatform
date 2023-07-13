@@ -24,14 +24,16 @@ type ProductGroupHttp struct {
 }
 
 func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) ProductGroupHttp {
+	prod := ms.Producer(cfg.MQConfig())
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewProductGroupRepository(pst)
 	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+	repoMessageQueue := repositories.NewProductGroupMessageQueueRepository(prod)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductGroupHttpService(repo, repoProductBarcode, cfg.ProductGroupServiceConfig(), masterSyncCacheRepo)
+	svc := services.NewProductGroupHttpService(repo, repoMessageQueue, repoProductBarcode, cfg.ProductGroupServiceConfig(), masterSyncCacheRepo)
 
 	return ProductGroupHttp{
 		ms:  ms,
