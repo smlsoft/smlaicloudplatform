@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
-	"smlcloudplatform/pkg/config"
+	"smlcloudplatform/pkg/logger"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
@@ -42,7 +42,7 @@ type UnitHttpService struct {
 	repo               repositories.IUnitRepository
 	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
 	syncCacheRepo      mastersync.IMasterSyncCacheRepository
-	unitServiceConfig  config.IUnitServiceConfig
+	repoMessageQueue   repositories.IUnitMessageQueueRepository
 
 	services.ActivityService[models.UnitActivity, models.UnitDeleteActivity]
 	contextTimeout time.Duration
@@ -51,7 +51,7 @@ type UnitHttpService struct {
 func NewUnitHttpService(
 	repo repositories.IUnitRepository,
 	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository,
-	unitServiceConfig config.IUnitServiceConfig,
+	repoMessageQueue repositories.IUnitMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 ) *UnitHttpService {
 
@@ -60,7 +60,7 @@ func NewUnitHttpService(
 	insSvc := &UnitHttpService{
 		repo:               repo,
 		repoProductBarcode: repoProductBarcode,
-		unitServiceConfig:  unitServiceConfig,
+		repoMessageQueue:   repoMessageQueue,
 		syncCacheRepo:      syncCacheRepo,
 		contextTimeout:     contextTimeout,
 	}
@@ -104,6 +104,10 @@ func (svc UnitHttpService) CreateUnit(shopID string, authUsername string, doc mo
 		return "", err
 	}
 
+	go func() {
+		svc.repoMessageQueue.Create(docData)
+		svc.saveMasterSync(shopID)
+	}()
 	svc.saveMasterSync(shopID)
 
 	return newGuidFixed, nil
@@ -140,7 +144,15 @@ func (svc UnitHttpService) UpdateUnit(shopID string, guid string, authUsername s
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Update(findDoc)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -192,7 +204,16 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+
+		err := svc.repoMessageQueue.Update(findDoc)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -215,7 +236,7 @@ func (svc UnitHttpService) existsUnitRefInProduct(shopID, unitCode string) (bool
 	return false, nil
 }
 
-func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authUsername string) error {
+func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authUsername string) (models.UnitDoc, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -223,36 +244,39 @@ func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authUsername string) e
 	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
-		return err
+		return findDoc, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return nil
+		return findDoc, nil
 	}
 
 	existsInProduct, err := svc.existsUnitRefInProduct(shopID, findDoc.UnitCode)
 
 	if existsInProduct {
-		return err
+		return findDoc, err
 	}
 
 	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
-		return err
+		return findDoc, err
 	}
 
-	return nil
+	return findDoc, nil
 }
 
 func (svc UnitHttpService) DeleteUnit(shopID, guid, authUsername string) error {
 
-	err := svc.deleteByUnitCode(shopID, guid, authUsername)
+	doc, err := svc.deleteByUnitCode(shopID, guid, authUsername)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMessageQueue.Delete(doc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -296,7 +320,15 @@ func (svc UnitHttpService) DeleteUnitByGUIDs(shopID, authUsername string, GUIDs 
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.DeleteInBatch(findDocs)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }

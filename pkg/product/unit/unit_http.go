@@ -27,12 +27,15 @@ type UnitHttp struct {
 func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewUnitRepository(pst)
 	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
 
+	repoMessageQueue := repositories.NewUnitMessageQueueRepository(prod)
+
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewUnitHttpService(repo, repoProductBarcode, cfg.UnitServiceConfig(), masterSyncCacheRepo)
+	svc := services.NewUnitHttpService(repo, repoProductBarcode, repoMessageQueue, masterSyncCacheRepo)
 
 	return UnitHttp{
 		ms:  ms,
