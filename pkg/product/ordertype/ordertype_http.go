@@ -23,14 +23,16 @@ type OrderTypeHttp struct {
 }
 
 func NewOrderTypeHttp(ms *microservice.Microservice, cfg config.IConfig) OrderTypeHttp {
+	prod := ms.Producer(cfg.MQConfig())
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewOrderTypeRepository(pst)
+	repoMessageQueue := repositories.NewOrderTypeMessageQueueRepository(prod)
 	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewOrderTypeHttpService(repo, repoProductBarcode, masterSyncCacheRepo)
+	svc := services.NewOrderTypeHttpService(repo, repoMessageQueue, repoProductBarcode, masterSyncCacheRepo)
 
 	return OrderTypeHttp{
 		ms:  ms,

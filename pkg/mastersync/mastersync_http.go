@@ -156,7 +156,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 
 	// Order type
 	repoOrdertype := ordertype_repo.NewOrderTypeRepository(pst)
-	svcOrdertype := ordertype_service.NewOrderTypeHttpService(repoOrdertype, repoProductBarcode, masterSyncCacheRepo)
+	svcOrdertype := ordertype_service.NewOrderTypeHttpService(repoOrdertype, nil, repoProductBarcode, masterSyncCacheRepo)
 	activityModuleManager.Add(svcOrdertype)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)

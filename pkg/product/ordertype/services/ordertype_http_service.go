@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/logger"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/ordertype/models"
@@ -35,6 +36,7 @@ type IOrderTypeHttpService interface {
 
 type OrderTypeHttpService struct {
 	repo               repositories.IOrderTypeRepository
+	repoMessageQueue   repositories.IOrderTypeMessageQueueRepository
 	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
 	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.OrderTypeActivity, models.OrderTypeDeleteActivity]
@@ -43,6 +45,7 @@ type OrderTypeHttpService struct {
 
 func NewOrderTypeHttpService(
 	repo repositories.IOrderTypeRepository,
+	repoMessageQueue repositories.IOrderTypeMessageQueueRepository,
 	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 ) *OrderTypeHttpService {
@@ -51,6 +54,7 @@ func NewOrderTypeHttpService(
 
 	insSvc := &OrderTypeHttpService{
 		repo:               repo,
+		repoMessageQueue:   repoMessageQueue,
 		syncCacheRepo:      syncCacheRepo,
 		repoProductBarcode: repoProductBarcode,
 		contextTimeout:     contextTimeout,
@@ -96,7 +100,15 @@ func (svc OrderTypeHttpService) CreateOrderType(shopID string, authUsername stri
 		return "", err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Create(docData)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, nil
 }
@@ -116,18 +128,28 @@ func (svc OrderTypeHttpService) UpdateOrderType(shopID string, guid string, auth
 		return errors.New("document not found")
 	}
 
-	findDoc.OrderType = doc
+	docData := findDoc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.OrderType = doc
 
-	err = svc.repo.Update(ctx, shopID, guid, findDoc)
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Update(docData)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -158,7 +180,15 @@ func (svc OrderTypeHttpService) DeleteOrderType(shopID string, guid string, auth
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Delete(findDoc)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -182,6 +212,19 @@ func (svc OrderTypeHttpService) DeleteOrderTypeByGUIDs(shopID string, authUserna
 	if err != nil {
 		return err
 	}
+
+	go func() {
+
+		findDocs, err := svc.repo.FindByGuids(ctx, shopID, GUIDs)
+
+		err = svc.repoMessageQueue.DeleteInBatch(findDocs)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
