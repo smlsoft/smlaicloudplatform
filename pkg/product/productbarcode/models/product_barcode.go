@@ -50,8 +50,15 @@ type ProductBarcodeBase struct {
 	VatCal           int                 `json:"vatcal" bson:"vatcal"`
 	IsALaCarte       bool                `json:"isalacarte" bson:"isalacarte"`
 	OrderTypes       *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
+	ProductType      ProductType         `json:"producttype" bson:"producttype"`
 	IsSplitUnitPrint bool                `json:"issplitunitprint" bson:"issplitunitprint"`
 	IsOnlyStaff      bool                `json:"isonlystaff" bson:"isonlystaff"`
+}
+
+type ProductType struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
 type ProductOrderType struct {
