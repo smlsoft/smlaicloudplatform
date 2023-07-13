@@ -23,13 +23,15 @@ type ProductTypeHttp struct {
 }
 
 func NewProductTypeHttp(ms *microservice.Microservice, cfg config.IConfig) ProductTypeHttp {
+	prod := ms.Producer(cfg.MQConfig())
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewProductTypeRepository(pst)
+	repoMessageQueue := repositories.NewProductTypeMessageQueueRepository(prod)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductTypeHttpService(repo, masterSyncCacheRepo, 15*time.Second)
+	svc := services.NewProductTypeHttpService(repo, repoMessageQueue, masterSyncCacheRepo, 15*time.Second)
 
 	return ProductTypeHttp{
 		ms:  ms,
