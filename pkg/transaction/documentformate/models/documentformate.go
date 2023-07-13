@@ -14,8 +14,11 @@ type DocumentFormate struct {
 	Module                   string                   `json:"module" bson:"module" validate:"required,min=1"`
 	DateFormate              string                   `json:"dateformate" bson:"dateformate" validate:"required,min=1"`
 	DocNumber                int                      `json:"docnumber" bson:"docnumber" validate:"required"`
+	DocFormat                string                   `json:"docformat" bson:"docformat" validate:"required,min=1"`
 	Description              string                   `json:"description" bson:"description"`
 	Details                  *[]DocumentFormateDetail `json:"details" bson:"details"`
+	IsAutoFormat             bool                     `json:"isautoformat" bson:"isautoformat"`
+	YearType                 int8                     `json:"yeartype" bson:"yeartype" validate:"required"`
 }
 
 type DocumentFormateDetail struct {
