@@ -96,11 +96,13 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 
 			tempUserInfo := models.UserInfo{}
 
-			memTempUserInfo, memExists := authService.cacheMemory.Get(cacheKey)
+			// memTempUserInfo, memExists := authService.cacheMemory.Get(cacheKey)
 
-			if memExists {
-				tempUserInfo = memTempUserInfo.(models.UserInfo)
-			} else {
+			// if memExists {
+			// 	tempUserInfo = memTempUserInfo.(models.UserInfo)
+			// }
+
+			if len(tempUserInfo.Username) < 1 {
 
 				tempUserInfoRaw, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid", "role"})
 
@@ -409,15 +411,17 @@ func (authService *AuthService) GenerateTokenWithRedisExpire(tokenType TokenType
 func (authService *AuthService) SelectShop(tokenType TokenType, tokenStr string, shopID string, role uint8) error {
 	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 
-	authService.cacheMemory.Delete(cacheKey)
+	// authService.cacheMemory.Delete(cacheKey)
 
-	tempUser, tempExists := authService.cacheMemory.Get(cacheKey)
-	if tempExists {
-		userInfo := tempUser.(models.UserInfo)
-		userInfo.ShopID = shopID
-		userInfo.Role = role
-		authService.cacheMemory.Set(cacheKey, userInfo, authService.cacheMemoryExpire)
-	}
+	// _, tempExists := authService.cacheMemory.Get(cacheKey)
+	// if tempExists {
+	// 	userInfo := models.UserInfo{}
+	// 	userInfo.Username = ""
+	// 	userInfo.Name = ""
+	// 	userInfo.ShopID = ""
+	// 	userInfo.Role = 0
+	// 	authService.cacheMemory.Set(cacheKey, userInfo, authService.cacheMemoryExpire)
+	// }
 
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"shopid": shopID,
