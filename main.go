@@ -37,10 +37,10 @@ import (
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
 	"smlcloudplatform/pkg/product/ordertype"
-	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
+	"smlcloudplatform/pkg/product/producttype"
 	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
@@ -193,8 +193,9 @@ func main() {
 			//product
 			productcategory.NewProductCategoryHttp(ms, cfg),
 			productbarcode.NewProductBarcodeHttp(ms, cfg),
-			product.NewProductHttp(ms, cfg),
+			// product.NewProductHttp(ms, cfg),
 			productgroup.NewProductGroupHttp(ms, cfg),
+			producttype.NewProductTypeHttp(ms, cfg),
 
 			inventoryimport.NewInventoryImportHttp(ms, cfg),
 			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
