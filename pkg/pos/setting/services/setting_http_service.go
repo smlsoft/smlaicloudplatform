@@ -63,14 +63,24 @@ func (svc SettingHttpService) CreateSetting(shopID string, authUsername string, 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
+	findDocCode, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
 	}
 
-	if len(findDoc.GuidFixed) > 0 {
+	if len(findDocCode.GuidFixed) > 0 {
 		return "", errors.New("code is exists")
+	}
+
+	findDocDocCode, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "doccode", doc.DocCode)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDocDocCode.GuidFixed) > 0 {
+		return "", errors.New("doc code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()

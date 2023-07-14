@@ -11,6 +11,7 @@ const settingCollectionName = "posSettings"
 type Setting struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string        `json:"code" bson:"code" validate:"required"`
+	DocCode                  string        `json:"doccode" bson:"doccode"`
 	DeviceNumber             string        `json:"devicenumber" bson:"devicenumber"`
 	DocFormatTaxInv          string        `json:"docformattaxinv" bson:"docformattaxinv"`
 	DocFormatInv             string        `json:"docformatinv" bson:"docformatinv"`
@@ -20,6 +21,8 @@ type Setting struct {
 	Branch                   Branch        `json:"branch" bson:"branch"`
 	ActivePin                string        `json:"activepin" bson:"activepin"`
 	Employees                []POSEmployee `json:"employees" bson:"employees"`
+	DocFormateSaleReturn     string        `json:"docformatesalereturn" bson:"docformatesalereturn"`
+	VatType                  int8          `json:"vattype" bson:"vattype"`
 }
 
 type POSEmployee struct {
