@@ -23,6 +23,17 @@ type Setting struct {
 	Employees                []POSEmployee `json:"employees" bson:"employees"`
 	DocFormateSaleReturn     string        `json:"docformatesalereturn" bson:"docformatesalereturn"`
 	VatType                  int8          `json:"vattype" bson:"vattype"`
+	VatRate                  float64       `json:"vatrate" bson:"vatrate"`
+	Slips                    *[]Slip       `json:"slips" bson:"slips"`
+	IsEJournal               bool          `json:"isejournal" bson:"isejournal"`
+	Wallet                   string        `json:"wallet" bson:"wallet"`
+	QRCode                   string        `json:"qrcode" bson:"qrcode"`
+}
+
+type Slip struct {
+	Code      string `json:"code" bson:"code"`
+	Name      string `json:"name" bson:"name"`
+	IsRequire bool   `json:"isrequire" bson:"isrequire"`
 }
 
 type POSEmployee struct {
