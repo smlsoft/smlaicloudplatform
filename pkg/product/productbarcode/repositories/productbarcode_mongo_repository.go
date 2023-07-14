@@ -21,6 +21,7 @@ type IProductBarcodeRepository interface {
 	CountByUnitCodes(ctx context.Context, shopID string, unitCodes []string) (int, error)
 	CountByGroupCodes(ctx context.Context, shopID string, unitCodes []string) (int, error)
 	CountByOrderTypes(ctx context.Context, shopID string, GUIDs []string) (int, error)
+	CountByProductTypes(ctx context.Context, shopID string, GUIDs []string) (int, error)
 	Create(ctx context.Context, doc models.ProductBarcodeDoc) (string, error)
 	CreateInBatch(ctx context.Context, docList []models.ProductBarcodeDoc) error
 	Update(ctx context.Context, shopID string, guid string, doc models.ProductBarcodeDoc) error
@@ -52,6 +53,7 @@ type IProductBarcodeRepository interface {
 	FindPageByGroups(ctx context.Context, shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 
 	UpdateRefBarcodeByGUID(ctx context.Context, shopID string, guid string, refBarcode models.RefProductBarcode) error
+	UpdateProductTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductType) error
 }
 
 type ProductBarcodeRepository struct {
@@ -79,28 +81,27 @@ func NewProductBarcodeRepository(pst microservice.IPersisterMongo, cache microse
 }
 
 func (repo ProductBarcodeRepository) CountByRefBarcode(ctx context.Context, shopID string, refBarcode string) (int, error) {
-
 	return repo.CountByKey(ctx, shopID, "refbarcodes.barcode", refBarcode)
 }
 
 func (repo ProductBarcodeRepository) CountByRefGuids(ctx context.Context, shopID string, GUIDs []string) (int, error) {
-
 	return repo.CountByInKeys(ctx, shopID, "refbarcodes.guidfixed", GUIDs)
 }
 
 func (repo ProductBarcodeRepository) CountByUnitCodes(ctx context.Context, shopID string, unitCodes []string) (int, error) {
-
 	return repo.CountByInKeys(ctx, shopID, "itemunitcode", unitCodes)
 }
 
 func (repo ProductBarcodeRepository) CountByGroupCodes(ctx context.Context, shopID string, unitCodes []string) (int, error) {
-
 	return repo.CountByInKeys(ctx, shopID, "groupcode", unitCodes)
 }
 
 func (repo ProductBarcodeRepository) CountByOrderTypes(ctx context.Context, shopID string, GUIDs []string) (int, error) {
-
 	return repo.CountByInKeys(ctx, shopID, "ordertypes.guidfixed", GUIDs)
+}
+
+func (repo ProductBarcodeRepository) CountByProductTypes(ctx context.Context, shopID string, GUIDs []string) (int, error) {
+	return repo.CountByInKeys(ctx, shopID, "producttype.guidfixed", GUIDs)
 }
 
 func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(ctx context.Context, shopID string, parentGUID string, guids []string) error {
@@ -254,6 +255,23 @@ func (repo ProductBarcodeRepository) UpdateRefBarcodeByGUID(ctx context.Context,
 			"refbarcodes.$.dividevalue":   refBarcode.DivideValue,
 			"refbarcodes.$.standvalue":    refBarcode.StandValue,
 			"refbarcodes.$.qty":           refBarcode.Qty,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
+}
+
+func (repo ProductBarcodeRepository) UpdateProductTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductType) error {
+	filters := bson.M{
+		"shopid":                shopID,
+		"deletedat":             bson.M{"$exists": false},
+		"refbarcodes.guidfixed": guid,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"producttype.code":  doc.Code,
+			"producttype.names": doc.Names,
 		},
 	}
 

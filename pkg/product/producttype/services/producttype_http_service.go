@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/logger"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/producttype/models"
@@ -33,23 +34,25 @@ type IProductTypeHttpService interface {
 }
 
 type ProductTypeHttpService struct {
-	repo repositories.IProductTypeRepository
-
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	repo             repositories.IProductTypeRepository
+	repoMessageQueue repositories.IProductTypeMessageQueueRepository
+	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.ProductTypeActivity, models.ProductTypeDeleteActivity]
 	contextTimeout time.Duration
 }
 
 func NewProductTypeHttpService(
 	repo repositories.IProductTypeRepository,
+	repoMessageQueue repositories.IProductTypeMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 	contextTimeout time.Duration,
 ) *ProductTypeHttpService {
 
 	insSvc := &ProductTypeHttpService{
-		repo:           repo,
-		syncCacheRepo:  syncCacheRepo,
-		contextTimeout: contextTimeout,
+		repo:             repo,
+		repoMessageQueue: repoMessageQueue,
+		syncCacheRepo:    syncCacheRepo,
+		contextTimeout:   contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.ProductTypeActivity, models.ProductTypeDeleteActivity](repo)
@@ -73,7 +76,7 @@ func (svc ProductTypeHttpService) CreateProductType(shopID string, authUsername 
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("Code is exists")
+		return "", errors.New("code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -92,7 +95,15 @@ func (svc ProductTypeHttpService) CreateProductType(shopID string, authUsername 
 		return "", err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Create(docData)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, nil
 }
@@ -112,18 +123,28 @@ func (svc ProductTypeHttpService) UpdateProductType(shopID string, guid string, 
 		return errors.New("document not found")
 	}
 
-	findDoc.ProductType = doc
+	docData := findDoc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.ProductType = doc
 
-	err = svc.repo.Update(ctx, shopID, guid, findDoc)
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Update(docData)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -148,7 +169,15 @@ func (svc ProductTypeHttpService) DeleteProductType(shopID string, guid string, 
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Delete(findDoc)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -167,7 +196,21 @@ func (svc ProductTypeHttpService) DeleteProductTypeByGUIDs(shopID string, authUs
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		findDocs, err := svc.repo.FindByGuids(ctx, shopID, GUIDs)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		} else {
+			err = svc.repoMessageQueue.DeleteInBatch(findDocs)
+
+			if err != nil {
+				logger.GetLogger().Error(err)
+			}
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
