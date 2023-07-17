@@ -8372,7 +8372,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
                         }
                     }
                 ],
@@ -8457,7 +8457,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Branch"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
                             }
                         }
                     }
@@ -8641,7 +8641,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
                         }
                     }
                 ],
@@ -19635,7 +19635,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
                         }
                     }
                 ],
@@ -19821,7 +19821,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
                         }
                     }
                 ],
@@ -29488,39 +29488,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Branch": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "departments": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Department"
-                    }
-                },
-                "location": {
-                    "$ref": "#/definitions/models.Location"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "telephone": {
-                    "type": "string",
-                    "maxLength": 100
-                }
-            }
-        },
         "models.BulkInsertResponse": {
             "type": "object",
             "properties": {
@@ -30004,38 +29971,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -30291,7 +30226,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -30741,11 +30675,17 @@ const docTemplate = `{
         "models.EmployeeRequestRegister": {
             "type": "object",
             "properties": {
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -30779,11 +30719,17 @@ const docTemplate = `{
         "models.EmployeeRequestUpdate": {
             "type": "object",
             "properties": {
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -32292,11 +32238,14 @@ const docTemplate = `{
         "models.Location": {
             "type": "object",
             "properties": {
-                "lat": {
+                "code": {
                     "type": "string"
                 },
-                "lng": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -34826,7 +34775,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "branch": {
-                    "$ref": "#/definitions/models.Branch"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Branch"
                 },
                 "code": {
                     "type": "string"
@@ -34871,7 +34820,7 @@ const docTemplate = `{
                     }
                 },
                 "vatrate": {
-                    "type": "string"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -34979,6 +34928,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "branchcode": {
+                    "type": "string"
+                },
+                "createdby": {
                     "type": "string"
                 },
                 "isfavorite": {
@@ -36523,6 +36475,95 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_organization_branch_models.Branch": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_pos_setting_models.Branch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "smlcloudplatform_pkg_pos_setting_models.Warehouse": {
             "type": "object",
             "properties": {
@@ -36764,6 +36805,88 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_branch_models.Branch": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "location": {
+                    "$ref": "#/definitions/models.Location"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "telephone": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.Branch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },

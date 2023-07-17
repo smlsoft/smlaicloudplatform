@@ -358,29 +358,6 @@ definitions:
     - banknames
     - names
     type: object
-  models.Branch:
-    properties:
-      code:
-        type: integer
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-        uniqueItems: true
-      location:
-        $ref: '#/definitions/models.Location'
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      telephone:
-        maxLength: 100
-        type: string
-    required:
-    - names
-    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -710,27 +687,6 @@ definitions:
       comment:
         type: string
     type: object
-  models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -912,7 +868,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -1209,10 +1164,14 @@ definitions:
     type: object
   models.EmployeeRequestRegister:
     properties:
+      branches:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch'
+        type: array
       code:
         type: string
       contact:
-        $ref: '#/definitions/models.Contact'
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
       email:
         type: string
       isenabled:
@@ -1234,10 +1193,14 @@ definitions:
     type: object
   models.EmployeeRequestUpdate:
     properties:
+      branches:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch'
+        type: array
       code:
         type: string
       contact:
-        $ref: '#/definitions/models.Contact'
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
       email:
         type: string
       isenabled:
@@ -2274,10 +2237,12 @@ definitions:
     type: object
   models.Location:
     properties:
-      lat:
+      code:
         type: string
-      lng:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.LocationRequest:
     properties:
@@ -3985,7 +3950,7 @@ definitions:
       activepin:
         type: string
       branch:
-        $ref: '#/definitions/models.Branch'
+        $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Branch'
       code:
         type: string
       devicenumber:
@@ -4015,7 +3980,7 @@ definitions:
           $ref: '#/definitions/models.Slip'
         type: array
       vatrate:
-        type: string
+        type: number
       vattype:
         type: integer
       wallet:
@@ -4088,6 +4053,8 @@ definitions:
   models.ShopUserInfo:
     properties:
       branchcode:
+        type: string
+      createdby:
         type: string
       isfavorite:
         type: boolean
@@ -5128,6 +5095,65 @@ definitions:
       success:
         type: boolean
     type: object
+  smlcloudplatform_pkg_organization_branch_models.Branch:
+    properties:
+      businesstypes:
+        items:
+          type: string
+        type: array
+      code:
+        type: string
+      contact:
+        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+      languages:
+        items:
+          type: string
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
+  smlcloudplatform_pkg_organization_branch_models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  smlcloudplatform_pkg_pos_setting_models.Branch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   smlcloudplatform_pkg_pos_setting_models.Warehouse:
     properties:
       code:
@@ -5290,6 +5316,61 @@ definitions:
     required:
     - code
     - names
+    type: object
+  smlcloudplatform_pkg_shop_branch_models.Branch:
+    properties:
+      code:
+        type: integer
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+        uniqueItems: true
+      location:
+        $ref: '#/definitions/models.Location'
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      telephone:
+        maxLength: 100
+        type: string
+    required:
+    - names
+    type: object
+  smlcloudplatform_pkg_shop_employee_models.Branch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  smlcloudplatform_pkg_shop_employee_models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -10562,7 +10643,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/models.Branch'
+          $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
       responses:
         "201":
           description: Created
@@ -10638,7 +10719,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/models.Branch'
+          $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
       responses:
         "201":
           description: Created
@@ -10664,7 +10745,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.Branch'
+            $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
           type: array
       responses:
         "201":
@@ -17626,7 +17707,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/models.Branch'
+          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch'
       responses:
         "201":
           description: Created
@@ -17702,7 +17783,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/models.Branch'
+          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch'
       responses:
         "201":
           description: Created
