@@ -5,10 +5,22 @@ import (
 	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop/models"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+func NormalizeUsername(username string) string {
+	username = strings.TrimSpace(username)
+	username = strings.ToLower(username)
+	return username
+}
+
+func NormalizeName(username string) string {
+	username = strings.TrimSpace(username)
+	return username
+}
 
 func HasPermissionShop(pst microservice.IPersisterMongo, ctx microservice.IContext) (bool, error) {
 

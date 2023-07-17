@@ -5,6 +5,7 @@ import (
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/utils"
 
 	"github.com/userplant/mongopagination"
 )
@@ -112,6 +113,8 @@ func (svc ShopUserService) ListUserInShop(shopID string, pageable micromodels.Pa
 }
 
 func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername string, username string, role models.UserRole) error {
+
+	username = utils.NormalizeUsername(username)
 
 	authUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, authUsername)
 

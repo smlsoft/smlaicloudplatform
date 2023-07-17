@@ -8,6 +8,7 @@ import (
 	"smlcloudplatform/pkg/firebase"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 
@@ -60,15 +61,9 @@ func NewAuthenticationService(
 	}
 }
 
-func (svc AuthenticationService) normalizeUsername(username string) string {
-	username = strings.TrimSpace(username)
-	username = strings.ToLower(username)
-	return username
-}
-
 func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (TokenLoginResponse, error) {
 
-	userLoginReq.Username = svc.normalizeUsername(userLoginReq.Username)
+	userLoginReq.Username = utils.NormalizeUsername(userLoginReq.Username)
 
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
 	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
@@ -163,7 +158,7 @@ func (svc AuthenticationService) RefreshToken(tokenRequest TokenLoginRequest) (T
 
 func (svc AuthenticationService) Register(userRequest models.UserRequest) (string, error) {
 
-	userRequest.Username = svc.normalizeUsername(userRequest.Username)
+	userRequest.Username = utils.NormalizeUsername(userRequest.Username)
 
 	userFind, err := svc.authRepo.FindUser(context.Background(), userRequest.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
