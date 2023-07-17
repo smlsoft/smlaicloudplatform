@@ -106,8 +106,9 @@ type EmployeeRequestUpdate struct {
 }
 
 type EmployeeRequestPassword struct {
-	Code     string `json:"code" bson:"code"`
-	Password string `json:"password" bson:"password"`
+	Code            string `json:"code" bson:"code"`
+	CurrentPassword string `json:"currentpassword" bson:"currentpassword"`
+	NewPassword     string `json:"newpassword" bson:"newpassword"`
 }
 
 type EmployeePassword struct {

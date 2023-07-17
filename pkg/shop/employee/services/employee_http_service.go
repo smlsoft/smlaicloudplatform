@@ -154,10 +154,16 @@ func (svc EmployeeHttpService) UpdatePassword(shopID string, authUsername string
 	}
 
 	if len(userFind.Code) < 1 {
-		return errors.New("user code is exists")
+		return errors.New("user or password invalid")
 	}
 
-	hashPassword, err := utils.HashPassword(emp.Password)
+	isCurrentPasswordInvalid := utils.CheckHashPassword(emp.CurrentPassword, userFind.Password)
+
+	if !isCurrentPasswordInvalid {
+		return errors.New("user or password invalid")
+	}
+
+	hashPassword, err := utils.HashPassword(emp.NewPassword)
 
 	if err != nil {
 		return err
