@@ -111,6 +111,7 @@ type ShopUserInfo struct {
 	Role           UserRole  `json:"role" bson:"role"`
 	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`
 	LastAccessedAt time.Time `json:"lastaccessedat" bson:"lastaccessedat"`
+	CreatedBy      string    `json:"createdby" bson:"createdby"`
 }
 
 func (*ShopUserInfo) CollectionName() string {

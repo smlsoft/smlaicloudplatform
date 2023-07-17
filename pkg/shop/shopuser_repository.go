@@ -186,6 +186,7 @@ func (repo ShopUserRepository) FindByUsernamePage(ctx context.Context, username 
 				"lastaccessedat": 1,
 				"name":           bson.M{"$first": "$shopInfo.name1"},
 				"branchcode":     bson.M{"$first": "$shopInfo.branchcode"},
+				"createdby":      bson.M{"$first": "$shopInfo.createdby"},
 			},
 		},
 		bson.M{
