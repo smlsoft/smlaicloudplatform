@@ -17,7 +17,8 @@ type BookBank struct {
 	AccountName              string          `json:"accountname" bson:"accountname"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	BankNames                *[]models.NameX `json:"banknames" bson:"banknames" validate:"required,min=1,unique=Code,dive"`
-	Images                   *[]Image        `json:"images" bson:"images" `
+	Images                   *[]Image        `json:"images" bson:"images"`
+	BankBranch               string          `json:"bankbranch" bson:"bankbranch"`
 }
 
 type Image struct {
