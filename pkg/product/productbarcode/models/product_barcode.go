@@ -12,12 +12,12 @@ import (
 const productBarcodeCollectionName = "productBarcodes"
 
 type ProductBarcodeBase struct {
-	ItemCode  string          `json:"itemcode" bson:"itemcode"`
-	Barcode   string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
-	GroupCode string          `json:"groupcode" bson:"groupcode"`
-	GroupName *[]models.NameX `json:"groupnames" bson:"groupnames"`
-	Names     *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSorts    *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
+	ItemCode   string          `json:"itemcode" bson:"itemcode"`
+	Barcode    string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	GroupCode  string          `json:"groupcode" bson:"groupcode"`
+	GroupNames *[]models.NameX `json:"groupnames" bson:"groupnames"`
+	Names      *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	XSorts     *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 
 	ItemUnitCode    string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames   *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames"`
@@ -53,19 +53,6 @@ type ProductBarcodeBase struct {
 	ProductType      ProductType         `json:"producttype" bson:"producttype"`
 	IsSplitUnitPrint bool                `json:"issplitunitprint" bson:"issplitunitprint"`
 	IsOnlyStaff      bool                `json:"isonlystaff" bson:"isonlystaff"`
-}
-
-type ProductType struct {
-	models.DocIdentity `bson:"inline"`
-	Code               string          `json:"code" bson:"code"`
-	Names              *[]models.NameX `json:"names" bson:"names"`
-}
-
-type ProductOrderType struct {
-	models.DocIdentity `bson:"inline"`
-	Code               string          `json:"code" bson:"code"`
-	Names              *[]models.NameX `json:"names" bson:"names"`
-	Price              float64         `json:"price" bson:"price"`
 }
 
 type RefProductBarcode struct {

@@ -13,6 +13,10 @@ import (
 
 type IProductBarcodeConsumeService interface {
 	UpdateRefBarcode(shopID string, doc models.ProductBarcodeDoc) error
+	UpdateProductType(shopID string, doc models.ProductType) error
+	UpdateProductGroup(shopID string, doc models.ProductGroup) error
+	UpdateProductUnit(shopID string, doc models.ProductUnit) error
+	UpdateProductOrderType(shopID string, doc models.ProductOrderType) error
 	UpSert(shopID string, barcode string, doc models.ProductBarcodeDoc) (*models.ProductBarcodePg, error)
 	Delete(ctx context.Context, shopID string, barcode string) error
 	ReSync(shopID string) error
@@ -49,6 +53,46 @@ func (svc ProductBarcodeConsumeService) UpdateRefBarcode(shopID string, doc mode
 	refProductBarcode := doc.ToRefBarcode()
 
 	err := svc.productMongoRepo.UpdateRefBarcodeByGUID(context.Background(), shopID, doc.GuidFixed, refProductBarcode)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ProductBarcodeConsumeService) UpdateProductType(shopID string, doc models.ProductType) error {
+	err := svc.productMongoRepo.UpdateAllProductTypeByGUID(context.Background(), shopID, doc.GuidFixed, doc)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ProductBarcodeConsumeService) UpdateProductGroup(shopID string, doc models.ProductGroup) error {
+	err := svc.productMongoRepo.UpdateAllProductGroupByCode(context.Background(), shopID, doc)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ProductBarcodeConsumeService) UpdateProductUnit(shopID string, doc models.ProductUnit) error {
+	err := svc.productMongoRepo.UpdateAllProductUnitByCode(context.Background(), shopID, doc)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ProductBarcodeConsumeService) UpdateProductOrderType(shopID string, doc models.ProductOrderType) error {
+	err := svc.productMongoRepo.UpdateAllProductOrderTypeByGUID(context.Background(), shopID, doc.GuidFixed, doc)
 
 	if err != nil {
 		return err
