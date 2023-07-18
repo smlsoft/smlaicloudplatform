@@ -185,7 +185,12 @@ func (svc ProductGroupHttpService) UpdateProductGroup(shopID string, guid string
 	}
 
 	go func() {
-		svc.repoMessageQueue.Update(docData)
+		err := svc.repoMessageQueue.Update(docData)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
 		svc.saveMasterSync(shopID)
 	}()
 

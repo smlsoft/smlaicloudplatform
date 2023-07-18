@@ -272,7 +272,6 @@ func main() {
 	consumeServices := []ConsumerRegister{
 		task.NewTaskConsumer(ms, cfg),
 		productbarcode.NewProductBarcodeConsumer(ms, cfg),
-		productbarcode.NewProductBarcodeConsumer(ms, cfg),
 	}
 
 	serviceStartConsumer(ms, consumeServices...)

@@ -53,7 +53,10 @@ type IProductBarcodeRepository interface {
 	FindPageByGroups(ctx context.Context, shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 
 	UpdateRefBarcodeByGUID(ctx context.Context, shopID string, guid string, refBarcode models.RefProductBarcode) error
-	UpdateProductTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductType) error
+	UpdateAllProductTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductType) error
+	UpdateAllProductGroupByCode(ctx context.Context, shopID string, doc models.ProductGroup) error
+	UpdateAllProductUnitByCode(ctx context.Context, shopID string, doc models.ProductUnit) error
+	UpdateAllProductOrderTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductOrderType) error
 }
 
 type ProductBarcodeRepository struct {
@@ -261,17 +264,69 @@ func (repo ProductBarcodeRepository) UpdateRefBarcodeByGUID(ctx context.Context,
 	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
 }
 
-func (repo ProductBarcodeRepository) UpdateProductTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductType) error {
+func (repo ProductBarcodeRepository) UpdateAllProductTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductType) error {
 	filters := bson.M{
 		"shopid":                shopID,
 		"deletedat":             bson.M{"$exists": false},
-		"refbarcodes.guidfixed": guid,
+		"producttype.guidfixed": guid,
 	}
 
 	update := bson.M{
 		"$set": bson.M{
 			"producttype.code":  doc.Code,
 			"producttype.names": doc.Names,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
+}
+
+func (repo ProductBarcodeRepository) UpdateAllProductGroupByCode(ctx context.Context, shopID string, doc models.ProductGroup) error {
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"groupcode": doc.Code,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"groupcode":  doc.Code,
+			"groupnames": doc.Names,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
+}
+
+func (repo ProductBarcodeRepository) UpdateAllProductUnitByCode(ctx context.Context, shopID string, doc models.ProductUnit) error {
+	filters := bson.M{
+		"shopid":       shopID,
+		"deletedat":    bson.M{"$exists": false},
+		"itemunitcode": doc.UnitCode,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"itemunitcode":  doc.UnitCode,
+			"itemunitnames": doc.Names,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
+}
+
+func (repo ProductBarcodeRepository) UpdateAllProductOrderTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductOrderType) error {
+	filters := bson.M{
+		"shopid":               shopID,
+		"deletedat":            bson.M{"$exists": false},
+		"ordertypes.guidfixed": guid,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"ordertypes.$.code":  doc.Code,
+			"ordertypes.$.names": doc.Names,
+			"ordertypes.$.price": doc.Price,
 		},
 	}
 
