@@ -10,26 +10,26 @@ const settingCollectionName = "posSettings"
 
 type Setting struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string        `json:"code" bson:"code" validate:"required"`
-	DocCode                  string        `json:"doccode" bson:"doccode"`
-	DeviceNumber             string        `json:"devicenumber" bson:"devicenumber"`
-	DocFormatTaxInv          string        `json:"docformattaxinv" bson:"docformattaxinv"`
-	DocFormatInv             string        `json:"docformatinv" bson:"docformatinv"`
-	ReceiptForm              string        `json:"receiptform" bson:"receiptform"`
-	Warehouse                Warehouse     `json:"warehouse" bson:"warehouse"`
-	Location                 Location      `json:"location" bson:"location"`
-	Branch                   Branch        `json:"branch" bson:"branch"`
-	ActivePin                string        `json:"activepin" bson:"activepin"`
-	Employees                []POSEmployee `json:"employees" bson:"employees"`
-	DocFormateSaleReturn     string        `json:"docformatesalereturn" bson:"docformatesalereturn"`
-	VatType                  int8          `json:"vattype" bson:"vattype"`
-	VatRate                  float64       `json:"vatrate" bson:"vatrate"`
-	Slips                    *[]Slip       `json:"slips" bson:"slips"`
-	IsEJournal               bool          `json:"isejournal" bson:"isejournal"`
-	Wallet                   string        `json:"wallet" bson:"wallet"`
-	QRCode                   string        `json:"qrcode" bson:"qrcode"`
-	BillHeader               string        `json:"billheader" bson:"billheader"`
-	BillFooter               string        `json:"billfooter" bson:"billfooter"`
+	Code                     string                    `json:"code" bson:"code" validate:"required"`
+	DocCode                  string                    `json:"doccode" bson:"doccode"`
+	DeviceNumber             string                    `json:"devicenumber" bson:"devicenumber"`
+	DocFormatTaxInv          string                    `json:"docformattaxinv" bson:"docformattaxinv"`
+	DocFormatInv             string                    `json:"docformatinv" bson:"docformatinv"`
+	ReceiptForm              string                    `json:"receiptform" bson:"receiptform"`
+	Warehouse                Warehouse                 `json:"warehouse" bson:"warehouse"`
+	Location                 Location                  `json:"location" bson:"location"`
+	Branch                   Branch                    `json:"branch" bson:"branch"`
+	ActivePin                string                    `json:"activepin" bson:"activepin"`
+	Employees                []POSEmployee             `json:"employees" bson:"employees"`
+	DocFormateSaleReturn     string                    `json:"docformatesalereturn" bson:"docformatesalereturn"`
+	VatType                  int8                      `json:"vattype" bson:"vattype"`
+	VatRate                  float64                   `json:"vatrate" bson:"vatrate"`
+	Slips                    *[]Slip                   `json:"slips" bson:"slips"`
+	IsEJournal               bool                      `json:"isejournal" bson:"isejournal"`
+	Wallet                   string                    `json:"wallet" bson:"wallet"`
+	QRCodes                  *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
+	BillHeader               string                    `json:"billheader" bson:"billheader"`
+	BillFooter               string                    `json:"billfooter" bson:"billfooter"`
 }
 
 type Slip struct {
