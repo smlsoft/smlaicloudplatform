@@ -119,9 +119,10 @@ func (*ShopUserInfo) CollectionName() string {
 }
 
 type UserRoleRequest struct {
-	ShopID   string   `json:"shopid" bson:"shopid"`
-	Username string   `json:"username" bson:"username"`
-	Role     UserRole `json:"role" bson:"role"`
+	ShopID       string   `json:"shopid" bson:"shopid"`
+	EditUsername string   `json:"editusername" bson:"editusername"`
+	Username     string   `json:"username" bson:"username"`
+	Role         UserRole `json:"role" bson:"role"`
 }
 
 type ShopUserAccessLog struct {

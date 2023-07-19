@@ -199,7 +199,7 @@ func (h ShopMemberHttp) SaveUserPermissionShop(ctx microservice.IContext) error 
 		return err
 	}
 
-	err = h.svc.SaveUserPermissionShop(userRoleReq.ShopID, authUsername, userRoleReq.Username, userRoleReq.Role)
+	err = h.svc.SaveUserPermissionShop(userRoleReq.ShopID, authUsername, userRoleReq.EditUsername, userRoleReq.Username, userRoleReq.Role)
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err

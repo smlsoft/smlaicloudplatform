@@ -116,6 +116,11 @@ type ShopUserRepositoryMock struct {
 	mock.Mock
 }
 
+func (m *ShopUserRepositoryMock) Update(ctx context.Context, shopID string, editusername string, username string, role models.UserRole) error {
+	args := m.Called(ctx, shopID, editusername, username, role)
+	return args.Error(0)
+}
+
 func (m *ShopUserRepositoryMock) Save(ctx context.Context, shopID string, username string, role models.UserRole) error {
 	args := m.Called(ctx, shopID, username, role)
 	return args.Error(0)

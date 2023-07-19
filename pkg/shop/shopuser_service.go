@@ -11,7 +11,7 @@ import (
 )
 
 type IShopUserService interface {
-	SaveUserPermissionShop(shopID string, authUsername string, username string, role models.UserRole) error
+	SaveUserPermissionShop(shopID string, authUsername string, editusername string, username string, role models.UserRole) error
 	DeleteUserPermissionShop(shopID string, authUsername string, username string) error
 
 	InfoShopByUser(shopID string, username string) (models.ShopUserProfile, error)
@@ -112,7 +112,7 @@ func (svc ShopUserService) ListUserInShop(shopID string, pageable micromodels.Pa
 	return shopUserProfiles, pagination, err
 }
 
-func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername string, username string, role models.UserRole) error {
+func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername string, editusername string, username string, role models.UserRole) error {
 
 	username = utils.NormalizeUsername(username)
 
@@ -126,10 +126,33 @@ func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername st
 		return errors.New("permission denied")
 	}
 
-	err = svc.repo.Save(context.Background(), shopID, username, role)
+	editusername = utils.NormalizeUsername(editusername)
 
-	if err != nil {
-		return err
+	if editusername != "" {
+
+		findUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, editusername)
+
+		if err != nil {
+			return err
+		}
+
+		if findUser.Username != "" && editusername != username {
+			err = svc.repo.Update(context.Background(), shopID, editusername, username, role)
+			if err != nil {
+				return err
+			}
+		} else {
+			err = svc.repo.Save(context.Background(), shopID, username, role)
+			if err != nil {
+				return err
+			}
+		}
+
+	} else {
+		err = svc.repo.Save(context.Background(), shopID, username, role)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

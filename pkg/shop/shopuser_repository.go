@@ -14,6 +14,7 @@ import (
 )
 
 type IShopUserRepository interface {
+	Update(ctx context.Context, shopID string, editusername string, username string, role models.UserRole) error
 	Save(ctx context.Context, shopID string, username string, role models.UserRole) error
 	UpdateLastAccess(ctx context.Context, shopID string, username string, lastAccessedAt time.Time) error
 	SaveFavorite(ctx context.Context, shopID string, username string, isFavorite bool) error
@@ -36,6 +37,23 @@ func NewShopUserRepository(pst microservice.IPersisterMongo) ShopUserRepository 
 	return ShopUserRepository{
 		pst: pst,
 	}
+}
+
+func (svc ShopUserRepository) Update(ctx context.Context, shopID string, editusername string, username string, role models.UserRole) error {
+
+	findUsername := username
+
+	if editusername != "" {
+		findUsername = editusername
+	}
+
+	err := svc.pst.Update(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": findUsername}, bson.M{"$set": bson.M{"username": username, "role": role}})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc ShopUserRepository) Save(ctx context.Context, shopID string, username string, role models.UserRole) error {
