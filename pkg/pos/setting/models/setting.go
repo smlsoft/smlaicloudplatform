@@ -33,9 +33,11 @@ type Setting struct {
 }
 
 type Slip struct {
-	Code      string `json:"code" bson:"code"`
-	Name      string `json:"name" bson:"name"`
-	IsRequire bool   `json:"isrequire" bson:"isrequire"`
+	Code      string          `json:"code" bson:"code"`
+	Name      string          `json:"name" bson:"name"`
+	IsRequire bool            `json:"isrequire" bson:"isrequire"`
+	FormCode  string          `json:"formcode" bson:"formcode"`
+	FormNames *[]models.NameX `json:"formnames" bson:"formnames"`
 }
 
 type POSEmployee struct {
