@@ -30228,13 +30228,18 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -32239,12 +32244,27 @@ const docTemplate = `{
         },
         "models.Location": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
-                "lat": {
+                "code": {
                     "type": "string"
                 },
-                "lng": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 }
             }
         },
@@ -34487,6 +34507,30 @@ const docTemplate = `{
                 "cashiercode": {
                     "type": "string"
                 },
+                "chequeamount": {
+                    "type": "number"
+                },
+                "chequebookcode": {
+                    "type": "string"
+                },
+                "chequebooknumber": {
+                    "type": "string"
+                },
+                "chequeduedate": {
+                    "type": "string"
+                },
+                "chequeno": {
+                    "type": "string"
+                },
+                "couponamount": {
+                    "type": "number"
+                },
+                "coupondescription": {
+                    "type": "string"
+                },
+                "couponno": {
+                    "type": "string"
+                },
                 "custcode": {
                     "type": "string"
                 },
@@ -34549,6 +34593,12 @@ const docTemplate = `{
                 },
                 "posid": {
                     "type": "string"
+                },
+                "qrcode": {
+                    "type": "string"
+                },
+                "qrcodeamount": {
+                    "type": "number"
                 },
                 "salecode": {
                     "type": "string"
@@ -34606,6 +34656,30 @@ const docTemplate = `{
                 "cashiercode": {
                     "type": "string"
                 },
+                "chequeamount": {
+                    "type": "number"
+                },
+                "chequebookcode": {
+                    "type": "string"
+                },
+                "chequebooknumber": {
+                    "type": "string"
+                },
+                "chequeduedate": {
+                    "type": "string"
+                },
+                "chequeno": {
+                    "type": "string"
+                },
+                "couponamount": {
+                    "type": "number"
+                },
+                "coupondescription": {
+                    "type": "string"
+                },
+                "couponno": {
+                    "type": "string"
+                },
                 "custcode": {
                     "type": "string"
                 },
@@ -34668,6 +34742,12 @@ const docTemplate = `{
                 },
                 "posid": {
                     "type": "string"
+                },
+                "qrcode": {
+                    "type": "string"
+                },
+                "qrcodeamount": {
+                    "type": "number"
                 },
                 "salecode": {
                     "type": "string"
