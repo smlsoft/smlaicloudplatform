@@ -13,6 +13,19 @@ type SaleInvoiceReturn struct {
 	models.PartitionIdentity `bson:"inline"`
 	transmodels.Transaction  `bson:"inline"`
 	IsPOS                    bool `json:"ispos" bson:"ispos"`
+
+	CouponNo          string  `json:"couponno" bson:"couponno"`
+	CouponAmount      float64 `json:"couponamount" bson:"couponamount"`
+	CouponDescription string  `json:"coupondescription" bson:"coupondescription"`
+
+	QRCode       string  `json:"qrcode" bson:"qrcode"`
+	QRCodeAmount float64 `json:"qrcodeamount" bson:"qrcodeamount"`
+
+	ChequeNo         string  `json:"chequeno" bson:"chequeno"`
+	ChequeBookNumber string  `json:"chequebooknumber" bson:"chequebooknumber"`
+	ChequeBookCode   string  `json:"chequebookcode" bson:"chequebookcode"`
+	ChequeDueDate    string  `json:"chequeduedate" bson:"chequeduedate"`
+	ChequeAmount     float64 `json:"chequeamount" bson:"chequeamount"`
 }
 
 type SaleInvoiceReturnInfo struct {
