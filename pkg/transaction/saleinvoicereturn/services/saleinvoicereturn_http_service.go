@@ -146,6 +146,16 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 		docNo = doc.DocNo
 	}
 
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", docNo)
+
+	if err != nil {
+		return "", "", err
+	}
+
+	if len(findDoc.GuidFixed) > 0 {
+		return "", "", errors.New("DocNo is exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.SaleInvoiceReturnDoc{}
@@ -161,7 +171,7 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(ctx, docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", "", err
