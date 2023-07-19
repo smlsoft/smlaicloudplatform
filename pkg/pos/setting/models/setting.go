@@ -28,6 +28,8 @@ type Setting struct {
 	IsEJournal               bool          `json:"isejournal" bson:"isejournal"`
 	Wallet                   string        `json:"wallet" bson:"wallet"`
 	QRCode                   string        `json:"qrcode" bson:"qrcode"`
+	BillHeader               string        `json:"billheader" bson:"billheader"`
+	BillFooter               string        `json:"billfooter" bson:"billfooter"`
 }
 
 type Slip struct {
