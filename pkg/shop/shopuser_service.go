@@ -116,6 +116,10 @@ func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername st
 
 	username = utils.NormalizeUsername(username)
 
+	if authUsername == username {
+		return errors.New("can not edit self permission")
+	}
+
 	authUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, authUsername)
 
 	if err != nil {
