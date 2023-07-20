@@ -30,6 +30,7 @@ type Setting struct {
 	QRCodes                  *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
 	BillHeader               string                    `json:"billheader" bson:"billheader"`
 	BillFooter               string                    `json:"billfooter" bson:"billfooter"`
+	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
 }
 
 type Slip struct {
