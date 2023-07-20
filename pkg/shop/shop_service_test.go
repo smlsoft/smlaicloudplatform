@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/tj/assert"
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestShop_Create(t *testing.T) {
@@ -116,8 +117,13 @@ type ShopUserRepositoryMock struct {
 	mock.Mock
 }
 
-func (m *ShopUserRepositoryMock) Update(ctx context.Context, shopID string, editusername string, username string, role models.UserRole) error {
-	args := m.Called(ctx, shopID, editusername, username, role)
+func (m *ShopUserRepositoryMock) Create(ctx context.Context, shopUser *models.ShopUser) error {
+	args := m.Called(ctx, shopUser)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) Update(ctx context.Context, id primitive.ObjectID, shopID string, username string, role models.UserRole) error {
+	args := m.Called(ctx, id, shopID, username, role)
 	return args.Error(0)
 }
 

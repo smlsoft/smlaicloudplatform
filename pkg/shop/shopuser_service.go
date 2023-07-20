@@ -134,29 +134,48 @@ func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername st
 
 	if editusername != "" {
 
-		findUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, editusername)
+		findEditUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, editusername)
 
 		if err != nil {
 			return err
 		}
 
-		if findUser.Username != "" && editusername != username {
-			err = svc.repo.Update(context.Background(), shopID, editusername, username, role)
+		if findEditUser.Username != "" {
+			tempID := findEditUser.ID
+
+			err = svc.repo.Update(context.Background(), tempID, shopID, username, role)
 			if err != nil {
 				return err
 			}
 		} else {
 			err = svc.repo.Save(context.Background(), shopID, username, role)
+
 			if err != nil {
 				return err
 			}
 		}
 
 	} else {
+
 		err = svc.repo.Save(context.Background(), shopID, username, role)
+
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (svc ShopUserService) create(ctx context.Context, shopID string, username string, role models.UserRole) error {
+
+	tempShopUser := models.ShopUser{}
+	tempShopUser.ShopID = shopID
+	tempShopUser.Username = username
+	tempShopUser.Role = role
+
+	err := svc.repo.Create(ctx, &tempShopUser)
+	if err != nil {
+		return err
 	}
 	return nil
 }

@@ -14,7 +14,8 @@ import (
 )
 
 type IShopUserRepository interface {
-	Update(ctx context.Context, shopID string, editusername string, username string, role models.UserRole) error
+	Create(ctx context.Context, shopUser *models.ShopUser) error
+	Update(ctx context.Context, id primitive.ObjectID, shopID string, username string, role models.UserRole) error
 	Save(ctx context.Context, shopID string, username string, role models.UserRole) error
 	UpdateLastAccess(ctx context.Context, shopID string, username string, lastAccessedAt time.Time) error
 	SaveFavorite(ctx context.Context, shopID string, username string, isFavorite bool) error
@@ -39,15 +40,20 @@ func NewShopUserRepository(pst microservice.IPersisterMongo) ShopUserRepository 
 	}
 }
 
-func (svc ShopUserRepository) Update(ctx context.Context, shopID string, editusername string, username string, role models.UserRole) error {
+func (svc ShopUserRepository) Create(ctx context.Context, shopUser *models.ShopUser) error {
 
-	findUsername := username
+	_, err := svc.pst.Create(ctx, &models.ShopUser{}, shopUser)
 
-	if editusername != "" {
-		findUsername = editusername
+	if err != nil {
+		return err
 	}
 
-	err := svc.pst.Update(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": findUsername}, bson.M{"$set": bson.M{"username": username, "role": role}})
+	return nil
+}
+
+func (svc ShopUserRepository) Update(ctx context.Context, id primitive.ObjectID, shopID string, username string, role models.UserRole) error {
+
+	err := svc.pst.Update(ctx, &models.ShopUser{}, bson.M{"_id": id, "shopid": shopID}, bson.M{"$set": bson.M{"username": username, "role": role}})
 
 	if err != nil {
 		return err
