@@ -368,13 +368,25 @@ definitions:
   models.Branch:
     properties:
       code:
-        type: string
-      guidfixed:
-        type: string
+        type: integer
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+        uniqueItems: true
+      location:
+        $ref: '#/definitions/models.Location'
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+      telephone:
+        maxLength: 100
+        type: string
+    required:
+    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -907,6 +919,7 @@ definitions:
         type: array
         uniqueItems: true
     required:
+    - code
     - names
     type: object
   models.Detail:
@@ -3435,6 +3448,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       salecode:
@@ -3512,6 +3527,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       salecode:
@@ -3772,6 +3789,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       qrcode:
@@ -3871,6 +3890,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       qrcode:
@@ -4191,6 +4212,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       salecode:
@@ -4268,6 +4291,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       salecode:
@@ -4345,6 +4370,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       salecode:
@@ -4422,6 +4449,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       salecode:
@@ -4499,6 +4528,8 @@ definitions:
         type: string
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
       posid:
         type: string
       salecode:

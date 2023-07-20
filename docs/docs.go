@@ -29102,18 +29102,34 @@ const docTemplate = `{
         },
         "models.Branch": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "integer"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "location": {
+                    "$ref": "#/definitions/models.Location"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "telephone": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -29887,6 +29903,7 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
+                "code",
                 "names"
             ],
             "properties": {
@@ -33604,6 +33621,9 @@ const docTemplate = `{
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
                 },
+                "paymentdetailraw": {
+                    "type": "string"
+                },
                 "posid": {
                     "type": "string"
                 },
@@ -33719,6 +33739,9 @@ const docTemplate = `{
                 },
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "paymentdetailraw": {
+                    "type": "string"
                 },
                 "posid": {
                     "type": "string"
@@ -34104,6 +34127,9 @@ const docTemplate = `{
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
                 },
+                "paymentdetailraw": {
+                    "type": "string"
+                },
                 "posid": {
                     "type": "string"
                 },
@@ -34252,6 +34278,9 @@ const docTemplate = `{
                 },
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "paymentdetailraw": {
+                    "type": "string"
                 },
                 "posid": {
                     "type": "string"
@@ -34738,6 +34767,9 @@ const docTemplate = `{
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
                 },
+                "paymentdetailraw": {
+                    "type": "string"
+                },
                 "posid": {
                     "type": "string"
                 },
@@ -34853,6 +34885,9 @@ const docTemplate = `{
                 },
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "paymentdetailraw": {
+                    "type": "string"
                 },
                 "posid": {
                     "type": "string"
@@ -34970,6 +35005,9 @@ const docTemplate = `{
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
                 },
+                "paymentdetailraw": {
+                    "type": "string"
+                },
                 "posid": {
                     "type": "string"
                 },
@@ -35086,6 +35124,9 @@ const docTemplate = `{
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
                 },
+                "paymentdetailraw": {
+                    "type": "string"
+                },
                 "posid": {
                     "type": "string"
                 },
@@ -35201,6 +35242,9 @@ const docTemplate = `{
                 },
                 "paymentdetail": {
                     "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "paymentdetailraw": {
+                    "type": "string"
                 },
                 "posid": {
                     "type": "string"
