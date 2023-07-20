@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/producttype/models"
 	"smlcloudplatform/pkg/product/producttype/repositories"
 	"smlcloudplatform/pkg/product/producttype/services"
@@ -28,10 +29,11 @@ func NewProductTypeHttp(ms *microservice.Microservice, cfg config.IConfig) Produ
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewProductTypeRepository(pst)
+	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
 	repoMessageQueue := repositories.NewProductTypeMessageQueueRepository(prod)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductTypeHttpService(repo, repoMessageQueue, masterSyncCacheRepo, 15*time.Second)
+	svc := services.NewProductTypeHttpService(repo, repoProductBarcode, repoMessageQueue, masterSyncCacheRepo, 15*time.Second)
 
 	return ProductTypeHttp{
 		ms:  ms,

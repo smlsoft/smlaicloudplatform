@@ -8,6 +8,7 @@ import (
 	"smlcloudplatform/pkg/logger"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/producttype/models"
 	"smlcloudplatform/pkg/product/producttype/repositories"
 	"smlcloudplatform/pkg/services"
@@ -34,25 +35,28 @@ type IProductTypeHttpService interface {
 }
 
 type ProductTypeHttpService struct {
-	repo             repositories.IProductTypeRepository
-	repoMessageQueue repositories.IProductTypeMessageQueueRepository
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+	repo               repositories.IProductTypeRepository
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
+	repoMessageQueue   repositories.IProductTypeMessageQueueRepository
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.ProductTypeActivity, models.ProductTypeDeleteActivity]
 	contextTimeout time.Duration
 }
 
 func NewProductTypeHttpService(
 	repo repositories.IProductTypeRepository,
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository,
 	repoMessageQueue repositories.IProductTypeMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 	contextTimeout time.Duration,
 ) *ProductTypeHttpService {
 
 	insSvc := &ProductTypeHttpService{
-		repo:             repo,
-		repoMessageQueue: repoMessageQueue,
-		syncCacheRepo:    syncCacheRepo,
-		contextTimeout:   contextTimeout,
+		repo:               repo,
+		repoProductBarcode: repoProductBarcode,
+		repoMessageQueue:   repoMessageQueue,
+		syncCacheRepo:      syncCacheRepo,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.ProductTypeActivity, models.ProductTypeDeleteActivity](repo)
@@ -164,6 +168,12 @@ func (svc ProductTypeHttpService) DeleteProductType(shopID string, guid string, 
 		return errors.New("document not found")
 	}
 
+	existsInProduct, _ := svc.existsOrderTypeRefInProduct(shopID, []string{guid})
+
+	if existsInProduct {
+		return fmt.Errorf("\"%s\" is referenced in product barcode", findDoc.Code)
+	}
+
 	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
@@ -186,6 +196,12 @@ func (svc ProductTypeHttpService) DeleteProductTypeByGUIDs(shopID string, authUs
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
+
+	existsInProduct, _ := svc.existsOrderTypeRefInProduct(shopID, GUIDs)
+
+	if existsInProduct {
+		return fmt.Errorf("referenced in product")
+	}
 
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
@@ -426,4 +442,21 @@ func (svc ProductTypeHttpService) saveMasterSync(shopID string) {
 
 func (svc ProductTypeHttpService) GetModuleName() string {
 	return "productType"
+}
+
+func (svc ProductTypeHttpService) existsOrderTypeRefInProduct(shopID string, GUIDs []string) (bool, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docCount, err := svc.repoProductBarcode.CountByProductTypes(ctx, shopID, GUIDs)
+	if err != nil {
+		return true, err
+	}
+
+	if docCount > 0 {
+		return true, fmt.Errorf("referenced in product barcode")
+	}
+
+	return false, nil
 }
