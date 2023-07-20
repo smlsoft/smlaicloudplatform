@@ -116,7 +116,7 @@ func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername st
 
 	username = utils.NormalizeUsername(username)
 
-	if authUsername == username {
+	if authUsername == editusername {
 		return errors.New("can not edit self permission")
 	}
 
