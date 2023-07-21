@@ -13,6 +13,7 @@ type Table struct {
 	Names  *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Seat   int8            `json:"seat" bson:"seat"`
 	Zone   string          `json:"zone" bson:"zone"`
+	XOrder uint            `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
 }
 
 type TableInfo struct {
@@ -87,4 +88,9 @@ type TableFetchUpdateResponse struct {
 	Success    bool                          `json:"success"`
 	Data       TableLastActivityResponse     `json:"data,omitempty"`
 	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type XOrderRequest struct {
+	GuidFixed string `json:"guidfixed" bson:"guidfixed" validate:"required,min=1"`
+	XOrder    uint   `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
 }

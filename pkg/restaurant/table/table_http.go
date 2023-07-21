@@ -43,6 +43,7 @@ func (h TableHttp) RegisterHttp() {
 	h.ms.POST("/restaurant/table", h.CreateTable)
 	h.ms.GET("/restaurant/table/:id", h.InfoTable)
 	h.ms.PUT("/restaurant/table/:id", h.UpdateTable)
+	h.ms.PUT("/restaurant/table/xorder", h.SaveXOrder)
 	h.ms.DELETE("/restaurant/table/:id", h.DeleteTable)
 
 }
@@ -295,6 +296,49 @@ func (h TableHttp) SaveBulk(ctx microservice.IContext) error {
 			BulkImport: bulkResponse,
 		},
 	)
+
+	return nil
+}
+
+// Update XOrder Category godoc
+// @Description Update XOrder Table
+// @Tags		Restaurant
+// @Param		XOrder  body      []models.XOrderRequest  true  "XOrder"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table/xorder [put]
+func (h TableHttp) SaveXOrder(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	req := []models.XOrderRequest{}
+	err := json.Unmarshal([]byte(input), &req)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(req); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.SaveXOrder(shopID, authUsername, req)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
 
 	return nil
 }

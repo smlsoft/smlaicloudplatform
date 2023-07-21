@@ -26,6 +26,7 @@ type ITableService interface {
 	InfoTable(shopID string, guid string) (models.TableInfo, error)
 	SearchTable(shopID string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Table) (common.BulkImport, error)
+	SaveXOrder(shopID string, authUsername string, xOrders []models.XOrderRequest) error
 
 	GetModuleName() string
 }
@@ -314,4 +315,15 @@ func (svc TableService) saveMasterSync(shopID string) {
 
 func (svc TableService) GetModuleName() string {
 	return "restaurant-table"
+}
+
+func (svc TableService) SaveXOrder(shopID string, authUsername string, xOrders []models.XOrderRequest) error {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	for _, xOrder := range xOrders {
+		svc.repo.SaveXOrder(ctx, shopID, xOrder.GuidFixed, xOrder.XOrder)
+	}
+
+	return nil
 }

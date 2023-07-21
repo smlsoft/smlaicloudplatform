@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ITableRepository interface {
@@ -23,6 +24,7 @@ type ITableRepository interface {
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.TableItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, columnName string, filters interface{}) (models.TableDoc, error)
 	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.TableInfo, int, error)
+	SaveXOrder(ctx context.Context, shopID string, guid string, xorder uint) error
 
 	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.TableDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.TableActivity, mongopagination.PaginationData, error)
@@ -49,4 +51,14 @@ func NewTableRepository(pst microservice.IPersisterMongo) *TableRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.TableActivity, models.TableDeleteActivity](pst)
 
 	return &insRepo
+}
+
+func (repo TableRepository) SaveXOrder(ctx context.Context, shopID string, guid string, xorder uint) error {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+
+	return repo.pst.Update(ctx, models.TableDoc{}, filters, bson.M{"$set": bson.M{"xorder": xorder}})
 }
