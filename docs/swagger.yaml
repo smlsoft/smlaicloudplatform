@@ -862,16 +862,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - code
-    - names
     type: object
   models.Detail:
     properties:
@@ -2195,6 +2191,19 @@ definitions:
     required:
     - names
     type: object
+  models.KitchenBarcode:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2916,7 +2925,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2952,23 +2961,9 @@ definitions:
     properties:
       barcode:
         type: string
-      guidfixed:
-        type: string
-      itemcode:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
+      kitchens:
         items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      prices:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.KitchenBarcode'
         type: array
     type: object
   models.ProductBarcodeRequest:
@@ -3038,7 +3033,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3199,6 +3194,13 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      price:
+        type: number
+    type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
       price:
         type: number
     type: object
@@ -4585,6 +4587,10 @@ definitions:
         type: string
       seat:
         type: integer
+      xorder:
+        maximum: 4294967295
+        minimum: 0
+        type: integer
       zone:
         type: string
     required:
@@ -4603,6 +4609,10 @@ definitions:
       number:
         type: string
       seat:
+        type: integer
+      xorder:
+        maximum: 4294967295
+        minimum: 0
         type: integer
       zone:
         type: string
@@ -4984,6 +4994,18 @@ definitions:
       vatyear:
         type: integer
     type: object
+  models.XOrderRequest:
+    properties:
+      guidfixed:
+        minLength: 1
+        type: string
+      xorder:
+        maximum: 4294967295
+        minimum: 0
+        type: integer
+    required:
+    - guidfixed
+    type: object
   models.XSort:
     properties:
       code:
@@ -5158,26 +5180,12 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
-    type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
@@ -16995,6 +17003,33 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/table/xorder:
+    put:
+      consumes:
+      - application/json
+      description: Update XOrder Table
+      parameters:
+      - description: XOrder
+        in: body
+        name: XOrder
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.XOrderRequest'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
