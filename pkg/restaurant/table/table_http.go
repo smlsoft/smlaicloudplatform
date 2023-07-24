@@ -45,6 +45,7 @@ func (h TableHttp) RegisterHttp() {
 	h.ms.PUT("/restaurant/table/:id", h.UpdateTable)
 	h.ms.PUT("/restaurant/table/xorder", h.SaveXOrder)
 	h.ms.DELETE("/restaurant/table/:id", h.DeleteTable)
+	h.ms.DELETE("/restaurant/table", h.DeleteByGUIDs)
 
 }
 
@@ -181,6 +182,44 @@ func (h TableHttp) DeleteByGUIDs(ctx microservice.IContext) error {
 	}
 
 	err = h.svc.DeleteByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Delete Table godoc
+// @Description Delete Table
+// @Tags		Restaurant
+// @Param		Table  body      []string  true  "Table GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table [delete]
+func (h TableHttp) DeleteTableByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteTableByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
