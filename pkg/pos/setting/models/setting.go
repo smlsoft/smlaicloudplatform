@@ -31,6 +31,7 @@ type Setting struct {
 	BillHeader               string                    `json:"billheader" bson:"billheader"`
 	BillFooter               string                    `json:"billfooter" bson:"billfooter"`
 	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
+	MediaGUID                string                    `json:"mediaguid" bson:"mediaguid"`
 }
 
 type Slip struct {

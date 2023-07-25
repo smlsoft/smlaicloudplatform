@@ -28,6 +28,7 @@ import (
 	"smlcloudplatform/pkg/payment/bookbank"
 	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
+	pos_media "smlcloudplatform/pkg/pos/media"
 	pos_setting "smlcloudplatform/pkg/pos/setting"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/eorder"
@@ -280,6 +281,7 @@ func main() {
 			ordertype.NewOrderTypeHttp(ms, cfg),
 
 			pos_setting.NewSettingHttp(ms, cfg),
+			pos_media.NewMediaHttp(ms, cfg),
 			documentformate.NewDocumentFormateHttp(ms, cfg),
 		}
 

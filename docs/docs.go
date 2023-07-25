@@ -10870,6 +10870,404 @@ const docTemplate = `{
                 }
             }
         },
+        "/pos/media": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Media",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "description": "Media",
+                        "name": "Media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Media"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Media",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "description": "Media GUIDs",
+                        "name": "Media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/media/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Media",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "description": "Media",
+                        "name": "Media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Media"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/media/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Media info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Media Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/media/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/media/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Media info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Media guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Media",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Media",
+                        "name": "Media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Media"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Media",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/pos/setting": {
             "get": {
                 "security": [
@@ -29413,8 +29811,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "name1": {
                     "type": "string",
@@ -29436,17 +29834,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -30283,7 +30671,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -31007,8 +31394,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -31033,9 +31420,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -31057,13 +31441,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -31216,8 +31593,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -31242,9 +31619,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -31266,13 +31640,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -31502,8 +31869,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -31528,9 +31895,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -31552,13 +31916,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -32258,6 +32615,25 @@ const docTemplate = `{
                 }
             }
         },
+        "models.KitchenBarcode": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.KitchenInfo": {
             "type": "object",
             "required": [
@@ -32329,11 +32705,14 @@ const docTemplate = `{
         "models.Location": {
             "type": "object",
             "properties": {
-                "lat": {
+                "code": {
                     "type": "string"
                 },
-                "lng": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -32372,6 +32751,61 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.Media": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MediaResource"
+                    }
+                }
+            }
+        },
+        "models.MediaResource": {
+            "type": "object",
+            "properties": {
+                "daysofweek": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "description": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "fromDate": {
+                    "type": "string"
+                },
+                "fromTime": {
+                    "type": "string"
+                },
+                "mediaType": {
+                    "type": "integer"
+                },
+                "toDate": {
+                    "type": "string"
+                },
+                "toTime": {
+                    "type": "string"
+                },
+                "uri": {
+                    "type": "string"
                 }
             }
         },
@@ -33358,157 +33792,14 @@ const docTemplate = `{
         },
         "models.ProductBarcode": {
             "type": "object",
-            "required": [
-                "barcode",
-                "names"
-            ],
             "properties": {
                 "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "colorselect": {
                     "type": "string"
                 },
-                "colorselecthex": {
-                    "type": "string"
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupnames": {
+                "kitchens": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
-                    }
-                },
-                "imageuri": {
-                    "type": "string"
-                },
-                "isalacarte": {
-                    "type": "boolean"
-                },
-                "isdividend": {
-                    "type": "boolean"
-                },
-                "isonlystaff": {
-                    "type": "boolean"
-                },
-                "issplitunitprint": {
-                    "type": "boolean"
-                },
-                "issumpoint": {
-                    "type": "boolean"
-                },
-                "isusesubbarcodes": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemunitsize": {
-                    "type": "number"
-                },
-                "maxdiscount": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOption"
-                    }
-                },
-                "ordertypes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOrderType"
-                    }
-                },
-                "prices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
-                    }
-                },
-                "producttype": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "refbarcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RefProductBarcode"
-                    }
-                },
-                "refdividevalue": {
-                    "type": "number"
-                },
-                "refstandvalue": {
-                    "type": "number"
-                },
-                "refunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "stockbarcode": {
-                    "type": "string"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "useimageorcolor": {
-                    "type": "boolean"
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "xsorts": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.XSort"
+                        "$ref": "#/definitions/models.KitchenBarcode"
                     }
                 }
             }
@@ -33854,20 +34145,10 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "memberprice": {
-                    "type": "number"
-                },
-                "normalprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -34340,48 +34621,6 @@ const docTemplate = `{
                 },
                 "wallettype": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.RefProductBarcode": {
-            "type": "object",
-            "required": [
-                "barcode"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "standvalue": {
-                    "type": "number"
                 }
             }
         },
@@ -34985,6 +35224,9 @@ const docTemplate = `{
                 },
                 "location": {
                     "$ref": "#/definitions/models.Location"
+                },
+                "mediaguid": {
+                    "type": "string"
                 },
                 "qrcodes": {
                     "type": "array",

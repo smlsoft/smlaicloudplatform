@@ -274,8 +274,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -291,14 +291,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -877,7 +870,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -1358,8 +1350,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1377,8 +1369,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1394,11 +1384,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1507,8 +1492,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1526,8 +1511,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1543,11 +1526,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1706,8 +1684,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1725,8 +1703,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1742,11 +1718,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2223,6 +2194,19 @@ definitions:
     required:
     - names
     type: object
+  models.KitchenBarcode:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2270,10 +2254,12 @@ definitions:
     type: object
   models.Location:
     properties:
-      lat:
+      code:
         type: string
-      lng:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.LocationRequest:
     properties:
@@ -2299,6 +2285,42 @@ definitions:
         $ref: '#/definitions/models.ProfitAndLossSheetReport'
       success:
         type: boolean
+    type: object
+  models.Media:
+    properties:
+      code:
+        type: string
+      description:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      resources:
+        items:
+          $ref: '#/definitions/models.MediaResource'
+        type: array
+    type: object
+  models.MediaResource:
+    properties:
+      daysofweek:
+        items:
+          type: integer
+        type: array
+      description:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      fromDate:
+        type: string
+      fromTime:
+        type: string
+      mediaType:
+        type: integer
+      toDate:
+        type: string
+      toTime:
+        type: string
+      uri:
+        type: string
     type: object
   models.Member:
     properties:
@@ -2968,108 +2990,11 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
-        minLength: 1
         type: string
-      colorselect:
-        type: string
-      colorselecthex:
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      groupcode:
-        type: string
-      groupnames:
+      kitchens:
         items:
-          $ref: '#/definitions/models.NameX'
+          $ref: '#/definitions/models.KitchenBarcode'
         type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
-        type: array
-      imageuri:
-        type: string
-      isalacarte:
-        type: boolean
-      isdividend:
-        type: boolean
-      isonlystaff:
-        type: boolean
-      issplitunitprint:
-        type: boolean
-      issumpoint:
-        type: boolean
-      isusesubbarcodes:
-        type: boolean
-      itemcode:
-        type: string
-      itemtype:
-        type: integer
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemunitsize:
-        type: number
-      maxdiscount:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      options:
-        items:
-          $ref: '#/definitions/models.ProductOption'
-        type: array
-      ordertypes:
-        items:
-          $ref: '#/definitions/models.ProductOrderType'
-        type: array
-      prices:
-        items:
-          $ref: '#/definitions/models.ProductPrice'
-        type: array
-      producttype:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
-      qty:
-        type: number
-      refbarcodes:
-        items:
-          $ref: '#/definitions/models.RefProductBarcode'
-        type: array
-      refdividevalue:
-        type: number
-      refstandvalue:
-        type: number
-      refunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      standvalue:
-        type: number
-      stockbarcode:
-        type: string
-      taxtype:
-        type: integer
-      useimageorcolor:
-        type: boolean
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - barcode
-    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3304,16 +3229,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3633,34 +3551,6 @@ definitions:
         type: integer
     required:
     - names
-    type: object
-  models.RefProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
     type: object
   models.Reference:
     properties:
@@ -4063,6 +3953,8 @@ definitions:
         type: boolean
       location:
         $ref: '#/definitions/models.Location'
+      mediaguid:
+        type: string
       qrcodes:
         items:
           additionalProperties: true
@@ -12305,6 +12197,253 @@ paths:
       summary: นำเข้าข้อมูล payment master
       tags:
       - PaymentMaster
+  /pos/media:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Media
+      parameters:
+      - description: Media GUIDs
+        in: body
+        name: Media
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+    post:
+      consumes:
+      - application/json
+      description: Create Media
+      parameters:
+      - description: Media
+        in: body
+        name: Media
+        required: true
+        schema:
+          $ref: '#/definitions/models.Media'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+  /pos/media/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Media
+      parameters:
+      - description: Media ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+    get:
+      consumes:
+      - application/json
+      description: get Media info by guidfixed
+      parameters:
+      - description: Media guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+    put:
+      consumes:
+      - application/json
+      description: Update Media
+      parameters:
+      - description: Media ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Media
+        in: body
+        name: Media
+        required: true
+        schema:
+          $ref: '#/definitions/models.Media'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+  /pos/media/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Media
+      parameters:
+      - description: Media
+        in: body
+        name: Media
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Media'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+  /pos/media/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Media info by Code
+      parameters:
+      - description: Media Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
+  /pos/media/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Media
   /pos/setting:
     delete:
       consumes:

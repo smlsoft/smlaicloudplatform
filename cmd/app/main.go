@@ -58,6 +58,7 @@ import (
 	"smlcloudplatform/pkg/shop"
 
 	// "smlcloudplatform/pkg/shop/branch"
+	"smlcloudplatform/pkg/pos/media"
 	pos_setting "smlcloudplatform/pkg/pos/setting"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
@@ -262,6 +263,8 @@ func main() {
 		//reportquery.NewReportQueryHttp(ms, cfg),
 		reportquerym.NewReportQueryHttp(ms, cfg),
 		producttype.NewProductTypeHttp(ms, cfg),
+
+		media.NewMediaHttp(ms, cfg),
 	}
 
 	serviceStartHttp(ms, httpServices...)
