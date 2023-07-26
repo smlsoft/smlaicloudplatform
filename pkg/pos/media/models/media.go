@@ -24,6 +24,7 @@ type MediaResource struct {
 	FromTime    string          `json:"fromTime" bson:"fromTime"`
 	ToTime      string          `json:"toTime" bson:"toTime"`
 	Description *[]models.NameX `json:"description" bson:"description"`
+	DisplayTime int             `json:"displaytime" bson:"displaytime"`
 }
 
 type MediaInfo struct {
