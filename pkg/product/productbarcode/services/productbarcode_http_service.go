@@ -123,34 +123,25 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 		tempRefBarcodes[item.Barcode] = item
 	}
 
-	err = svc.repo.Transaction(ctx, func(ctx context.Context) error {
+	findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
 
-		findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
+	if err != nil {
+		return "", err
+	}
 
-		if err != nil {
-			return err
-		}
+	docData.RefBarcodes = &[]models.RefProductBarcode{}
+	for _, childDoc := range findChildrenDocs {
+		tempRef := childDoc.ToRefBarcode()
 
-		docData.RefBarcodes = &[]models.RefProductBarcode{}
-		for _, childDoc := range findChildrenDocs {
-			tempRef := childDoc.ToRefBarcode()
+		tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
+		tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
+		tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
+		tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
 
-			tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
-			tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
-			tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
-			tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
+		*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
+	}
 
-			*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
-		}
-
-		_, err = svc.repo.Create(ctx, docData)
-
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
