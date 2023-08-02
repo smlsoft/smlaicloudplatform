@@ -411,18 +411,6 @@ func (authService *AuthService) GenerateTokenWithRedisExpire(tokenType TokenType
 func (authService *AuthService) SelectShop(tokenType TokenType, tokenStr string, shopID string, role uint8) error {
 	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 
-	// authService.cacheMemory.Delete(cacheKey)
-
-	// _, tempExists := authService.cacheMemory.Get(cacheKey)
-	// if tempExists {
-	// 	userInfo := models.UserInfo{}
-	// 	userInfo.Username = ""
-	// 	userInfo.Name = ""
-	// 	userInfo.ShopID = ""
-	// 	userInfo.Role = 0
-	// 	authService.cacheMemory.Set(cacheKey, userInfo, authService.cacheMemoryExpire)
-	// }
-
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"shopid": shopID,
 		"role":   role,
