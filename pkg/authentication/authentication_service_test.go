@@ -481,17 +481,17 @@ type ShopUserRepositoryMock struct {
 }
 
 func (m *ShopUserRepositoryMock) Create(ctx context.Context, shopUser *models.ShopUser) error {
-	args := m.Called(shopUser)
-	return args.Error(0)
-}
-
-func (m *ShopUserRepositoryMock) Save(ctx context.Context, shopID string, username string, role models.UserRole) error {
-	args := m.Called(shopID, username, role)
+	args := m.Called(ctx, shopUser)
 	return args.Error(0)
 }
 
 func (m *ShopUserRepositoryMock) Update(ctx context.Context, id primitive.ObjectID, shopID string, username string, role models.UserRole) error {
 	args := m.Called(id, shopID, username, role)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) Save(ctx context.Context, shopID string, username string, role models.UserRole) error {
+	args := m.Called(shopID, username, role)
 	return args.Error(0)
 }
 
@@ -545,6 +545,11 @@ func (m *ShopUserRepositoryMock) FindByUserInShopPage(ctx context.Context, shopI
 func (m *ShopUserRepositoryMock) FindUserProfileByUsernames(ctx context.Context, usernames []string) ([]models.UserProfile, error) {
 	args := m.Called(usernames)
 	return args.Get(0).([]models.UserProfile), args.Error(1)
+}
+
+func (m *ShopUserRepositoryMock) FindByShopIDAndUsernameAndRole(ctx context.Context, shopID string, username string, role models.UserRole) (models.ShopUser, error) {
+	args := m.Called(shopID, username, role)
+	return args.Get(0).(models.ShopUser), args.Error(1)
 }
 
 // Shop User Access Log
