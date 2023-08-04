@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -28,15 +29,19 @@ type IProductBarcodeHttpService interface {
 	InfoProductBarcodeByBarcode(shopID string, barcode string) (models.ProductBarcodeInfo, error)
 	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
-	SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	GetProductBarcodeByBarcodeRef(shopID string, barcodeRef string) ([]models.ProductBarcodeInfo, error)
+	SearchProductBarcode(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	SearchProductBarcode2(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeSearch, common.Pagination, error)
 
-	SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
+	SearchProductBarcodeStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 
 	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
+	GetProductBarcodeByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 
 	GetModuleName() string
+	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 }
 
 type ProductBarcodeHttpService struct {
@@ -45,23 +50,34 @@ type ProductBarcodeHttpService struct {
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	mqRepo        repositories.IProductBarcodeMessageQueueRepository
 	services.ActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, mqRepo repositories.IProductBarcodeMessageQueueRepository, chRepo repositories.IProductBarcodeClickhouseRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &ProductBarcodeHttpService{
-		repo:          repo,
-		chRepo:        chRepo,
-		syncCacheRepo: syncCacheRepo,
-		mqRepo:        mqRepo,
+		repo:           repo,
+		chRepo:         chRepo,
+		syncCacheRepo:  syncCacheRepo,
+		mqRepo:         mqRepo,
+		contextTimeout: contextTimeout,
 	}
 	insSvc.ActivityService = services.NewActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity](repo)
 	return insSvc
 }
 
+func (svc ProductBarcodeHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUsername string, docReq models.ProductBarcodeRequest) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "barcode", docReq.Barcode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "barcode", docReq.Barcode)
 
 	if err != nil {
 		return "", err
@@ -107,34 +123,25 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 		tempRefBarcodes[item.Barcode] = item
 	}
 
-	err = svc.repo.Transaction(func() error {
+	findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
 
-		findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(shopID, "barcode", tempChildrenBarcodes)
+	if err != nil {
+		return "", err
+	}
 
-		if err != nil {
-			return err
-		}
+	docData.RefBarcodes = &[]models.RefProductBarcode{}
+	for _, childDoc := range findChildrenDocs {
+		tempRef := childDoc.ToRefBarcode()
 
-		docData.RefBarcodes = &[]models.RefProductBarcode{}
-		for _, childDoc := range findChildrenDocs {
-			tempRef := childDoc.ToRefBarcode()
+		tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
+		tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
+		tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
+		tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
 
-			tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
-			tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
-			tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
-			tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
+		*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
+	}
 
-			*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
-		}
-
-		_, err = svc.repo.Create(docData)
-
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -152,7 +159,10 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 
 func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid string, authUsername string, docReq models.ProductBarcodeRequest) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -177,9 +187,9 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 		tempRefBarcodes[item.Barcode] = item
 	}
 
-	err = svc.repo.Transaction(func() error {
+	err = svc.repo.Transaction(ctx, func(ctx context.Context) error {
 
-		findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(shopID, "barcode", tempChildrenBarcodes)
+		findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
 
 		if err != nil {
 			return err
@@ -203,7 +213,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 			return err
 		}
 
-		err = svc.repo.Update(shopID, guid, docData)
+		err = svc.repo.Update(ctx, shopID, guid, docData)
 
 		if err != nil {
 			return err
@@ -216,7 +226,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 		return err
 	}
 
-	err = svc.mqRepo.Update(findDoc)
+	err = svc.mqRepo.Update(docData)
 	if err != nil {
 		return err
 	}
@@ -228,7 +238,10 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 
 func (svc ProductBarcodeHttpService) updateMetaInRefBarcode(shopID string, docData models.ProductBarcodeDoc) error {
 
-	findDocs, err := svc.repo.FindByRefBarcode(shopID, docData.Barcode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocs, err := svc.repo.FindByRefBarcode(ctx, shopID, docData.Barcode)
 	if err != nil {
 		return err
 	}
@@ -247,7 +260,7 @@ func (svc ProductBarcodeHttpService) updateMetaInRefBarcode(shopID string, docDa
 
 		findDoc.RefBarcodes = &tempRefBarcodes
 
-		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+		err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 		if err != nil {
 			return err
 		}
@@ -259,7 +272,10 @@ func (svc ProductBarcodeHttpService) updateMetaInRefBarcode(shopID string, docDa
 
 func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -269,7 +285,17 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid st
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	docCount, err := svc.repo.CountByRefBarcode(ctx, shopID, findDoc.Barcode)
+
+	if err != nil {
+		return err
+	}
+
+	if docCount > 1 {
+		return errors.New("document has refenced")
+	}
+
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -286,7 +312,10 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid st
 
 func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid string) (models.ProductBarcodeInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.ProductBarcodeInfo{}, err
@@ -301,7 +330,10 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 
 func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, barcode string) (models.ProductBarcodeInfo, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "barcode", barcode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "barcode", barcode)
 
 	if err != nil {
 		return models.ProductBarcodeInfo{}, err
@@ -315,10 +347,14 @@ func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, 
 }
 
 func (svc ProductBarcodeHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	docList := []interface{}{}
 
 	for _, code := range codes {
-		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "barcode", code)
+		findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "barcode", code)
 		if err != nil || findDoc.ID == primitive.NilObjectID {
 			// add item empty
 			docList = append(docList, nil)
@@ -331,9 +367,13 @@ func (svc ProductBarcodeHttpService) InfoWTFArray(shopID string, codes []string)
 }
 
 func (svc ProductBarcodeHttpService) InfoWTFArrayMaster(codes []string) ([]interface{}, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	docList := []interface{}{}
 
-	findDocList, err := svc.repo.FindMasterInCodes(codes)
+	findDocList, err := svc.repo.FindMasterInCodes(ctx, codes)
 
 	if err != nil {
 		return []interface{}{}, err
@@ -354,15 +394,79 @@ func (svc ProductBarcodeHttpService) InfoWTFArrayMaster(codes []string) ([]inter
 	return docList, nil
 }
 
-func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+func (svc ProductBarcodeHttpService) GetProductBarcodeByBarcodeRef(shopID string, barcodeRef string) ([]models.ProductBarcodeInfo, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocs, err := svc.repo.FindByRefBarcode(ctx, shopID, barcodeRef)
+	if err != nil {
+		return nil, err
+	}
+
+	resultDocs := []models.ProductBarcodeInfo{}
+	for _, findDoc := range findDocs {
+		resultDocs = append(resultDocs, findDoc.ProductBarcodeInfo)
+	}
+
+	return resultDocs, nil
+}
+
+func (svc ProductBarcodeHttpService) GetProductBarcodeByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	results, err := svc.repo.FindByBarcodes(ctx, shopID, barcodes)
+	if err != nil {
+		return nil, err
+	}
+
+	tempResults := map[string]models.ProductBarcodeInfo{}
+	for _, result := range results {
+		tempResults[result.Barcode] = result
+	}
+
+	resultDocs := []models.ProductBarcodeInfo{}
+	for _, barcode := range barcodes {
+
+		temp, ok := tempResults[barcode]
+		if ok {
+			resultDocs = append(resultDocs, temp)
+		}
+	}
+
+	return resultDocs, nil
+
+}
+
+func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"barcode",
 		"names.name",
 		"itemcode",
 		"groupcode",
+		"groupnames.name",
+		"itemunitnames.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	isalacarte, ok := filters["isalacarte"]
+	if ok {
+		if !isalacarte.(bool) {
+			delete(filters, "isalacarte")
+			filters["$or"] = []bson.M{
+				{"isalacarte": false},
+				{"isalacarte": bson.M{"$exists": false}},
+			}
+		}
+
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, pagination, err
@@ -384,18 +488,22 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode2(shopID string, pageab
 	return docList, pagination, nil
 }
 
-func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error) {
+func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"barcode",
 		"names.name",
 		"itemcode",
 		"groupcode",
+		"groupnames.name",
+		"itemunitnames.name",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
-
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, 0, err
 	}
@@ -405,6 +513,9 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 
 func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.ProductBarcode](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -412,7 +523,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 		itemCodeGuidList = append(itemCodeGuidList, doc.Barcode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "barcode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "barcode", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -451,7 +562,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.ProductBarcodeDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "barcode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "barcode", guid)
 		},
 		func(doc models.ProductBarcodeDoc) bool {
 			return doc.Barcode != ""
@@ -475,7 +586,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 
 			svc.UpdateProductBarcode(shopID, doc.GuidFixed, authUsername, docReq)
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -484,7 +595,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 	)
 
 	if len(createDataList) > 0 {
-		svc.repo.Transaction(func() error {
+		svc.repo.Transaction(ctx, func(ctx context.Context) error {
 			for _, doc := range createDataList {
 				docReq := models.ProductBarcodeRequest{}
 				docReq.ProductBarcodeBase = doc.ProductBarcodeBase
@@ -568,11 +679,14 @@ func (svc ProductBarcodeHttpService) getDocIDKey(doc models.ProductBarcode) stri
 }
 
 func (svc ProductBarcodeHttpService) XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
 		}
-		findDoc, err := svc.repo.FindByGuid(shopID, xsort.GUIDFixed)
+		findDoc, err := svc.repo.FindByGuid(ctx, shopID, xsort.GUIDFixed)
 
 		if err != nil {
 			return err
@@ -607,7 +721,7 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, authUsername stri
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+		err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err
@@ -622,12 +736,24 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, authUsername stri
 }
 
 func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docCount, err := svc.repo.CountByRefGuids(ctx, shopID, GUIDs)
+
+	if err != nil {
+		return err
+	}
+
+	if docCount > 0 {
+		return errors.New("document has refenced")
+	}
 
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err = svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -635,6 +761,42 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, 
 	svc.saveMasterSync(shopID)
 
 	return nil
+}
+
+func (svc ProductBarcodeHttpService) GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	if len(unitCodes) < 1 {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, nil
+	}
+
+	results, pagination, err := svc.repo.FindPageByUnits(ctx, shopID, unitCodes, pageable)
+
+	if err != nil {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
+}
+
+func (svc ProductBarcodeHttpService) GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	if len(groupCodes) < 1 {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, nil
+	}
+
+	results, pagination, err := svc.repo.FindPageByGroups(ctx, shopID, groupCodes, pageable)
+
+	if err != nil {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
 }
 
 func (svc ProductBarcodeHttpService) saveMasterSync(shopID string) {

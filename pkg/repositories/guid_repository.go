@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,10 +17,10 @@ func NewGuidRepository[T any](pst microservice.IPersisterMongo) GuidRepository[T
 	}
 }
 
-func (repo GuidRepository[T]) FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]T, error) {
+func (repo GuidRepository[T]) FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]T, error) {
 
 	findDoc := []T{}
-	err := repo.pst.Find(new(T), bson.M{"shopid": shopID, columnName: bson.M{"$in": itemGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
+	err := repo.pst.Find(ctx, new(T), bson.M{"shopid": shopID, columnName: bson.M{"$in": itemGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
 
 	if err != nil {
 		return []T{}, err
@@ -27,10 +28,10 @@ func (repo GuidRepository[T]) FindInItemGuid(shopID string, columnName string, i
 	return findDoc, nil
 }
 
-func (repo GuidRepository[T]) FindInItemGuids(shopID string, columnName string, itemGuidList []interface{}) ([]T, error) {
+func (repo GuidRepository[T]) FindInItemGuids(ctx context.Context, shopID string, columnName string, itemGuidList []interface{}) ([]T, error) {
 
 	findDoc := []T{}
-	err := repo.pst.Find(new(T), bson.M{"shopid": shopID, columnName: bson.M{"$in": itemGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
+	err := repo.pst.Find(ctx, new(T), bson.M{"shopid": shopID, columnName: bson.M{"$in": itemGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
 
 	if err != nil {
 		return []T{}, err

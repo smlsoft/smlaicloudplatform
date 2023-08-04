@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/models"
@@ -17,11 +18,11 @@ type IAccountPeriodMasterHttp interface{}
 
 type AccountPeriodMasterHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IAccountPeriodMasterHttpService
 }
 
-func NewAccountPeriodMasterHttp(ms *microservice.Microservice, cfg microservice.IConfig) AccountPeriodMasterHttp {
+func NewAccountPeriodMasterHttp(ms *microservice.Microservice, cfg config.IConfig) AccountPeriodMasterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewAccountPeriodMasterRepository(pst)
@@ -35,7 +36,7 @@ func NewAccountPeriodMasterHttp(ms *microservice.Microservice, cfg microservice.
 	}
 }
 
-func (h AccountPeriodMasterHttp) RouteSetup() {
+func (h AccountPeriodMasterHttp) RegisterHttp() {
 
 	h.ms.GET("/gl/accountperiodmaster", h.SearchAccountPeriodMasterPage)
 	h.ms.GET("/gl/accountperiodmaster/list", h.SearchAccountPeriodMasterLimit)

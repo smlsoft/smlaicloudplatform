@@ -4,22 +4,23 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
 )
 
 type IInventoryImporOptionMaintHttp interface {
-	RouteSetup()
+	RegisterHttp()
 }
 
 type InventoryImporOptionMaintHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IInventoryOptionMainImportService
 }
 
-func NewInventoryImporOptionMaintHttp(ms *microservice.Microservice, cfg microservice.IConfig) *InventoryImporOptionMaintHttp {
+func NewInventoryImporOptionMaintHttp(ms *microservice.Microservice, cfg config.IConfig) *InventoryImporOptionMaintHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
@@ -33,7 +34,7 @@ func NewInventoryImporOptionMaintHttp(ms *microservice.Microservice, cfg microse
 	}
 }
 
-func (h *InventoryImporOptionMaintHttp) RouteSetup() {
+func (h *InventoryImporOptionMaintHttp) RegisterHttp() {
 
 	h.ms.GET("/import/option", h.ListInventoryOptionMain)
 	h.ms.POST("/import/option", h.CreateInventoryOptionMain)

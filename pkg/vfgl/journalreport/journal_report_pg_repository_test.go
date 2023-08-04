@@ -5,6 +5,7 @@ import (
 	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/vfgl/journalreport"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"testing"
@@ -20,7 +21,7 @@ func TestGetDataTrialBalanceReportPgRepository(t *testing.T) {
 	}
 	assert := assert.New(t)
 
-	pstConfig := microservice.NewPersisterConfig()
+	pstConfig := config.NewPersisterConfig()
 	pst := microservice.NewPersister(pstConfig)
 
 	assert.NotNil(pst)
@@ -42,7 +43,7 @@ func TestGetDataProfitAndLossReportPgRepository(t *testing.T) {
 	}
 	assert := assert.New(t)
 
-	pstConfig := microservice.NewPersisterConfig()
+	pstConfig := config.NewPersisterConfig()
 	pst := microservice.NewPersister(pstConfig)
 
 	assert.NotNil(pst)
@@ -64,7 +65,7 @@ func TestGetDataBalanceSheetReportPgRepository(t *testing.T) {
 	}
 	assert := assert.New(t)
 
-	pstConfig := microservice.NewPersisterConfig()
+	pstConfig := config.NewPersisterConfig()
 	pst := microservice.NewPersister(pstConfig)
 
 	assert.NotNil(pst)

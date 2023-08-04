@@ -7,7 +7,7 @@ import (
 
 type IMemberPGRepository interface {
 	Count(shopID string, guid string) (int, error)
-	Create(member models.MemberIndex) error
+	Create(doc models.MemberIndex) error
 	Delete(shopID string, guid string) error
 	FindByGuid(shopID string, guid string) (models.MemberIndex, error)
 }

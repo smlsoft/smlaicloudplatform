@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/member/models"
 	common "smlcloudplatform/pkg/models"
@@ -11,7 +12,7 @@ import (
 )
 
 type IMemberHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	CreateMember(ctx microservice.IContext) error
 	UpdateMember(ctx microservice.IContext) error
 	DeleteMember(ctx microservice.IContext) error
@@ -21,11 +22,11 @@ type IMemberHttp interface {
 
 type MemberHttp struct {
 	ms      *microservice.Microservice
-	cfg     microservice.IConfig
+	cfg     config.IConfig
 	service IMemberService
 }
 
-func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) MemberHttp {
+func NewMemberHttp(ms *microservice.Microservice, cfg config.IConfig) MemberHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
@@ -43,7 +44,7 @@ func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) Memb
 	}
 }
 
-func (h MemberHttp) RouteSetup() {
+func (h MemberHttp) RegisterHttp() {
 
 	h.ms.GET("/member/:id", h.InfoMember)
 	h.ms.GET("/member", h.SearchMember)

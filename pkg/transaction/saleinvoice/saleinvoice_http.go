@@ -4,30 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoice/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type ISaleInvoiceHttp interface{}
 
 type SaleInvoiceHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISaleInvoiceHttpService
 }
 
-func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleInvoiceHttp {
+func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg config.IConfig) SaleInvoiceHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewSaleInvoiceRepository(pst)
+	repoMq := repositories.NewSaleInvoiceMessageQueueRepository(producer)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewSaleInvoiceHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return SaleInvoiceHttp{
 		ms:  ms,
@@ -36,7 +42,7 @@ func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig)
 	}
 }
 
-func (h SaleInvoiceHttp) RouteSetup() {
+func (h SaleInvoiceHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/sale-invoice/bulk", h.SaveBulk)
 
@@ -77,7 +83,7 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateSaleInvoice(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateSaleInvoice(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +93,7 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -272,6 +279,7 @@ func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error 
 // @Param		custcode	query	string		false  "customer code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -286,15 +294,20 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -319,6 +332,7 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 // @Param		q		query	string		false  "Search Value"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -335,15 +349,20 @@ func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error 
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

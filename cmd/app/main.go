@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/channel/salechannel"
 	"smlcloudplatform/pkg/channel/transportchannel"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/creditor"
 	"smlcloudplatform/pkg/debtaccount/creditorgroup"
 	"smlcloudplatform/pkg/debtaccount/customer"
@@ -28,28 +29,37 @@ import (
 	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/color"
+	"smlcloudplatform/pkg/product/eorder"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/ordertype"
 	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
+	"smlcloudplatform/pkg/product/producttype"
+	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
-	"smlcloudplatform/pkg/report/reportquery"
+	"smlcloudplatform/pkg/report/reportquerym"
+	"time"
+
+	// "smlcloudplatform/pkg/report/reportquery"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
-	"smlcloudplatform/pkg/restaurant/restaurantsettings"
-	"smlcloudplatform/pkg/restaurant/shoptable"
-	"smlcloudplatform/pkg/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/settings"
 	"smlcloudplatform/pkg/restaurant/staff"
+	"smlcloudplatform/pkg/restaurant/table"
+	"smlcloudplatform/pkg/restaurant/zone"
 	"smlcloudplatform/pkg/shop"
 
 	// "smlcloudplatform/pkg/shop/branch"
+	"smlcloudplatform/pkg/pos/media"
+	pos_setting "smlcloudplatform/pkg/pos/setting"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smspatterns"
@@ -60,6 +70,7 @@ import (
 	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
+	"smlcloudplatform/pkg/transaction/documentformate"
 	"smlcloudplatform/pkg/transaction/paid"
 	"smlcloudplatform/pkg/transaction/pay"
 	"smlcloudplatform/pkg/transaction/purchase"
@@ -87,7 +98,7 @@ import (
 
 func main() {
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)
@@ -99,12 +110,13 @@ func main() {
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
-	authService := microservice.NewAuthService(cacher, 24*3)
+	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	publicPath := []string{
 		"/swagger",
 		"/login",
 		"/register",
+		"/refresh",
 
 		"/employee/login",
 
@@ -114,6 +126,10 @@ func main() {
 		"/healthz",
 		"/ws",
 		"/metrics",
+
+		"/e-order/product",
+		"/e-order/category",
+		"/e-order/product-barcode",
 	}
 
 	exceptShopPath := []string{
@@ -132,7 +148,7 @@ func main() {
 
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 
-	services := []HttpRouteSetup{
+	httpServices := []HttpRegister{
 		authentication.NewAuthenticationHttp(ms, cfg),
 		shop.NewShopHttp(ms, cfg),
 		shop.NewShopMemberHttp(ms, cfg),
@@ -146,11 +162,11 @@ func main() {
 		inventoryimport.NewCategoryImportHttp(ms, cfg),
 
 		//restaurants
-		shopzone.NewShopZoneHttp(ms, cfg),
-		shoptable.NewShopTableHttp(ms, cfg),
+		zone.NewZoneHttp(ms, cfg),
+		table.NewTableHttp(ms, cfg),
 		printer.NewPrinterHttp(ms, cfg),
 		kitchen.NewKitchenHttp(ms, cfg),
-		restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
+		settings.NewRestaurantSettingsHttp(ms, cfg),
 		device.NewDeviceHttp(ms, cfg),
 		staff.NewStaffHttp(ms, cfg),
 
@@ -235,19 +251,37 @@ func main() {
 		paid.NewPaidHttp(ms, cfg),
 		pay.NewPayHttp(ms, cfg),
 
-		reportquery.NewReportQueryHttp(ms, cfg),
+		promotion.NewPromotionHttp(ms, cfg),
+
+		eorder.NewEOrderHttp(ms, cfg),
+
+		ordertype.NewOrderTypeHttp(ms, cfg),
+		pos_setting.NewSettingHttp(ms, cfg),
+
+		documentformate.NewDocumentFormateHttp(ms, cfg),
+
+		//reportquery.NewReportQueryHttp(ms, cfg),
+		reportquerym.NewReportQueryHttp(ms, cfg),
+		producttype.NewProductTypeHttp(ms, cfg),
+
+		media.NewMediaHttp(ms, cfg),
 	}
 
-	serviceStartHttp(services...)
+	serviceStartHttp(ms, httpServices...)
 
-	inventory.StartInventoryAsync(ms, cfg)
-	inventory.StartInventoryComsumeCreated(ms, cfg)
+	// inventory.StartInventoryAsync(ms, cfg)
+	// inventory.StartInventoryComsumeCreated(ms, cfg)
 
-	task.NewTaskConsumer(ms, cfg).RegisterConsumer()
+	consumeServices := []ConsumerRegister{
+		task.NewTaskConsumer(ms, cfg),
+		productbarcode.NewProductBarcodeConsumer(ms, cfg),
+	}
+
+	serviceStartConsumer(ms, consumeServices...)
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
-	toolSvc.RouteSetup()
+	toolSvc.RegisterHttp()
 
 	ms.Echo().GET("/routes", func(ctx echo.Context) error {
 		data, err := json.MarshalIndent(ms.Echo().Routes(), "", "  ")
@@ -270,12 +304,22 @@ func main() {
 	ms.Start()
 }
 
-type HttpRouteSetup interface {
-	RouteSetup()
+type HttpRegister interface {
+	RegisterHttp()
 }
 
-func serviceStartHttp(services ...HttpRouteSetup) {
+func serviceStartHttp(ms *microservice.Microservice, services ...HttpRegister) {
 	for _, service := range services {
-		service.RouteSetup()
+		ms.RegisterHttp(service)
+	}
+}
+
+type ConsumerRegister interface {
+	RegisterConsumer()
+}
+
+func serviceStartConsumer(ms *microservice.Microservice, services ...ConsumerRegister) {
+	for _, service := range services {
+		ms.RegisterConsumer(service)
 	}
 }

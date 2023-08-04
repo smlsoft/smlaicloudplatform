@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/productsection/sectiondepartment/models"
@@ -16,11 +17,11 @@ type ISectionDepartmentHttp interface{}
 
 type SectionDepartmentHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISectionDepartmentHttpService
 }
 
-func NewSectionDepartmentHttp(ms *microservice.Microservice, cfg microservice.IConfig) SectionDepartmentHttp {
+func NewSectionDepartmentHttp(ms *microservice.Microservice, cfg config.IConfig) SectionDepartmentHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -36,7 +37,7 @@ func NewSectionDepartmentHttp(ms *microservice.Microservice, cfg microservice.IC
 	}
 }
 
-func (h SectionDepartmentHttp) RouteSetup() {
+func (h SectionDepartmentHttp) RegisterHttp() {
 
 	h.ms.POST("/product-section/department/bulk", h.SaveBulk)
 

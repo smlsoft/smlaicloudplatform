@@ -1,6 +1,7 @@
 package option_test
 
 import (
+	"context"
 	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
@@ -29,14 +30,14 @@ func TestCreateInventoryOptionMain(t *testing.T) {
 	give.ShopID = "mx01"
 	give.Code = "code001"
 
-	_, err := repo.Create(give)
+	_, err := repo.Create(context.TODO(), give)
 
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	findDoc, err := repo.FindByGuid("mx01", "fx01")
+	findDoc, err := repo.FindByGuid(context.TODO(), "mx01", "fx01")
 
 	if err != nil {
 		t.Error(err)

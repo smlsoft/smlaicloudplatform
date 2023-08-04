@@ -1,6 +1,7 @@
 package shop
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
@@ -11,11 +12,11 @@ import (
 )
 
 type IShopRepository interface {
-	Create(shop models.ShopDoc) (string, error)
-	Update(guid string, shop models.ShopDoc) error
-	FindByGuid(guid string) (models.ShopDoc, error)
-	FindPage(pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error)
-	Delete(guid string, username string) error
+	Create(ctx context.Context, shop models.ShopDoc) (string, error)
+	Update(ctx context.Context, guid string, shop models.ShopDoc) error
+	FindByGuid(ctx context.Context, guid string) (models.ShopDoc, error)
+	FindPage(ctx context.Context, pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error)
+	Delete(ctx context.Context, guid string, username string) error
 }
 
 type ShopRepository struct {
@@ -28,19 +29,19 @@ func NewShopRepository(pst microservice.IPersisterMongo) ShopRepository {
 	}
 }
 
-func (repo ShopRepository) Create(shop models.ShopDoc) (string, error) {
-	idx, err := repo.pst.Create(&models.ShopDoc{}, shop)
+func (repo ShopRepository) Create(ctx context.Context, shop models.ShopDoc) (string, error) {
+	idx, err := repo.pst.Create(ctx, &models.ShopDoc{}, shop)
 	if err != nil {
 		return "", err
 	}
 	return idx.Hex(), nil
 }
 
-func (repo ShopRepository) Update(guid string, shop models.ShopDoc) error {
+func (repo ShopRepository) Update(ctx context.Context, guid string, shop models.ShopDoc) error {
 	filterDoc := map[string]interface{}{
 		"guidfixed": guid,
 	}
-	err := repo.pst.UpdateOne(&models.ShopDoc{}, filterDoc, shop)
+	err := repo.pst.UpdateOne(ctx, &models.ShopDoc{}, filterDoc, shop)
 
 	if err != nil {
 		return err
@@ -49,9 +50,9 @@ func (repo ShopRepository) Update(guid string, shop models.ShopDoc) error {
 	return nil
 }
 
-func (repo ShopRepository) FindByGuid(guid string) (models.ShopDoc, error) {
+func (repo ShopRepository) FindByGuid(ctx context.Context, guid string) (models.ShopDoc, error) {
 	findShop := &models.ShopDoc{}
-	err := repo.pst.FindOne(&models.ShopDoc{}, bson.M{"guidfixed": guid, "deletedat": bson.M{"$exists": false}}, findShop)
+	err := repo.pst.FindOne(ctx, &models.ShopDoc{}, bson.M{"guidfixed": guid, "deletedat": bson.M{"$exists": false}}, findShop)
 
 	if err != nil {
 		return models.ShopDoc{}, err
@@ -59,7 +60,7 @@ func (repo ShopRepository) FindByGuid(guid string) (models.ShopDoc, error) {
 	return *findShop, err
 }
 
-func (repo ShopRepository) FindPage(pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error) {
+func (repo ShopRepository) FindPage(ctx context.Context, pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error) {
 	filterQueries := bson.M{
 		"deletedat": bson.M{"$exists": false},
 		"name1": bson.M{"$regex": primitive.Regex{
@@ -69,7 +70,7 @@ func (repo ShopRepository) FindPage(pageable micromodels.Pageable) ([]models.Sho
 
 	shopList := []models.ShopInfo{}
 
-	pagination, err := repo.pst.FindPage(&models.ShopInfo{}, filterQueries, pageable, &shopList)
+	pagination, err := repo.pst.FindPage(ctx, &models.ShopInfo{}, filterQueries, pageable, &shopList)
 
 	if err != nil {
 		return []models.ShopInfo{}, mongopagination.PaginationData{}, err
@@ -78,8 +79,8 @@ func (repo ShopRepository) FindPage(pageable micromodels.Pageable) ([]models.Sho
 	return shopList, pagination, nil
 }
 
-func (repo ShopRepository) Delete(guid string, username string) error {
-	err := repo.pst.SoftDeleteByID(&models.ShopInfo{}, guid, username)
+func (repo ShopRepository) Delete(ctx context.Context, guid string, username string) error {
+	err := repo.pst.SoftDeleteByID(ctx, &models.ShopInfo{}, guid, username)
 	if err != nil {
 		return err
 	}

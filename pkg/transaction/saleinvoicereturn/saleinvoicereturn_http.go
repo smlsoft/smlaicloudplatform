@@ -4,30 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoicereturn/models"
 	"smlcloudplatform/pkg/transaction/saleinvoicereturn/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoicereturn/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type ISaleInvoiceReturnHttp interface{}
 
 type SaleInvoiceReturnHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISaleInvoiceReturnHttpService
 }
 
-func NewSaleInvoiceReturnHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleInvoiceReturnHttp {
+func NewSaleInvoiceReturnHttp(ms *microservice.Microservice, cfg config.IConfig) SaleInvoiceReturnHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewSaleInvoiceReturnRepository(pst)
+	repoMq := repositories.NewSaleInvoiceReturnMessageQueueRepository(producer)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceReturnHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewSaleInvoiceReturnHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return SaleInvoiceReturnHttp{
 		ms:  ms,
@@ -36,7 +42,7 @@ func NewSaleInvoiceReturnHttp(ms *microservice.Microservice, cfg microservice.IC
 	}
 }
 
-func (h SaleInvoiceReturnHttp) RouteSetup() {
+func (h SaleInvoiceReturnHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/sale-invoice-return/bulk", h.SaveBulk)
 
@@ -77,7 +83,7 @@ func (h SaleInvoiceReturnHttp) CreateSaleInvoiceReturn(ctx microservice.IContext
 		return err
 	}
 
-	idx, err := h.svc.CreateSaleInvoiceReturn(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateSaleInvoiceReturn(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +93,7 @@ func (h SaleInvoiceReturnHttp) CreateSaleInvoiceReturn(ctx microservice.IContext
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -273,6 +280,7 @@ func (h SaleInvoiceReturnHttp) InfoSaleInvoiceReturnByCode(ctx microservice.ICon
 // @Param		q		query	string		false  "Search Value"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -286,15 +294,20 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -319,6 +332,7 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 // @Param		q		query	string		false  "Search Value"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -335,15 +349,20 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnStep(ctx microservice.ICon
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

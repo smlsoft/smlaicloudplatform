@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/product/product/models"
 	"smlcloudplatform/pkg/repositories"
 
@@ -14,14 +15,14 @@ type SysInfoHttp struct {
 	ms *microservice.Microservice
 }
 
-func NewSysInfoHttp(ms *microservice.Microservice, cfg microservice.IConfig) SysInfoHttp {
+func NewSysInfoHttp(ms *microservice.Microservice, cfg config.IConfig) SysInfoHttp {
 
 	return SysInfoHttp{
 		ms: ms,
 	}
 }
 
-func (h SysInfoHttp) RouteSetup() {
+func (h SysInfoHttp) RegisterHttp() {
 
 	h.ms.GET("/sys-info/version", h.Version)
 	h.ms.GET("/sys-info/wordcut", h.Wordcut)

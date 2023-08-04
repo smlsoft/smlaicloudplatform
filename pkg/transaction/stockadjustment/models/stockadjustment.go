@@ -38,7 +38,7 @@ func (StockAdjustmentDoc) CollectionName() string {
 }
 
 type StockAdjustmentItemGuid struct {
-	Docno string `json:"docno" bson:"docno"`
+	DocNo string `json:"docno" bson:"docno"`
 }
 
 func (StockAdjustmentItemGuid) CollectionName() string {

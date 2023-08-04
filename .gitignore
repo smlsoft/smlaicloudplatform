@@ -47,3 +47,7 @@ mock/*.env
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+docs.sh
+cmd/app/tdict-std.txt
+cmd/app/*.crt

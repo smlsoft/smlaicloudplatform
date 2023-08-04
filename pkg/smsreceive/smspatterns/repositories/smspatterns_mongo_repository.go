@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/models"
@@ -11,12 +12,12 @@ import (
 )
 
 type ISmsPatternsRepository interface {
-	Create(doc models.SmsPatternsDoc) (string, error)
-	UpdateByGuid(guid string, doc models.SmsPatternsDoc) error
-	DeleteByGuid(guid string) error
-	FindByCode(code string) (models.SmsPatternsDoc, error)
-	FindByGuid(guid string) (models.SmsPatternsDoc, error)
-	FindPage(searchInFields []string, pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error)
+	Create(ctx context.Context, doc models.SmsPatternsDoc) (string, error)
+	UpdateByGuid(ctx context.Context, guid string, doc models.SmsPatternsDoc) error
+	DeleteByGuid(ctx context.Context, guid string) error
+	FindByCode(ctx context.Context, code string) (models.SmsPatternsDoc, error)
+	FindByGuid(ctx context.Context, guid string) (models.SmsPatternsDoc, error)
+	FindPage(ctx context.Context, searchInFields []string, pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error)
 }
 
 type SmsPatternsRepository struct {
@@ -32,9 +33,9 @@ func NewSmsPatternsRepository(pst microservice.IPersisterMongo) *SmsPatternsRepo
 	return insRepo
 }
 
-func (repo SmsPatternsRepository) Create(doc models.SmsPatternsDoc) (string, error) {
+func (repo SmsPatternsRepository) Create(ctx context.Context, doc models.SmsPatternsDoc) (string, error) {
 
-	idx, err := repo.pst.Create(models.SmsPatternsDoc{}, doc)
+	idx, err := repo.pst.Create(ctx, models.SmsPatternsDoc{}, doc)
 
 	if err != nil {
 		return "", err
@@ -43,12 +44,12 @@ func (repo SmsPatternsRepository) Create(doc models.SmsPatternsDoc) (string, err
 	return idx.Hex(), nil
 }
 
-func (repo SmsPatternsRepository) UpdateByGuid(guid string, doc models.SmsPatternsDoc) error {
+func (repo SmsPatternsRepository) UpdateByGuid(ctx context.Context, guid string, doc models.SmsPatternsDoc) error {
 	filterDoc := map[string]interface{}{
 		"guidfixed": guid,
 	}
 
-	err := repo.pst.UpdateOne(models.SmsPatternsDoc{}, filterDoc, doc)
+	err := repo.pst.UpdateOne(ctx, models.SmsPatternsDoc{}, filterDoc, doc)
 
 	if err != nil {
 		return err
@@ -57,12 +58,12 @@ func (repo SmsPatternsRepository) UpdateByGuid(guid string, doc models.SmsPatter
 	return nil
 }
 
-func (repo SmsPatternsRepository) UpdateByCode(code string, doc models.SmsPatternsDoc) error {
+func (repo SmsPatternsRepository) UpdateByCode(ctx context.Context, code string, doc models.SmsPatternsDoc) error {
 	filterDoc := map[string]interface{}{
 		"code": code,
 	}
 
-	err := repo.pst.UpdateOne(models.SmsPatternsDoc{}, filterDoc, doc)
+	err := repo.pst.UpdateOne(ctx, models.SmsPatternsDoc{}, filterDoc, doc)
 
 	if err != nil {
 		return err
@@ -71,12 +72,12 @@ func (repo SmsPatternsRepository) UpdateByCode(code string, doc models.SmsPatter
 	return nil
 }
 
-func (repo SmsPatternsRepository) DeleteByGuid(guid string) error {
+func (repo SmsPatternsRepository) DeleteByGuid(ctx context.Context, guid string) error {
 	filterDoc := map[string]interface{}{
 		"guidfixed": guid,
 	}
 
-	err := repo.pst.Delete(models.SmsPatternsDoc{}, filterDoc)
+	err := repo.pst.Delete(ctx, models.SmsPatternsDoc{}, filterDoc)
 
 	if err != nil {
 		return err
@@ -85,7 +86,7 @@ func (repo SmsPatternsRepository) DeleteByGuid(guid string) error {
 	return nil
 }
 
-func (repo SmsPatternsRepository) FindByCode(code string) (models.SmsPatternsDoc, error) {
+func (repo SmsPatternsRepository) FindByCode(ctx context.Context, code string) (models.SmsPatternsDoc, error) {
 
 	doc := models.SmsPatternsDoc{}
 
@@ -93,7 +94,7 @@ func (repo SmsPatternsRepository) FindByCode(code string) (models.SmsPatternsDoc
 		"code": code,
 	}
 
-	err := repo.pst.FindOne(models.SmsPatternsDoc{}, filters, &doc)
+	err := repo.pst.FindOne(ctx, models.SmsPatternsDoc{}, filters, &doc)
 
 	if err != nil {
 		return models.SmsPatternsDoc{}, err
@@ -102,7 +103,7 @@ func (repo SmsPatternsRepository) FindByCode(code string) (models.SmsPatternsDoc
 	return doc, nil
 }
 
-func (repo SmsPatternsRepository) FindByGuid(guidFixed string) (models.SmsPatternsDoc, error) {
+func (repo SmsPatternsRepository) FindByGuid(ctx context.Context, guidFixed string) (models.SmsPatternsDoc, error) {
 
 	doc := models.SmsPatternsDoc{}
 
@@ -110,7 +111,7 @@ func (repo SmsPatternsRepository) FindByGuid(guidFixed string) (models.SmsPatter
 		"guidfixed": guidFixed,
 	}
 
-	err := repo.pst.FindOne(models.SmsPatternsDoc{}, filters, &doc)
+	err := repo.pst.FindOne(ctx, models.SmsPatternsDoc{}, filters, &doc)
 
 	if err != nil {
 		return models.SmsPatternsDoc{}, err
@@ -119,7 +120,7 @@ func (repo SmsPatternsRepository) FindByGuid(guidFixed string) (models.SmsPatter
 	return doc, nil
 }
 
-func (repo SmsPatternsRepository) FindPage(searchInFields []string, pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error) {
+func (repo SmsPatternsRepository) FindPage(ctx context.Context, searchInFields []string, pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error) {
 
 	searchFilterList := []interface{}{}
 
@@ -135,7 +136,7 @@ func (repo SmsPatternsRepository) FindPage(searchInFields []string, pageable mic
 	}
 
 	docList := []models.SmsPatternsInfo{}
-	pagination, err := repo.pst.FindPage(models.SmsPatternsInfo{}, filterQueries, pageable, &docList)
+	pagination, err := repo.pst.FindPage(ctx, models.SmsPatternsInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.SmsPatternsInfo{}, mongopagination.PaginationData{}, err

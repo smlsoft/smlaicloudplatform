@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	smspatternsRepo "smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
 	smssetingsRepo "smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
@@ -17,11 +18,11 @@ type ISmsTransactionHttp interface{}
 
 type SmsTransactionHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISmsTransactionHttpService
 }
 
-func NewSmsTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) SmsTransactionHttp {
+func NewSmsTransactionHttp(ms *microservice.Microservice, cfg config.IConfig) SmsTransactionHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewSmsTransactionRepository(pst)
@@ -36,7 +37,7 @@ func NewSmsTransactionHttp(ms *microservice.Microservice, cfg microservice.IConf
 	}
 }
 
-func (h SmsTransactionHttp) RouteSetup() {
+func (h SmsTransactionHttp) RegisterHttp() {
 	h.ms.GET("/smstransaction", h.SearchSmsTransaction)
 	h.ms.POST("/smstransaction", h.CreateSmsTransaction)
 	h.ms.GET("/smstransaction/:id", h.InfoSmsTransaction)

@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -10,14 +11,14 @@ import (
 )
 
 type IShopCouponRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.ShopCouponDoc) (string, error)
-	CreateInBatch(docList []models.ShopCouponDoc) error
-	Update(shopID string, guid string, doc models.ShopCouponDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.ShopCouponDoc, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.ShopCouponDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.ShopCouponDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.ShopCouponDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.ShopCouponDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
 }
 
 type ShopCouponRepository struct {

@@ -54,7 +54,7 @@ func (*TestElkModel) IndexName() string {
 
 // func TestElkDelete(t *testing.T) {
 // 	pst := microservice.NewPersisterElk(&ConfigElkTest{})
-// 	err := pst.Delete("9-DSU38BxwH1fQnY-VzD", &TestElkModel{})
+// 	err := pst.Delete(ctx,"9-DSU38BxwH1fQnY-VzD", &TestElkModel{})
 
 // 	if err != nil {
 // 		t.Error(err)

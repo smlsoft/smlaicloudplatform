@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop/employee/models"
@@ -16,11 +17,11 @@ type IEmployeeHttp interface{}
 
 type EmployeeHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IEmployeeHttpService
 }
 
-func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) EmployeeHttp {
+func NewEmployeeHttp(ms *microservice.Microservice, cfg config.IConfig) EmployeeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -36,7 +37,7 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 	}
 }
 
-func (h EmployeeHttp) RouteSetup() {
+func (h EmployeeHttp) RegisterHttp() {
 
 	h.ms.GET("/shop/employee", h.SearchEmployeePage)
 	h.ms.GET("/shop/employee/list", h.SearchEmployeeStep)

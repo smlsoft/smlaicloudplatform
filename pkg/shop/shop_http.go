@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	branchModel "smlcloudplatform/pkg/organization/branch/models"
@@ -14,6 +15,7 @@ import (
 	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
+	"time"
 
 	warehouseModels "smlcloudplatform/pkg/warehouse/models"
 	warehouseRepositories "smlcloudplatform/pkg/warehouse/repositories"
@@ -21,7 +23,7 @@ import (
 )
 
 type IShopHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	CreateShop(ctx microservice.IContext) error
 	UpdateShop(ctx microservice.IContext) error
 	DeleteShop(ctx microservice.IContext) error
@@ -31,14 +33,14 @@ type IShopHttp interface {
 
 type ShopHttp struct {
 	ms               *microservice.Microservice
-	cfg              microservice.IConfig
+	cfg              config.IConfig
 	service          IShopService
 	serviceBranch    branchServices.IBranchHttpService
 	serviceWarehouse warehouseServices.IWarehouseHttpService
 	authService      *microservice.AuthService
 }
 
-func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHttp {
+func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopRepository(pst)
@@ -46,7 +48,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHt
 	shopUserRepo := NewShopUserRepository(pst)
 	service := NewShopService(repo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 
-	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3*time.Hour, 24*30*time.Hour)
 
 	repoBrach := branchRepositories.NewBranchRepository(pst)
 
@@ -69,9 +71,9 @@ func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHt
 	}
 }
 
-func (h ShopHttp) RouteSetup() {
+func (h ShopHttp) RegisterHttp() {
 	h.ms.GET("/shop/:id", h.InfoShop)
-	h.ms.GET("/shop", h.SearchShop)
+	// h.ms.GET("/shop", h.SearchShop)
 
 	h.ms.POST("/shop", h.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 	h.ms.PUT("/shop/:id", h.UpdateShop)
@@ -297,17 +299,7 @@ func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 // @Security     AccessToken
 // @Router /shop/{id} [get]
 func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")
-
-	if userInfo.Role != models.ROLE_OWNER {
-		ctx.Response(http.StatusOK, &common.ApiResponse{
-			Success: false,
-			Message: "permission denied",
-		})
-
-		return errors.New("permission denied")
-	}
 
 	shopInfo, err := h.service.InfoShop(id)
 

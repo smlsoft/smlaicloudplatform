@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/shopdesign/zonedesign/models"
 	"smlcloudplatform/pkg/shopdesign/zonedesign/repositories"
 	"smlcloudplatform/pkg/shopdesign/zonedesign/services"
@@ -14,11 +15,11 @@ import (
 
 type ZoneDesignHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IZoneDesignService
 }
 
-func NewZoneDesignHttp(ms *microservice.Microservice, cfg microservice.IConfig) ZoneDesignHttp {
+func NewZoneDesignHttp(ms *microservice.Microservice, cfg config.IConfig) ZoneDesignHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewZoneDesignRepository(pst)
@@ -31,7 +32,7 @@ func NewZoneDesignHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	}
 }
 
-func (h ZoneDesignHttp) RouteSetup() {
+func (h ZoneDesignHttp) RegisterHttp() {
 
 	h.ms.GET("/zone-design", h.SearchZoneDesign)
 	h.ms.POST("/zone-design", h.CreateZoneDesign)

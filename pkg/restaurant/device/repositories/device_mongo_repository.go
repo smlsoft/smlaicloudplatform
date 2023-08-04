@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -11,24 +12,24 @@ import (
 )
 
 type IDeviceRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.DeviceDoc) (string, error)
-	CreateInBatch(docList []models.DeviceDoc) error
-	Update(shopID string, guid string, doc models.DeviceDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DeviceInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.DeviceDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.DeviceDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.DeviceDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.DeviceDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DeviceInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.DeviceDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.DeviceItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.DeviceDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.DeviceItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.DeviceDoc, error)
 
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DeviceInfo, int, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DeviceInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DeviceDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DeviceActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DeviceDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DeviceActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DeviceDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DeviceActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DeviceDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DeviceActivity, error)
 }
 
 type DeviceRepository struct {

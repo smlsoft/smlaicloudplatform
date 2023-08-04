@@ -3,12 +3,13 @@ package inventory
 import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
+	sysConfig "smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/product/inventory/config"
 	"smlcloudplatform/pkg/product/inventory/models"
 	"time"
 )
 
-func StartInventoryComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig) {
+func StartInventoryComsumeCreated(ms *microservice.Microservice, cfg sysConfig.IConfig) {
 	groupID := "postgres-inventory-consumer"
 
 	topicCreated := config.MQ_TOPIC_INVENTORY_CREATED
@@ -45,7 +46,7 @@ func StartInventoryComsumeCreated(ms *microservice.Microservice, cfg microservic
 
 }
 
-func startInventoryComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig) {
+func startInventoryComsumeCreated(ms *microservice.Microservice, cfg sysConfig.IConfig) {
 	groupID := "postgres-inventory-consumer"
 
 	topicCreated := config.MQ_TOPIC_INVENTORY_CREATED
@@ -82,7 +83,7 @@ func startInventoryComsumeCreated(ms *microservice.Microservice, cfg microservic
 
 }
 
-func startInventoryComsumeUpdated(ms *microservice.Microservice, cfg microservice.IConfig) {
+func startInventoryComsumeUpdated(ms *microservice.Microservice, cfg sysConfig.IConfig) {
 	groupID := "postgres-inventory-consumer"
 
 	topicCreated := config.MQ_TOPIC_INVENTORY_UPDATED

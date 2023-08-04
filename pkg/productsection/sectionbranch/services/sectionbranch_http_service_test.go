@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -17,83 +18,83 @@ type MockSectionBranchRepository struct {
 	mock.Mock
 }
 
-func (m *MockSectionBranchRepository) Count(shopID string) (int, error) {
-	args := m.Called(shopID)
+func (m *MockSectionBranchRepository) Count(ctx context.Context, shopID string) (int, error) {
+	args := m.Called(ctx, shopID)
 	return args.Int(0), args.Error(1)
 }
 
-func (m *MockSectionBranchRepository) Create(doc models.SectionBranchDoc) (string, error) {
-	args := m.Called(doc)
+func (m *MockSectionBranchRepository) Create(ctx context.Context, doc models.SectionBranchDoc) (string, error) {
+	args := m.Called(ctx, doc)
 	return args.String(0), args.Error(1)
 }
 
-func (m *MockSectionBranchRepository) CreateInBatch(docList []models.SectionBranchDoc) error {
-	args := m.Called(docList)
+func (m *MockSectionBranchRepository) CreateInBatch(ctx context.Context, docList []models.SectionBranchDoc) error {
+	args := m.Called(ctx, docList)
 	return args.Error(0)
 }
 
-func (m *MockSectionBranchRepository) Update(shopID string, guid string, doc models.SectionBranchDoc) error {
-	args := m.Called(shopID, guid, doc)
+func (m *MockSectionBranchRepository) Update(ctx context.Context, shopID string, guid string, doc models.SectionBranchDoc) error {
+	args := m.Called(ctx, shopID, guid, doc)
 	return args.Error(0)
 }
 
-func (m *MockSectionBranchRepository) DeleteByGuidfixed(shopID string, guid string, username string) error {
-	args := m.Called(shopID, guid, username)
+func (m *MockSectionBranchRepository) DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error {
+	args := m.Called(ctx, shopID, guid, username)
 	return args.Error(0)
 }
 
-func (m *MockSectionBranchRepository) Delete(shopID string, username string, filters map[string]interface{}) error {
-	args := m.Called(shopID, username, filters)
+func (m *MockSectionBranchRepository) Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error {
+	args := m.Called(ctx, shopID, username, filters)
 	return args.Error(0)
 }
 
-func (m *MockSectionBranchRepository) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionBranchInfo, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, searchInFields, pageable)
+func (m *MockSectionBranchRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionBranchInfo, mongopagination.PaginationData, error) {
+	args := m.Called(ctx, shopID, searchInFields, pageable)
 	return args.Get(0).([]models.SectionBranchInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
-func (m *MockSectionBranchRepository) FindByGuid(shopID string, guid string) (models.SectionBranchDoc, error) {
-	args := m.Called(shopID, guid)
+func (m *MockSectionBranchRepository) FindByGuid(ctx context.Context, shopID string, guid string) (models.SectionBranchDoc, error) {
+	args := m.Called(ctx, shopID, guid)
 	return args.Get(0).(models.SectionBranchDoc), args.Error(1)
 }
 
-func (m *MockSectionBranchRepository) FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.SectionBranchItemGuid, error) {
-	args := m.Called(shopID, columnName, itemGuidList)
+func (m *MockSectionBranchRepository) FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.SectionBranchItemGuid, error) {
+	args := m.Called(ctx, shopID, columnName, itemGuidList)
 	return args.Get(0).([]models.SectionBranchItemGuid), args.Error(1)
 }
 
-func (m *MockSectionBranchRepository) FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.SectionBranchDoc, error) {
-	args := m.Called(shopID, indentityField, indentityValue)
+func (m *MockSectionBranchRepository) FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.SectionBranchDoc, error) {
+	args := m.Called(ctx, shopID, indentityField, indentityValue)
 	return args.Get(0).(models.SectionBranchDoc), args.Error(1)
 }
 
-func (m *MockSectionBranchRepository) FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionBranchInfo, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, filters, searchInFields, pageable)
+func (m *MockSectionBranchRepository) FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionBranchInfo, mongopagination.PaginationData, error) {
+	args := m.Called(ctx, shopID, filters, searchInFields, pageable)
 	return args.Get(0).([]models.SectionBranchInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
-func (m *MockSectionBranchRepository) FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.SectionBranchInfo, int, error) {
-	args := m.Called(shopID, filters, searchInFields, projects, pageableLimit)
+func (m *MockSectionBranchRepository) FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.SectionBranchInfo, int, error) {
+	args := m.Called(ctx, shopID, filters, searchInFields, projects, pageableLimit)
 	return args.Get(0).([]models.SectionBranchInfo), args.Int(1), args.Error(2)
 }
 
-func (m *MockSectionBranchRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionBranchDeleteActivity, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, lastUpdatedDate, filters, pageable)
+func (m *MockSectionBranchRepository) FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionBranchDeleteActivity, mongopagination.PaginationData, error) {
+	args := m.Called(ctx, shopID, lastUpdatedDate, filters, pageable)
 	return args.Get(0).([]models.SectionBranchDeleteActivity), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
-func (m *MockSectionBranchRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionBranchActivity, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, lastUpdatedDate, filters, pageable)
+func (m *MockSectionBranchRepository) FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionBranchActivity, mongopagination.PaginationData, error) {
+	args := m.Called(ctx, shopID, lastUpdatedDate, filters, pageable)
 	return args.Get(0).([]models.SectionBranchActivity), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
-func (m *MockSectionBranchRepository) FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionBranchDeleteActivity, error) {
-	args := m.Called(shopID, lastUpdatedDate, filters, pageableStep)
+func (m *MockSectionBranchRepository) FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionBranchDeleteActivity, error) {
+	args := m.Called(ctx, shopID, lastUpdatedDate, filters, pageableStep)
 	return args.Get(0).([]models.SectionBranchDeleteActivity), args.Error(1)
 }
 
-func (m *MockSectionBranchRepository) FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionBranchActivity, error) {
-	args := m.Called(shopID, lastUpdatedDate, filters, pageableStep)
+func (m *MockSectionBranchRepository) FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionBranchActivity, error) {
+	args := m.Called(ctx, shopID, lastUpdatedDate, filters, pageableStep)
 	return args.Get(0).([]models.SectionBranchActivity), args.Error(1)
 }
 

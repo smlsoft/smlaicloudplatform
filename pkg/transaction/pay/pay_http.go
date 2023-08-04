@@ -4,30 +4,34 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/pay/models"
 	"smlcloudplatform/pkg/transaction/pay/repositories"
 	"smlcloudplatform/pkg/transaction/pay/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IPayHttp interface{}
 
 type PayHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IPayHttpService
 }
 
-func NewPayHttp(ms *microservice.Microservice, cfg microservice.IConfig) PayHttp {
+func NewPayHttp(ms *microservice.Microservice, cfg config.IConfig) PayHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewPayRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPayHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewPayHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return PayHttp{
 		ms:  ms,
@@ -36,7 +40,7 @@ func NewPayHttp(ms *microservice.Microservice, cfg microservice.IConfig) PayHttp
 	}
 }
 
-func (h PayHttp) RouteSetup() {
+func (h PayHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/pay/bulk", h.SaveBulk)
 
@@ -77,7 +81,7 @@ func (h PayHttp) CreatePay(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreatePay(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreatePay(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +91,7 @@ func (h PayHttp) CreatePay(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -285,15 +290,15 @@ func (h PayHttp) SearchPayPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -334,15 +339,15 @@ func (h PayHttp) SearchPayStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

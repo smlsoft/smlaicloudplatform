@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -10,14 +11,14 @@ import (
 )
 
 type IZoneDesignRepository interface {
-	Count(shopID string) (int, error)
-	Create(category models.ZoneDesignDoc) (string, error)
-	CreateInBatch(docList []models.ZoneDesignDoc) error
-	Update(shopID string, guid string, category models.ZoneDesignDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters interface{}) (models.ZoneDesignDoc, error)
-	FindByGuid(shopID string, guid string) (models.ZoneDesignDoc, error)
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.ZoneDesignDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.ZoneDesignDoc) error
+	Update(ctx context.Context, shopID string, guid string, category models.ZoneDesignDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.ZoneDesignDoc, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.ZoneDesignDoc, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error)
 }
 
 type ZoneDesignRepository struct {

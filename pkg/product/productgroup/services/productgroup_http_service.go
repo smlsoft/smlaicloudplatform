@@ -1,9 +1,12 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
+	"smlcloudplatform/pkg/logger"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productgroup/models"
@@ -12,6 +15,8 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
+
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,17 +39,32 @@ type IProductGroupHttpService interface {
 }
 
 type ProductGroupHttpService struct {
-	repo repositories.IProductGroupRepository
-
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	repo               repositories.IProductGroupRepository
+	repoMessageQueue   repositories.IProductGroupMessageQueueRepository
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.ProductGroupActivity, models.ProductGroupDeleteActivity]
+	productGroupServiceConfig config.IProductGroupServiceConfig
+	contextTimeout            time.Duration
 }
 
-func NewProductGroupHttpService(repo repositories.IProductGroupRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductGroupHttpService {
+func NewProductGroupHttpService(
+	repo repositories.IProductGroupRepository,
+	repoMessageQueue repositories.IProductGroupMessageQueueRepository,
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository,
+	productGroupServiceConfig config.IProductGroupServiceConfig,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *ProductGroupHttpService {
+
+	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &ProductGroupHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:                      repo,
+		repoMessageQueue:          repoMessageQueue,
+		repoProductBarcode:        repoProductBarcode,
+		syncCacheRepo:             syncCacheRepo,
+		productGroupServiceConfig: productGroupServiceConfig,
+		contextTimeout:            contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.ProductGroupActivity, models.ProductGroupDeleteActivity](repo)
@@ -52,9 +72,16 @@ func NewProductGroupHttpService(repo repositories.IProductGroupRepository, syncC
 	return insSvc
 }
 
+func (svc ProductGroupHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc ProductGroupHttpService) SaveProductGroup(shopID string, authUsername string, doc models.ProductGroup) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
@@ -62,22 +89,31 @@ func (svc ProductGroupHttpService) SaveProductGroup(shopID string, authUsername 
 
 	if len(findDoc.Code) > 0 {
 
-		err = svc.update(shopID, authUsername, findDoc.GuidFixed, findDoc, doc)
+		docData, err := svc.update(shopID, authUsername, findDoc.GuidFixed, findDoc, doc)
 
 		if err != nil {
 			return "", err
 		}
 
-		return findDoc.GuidFixed, nil
+		return docData.GuidFixed, nil
 
 	} else {
-		return svc.create(shopID, authUsername, doc)
+		docData, err := svc.create(shopID, authUsername, doc)
+
+		if err != nil {
+			return "", err
+		}
+
+		return docData.GuidFixed, nil
 	}
 }
 
 func (svc ProductGroupHttpService) CreateProductGroup(shopID string, authUsername string, doc models.ProductGroup) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
@@ -87,12 +123,22 @@ func (svc ProductGroupHttpService) CreateProductGroup(shopID string, authUsernam
 		return "", errors.New("code is exists")
 	}
 
-	svc.saveMasterSync(shopID)
+	docData, err := svc.create(shopID, authUsername, doc)
 
-	return svc.create(shopID, authUsername, doc)
+	go func() {
+		svc.repoMessageQueue.Create(docData)
+
+		svc.saveMasterSync(shopID)
+	}()
+
+	return docData.GuidFixed, err
 }
 
-func (svc ProductGroupHttpService) create(shopID string, authUsername string, doc models.ProductGroup) (string, error) {
+func (svc ProductGroupHttpService) create(shopID string, authUsername string, doc models.ProductGroup) (models.ProductGroupDoc, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.ProductGroupDoc{}
@@ -103,18 +149,21 @@ func (svc ProductGroupHttpService) create(shopID string, authUsername string, do
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err := svc.repo.Create(ctx, docData)
 
 	if err != nil {
-		return "", err
+		return models.ProductGroupDoc{}, err
 	}
 
-	return newGuidFixed, nil
+	return docData, nil
 }
 
 func (svc ProductGroupHttpService) UpdateProductGroup(shopID string, guid string, authUsername string, doc models.ProductGroup) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -129,71 +178,139 @@ func (svc ProductGroupHttpService) UpdateProductGroup(shopID string, guid string
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.update(shopID, authUsername, guid, findDoc, doc)
+	docData, err := svc.update(shopID, authUsername, guid, findDoc, doc)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Update(docData)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
 
-func (svc ProductGroupHttpService) update(shopID string, authUsername string, guid string, findDoc models.ProductGroupDoc, docUpdate models.ProductGroup) error {
-	findDoc.ProductGroup = docUpdate
+func (svc ProductGroupHttpService) update(shopID string, authUsername string, guid string, findDoc models.ProductGroupDoc, docUpdate models.ProductGroup) (models.ProductGroupDoc, error) {
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
-	err := svc.repo.Update(shopID, guid, findDoc)
+	docData := findDoc
+
+	docData.ProductGroup = docUpdate
+
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
+
+	err := svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
-		return err
+		return models.ProductGroupDoc{}, err
 	}
 
-	return nil
+	return docData, nil
 }
 
-func (svc ProductGroupHttpService) DeleteProductGroup(shopID string, guid string, authUsername string) error {
+func (svc ProductGroupHttpService) DeleteProductGroup(shopID, guid, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return errors.New("document not found")
+		return nil
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	existsInProduct, _ := svc.existsGroupRefInProduct(shopID, []string{findDoc.Code})
+
+	if existsInProduct {
+		return fmt.Errorf("group code \"%s\" is referenced in product barcode", findDoc.Code)
+	}
+
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		err := svc.repoMessageQueue.Delete(findDoc)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
 
-func (svc ProductGroupHttpService) DeleteProductGroupByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc ProductGroupHttpService) DeleteProductGroupByGUIDs(shopID, authUsername string, GUIDs []string) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocs, err := svc.repo.FindByGuids(ctx, shopID, GUIDs)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDocs) == 0 {
+		return nil
+	}
+
+	groupCodes := []string{}
+	for _, v := range findDocs {
+		groupCodes = append(groupCodes, v.Code)
+	}
+
+	existsInProduct, _ := svc.existsGroupRefInProduct(shopID, groupCodes)
+
+	if existsInProduct {
+		return fmt.Errorf("referenced in product")
+	}
 
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err = svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
+
+	go func() {
+		err := svc.repoMessageQueue.DeleteInBatch(findDocs)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
 
 func (svc ProductGroupHttpService) InfoProductGroup(shopID string, guid string) (models.ProductGroupInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.ProductGroupInfo{}, err
@@ -208,10 +325,14 @@ func (svc ProductGroupHttpService) InfoProductGroup(shopID string, guid string) 
 }
 
 func (svc ProductGroupHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	docList := []interface{}{}
 
 	for _, code := range codes {
-		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+		findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", code)
 		if err != nil || findDoc.ID == primitive.NilObjectID {
 			// add item empty
 			docList = append(docList, nil)
@@ -224,12 +345,16 @@ func (svc ProductGroupHttpService) InfoWTFArray(shopID string, codes []string) (
 }
 
 func (svc ProductGroupHttpService) SearchProductGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductGroupInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductGroupInfo{}, pagination, err
@@ -239,23 +364,18 @@ func (svc ProductGroupHttpService) SearchProductGroup(shopID string, filters map
 }
 
 func (svc ProductGroupHttpService) SearchProductGroupStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductGroupInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
 	}
 
-	selectFields := map[string]interface{}{
-		"guidfixed": 1,
-		"code":      1,
-	}
+	selectFields := map[string]interface{}{}
 
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
-
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ProductGroupInfo{}, 0, err
@@ -266,6 +386,9 @@ func (svc ProductGroupHttpService) SearchProductGroupStep(shopID string, langCod
 
 func (svc ProductGroupHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.ProductGroup) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.ProductGroup](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -273,7 +396,7 @@ func (svc ProductGroupHttpService) SaveInBatch(shopID string, authUsername strin
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -312,7 +435,7 @@ func (svc ProductGroupHttpService) SaveInBatch(shopID string, authUsername strin
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.ProductGroupDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", guid)
 		},
 		func(doc models.ProductGroupDoc) bool {
 			return doc.Code != ""
@@ -323,7 +446,7 @@ func (svc ProductGroupHttpService) SaveInBatch(shopID string, authUsername strin
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -332,7 +455,7 @@ func (svc ProductGroupHttpService) SaveInBatch(shopID string, authUsername strin
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err
@@ -388,4 +511,22 @@ func (svc ProductGroupHttpService) saveMasterSync(shopID string) {
 
 func (svc ProductGroupHttpService) GetModuleName() string {
 	return "productGroup"
+}
+
+func (svc ProductGroupHttpService) existsGroupRefInProduct(shopID string, groupCodes []string) (bool, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docCount, err := svc.repoProductBarcode.CountByGroupCodes(ctx, shopID, groupCodes)
+
+	if err != nil {
+		return true, err
+	}
+
+	if docCount > 0 {
+		return true, fmt.Errorf("referenced in product barcode")
+	}
+
+	return false, nil
 }

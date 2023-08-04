@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/utils/mogoutil"
@@ -23,7 +24,7 @@ func NewSearchRepository[T any](pst microservice.IPersisterMongo) SearchReposito
 	}
 }
 
-func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q string) ([]T, error) {
+func (repo SearchRepository[T]) Find(ctx context.Context, shopID string, searchInFields []string, q string) ([]T, error) {
 
 	filterQuery := bson.M{
 		"shopid":    shopID,
@@ -41,7 +42,7 @@ func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q s
 	}
 
 	docList := []T{}
-	err := repo.pst.Find(new(T), filterQuery, &docList)
+	err := repo.pst.Find(ctx, new(T), filterQuery, &docList)
 
 	if err != nil {
 		return []T{}, err
@@ -50,7 +51,7 @@ func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q s
 	return docList, nil
 }
 
-func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableStep models.PageableStep) ([]T, int, error) {
+func (repo SearchRepository[T]) FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableStep models.PageableStep) ([]T, int, error) {
 
 	filterQuery := bson.M{
 		"shopid":    shopID,
@@ -101,13 +102,13 @@ func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]inter
 	}
 
 	docList := []T{}
-	err := repo.pst.Find(new(T), filterQuery, &docList, tempOptions)
+	err := repo.pst.Find(ctx, new(T), filterQuery, &docList, tempOptions)
 
 	if err != nil {
 		return []T{}, 0, err
 	}
 
-	count, err := repo.pst.Count(new(T), filterQuery)
+	count, err := repo.pst.Count(ctx, new(T), filterQuery)
 
 	if err != nil {
 		return []T{}, 0, err
@@ -116,7 +117,7 @@ func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]inter
 	return docList, count, nil
 }
 
-func (repo SearchRepository[T]) FindPage(shopID string, searchInFields []string, pageable models.Pageable) ([]T, mongopagination.PaginationData, error) {
+func (repo SearchRepository[T]) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable models.Pageable) ([]T, mongopagination.PaginationData, error) {
 
 	filterQuery := bson.M{
 		"shopid":    shopID,
@@ -138,7 +139,7 @@ func (repo SearchRepository[T]) FindPage(shopID string, searchInFields []string,
 	}
 
 	docList := []T{}
-	pagination, err := repo.pst.FindPage(new(T), filterQuery, pageable, &docList)
+	pagination, err := repo.pst.FindPage(ctx, new(T), filterQuery, pageable, &docList)
 
 	if err != nil {
 		return []T{}, mongopagination.PaginationData{}, err
@@ -147,7 +148,7 @@ func (repo SearchRepository[T]) FindPage(shopID string, searchInFields []string,
 	return docList, pagination, nil
 }
 
-func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable models.Pageable) ([]T, mongopagination.PaginationData, error) {
+func (repo SearchRepository[T]) FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable models.Pageable) ([]T, mongopagination.PaginationData, error) {
 
 	matchFilterList := []interface{}{}
 
@@ -181,7 +182,7 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 	}
 
 	docList := []T{}
-	pagination, err := repo.pst.FindPage(new(T), queryFilters, pageable, &docList)
+	pagination, err := repo.pst.FindPage(ctx, new(T), queryFilters, pageable, &docList)
 
 	if err != nil {
 		return []T{}, mongopagination.PaginationData{}, err
@@ -190,7 +191,7 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 	return docList, pagination, nil
 }
 
-func (repo SearchRepository[T]) FindAggregatePage(shopID string, pageable models.Pageable, criteria ...interface{}) ([]T, mongopagination.PaginationData, error) {
+func (repo SearchRepository[T]) FindAggregatePage(ctx context.Context, shopID string, pageable models.Pageable, criteria ...interface{}) ([]T, mongopagination.PaginationData, error) {
 
 	mainFilter := bson.M{
 		"$match": bson.M{
@@ -201,7 +202,7 @@ func (repo SearchRepository[T]) FindAggregatePage(shopID string, pageable models
 
 	tempCriteria := append([]interface{}{mainFilter}, criteria...)
 
-	aggData, err := repo.pst.AggregatePage(new(T), pageable, tempCriteria...)
+	aggData, err := repo.pst.AggregatePage(ctx, new(T), pageable, tempCriteria...)
 
 	if err != nil {
 		return []T{}, mongopagination.PaginationData{}, err

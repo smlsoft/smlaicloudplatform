@@ -3,6 +3,7 @@ package inventorysearchconsumer
 import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	inventoryConfig "smlcloudplatform/pkg/product/inventory/config"
 	"smlcloudplatform/pkg/product/inventorysearchconsumer/models"
 	"time"
@@ -18,11 +19,11 @@ type IInventorySearchConsumer interface {
 
 type InventorySearchConsumer struct {
 	ms                             *microservice.Microservice
-	cfg                            microservice.IConfig
+	cfg                            config.IConfig
 	InventorySearchConsumerService IInventorySearchConsumerService
 }
 
-func NewInventorySearchConsumer(ms *microservice.Microservice, cfg microservice.IConfig) *InventorySearchConsumer {
+func NewInventorySearchConsumer(ms *microservice.Microservice, cfg config.IConfig) *InventorySearchConsumer {
 	consume := &InventorySearchConsumer{
 		ms:  ms,
 		cfg: cfg,

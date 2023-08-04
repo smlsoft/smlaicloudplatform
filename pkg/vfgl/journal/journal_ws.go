@@ -14,16 +14,18 @@ import (
 	"time"
 	"unicode/utf8"
 
+	msConfig "smlcloudplatform/pkg/config"
+
 	"github.com/gorilla/websocket"
 )
 
 type JournalWs struct {
 	ms           *microservice.Microservice
-	cfg          microservice.IConfig
+	cfg          msConfig.IConfig
 	svcWebsocket services.IJournalWebsocketService
 }
 
-func NewJournalWs(ms *microservice.Microservice, cfg microservice.IConfig) JournalWs {
+func NewJournalWs(ms *microservice.Microservice, cfg msConfig.IConfig) JournalWs {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -38,7 +40,7 @@ func NewJournalWs(ms *microservice.Microservice, cfg microservice.IConfig) Journ
 	}
 }
 
-func (h JournalWs) RouteSetup() {
+func (h JournalWs) RegisterHttp() {
 	h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
 	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
 

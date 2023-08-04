@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/storefront/models"
 	"smlcloudplatform/pkg/storefront/repositories"
@@ -15,11 +16,11 @@ type IStorefrontHttp interface{}
 
 type StorefrontHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IStorefrontHttpService
 }
 
-func NewStorefrontHttp(ms *microservice.Microservice, cfg microservice.IConfig) StorefrontHttp {
+func NewStorefrontHttp(ms *microservice.Microservice, cfg config.IConfig) StorefrontHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewStorefrontRepository(pst)
@@ -33,7 +34,7 @@ func NewStorefrontHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	}
 }
 
-func (h StorefrontHttp) RouteSetup() {
+func (h StorefrontHttp) RegisterHttp() {
 
 	h.ms.GET("/storefront", h.SearchStorefront)
 	h.ms.POST("/storefront", h.CreateStorefront)

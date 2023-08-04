@@ -1,12 +1,14 @@
 package authentication
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/firebase"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 
@@ -16,7 +18,7 @@ import (
 )
 
 type IAuthenticationService interface {
-	Login(userReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error)
+	Login(userReq *models.UserLoginRequest, authContext AuthenticationContext) (TokenLoginResponse, error)
 	Register(userRequest models.UserRequest) (string, error)
 	Update(username string, userRequest models.UserProfileRequest) error
 	UpdatePassword(username string, currentPassword string, newPassword string) error
@@ -25,11 +27,12 @@ type IAuthenticationService interface {
 	AccessShop(shopID string, username string, authorizationHeader string, authContext AuthenticationContext) error
 	UpdateFavoriteShop(shopID string, username string, isFavorite bool) error
 	LoginWithFirebaseToken(token string) (string, error)
+	RefreshToken(tokenRequest TokenLoginRequest) (TokenLoginResponse, error)
 }
 
 type AuthenticationService struct {
 	authService           microservice.IAuthService
-	authRepo              IAuthenticationRepository
+	authRepo              IAuthenticationMongoCacheRepository
 	shopUserRepo          shop.IShopUserRepository
 	shopUserAccessLogRepo shop.IShopUserAccessLogRepository
 	passwordEncoder       func(string) (string, error)
@@ -58,60 +61,69 @@ func NewAuthenticationService(
 	}
 }
 
-func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error) {
+func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (TokenLoginResponse, error) {
+
+	userLoginReq.Username = utils.NormalizeUsername(userLoginReq.Username)
 
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
 	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
 
-	findUser, err := svc.authRepo.FindUser(userLoginReq.Username)
+	findUser, err := svc.authRepo.FindUser(context.Background(), userLoginReq.Username)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		// svc.ms.Log("Authentication service", err.Error())
-		return "", errors.New("auth: database connect error")
+		return TokenLoginResponse{}, errors.New("auth: database connect error")
 	}
 
 	if len(findUser.Username) < 1 {
-		return "", errors.New("username is not exists")
+		return TokenLoginResponse{}, errors.New("username or password is invalid")
 	}
 
 	passwordInvalid := !svc.checkHashPassword(userLoginReq.Password, findUser.Password)
 
 	if passwordInvalid {
-		return "", errors.New("password is not invalid")
+		return TokenLoginResponse{}, errors.New("username or password is invalid")
 	}
 
 	tokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_BEARER, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
-		return "", errors.New("generate token error")
+		return TokenLoginResponse{}, errors.New("login failed")
+	}
+
+	refreshTokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_REFRESH, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
+
+	if err != nil {
+		svc.authService.DeleteToken(microservice.AUTHTYPE_BEARER, tokenString)
+		return TokenLoginResponse{}, errors.New("login failed")
 	}
 
 	if len(userLoginReq.ShopID) > 0 {
-		shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(userLoginReq.ShopID, userLoginReq.Username)
+		shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(context.Background(), userLoginReq.ShopID, userLoginReq.Username)
 
 		if err != nil {
-			return "", err
+			return TokenLoginResponse{}, err
 		}
 
 		if shopUser.ID == primitive.NilObjectID {
-			return "", errors.New("shop invalid")
+			return TokenLoginResponse{}, errors.New("shop invalid")
 		}
 
 		err = svc.authService.SelectShop(microservice.AUTHTYPE_BEARER, tokenString, userLoginReq.ShopID, shopUser.Role)
 
 		if err != nil {
-			return "", errors.New("failed shop select")
+			return TokenLoginResponse{}, errors.New("failed shop select")
 		}
 
 		lastAccessedAt := svc.timeNow()
 
-		err = svc.shopUserRepo.UpdateLastAccess(userLoginReq.ShopID, userLoginReq.Username, lastAccessedAt)
+		err = svc.shopUserRepo.UpdateLastAccess(context.Background(), userLoginReq.ShopID, userLoginReq.Username, lastAccessedAt)
 		if err != nil {
 			// implement log
 			fmt.Println("error :: ", err.Error())
 		}
 
-		err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
+		err = svc.shopUserAccessLogRepo.Create(context.Background(), models.ShopUserAccessLog{
 			ShopID:         userLoginReq.ShopID,
 			Username:       userLoginReq.Username,
 			Ip:             authContext.Ip,
@@ -124,12 +136,31 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 		}
 	}
 
-	return tokenString, nil
+	return TokenLoginResponse{
+		Token:   tokenString,
+		Refresh: refreshTokenString,
+	}, nil
+}
+
+func (svc AuthenticationService) RefreshToken(tokenRequest TokenLoginRequest) (TokenLoginResponse, error) {
+
+	token, refreshToken, err := svc.authService.RefreshToken(tokenRequest.Token)
+
+	if err != nil {
+		return TokenLoginResponse{}, err
+	}
+
+	return TokenLoginResponse{
+		Token:   token,
+		Refresh: refreshToken,
+	}, nil
 }
 
 func (svc AuthenticationService) Register(userRequest models.UserRequest) (string, error) {
 
-	userFind, err := svc.authRepo.FindUser(userRequest.Username)
+	userRequest.Username = utils.NormalizeUsername(userRequest.Username)
+
+	userFind, err := svc.authRepo.FindUser(context.Background(), userRequest.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", err
 	}
@@ -151,7 +182,7 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 	user.UserDetail = userRequest.UserDetail
 	user.CreatedAt = svc.timeNow()
 
-	idx, err := svc.authRepo.CreateUser(user)
+	idx, err := svc.authRepo.CreateUser(context.Background(), user)
 
 	if err != nil {
 		return "", err
@@ -166,7 +197,7 @@ func (svc AuthenticationService) Update(username string, userRequest models.User
 		return errors.New("username invalid")
 	}
 
-	userFind, err := svc.authRepo.FindUser(username)
+	userFind, err := svc.authRepo.FindUser(context.Background(), username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
@@ -178,7 +209,7 @@ func (svc AuthenticationService) Update(username string, userRequest models.User
 	userFind.Name = userRequest.Name
 	userFind.UpdatedAt = svc.timeNow()
 
-	err = svc.authRepo.UpdateUser(username, *userFind)
+	err = svc.authRepo.UpdateUser(context.Background(), username, *userFind)
 
 	if err != nil {
 		return err
@@ -193,7 +224,7 @@ func (svc AuthenticationService) UpdatePassword(username string, currentPassword
 		return errors.New("username invalid")
 	}
 
-	userFind, err := svc.authRepo.FindUser(username)
+	userFind, err := svc.authRepo.FindUser(context.Background(), username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
@@ -217,7 +248,7 @@ func (svc AuthenticationService) UpdatePassword(username string, currentPassword
 	userFind.Password = hashPassword
 	userFind.UpdatedAt = svc.timeNow()
 
-	err = svc.authRepo.UpdateUser(username, *userFind)
+	err = svc.authRepo.UpdateUser(context.Background(), username, *userFind)
 
 	if err != nil {
 		return err
@@ -231,13 +262,15 @@ func (svc AuthenticationService) Logout(authorizationHeader string) error {
 }
 
 func (svc AuthenticationService) Profile(username string) (models.UserProfile, error) {
+	stime := time.Now()
 	userProfile := models.UserProfile{}
-	user, err := svc.authRepo.FindUser(username)
+	user, err := svc.authRepo.FindUser(context.Background(), username)
 	if err != nil {
 		return userProfile, err
 	}
 	userProfile.Username = user.Username
 	userProfile.Name = user.Name
+	fmt.Println("total time :: ", time.Since(stime))
 	return userProfile, nil
 }
 
@@ -261,7 +294,7 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 		return errors.New("token invalid")
 	}
 
-	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(shopID, username)
+	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(context.Background(), shopID, username)
 
 	if err != nil {
 		return err
@@ -278,18 +311,20 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 	}
 
 	lastAccessedAt := svc.timeNow()
-	err = svc.shopUserRepo.UpdateLastAccess(shopID, username, lastAccessedAt)
+	err = svc.shopUserRepo.UpdateLastAccess(context.Background(), shopID, username, lastAccessedAt)
 	if err != nil {
 		// implement log
 		fmt.Println("error :: ", err.Error())
 	}
 
-	err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
-		ShopID:         shopID,
-		Username:       username,
-		Ip:             authContext.Ip,
-		LastAccessedAt: lastAccessedAt,
-	})
+	err = svc.shopUserAccessLogRepo.Create(
+		context.Background(),
+		models.ShopUserAccessLog{
+			ShopID:         shopID,
+			Username:       username,
+			Ip:             authContext.Ip,
+			LastAccessedAt: lastAccessedAt,
+		})
 
 	if err != nil {
 		// implement log
@@ -309,7 +344,7 @@ func (svc AuthenticationService) UpdateFavoriteShop(shopID string, username stri
 		return errors.New("username invalid")
 	}
 
-	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(shopID, username)
+	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(context.Background(), shopID, username)
 
 	if err != nil {
 		return err
@@ -319,7 +354,7 @@ func (svc AuthenticationService) UpdateFavoriteShop(shopID string, username stri
 		return errors.New("shop invalid")
 	}
 
-	err = svc.shopUserRepo.SaveFavorite(shopID, username, isFavorite)
+	err = svc.shopUserRepo.SaveFavorite(context.Background(), shopID, username, isFavorite)
 	if err != nil {
 		return errors.New("favorite failed")
 	}
@@ -335,7 +370,7 @@ func (svc AuthenticationService) LoginWithFirebaseToken(token string) (string, e
 	}
 
 	// find
-	userFind, err := svc.authRepo.FindUser(userInfo.Email)
+	userFind, err := svc.authRepo.FindUser(context.Background(), userInfo.Email)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", err
 	}
@@ -349,11 +384,11 @@ func (svc AuthenticationService) LoginWithFirebaseToken(token string) (string, e
 		user.UserDetail.Name = userInfo.Name
 		user.CreatedAt = svc.timeNow()
 
-		_, err := svc.authRepo.CreateUser(user)
+		_, err := svc.authRepo.CreateUser(context.Background(), user)
 		if err != nil {
 			return "", err
 		}
-		userFind, err = svc.authRepo.FindUser(userInfo.Email)
+		userFind, err = svc.authRepo.FindUser(context.Background(), userInfo.Email)
 		if err != nil && err.Error() != "mongo: no documents in result" {
 			return "", err
 		}

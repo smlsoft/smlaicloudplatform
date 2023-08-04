@@ -1,9 +1,12 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/transaction/smltransaction/models"
 
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -14,8 +17,10 @@ type ISMLTransactionRepository interface {
 	CreateInBatch(collectionName string, docList []map[string]interface{}) error
 	DeleteByGuidfixed(collectionName string, shopID string, guid string, username string) error
 	Delete(collectionName string, shopID string, username string, filters map[string]interface{}) error
-	Transaction(fnc func() error) error
+	Transaction(fnc func(ctx context.Context) error) error
 	CreateIndex(collectionName string, keyID string) (string, error)
+
+	Filter(collectionName string, filters bson.M, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error)
 }
 
 type SMLTransactionRepository struct {
@@ -31,9 +36,31 @@ func NewSMLTransactionRepository(pst microservice.IPersisterMongo) *SMLTransacti
 	return insRepo
 }
 
+func (repo SMLTransactionRepository) Filter(collectionName string, filters bson.M, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error) {
+
+	docList := []map[string]interface{}{}
+	// err := repo.pst.Find(&models.DynamicCollection{Collection: collectionName}, filters, &docList)
+	pagination, err := repo.pst.FindSelectPage(
+		context.Background(),
+		&models.DynamicCollection{Collection: collectionName},
+		bson.M{
+			"shopid": 0,
+			"_id":    0,
+		}, filters,
+		pageable,
+		&docList,
+	)
+
+	if err != nil {
+		return docList, mongopagination.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}
+
 func (repo SMLTransactionRepository) Create(collectionName string, doc map[string]interface{}) (string, error) {
 
-	idx, err := repo.pst.Create(&models.DynamicCollection{Collection: collectionName}, doc)
+	idx, err := repo.pst.Create(context.Background(), &models.DynamicCollection{Collection: collectionName}, doc)
 
 	if err != nil {
 		return "", err
@@ -48,7 +75,7 @@ func (repo SMLTransactionRepository) Update(collectionName string, shopID string
 		"guidfixed": guid,
 	}
 
-	err := repo.pst.UpdateOne(&models.DynamicCollection{Collection: collectionName}, filterDoc, doc)
+	err := repo.pst.UpdateOne(context.Background(), &models.DynamicCollection{Collection: collectionName}, filterDoc, doc)
 
 	if err != nil {
 		return err
@@ -64,7 +91,7 @@ func (repo SMLTransactionRepository) CreateInBatch(collectionName string, docLis
 		tempList = append(tempList, inv)
 	}
 
-	err := repo.pst.CreateInBatch(&models.DynamicCollection{Collection: collectionName}, tempList)
+	err := repo.pst.CreateInBatch(context.Background(), &models.DynamicCollection{Collection: collectionName}, tempList)
 
 	if err != nil {
 		return err
@@ -81,7 +108,13 @@ func (repo SMLTransactionRepository) FindByDocIndentityKey(collectionName string
 
 	doc := map[string]interface{}{}
 
-	err := repo.pst.FindOne(&models.DynamicCollection{Collection: collectionName}, bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false}, indentityField: indentityValue}, &doc)
+	err := repo.pst.FindOne(
+		context.Background(),
+		&models.DynamicCollection{Collection: collectionName},
+		bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false},
+			indentityField: indentityValue},
+		&doc,
+	)
 
 	if err != nil {
 		return map[string]interface{}{}, err
@@ -91,7 +124,11 @@ func (repo SMLTransactionRepository) FindByDocIndentityKey(collectionName string
 }
 
 func (repo SMLTransactionRepository) DeleteByGuidfixed(collectionName string, shopID string, guid string, username string) error {
-	err := repo.pst.SoftDelete(&models.DynamicCollection{Collection: collectionName}, username, bson.M{"guidfixed": guid, "shopid": shopID})
+	err := repo.pst.SoftDelete(
+		context.Background(),
+		&models.DynamicCollection{Collection: collectionName},
+		username, bson.M{"guidfixed": guid, "shopid": shopID},
+	)
 
 	if err != nil {
 		return err
@@ -124,7 +161,11 @@ func (repo SMLTransactionRepository) Delete(collectionName string, shopID string
 
 	filterQuery["shopid"] = shopID
 
-	err := repo.pst.Delete(&models.DynamicCollection{Collection: collectionName}, filterQuery)
+	err := repo.pst.Delete(
+		context.Background(),
+		&models.DynamicCollection{Collection: collectionName},
+		filterQuery,
+	)
 
 	if err != nil {
 		return err
@@ -133,8 +174,8 @@ func (repo SMLTransactionRepository) Delete(collectionName string, shopID string
 	return nil
 }
 
-func (repo SMLTransactionRepository) Transaction(fnc func() error) error {
-	return repo.pst.Transaction(fnc)
+func (repo SMLTransactionRepository) Transaction(fnc func(ctx context.Context) error) error {
+	return repo.pst.Transaction(context.Background(), fnc)
 }
 
 func (repo SMLTransactionRepository) CreateIndex(collectionName string, keyID string) (string, error) {
@@ -143,5 +184,10 @@ func (repo SMLTransactionRepository) CreateIndex(collectionName string, keyID st
 		{Key: "shopid", Value: 1},
 		{Key: keyID, Value: 1},
 	}
-	return repo.pst.CreateIndex(&models.DynamicCollection{Collection: collectionName}, indexName, keys)
+	return repo.pst.CreateIndex(
+		context.Background(),
+		&models.DynamicCollection{Collection: collectionName},
+		indexName,
+		keys,
+	)
 }

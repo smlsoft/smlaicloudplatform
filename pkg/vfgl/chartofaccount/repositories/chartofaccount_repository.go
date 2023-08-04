@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -10,14 +11,14 @@ import (
 )
 
 type IChartOfAccountRepository interface {
-	Count(shopID string) (int, error)
+	Count(ctx context.Context, shopID string) (int, error)
 	Create(category models.ChartOfAccountDoc) (string, error)
-	CreateInBatch(docList []models.ChartOfAccountDoc) error
-	Update(shopID string, guid string, doc models.ChartOfAccountDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
+	CreateInBatch(ctx context.Context, docList []models.ChartOfAccountDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.ChartOfAccountDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
 	FindOne(shopID string, filters interface{}) (models.ChartOfAccountDoc, error)
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.ChartOfAccountDoc, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.ChartOfAccountDoc, error)
 }
 
 type ChartOfAccountRepository struct {

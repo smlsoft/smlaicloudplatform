@@ -6,12 +6,14 @@ import (
 	_ "net/http/pprof"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/vfgl/journal"
+	"time"
 )
 
 func main() {
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)
@@ -23,7 +25,7 @@ func main() {
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
-	authService := microservice.NewAuthService(cacher, 24*3)
+	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	publicPath := []string{
 		"/login",
@@ -45,10 +47,10 @@ func main() {
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 
 	authHttp := authentication.NewAuthenticationHttp(ms, cfg)
-	authHttp.RouteSetup()
+	authHttp.RegisterHttp()
 
 	journalWs := journal.NewJournalWs(ms, cfg)
-	journalWs.RouteSetup()
+	journalWs.RegisterHttp()
 
 	ms.Start()
 }

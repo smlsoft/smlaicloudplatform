@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -407,7 +408,7 @@ func (svc JournalWebsocketService) DocRefNextSelect(shopID string, username stri
 		Limit: 30,
 	}
 
-	tempNextDocImage, _, err := svc.docImageRepo.FindPageFilter(shopID, filters, []string{}, pageable)
+	tempNextDocImage, _, err := svc.docImageRepo.FindPageFilter(context.Background(), shopID, filters, []string{}, pageable)
 
 	if err != nil {
 		return documentimageModel.DocumentImageInfo{}, err

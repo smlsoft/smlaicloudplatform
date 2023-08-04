@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
 
@@ -12,15 +13,15 @@ import (
 
 type CategoryImportHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc ICategoryImportService
 }
 
 type ICategoryImportHttp interface {
-	RouteSetup()
+	RegisterHttp()
 }
 
-func NewCategoryImportHttp(ms *microservice.Microservice, cfg microservice.IConfig) ICategoryImportHttp {
+func NewCategoryImportHttp(ms *microservice.Microservice, cfg config.IConfig) ICategoryImportHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
@@ -34,7 +35,7 @@ func NewCategoryImportHttp(ms *microservice.Microservice, cfg microservice.IConf
 	}
 }
 
-func (h *CategoryImportHttp) RouteSetup() {
+func (h *CategoryImportHttp) RegisterHttp() {
 	h.ms.GET("/import/category", h.ListCategoryImport)
 	h.ms.POST("/import/category", h.CreateCategoryImport)
 	h.ms.DELETE("/import/category", h.DeleteCategoryImport)

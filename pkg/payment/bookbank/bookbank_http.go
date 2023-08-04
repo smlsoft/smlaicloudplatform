@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/payment/bookbank/models"
@@ -16,11 +17,11 @@ type IBookBankHttp interface{}
 
 type BookBankHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IBookBankHttpService
 }
 
-func NewBookBankHttp(ms *microservice.Microservice, cfg microservice.IConfig) BookBankHttp {
+func NewBookBankHttp(ms *microservice.Microservice, cfg config.IConfig) BookBankHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -36,7 +37,7 @@ func NewBookBankHttp(ms *microservice.Microservice, cfg microservice.IConfig) Bo
 	}
 }
 
-func (h BookBankHttp) RouteSetup() {
+func (h BookBankHttp) RegisterHttp() {
 
 	h.ms.POST("/payment/bookbank/bulk", h.SaveBulk)
 

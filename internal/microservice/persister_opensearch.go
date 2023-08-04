@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"smlcloudplatform/pkg/config"
 	"strings"
 	"sync"
 
@@ -26,12 +27,12 @@ type OpenSearchModel interface {
 }
 
 type PersisterOpenSearch struct {
-	config  IPersisterOpenSearchConfig
+	config  config.IPersisterOpenSearchConfig
 	db      *opensearch.Client
 	dbMutex sync.Mutex
 }
 
-func NewPersisterOpenSearch(config IPersisterOpenSearchConfig) *PersisterOpenSearch {
+func NewPersisterOpenSearch(config config.IPersisterOpenSearchConfig) *PersisterOpenSearch {
 	return &PersisterOpenSearch{
 		config: config,
 	}

@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -10,14 +11,14 @@ import (
 )
 
 type IJournalBookMongoRepository interface {
-	Count(shopID string) (int, error)
-	Create(category models.JournalBookDoc) (string, error)
-	CreateInBatch(docList []models.JournalBookDoc) error
-	Update(shopID string, guid string, category models.JournalBookDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters interface{}) (models.JournalBookDoc, error)
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.JournalBookDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.JournalBookDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.JournalBookDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.JournalBookDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.JournalBookDoc, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.JournalBookDoc, error)
 }
 
 type JournalBookMongoRepository struct {

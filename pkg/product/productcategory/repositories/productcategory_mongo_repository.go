@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/productcategory/models"
@@ -11,24 +12,24 @@ import (
 )
 
 type IProductCategoryRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.ProductCategoryDoc) (string, error)
-	CreateInBatch(docList []models.ProductCategoryDoc) error
-	Update(shopID string, guid string, doc models.ProductCategoryDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.ProductCategoryDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.ProductCategoryDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.ProductCategoryDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.ProductCategoryDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.ProductCategoryDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductCategoryItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductCategoryDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.ProductCategoryItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.ProductCategoryDoc, error)
 
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryActivity, error)
 }
 
 type ProductCategoryRepository struct {

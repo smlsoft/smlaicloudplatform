@@ -20,6 +20,7 @@ type ProductCategory struct {
 	UseImageOrColor          bool            `json:"useimageorcolor" bson:"useimageorcolor"`
 	ColorSelect              string          `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex           string          `json:"colorselecthex" bson:"colorselecthex"`
+	IsDisabled               bool            `json:"isdisabled" bson:"isdisabled"`
 }
 
 type CodeXSort struct {

@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -12,16 +13,16 @@ import (
 )
 
 type ISmsTransactionRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.SmsTransactionDoc) (string, error)
-	CreateInBatch(docList []models.SmsTransactionDoc) error
-	Update(shopID string, guid string, doc models.SmsTransactionDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.SmsTransactionDoc, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.SmsTransactionDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.SmsTransactionDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.SmsTransactionDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.SmsTransactionDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.SmsTransactionDoc, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.SmsTransactionDoc, error)
 
-	FindFilterSms(shopID string, storefrontGUID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error)
+	FindFilterSms(ctx context.Context, shopID string, storefrontGUID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error)
 }
 
 type SmsTransactionRepository struct {
@@ -29,12 +30,16 @@ type SmsTransactionRepository struct {
 	repositories.CrudRepository[models.SmsTransactionDoc]
 	repositories.SearchRepository[models.SmsTransactionInfo]
 	repositories.GuidRepository[models.SmsTransactionItemGuid]
+	contextTimeout time.Duration
 }
 
 func NewSmsTransactionRepository(pst microservice.IPersisterMongo) SmsTransactionRepository {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insRepo := SmsTransactionRepository{
-		pst: pst,
+		pst:            pst,
+		contextTimeout: contextTimeout,
 	}
 
 	insRepo.CrudRepository = repositories.NewCrudRepository[models.SmsTransactionDoc](pst)
@@ -44,7 +49,7 @@ func NewSmsTransactionRepository(pst microservice.IPersisterMongo) SmsTransactio
 	return insRepo
 }
 
-func (repo SmsTransactionRepository) FindFilterSms(shopID string, storefrontGUID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error) {
+func (repo SmsTransactionRepository) FindFilterSms(ctx context.Context, shopID string, storefrontGUID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error) {
 
 	filters := bson.M{
 		"shopid":         shopID,
@@ -59,7 +64,7 @@ func (repo SmsTransactionRepository) FindFilterSms(shopID string, storefrontGUID
 	}
 
 	docList := []models.SmsTransactionInfo{}
-	err := repo.pst.Find(models.SmsTransactionInfo{}, filters, &docList)
+	err := repo.pst.Find(ctx, models.SmsTransactionInfo{}, filters, &docList)
 
 	if err != nil {
 		return []models.SmsTransactionInfo{}, nil

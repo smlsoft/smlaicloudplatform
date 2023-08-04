@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"regexp"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -23,17 +24,28 @@ type ISmsPatternsHttpService interface {
 }
 
 type SmsPatternsHttpService struct {
-	repo repositories.ISmsPatternsRepository
+	repo           repositories.ISmsPatternsRepository
+	contextTimeout time.Duration
 }
 
 func NewSmsPatternsHttpService(repo repositories.ISmsPatternsRepository) *SmsPatternsHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	return &SmsPatternsHttpService{
-		repo: repo,
+		repo:           repo,
+		contextTimeout: contextTimeout,
 	}
 }
 
+func (svc SmsPatternsHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc SmsPatternsHttpService) CreateSmsPatterns(authUsername string, doc models.SmsPatterns) (string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	newGuidFixed := utils.NewGUID()
 
@@ -44,7 +56,7 @@ func (svc SmsPatternsHttpService) CreateSmsPatterns(authUsername string, doc mod
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err := svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -55,7 +67,10 @@ func (svc SmsPatternsHttpService) CreateSmsPatterns(authUsername string, doc mod
 
 func (svc SmsPatternsHttpService) UpdateSmsPatterns(guid string, authUsername string, doc models.SmsPatterns) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, guid)
 
 	if err != nil {
 		return err
@@ -73,7 +88,7 @@ func (svc SmsPatternsHttpService) UpdateSmsPatterns(guid string, authUsername st
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.UpdateByGuid(guid, findDoc)
+	err = svc.repo.UpdateByGuid(ctx, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -84,7 +99,10 @@ func (svc SmsPatternsHttpService) UpdateSmsPatterns(guid string, authUsername st
 
 func (svc SmsPatternsHttpService) DeleteSmsPatterns(guid string) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, guid)
 
 	if err != nil {
 		return err
@@ -94,7 +112,7 @@ func (svc SmsPatternsHttpService) DeleteSmsPatterns(guid string) error {
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuid(guid)
+	err = svc.repo.DeleteByGuid(ctx, guid)
 	if err != nil {
 		return err
 	}
@@ -104,7 +122,10 @@ func (svc SmsPatternsHttpService) DeleteSmsPatterns(guid string) error {
 
 func (svc SmsPatternsHttpService) InfoSmsPatterns(guid string) (models.SmsPatternsInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, guid)
 
 	if err != nil {
 		return models.SmsPatternsInfo{}, err
@@ -119,12 +140,16 @@ func (svc SmsPatternsHttpService) InfoSmsPatterns(guid string) (models.SmsPatter
 }
 
 func (svc SmsPatternsHttpService) SearchSmsPatterns(pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"name",
 		"address",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, searchInFields, pageable)
 
 	if err != nil {
 		return []models.SmsPatternsInfo{}, pagination, err

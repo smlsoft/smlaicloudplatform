@@ -1,5 +1,11 @@
 package models
 
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+)
+
 type Name struct {
 	Name1 string  `json:"name1" bson:"name1" validate:"required,max=255"`
 	Name2 *string `json:"name2,omitempty" bson:"name2" validate:"omitempty,max=255"`
@@ -33,4 +39,19 @@ type NameX struct {
 
 func NewNameXWithCodeName(code, name string) *NameX {
 	return &NameX{Code: &code, Name: &name, IsAuto: false, IsDelete: false}
+}
+
+// Value Marshal
+func (a NameX) Value() (driver.Value, error) {
+
+	return json.Marshal(a)
+}
+
+// Scan Unmarshal
+func (a *NameX) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(b, &a)
 }

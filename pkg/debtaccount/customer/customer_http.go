@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/customer/models"
 	"smlcloudplatform/pkg/debtaccount/customer/repositories"
 	"smlcloudplatform/pkg/debtaccount/customer/services"
@@ -17,11 +18,11 @@ type ICustomerHttp interface{}
 
 type CustomerHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ICustomerHttpService
 }
 
-func NewCustomerHttp(ms *microservice.Microservice, cfg microservice.IConfig) CustomerHttp {
+func NewCustomerHttp(ms *microservice.Microservice, cfg config.IConfig) CustomerHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -38,7 +39,7 @@ func NewCustomerHttp(ms *microservice.Microservice, cfg microservice.IConfig) Cu
 	}
 }
 
-func (h CustomerHttp) RouteSetup() {
+func (h CustomerHttp) RegisterHttp() {
 
 	h.ms.POST("/debtaccount/customer/bulk", h.SaveBulk)
 

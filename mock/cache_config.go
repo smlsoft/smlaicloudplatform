@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 
 	"github.com/joho/godotenv"
 )
@@ -35,7 +35,7 @@ func (cfg *CacherConfig) DB() int {
 	return 0
 }
 
-func (cfg *CacherConfig) ConnectionSettings() microservice.ICacherConnectionSettings {
+func (cfg *CacherConfig) ConnectionSettings() config.ICacherConnectionSettings {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
 	rootPath := re.Find([]byte(cwd))
@@ -45,5 +45,5 @@ func (cfg *CacherConfig) ConnectionSettings() microservice.ICacherConnectionSett
 	if err != nil {
 		fmt.Println("Load Env Failed ")
 	}
-	return microservice.NewDefaultCacherConnectionSettings()
+	return config.NewDefaultCacherConnectionSettings()
 }

@@ -39,7 +39,7 @@ func (StockTransferDoc) CollectionName() string {
 }
 
 type StockTransferItemGuid struct {
-	Docno string `json:"docno" bson:"docno"`
+	DocNo string `json:"docno" bson:"docno"`
 }
 
 func (StockTransferItemGuid) CollectionName() string {

@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/product/inventory/models"
 	"smlcloudplatform/pkg/product/inventory/repositories"
 	"smlcloudplatform/pkg/product/inventory/services"
 )
 
-func StartInventoryAsync(ms *microservice.Microservice, cfg microservice.IConfig) {
+func StartInventoryAsync(ms *microservice.Microservice, cfg config.IConfig) {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())

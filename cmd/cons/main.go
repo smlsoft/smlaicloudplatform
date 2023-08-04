@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 
 	"github.com/joho/godotenv"
 )
@@ -13,7 +14,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, _ := microservice.NewMicroservice(cfg)
 
 	// saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg, "")

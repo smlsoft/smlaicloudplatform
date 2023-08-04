@@ -25,6 +25,7 @@ type Debtor struct {
 	BranchNumber       string     `json:"branchnumber" bson:"branchnumber"`
 	FundCode           string     `json:"fundcode" bson:"fundcode"`
 	CreditDay          int        `json:"creditday" bson:"creditday"`
+	IsMember           bool       `json:"ismember" bson:"ismember"`
 	GroupGUIDs         *[]string  `json:"-" bson:"groups"`
 }
 

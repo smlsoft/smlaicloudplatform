@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/creditor/models"
 	"smlcloudplatform/pkg/debtaccount/creditor/repositories"
 	"smlcloudplatform/pkg/debtaccount/creditor/services"
@@ -11,17 +12,18 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type ICreditorHttp interface{}
 
 type CreditorHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ICreditorHttpService
 }
 
-func NewCreditorHttp(ms *microservice.Microservice, cfg microservice.IConfig) CreditorHttp {
+func NewCreditorHttp(ms *microservice.Microservice, cfg config.IConfig) CreditorHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -38,7 +40,7 @@ func NewCreditorHttp(ms *microservice.Microservice, cfg microservice.IConfig) Cr
 	}
 }
 
-func (h CreditorHttp) RouteSetup() {
+func (h CreditorHttp) RegisterHttp() {
 
 	h.ms.POST("/debtaccount/creditor/bulk", h.SaveBulk)
 
@@ -272,6 +274,7 @@ func (h CreditorHttp) InfoCreditorByCode(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Creditor
 // @Param		q		query	string		false  "Search Value"
+// @Param		groups		query	string		false  "groups guidfixed"
 // @Param		page	query	integer		false  "page"
 // @Param		limit	query	integer		false  "limit"
 // @Accept 		json
@@ -285,7 +288,15 @@ func (h CreditorHttp) SearchCreditorPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchCreditor(shopID, map[string]interface{}{}, pageable)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "groups",
+			Field: "groups",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchCreditor(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -304,6 +315,7 @@ func (h CreditorHttp) SearchCreditorPage(ctx microservice.IContext) error {
 // @Description search limit offset
 // @Tags		Creditor
 // @Param		q		query	string		false  "Search Value"
+// @Param		groups		query	string		false  "groups guidfixed"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -320,7 +332,15 @@ func (h CreditorHttp) SearchCreditorStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchCreditorStep(shopID, lang, pageableStep)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "groups",
+			Field: "groups",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	docList, total, err := h.svc.SearchCreditorStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

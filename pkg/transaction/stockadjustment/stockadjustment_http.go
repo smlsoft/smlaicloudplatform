@@ -4,30 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockadjustment/models"
 	"smlcloudplatform/pkg/transaction/stockadjustment/repositories"
 	"smlcloudplatform/pkg/transaction/stockadjustment/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IStockAdjustmentHttp interface{}
 
 type StockAdjustmentHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IStockAdjustmentHttpService
 }
 
-func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockAdjustmentHttp {
+func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg config.IConfig) StockAdjustmentHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockAdjustmentRepository(pst)
+	repoMq := repositories.NewStockAdjustmentMessageQueueRepository(producer)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockAdjustmentHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockAdjustmentHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockAdjustmentHttp{
 		ms:  ms,
@@ -36,7 +42,7 @@ func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg microservice.ICon
 	}
 }
 
-func (h StockAdjustmentHttp) RouteSetup() {
+func (h StockAdjustmentHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/stock-adjustment/bulk", h.SaveBulk)
 
@@ -77,7 +83,7 @@ func (h StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) er
 		return err
 	}
 
-	idx, err := h.svc.CreateStockAdjustment(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockAdjustment(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +93,7 @@ func (h StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) er
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -286,15 +293,15 @@ func (h StockAdjustmentHttp) SearchStockAdjustmentPage(ctx microservice.IContext
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -335,15 +342,15 @@ func (h StockAdjustmentHttp) SearchStockAdjustmentStep(ctx microservice.IContext
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

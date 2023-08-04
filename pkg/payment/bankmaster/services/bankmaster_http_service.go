@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -36,13 +37,16 @@ type BankMasterHttpService struct {
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.BankMasterActivity, models.BankMasterDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewBankMasterHttpService(repo repositories.IBankMasterRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *BankMasterHttpService {
+	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &BankMasterHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.BankMasterActivity, models.BankMasterDeleteActivity](repo)
@@ -50,9 +54,16 @@ func NewBankMasterHttpService(repo repositories.IBankMasterRepository, syncCache
 	return insSvc
 }
 
+func (svc BankMasterHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc BankMasterHttpService) CreateBankMaster(shopID string, authUsername string, doc models.BankMaster) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
@@ -72,7 +83,7 @@ func (svc BankMasterHttpService) CreateBankMaster(shopID string, authUsername st
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -85,7 +96,10 @@ func (svc BankMasterHttpService) CreateBankMaster(shopID string, authUsername st
 
 func (svc BankMasterHttpService) UpdateBankMaster(shopID string, guid string, authUsername string, doc models.BankMaster) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -100,7 +114,7 @@ func (svc BankMasterHttpService) UpdateBankMaster(shopID string, guid string, au
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -113,7 +127,10 @@ func (svc BankMasterHttpService) UpdateBankMaster(shopID string, guid string, au
 
 func (svc BankMasterHttpService) DeleteBankMaster(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -123,7 +140,7 @@ func (svc BankMasterHttpService) DeleteBankMaster(shopID string, guid string, au
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -135,11 +152,14 @@ func (svc BankMasterHttpService) DeleteBankMaster(shopID string, guid string, au
 
 func (svc BankMasterHttpService) DeleteBankMasterByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -149,7 +169,10 @@ func (svc BankMasterHttpService) DeleteBankMasterByGUIDs(shopID string, authUser
 
 func (svc BankMasterHttpService) InfoBankMaster(shopID string, guid string) (models.BankMasterInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.BankMasterInfo{}, err
@@ -164,12 +187,16 @@ func (svc BankMasterHttpService) InfoBankMaster(shopID string, guid string) (mod
 }
 
 func (svc BankMasterHttpService) SearchBankMaster(shopID string, pageable micromodels.Pageable) ([]models.BankMasterInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.BankMasterInfo{}, pagination, err
@@ -179,6 +206,10 @@ func (svc BankMasterHttpService) SearchBankMaster(shopID string, pageable microm
 }
 
 func (svc BankMasterHttpService) SearchBankMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BankMasterInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -196,7 +227,7 @@ func (svc BankMasterHttpService) SearchBankMasterStep(shopID string, langCode st
 		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.BankMasterInfo{}, 0, err
@@ -207,6 +238,9 @@ func (svc BankMasterHttpService) SearchBankMasterStep(shopID string, langCode st
 
 func (svc BankMasterHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.BankMaster) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.BankMaster](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -214,7 +248,7 @@ func (svc BankMasterHttpService) SaveInBatch(shopID string, authUsername string,
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -253,7 +287,7 @@ func (svc BankMasterHttpService) SaveInBatch(shopID string, authUsername string,
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.BankMasterDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", guid)
 		},
 		func(doc models.BankMasterDoc) bool {
 			return doc.Code != ""
@@ -264,7 +298,7 @@ func (svc BankMasterHttpService) SaveInBatch(shopID string, authUsername string,
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -273,7 +307,7 @@ func (svc BankMasterHttpService) SaveInBatch(shopID string, authUsername string,
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

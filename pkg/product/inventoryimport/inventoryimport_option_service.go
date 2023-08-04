@@ -1,6 +1,7 @@
 package inventoryimport
 
 import (
+	"context"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
@@ -16,16 +17,28 @@ type IInventoryOptionMainImportService interface {
 }
 
 type InventoryOptionMainImportService struct {
-	repo IInventoryOptionMainImportRepository
+	repo           IInventoryOptionMainImportRepository
+	contextTimeout time.Duration
 }
 
 func NewInventoryOptionMainImportService(invImportOptionMainRepository IInventoryOptionMainImportRepository) InventoryOptionMainImportService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	return InventoryOptionMainImportService{
-		repo: invImportOptionMainRepository,
+		repo:           invImportOptionMainRepository,
+		contextTimeout: contextTimeout,
 	}
 }
 
+func (svc InventoryOptionMainImportService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc InventoryOptionMainImportService) CreateInBatch(shopID string, authUsername string, options []models.InventoryOptionMainImport) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	codeList := []string{}
 	tempInvDataList := []models.InventoryOptionMainImportDoc{}
@@ -48,9 +61,9 @@ func (svc InventoryOptionMainImportService) CreateInBatch(shopID string, authUse
 		tempInvDataList = append(tempInvDataList, invDoc)
 	}
 	//Clear old items
-	svc.repo.DeleteInBatchCode(shopID, codeList)
+	svc.repo.DeleteInBatchCode(ctx, shopID, codeList)
 
-	err := svc.repo.CreateInBatch(tempInvDataList)
+	err := svc.repo.CreateInBatch(ctx, tempInvDataList)
 
 	if err != nil {
 		return err
@@ -62,7 +75,10 @@ func (svc InventoryOptionMainImportService) CreateInBatch(shopID string, authUse
 
 func (svc InventoryOptionMainImportService) Delete(shopID string, guidList []string) error {
 
-	err := svc.repo.DeleteInBatch(shopID, guidList)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.DeleteInBatch(ctx, shopID, guidList)
 
 	if err != nil {
 		return err
@@ -72,7 +88,11 @@ func (svc InventoryOptionMainImportService) Delete(shopID string, guidList []str
 }
 
 func (svc InventoryOptionMainImportService) ListInventory(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainImportInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, pageable)
 
 	if err != nil {
 		return []models.InventoryOptionMainImportInfo{}, pagination, err

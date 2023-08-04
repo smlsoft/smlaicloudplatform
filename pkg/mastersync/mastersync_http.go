@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -12,8 +13,8 @@ import (
 
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
-	"smlcloudplatform/pkg/restaurant/shoptable"
-	"smlcloudplatform/pkg/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/table"
+	"smlcloudplatform/pkg/restaurant/zone"
 
 	"smlcloudplatform/pkg/mastersync/services"
 
@@ -47,19 +48,22 @@ import (
 	restaurantStaffRepo "smlcloudplatform/pkg/restaurant/staff/repositories"
 	restaurantStaffService "smlcloudplatform/pkg/restaurant/staff/services"
 
+	ordertype_repo "smlcloudplatform/pkg/product/ordertype/repositories"
+	ordertype_service "smlcloudplatform/pkg/product/ordertype/services"
+
 	"smlcloudplatform/pkg/mastersync/repositories"
 )
 
 type MasterSyncHttp struct {
 	ms                    *microservice.Microservice
-	cfg                   microservice.IConfig
+	cfg                   config.IConfig
 	activityModuleManager *ActivityModuleManager
 
 	svcMasterSync services.IMasterSyncService
 	// svcProductBarcode productbarcodeService.ProductBarcodeHttpService
 }
 
-func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
+func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) MasterSyncHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
 	// prod := ms.Producer(cfg.MQConfig())
@@ -86,11 +90,12 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	activityModuleManager.Add(svcProductCategory)
 
 	// Product Barcode
-	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(productbarcodeRepo.NewProductBarcodeRepository(pst), nil, nil, masterSyncCacheRepo)
+	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst, cache)
+	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(repoProductBarcode, nil, nil, masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit
-	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), masterSyncCacheRepo)
+	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), repoProductBarcode, nil, masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductUnit)
 
 	// Kitchen
@@ -104,13 +109,13 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	activityModuleManager.Add(svcShopPrinter)
 
 	// Shop Table
-	repoShopTable := shoptable.NewShopTableRepository(pst)
-	svcShopTable := shoptable.NewShopTableService(repoShopTable, masterSyncCacheRepo)
+	repoShopTable := table.NewTableRepository(pst)
+	svcShopTable := table.NewTableService(repoShopTable, masterSyncCacheRepo)
 	activityModuleManager.Add(svcShopTable)
 
 	// Shop Zone
-	repoShopZone := shopzone.NewShopZoneRepository(pst)
-	svcShopZone := shopzone.NewShopZoneService(repoShopZone, masterSyncCacheRepo)
+	repoShopZone := zone.NewZoneRepository(pst)
+	svcShopZone := zone.NewZoneService(repoShopZone, masterSyncCacheRepo)
 	activityModuleManager.Add(svcShopZone)
 
 	// device
@@ -149,6 +154,11 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	svcQrPayment := qrpaymentService.NewQrPaymentHttpService(qrpaymentRepo, masterSyncCacheRepo)
 	activityModuleManager.Add(svcQrPayment)
 
+	// Order type
+	repoOrdertype := ordertype_repo.NewOrderTypeRepository(pst)
+	svcOrdertype := ordertype_service.NewOrderTypeHttpService(repoOrdertype, nil, repoProductBarcode, masterSyncCacheRepo)
+	activityModuleManager.Add(svcOrdertype)
+
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
 
@@ -162,7 +172,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	}
 }
 
-func (h MasterSyncHttp) RouteSetup() {
+func (h MasterSyncHttp) RegisterHttp() {
 	h.ms.GET("/master-sync", h.LastActivitySync)
 	h.ms.GET("/master-sync/status", h.SyncStatus)
 	h.ms.GET("/master-sync/list", h.LastActivitySyncOffset)

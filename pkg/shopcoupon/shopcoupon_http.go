@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shopcoupon/models"
 	"smlcloudplatform/pkg/shopcoupon/repositories"
@@ -17,11 +18,11 @@ type IShopCouponHttp interface{}
 
 type ShopCouponHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IShopCouponHttpService
 }
 
-func NewShopCouponHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopCouponHttp {
+func NewShopCouponHttp(ms *microservice.Microservice, cfg config.IConfig) ShopCouponHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewShopCouponRepository(pst)
@@ -35,7 +36,7 @@ func NewShopCouponHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	}
 }
 
-func (h ShopCouponHttp) RouteSetup() {
+func (h ShopCouponHttp) RegisterHttp() {
 
 	h.ms.GET("/shopcoupon", h.SearchShopCoupon)
 	h.ms.POST("/shopcoupon", h.CreateShopCoupon)

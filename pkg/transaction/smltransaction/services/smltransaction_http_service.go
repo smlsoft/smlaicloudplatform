@@ -1,13 +1,21 @@
 package services
 
 import (
+	"bytes"
+	"context"
+	"encoding/json"
 	"fmt"
+	"smlcloudplatform/pkg/reportquery"
 	"smlcloudplatform/pkg/transaction/smltransaction/models"
 	"smlcloudplatform/pkg/transaction/smltransaction/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strings"
+	"text/template"
 	"time"
 
+	micromodels "smlcloudplatform/internal/microservice/models"
+
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -15,6 +23,9 @@ type ISMLTransactionHttpService interface {
 	CreateSMLTransaction(shopID string, authUsername string, smlRequest models.SMLTransactionRequest) (string, error)
 	SaveInBatch(shopID string, authUsername string, dataReq models.SMLTransactionBulkRequest) ([]string, error)
 	DeleteSMLTransaction(shopID string, authUsername string, smlKeyRequest models.SMLTransactionKeyRequest) ([]string, error)
+	QueryFilter(filters bson.M, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error)
+
+	QueryFilter2(paramQuery map[string]interface{}, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error)
 }
 
 type SMLTransactionHttpService struct {
@@ -197,7 +208,7 @@ func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername str
 		return []string{}, fmt.Errorf("body request is empty")
 	}
 
-	err := svc.repo.Transaction(func() error {
+	err := svc.repo.Transaction(func(ctx context.Context) error {
 
 		filters := map[string]interface{}{
 			dataReq.KeyID: bson.M{"$in": identityKeys},
@@ -248,7 +259,7 @@ func (svc SMLTransactionHttpService) SaveInBatchOld(shopID string, authUsername 
 
 	guids := []string{}
 	tempSaveSuccess := []map[string]interface{}{}
-	err := svc.repo.Transaction(func() error {
+	err := svc.repo.Transaction(func(ctx context.Context) error {
 		for _, smlRequest := range dataReq.Body {
 			guidFixed, err := svc.CreateSMLTransaction(shopID, authUsername, models.SMLTransactionRequest{
 				Collection: dataReq.Collection,
@@ -303,6 +314,75 @@ func (svc SMLTransactionHttpService) DeleteSMLTransaction(shopID string, authUse
 	}
 
 	return smlKeyRequest.DeleteKeys, nil
+}
+
+func (svc SMLTransactionHttpService) QueryFilter(filters bson.M, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error) {
+	// collectionName := svc.getCollectionName("products")
+	collectionName := "products"
+
+	paramx := map[string]interface{}{
+		"@shop": "2Eh6e3pfWvXTp0yV3CyFEhKPjdI",
+	}
+	filterx, err := reportquery.ReplacePlaceholdersInMap(filters, &paramx)
+
+	if err != nil {
+		return []map[string]interface{}{}, mongopagination.PaginationData{}, err
+	}
+
+	docList, pagination, err := svc.repo.Filter(collectionName, filterx, pageable)
+
+	if err != nil {
+		return docList, pagination, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (svc SMLTransactionHttpService) QueryFilter2(paramQuery map[string]interface{}, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error) {
+	collectionName := "products"
+
+	tempQuery := map[string]interface{}{}
+	for key, value := range paramQuery {
+		escaped, err := json.Marshal(value)
+		if err != nil {
+			panic(err)
+		}
+		tempQuery[key] = string(escaped)
+	}
+
+	rawQuery := `{
+		"itemcode": "{{.itemcode}}"
+	}`
+
+	tmpl, err := template.New("myTemplate").Parse(rawQuery)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, tempQuery)
+	if err != nil {
+		panic(err)
+	}
+
+	replacedText := buf.String()
+
+	var filters bson.M
+	// Convert the JSON object to a bson.M object
+	err = bson.UnmarshalExtJSON([]byte(replacedText), true, &filters)
+
+	if err != nil {
+		panic(err)
+	}
+
+	docList, pagination, err := svc.repo.Filter(collectionName, filters, pageable)
+
+	if err != nil {
+		return docList, pagination, err
+	}
+
+	return docList, pagination, nil
 }
 
 func (svc SMLTransactionHttpService) getCollectionName(collectionName string) string {

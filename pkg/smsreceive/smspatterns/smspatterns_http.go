@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/models"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
@@ -15,11 +16,11 @@ type ISmsPatternsHttp interface{}
 
 type SmsPatternsHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISmsPatternsHttpService
 }
 
-func NewSmsPatternsHttp(ms *microservice.Microservice, cfg microservice.IConfig) SmsPatternsHttp {
+func NewSmsPatternsHttp(ms *microservice.Microservice, cfg config.IConfig) SmsPatternsHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewSmsPatternsRepository(pst)
@@ -33,7 +34,7 @@ func NewSmsPatternsHttp(ms *microservice.Microservice, cfg microservice.IConfig)
 	}
 }
 
-func (h SmsPatternsHttp) RouteSetup() {
+func (h SmsPatternsHttp) RegisterHttp() {
 
 	h.ms.GET("/smspatterns", h.SearchSmsPatterns)
 	h.ms.POST("/smspatterns", h.CreateSmsPatterns)

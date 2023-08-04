@@ -4,30 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/models"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/repositories"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IStockPickupProductHttp interface{}
 
 type StockPickupProductHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IStockPickupProductHttpService
 }
 
-func NewStockPickupProductHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockPickupProductHttp {
+func NewStockPickupProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockPickupProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockPickupProductRepository(pst)
+	repoMq := repositories.NewStockPickupProductMessageQueueRepository(producer)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockPickupProductHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockPickupProductHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockPickupProductHttp{
 		ms:  ms,
@@ -36,7 +42,7 @@ func NewStockPickupProductHttp(ms *microservice.Microservice, cfg microservice.I
 	}
 }
 
-func (h StockPickupProductHttp) RouteSetup() {
+func (h StockPickupProductHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/stock-prickup-product/bulk", h.SaveBulk)
 
@@ -77,7 +83,7 @@ func (h StockPickupProductHttp) CreateStockPickupProduct(ctx microservice.IConte
 		return err
 	}
 
-	idx, err := h.svc.CreateStockPickupProduct(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockPickupProduct(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +93,7 @@ func (h StockPickupProductHttp) CreateStockPickupProduct(ctx microservice.IConte
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -286,15 +293,15 @@ func (h StockPickupProductHttp) SearchStockPickupProductPage(ctx microservice.IC
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -335,15 +342,15 @@ func (h StockPickupProductHttp) SearchStockPickupProductStep(ctx microservice.IC
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

@@ -5,29 +5,32 @@ import (
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productbarcode/models"
 	"smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/productbarcode/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
+	"strings"
 )
 
 type IProductBarcodeHttp interface{}
 
 type ProductBarcodeHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IProductBarcodeHttpService
 }
 
-func NewProductBarcodeHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductBarcodeHttp {
+func NewProductBarcodeHttp(ms *microservice.Microservice, cfg config.IConfig) ProductBarcodeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
-	repo := repositories.NewProductBarcodeRepository(pst)
+	repo := repositories.NewProductBarcodeRepository(pst, cache)
 	clickHouseRepo := repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repositories.NewProductBarcodeMessageQueueRepository(prod)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
@@ -40,7 +43,7 @@ func NewProductBarcodeHttp(ms *microservice.Microservice, cfg microservice.IConf
 	}
 }
 
-func (h ProductBarcodeHttp) RouteSetup() {
+func (h ProductBarcodeHttp) RegisterHttp() {
 
 	h.ms.POST("/product/barcode/bulk", h.SaveBulk)
 
@@ -49,6 +52,7 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.GET("/product/barcode/list", h.SearchProductBarcodeLimit)
 	h.ms.POST("/product/barcode", h.CreateProductBarcode)
 	h.ms.GET("/product/barcode/:id", h.InfoProductBarcode)
+	h.ms.GET("/product/barcode/ref/:barcode", h.GetroductBarcodeByRef)
 	h.ms.GET("/product/barcode/pk/:barcode", h.InfoProductBarcodeByBarcode)
 	h.ms.GET("/product/barcode/by-code", h.InfoArray)
 	h.ms.GET("/product/barcode/master", h.InfoArrayMaster)
@@ -56,6 +60,9 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.PUT("/product/barcode/:id", h.UpdateProductBarcode)
 	h.ms.DELETE("/product/barcode/:id", h.DeleteProductBarcode)
 	h.ms.DELETE("/product/barcode", h.DeleteProductBarcodeByGUIDs)
+
+	h.ms.GET("/product/barcode/units", h.GetroductBarcodeByAllUnits)
+	h.ms.GET("/product/barcode/groups", h.GetroductBarcodeByGroups)
 }
 
 // Create ProductBarcode godoc
@@ -258,6 +265,35 @@ func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error 
 	return nil
 }
 
+// Get ProductBarcode By Reference Barcode godoc
+// @Description get by reference barcode
+// @Tags		ProductBarcode
+// @Param		barcode  path      string  true  "Reference Barcode"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/ref/{barcode} [get]
+func (h ProductBarcodeHttp) GetroductBarcodeByRef(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	refBarcode := ctx.Param("barcode")
+
+	docs, err := h.svc.GetProductBarcodeByBarcodeRef(shopID, refBarcode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docs,
+	})
+	return nil
+}
+
 // Get ProductBarcode By Barcode godoc
 // @Description get data by barcode
 // @Tags		ProductBarcode
@@ -373,6 +409,9 @@ func (h ProductBarcodeHttp) InfoArrayMaster(ctx microservice.IContext) error {
 // List ProductBarcode godoc
 // @Description get struct array by ID
 // @Tags		ProductBarcode
+// @Param		isalacarte		query	string		false  "is A La Carte"
+// @Param		ordertypes		query	string		false  "order types ex. a01,a02"
+// @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -386,7 +425,26 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchProductBarcode(shopID, pageable)
+
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "isalacarte",
+			Field: "isalacarte",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+		{
+			Param: "ordertypes",
+			Field: "ordertypes.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "itemtype",
+			Field: "itemtype",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchProductBarcode(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -435,6 +493,9 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // List ProductBarcode godoc
 // @Description search limit offset
 // @Tags		ProductBarcode
+// @Param		isalacarte		query	string		false  "is A La Carte"
+// @Param		ordertypes		query	string		false  "order types ex. a01,a02"
+// @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -452,7 +513,25 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchProductBarcodeStep(shopID, lang, pageableStep)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "isalacarte",
+			Field: "isalacarte",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+		{
+			Param: "ordertypes",
+			Field: "ordertypes.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "itemtype",
+			Field: "itemtype",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+
+	docList, total, err := h.svc.SearchProductBarcodeStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -545,5 +624,87 @@ func (h ProductBarcodeHttp) DeleteProductBarcodeByGUIDs(ctx microservice.IContex
 		Success: true,
 	})
 
+	return nil
+}
+
+// Get ProductBarcode By Reference Barcode godoc
+// @Description get by reference barcode
+// @Tags		ProductBarcode
+// @Accept 		json
+// @Param		codes	query	string		false  "array of units"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/units [get]
+func (h ProductBarcodeHttp) GetroductBarcodeByAllUnits(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	// inputBody := ctx.ReadInput()
+
+	// unitCodes := []string{}
+	// err := json.Unmarshal([]byte(inputBody), &unitCodes)
+
+	// if err != nil {
+	// 	ctx.ResponseError(400, err.Error())
+	// 	return err
+	// }
+
+	reqUnitCodes := ctx.QueryParam("codes")
+	unitCodes := []string{}
+
+	tempUnitCodes := strings.Split(reqUnitCodes, ",")
+	unitCodes = append(unitCodes, tempUnitCodes...)
+
+	docs, pagination, err := h.svc.GetProductBarcodeByUnits(shopID, unitCodes, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       docs,
+	})
+	return nil
+}
+
+// Get ProductBarcode By Groups
+// @Description get by group codes
+// @Tags		ProductBarcode
+// @Accept 		json
+// @Param		codes	query	string		false  "array of group"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/groups [get]
+func (h ProductBarcodeHttp) GetroductBarcodeByGroups(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	reqUnitCodes := ctx.QueryParam("codes")
+	groupCodes := []string{}
+
+	tempUnitCodes := strings.Split(reqUnitCodes, ",")
+	groupCodes = append(groupCodes, tempUnitCodes...)
+
+	docs, pagination, err := h.svc.GetProductBarcodeByGroups(shopID, groupCodes, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       docs,
+	})
 	return nil
 }

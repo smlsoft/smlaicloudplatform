@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/product/models"
@@ -18,11 +19,11 @@ type IProductHttp interface{}
 
 type ProductHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IProductHttpService
 }
 
-func NewProductHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductHttp {
+func NewProductHttp(ms *microservice.Microservice, cfg config.IConfig) ProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	prod := ms.Producer(cfg.MQConfig())
@@ -40,7 +41,7 @@ func NewProductHttp(ms *microservice.Microservice, cfg microservice.IConfig) Pro
 	}
 }
 
-func (h ProductHttp) RouteSetup() {
+func (h ProductHttp) RegisterHttp() {
 
 	h.ms.POST("/product/bulk", h.SaveBulk)
 

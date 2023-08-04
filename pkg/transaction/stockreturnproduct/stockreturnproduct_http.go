@@ -4,30 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/models"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/repositories"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IStockReturnProductHttp interface{}
 
 type StockReturnProductHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IStockReturnProductHttpService
 }
 
-func NewStockReturnProductHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockReturnProductHttp {
+func NewStockReturnProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockReturnProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockReturnProductRepository(pst)
+	repoMq := repositories.NewStockReturnProductMessageQueueRepository(producer)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockReturnProductHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockReturnProductHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockReturnProductHttp{
 		ms:  ms,
@@ -36,7 +42,7 @@ func NewStockReturnProductHttp(ms *microservice.Microservice, cfg microservice.I
 	}
 }
 
-func (h StockReturnProductHttp) RouteSetup() {
+func (h StockReturnProductHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/stock-return-product/bulk", h.SaveBulk)
 
@@ -77,7 +83,7 @@ func (h StockReturnProductHttp) CreateStockReturnProduct(ctx microservice.IConte
 		return err
 	}
 
-	idx, err := h.svc.CreateStockReturnProduct(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockReturnProduct(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +93,7 @@ func (h StockReturnProductHttp) CreateStockReturnProduct(ctx microservice.IConte
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -286,15 +293,15 @@ func (h StockReturnProductHttp) SearchStockReturnProductPage(ctx microservice.IC
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -335,15 +342,15 @@ func (h StockReturnProductHttp) SearchStockReturnProductStep(ctx microservice.IC
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

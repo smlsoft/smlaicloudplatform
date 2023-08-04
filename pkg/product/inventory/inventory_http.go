@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/inventory/models"
@@ -16,7 +17,7 @@ import (
 )
 
 type IInventoryHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	CreateInventory(ctx microservice.IContext) error
 	UpdateInventory(ctx microservice.IContext) error
 	DeleteInventory(ctx microservice.IContext) error
@@ -32,12 +33,12 @@ type IInventoryHttp interface {
 
 type InventoryHttp struct {
 	ms                       *microservice.Microservice
-	cfg                      microservice.IConfig
+	cfg                      config.IConfig
 	invService               services.IInventoryService
 	inventoryCategoryService services.IInventoryCategoryService
 }
 
-func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) *InventoryHttp {
+func NewInventoryHttp(ms *microservice.Microservice, cfg config.IConfig) *InventoryHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
@@ -59,7 +60,7 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) *
 	}
 }
 
-func (h InventoryHttp) RouteSetup() {
+func (h InventoryHttp) RegisterHttp() {
 	h.ms.GET("/inventory/:id", h.InfoInventory)
 	h.ms.GET("/inventory/itemcode/:itemcode", h.InfoInventoryItemCode)
 	h.ms.GET("/inventory/barcode/:barcode", h.InfoInventoryBarcode)

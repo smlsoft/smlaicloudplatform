@@ -4,30 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/purchasereturn/models"
 	"smlcloudplatform/pkg/transaction/purchasereturn/repositories"
 	"smlcloudplatform/pkg/transaction/purchasereturn/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IPurchaseReturnHttp interface{}
 
 type PurchaseReturnHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IPurchaseReturnHttpService
 }
 
-func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg microservice.IConfig) PurchaseReturnHttp {
+func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg config.IConfig) PurchaseReturnHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewPurchaseReturnRepository(pst)
+	repoMq := repositories.NewPurchaseReturnMessageQueueRepository(producer)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPurchaseReturnHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewPurchaseReturnHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return PurchaseReturnHttp{
 		ms:  ms,
@@ -36,7 +42,7 @@ func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg microservice.IConf
 	}
 }
 
-func (h PurchaseReturnHttp) RouteSetup() {
+func (h PurchaseReturnHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/purchase-return/bulk", h.SaveBulk)
 
@@ -77,7 +83,7 @@ func (h PurchaseReturnHttp) CreatePurchaseReturn(ctx microservice.IContext) erro
 		return err
 	}
 
-	idx, err := h.svc.CreatePurchaseReturn(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreatePurchaseReturn(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +93,7 @@ func (h PurchaseReturnHttp) CreatePurchaseReturn(ctx microservice.IContext) erro
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -286,15 +293,15 @@ func (h PurchaseReturnHttp) SearchPurchaseReturnPage(ctx microservice.IContext) 
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -335,15 +342,15 @@ func (h PurchaseReturnHttp) SearchPurchaseReturnStep(ctx microservice.IContext) 
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

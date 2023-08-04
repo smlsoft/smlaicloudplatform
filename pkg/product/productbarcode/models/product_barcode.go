@@ -1,6 +1,9 @@
 package models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"smlcloudplatform/pkg/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -9,15 +12,16 @@ import (
 const productBarcodeCollectionName = "productBarcodes"
 
 type ProductBarcodeBase struct {
-	ItemCode  string          `json:"itemcode" bson:"itemcode"`
-	Barcode   string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
-	GroupCode string          `json:"groupcode" bson:"groupcode"`
-	GroupName *[]models.NameX `json:"groupname" bson:"groupname"`
-	Names     *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSorts    *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
+	ItemCode   string          `json:"itemcode" bson:"itemcode"`
+	Barcode    string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	GroupCode  string          `json:"groupcode" bson:"groupcode"`
+	GroupNames *[]models.NameX `json:"groupnames" bson:"groupnames"`
+	Names      *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	XSorts     *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 
 	ItemUnitCode    string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames   *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames"`
+	ItemUnitSize    float64          `json:"itemunitsize" bson:"itemunitsize"`
 	Prices          *[]ProductPrice  `json:"prices" bson:"prices"`
 	ImageURI        string           `json:"imageuri" bson:"imageuri"`
 	Options         *[]ProductOption `json:"options" bson:"options"`
@@ -38,12 +42,17 @@ type ProductBarcodeBase struct {
 	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
 	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
 
-	RefUnitNames   *[]models.NameX `json:"refunitnames" bson:"refunitnames"`
-	StockBarcode   string          `json:"stockbarcode" bson:"stockbarcode"`
-	Qty            float64         `json:"qty" bson:"qty"`
-	RefDivideValue float64         `json:"refdividevalue" bson:"refdividevalue"`
-	RefStandValue  float64         `json:"refstandvalue" bson:"refstandvalue"`
-	VatCal         int             `json:"vatcal" bson:"vatcal"`
+	RefUnitNames     *[]models.NameX     `json:"refunitnames" bson:"refunitnames"`
+	StockBarcode     string              `json:"stockbarcode" bson:"stockbarcode"`
+	Qty              float64             `json:"qty" bson:"qty"`
+	RefDivideValue   float64             `json:"refdividevalue" bson:"refdividevalue"`
+	RefStandValue    float64             `json:"refstandvalue" bson:"refstandvalue"`
+	VatCal           int                 `json:"vatcal" bson:"vatcal"`
+	IsALaCarte       bool                `json:"isalacarte" bson:"isalacarte"`
+	OrderTypes       *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
+	ProductType      ProductType         `json:"producttype" bson:"producttype"`
+	IsSplitUnitPrint bool                `json:"issplitunitprint" bson:"issplitunitprint"`
+	IsOnlyStaff      bool                `json:"isonlystaff" bson:"isonlystaff"`
 }
 
 type RefProductBarcode struct {
@@ -163,4 +172,40 @@ type ProductBarcodeSearch struct {
 
 func (ProductBarcodeSearch) TableName() string {
 	return productBarcodeCollectionName
+}
+
+// //
+// Names                    datatypes.JSON `json:"names"  gorm:"column:names;type:jsonb;default:'[]'" `
+// Names                    *JSONB  `json:"names"  gorm:"column:names;type:jsonb" `
+type ProductBarcodePg struct {
+	ShopID                   string `json:"shopid" gorm:"column:shopid;primaryKey"`
+	models.PartitionIdentity `gorm:"embedded;"`
+	Barcode                  string  `json:"barcode" gorm:"column:barcode;primaryKey"`
+	Names                    JSONB   `json:"names"  gorm:"column:names;type:jsonb" `
+	UnitCode                 string  `json:"unitcode" gorm:"column:unitcode"`
+	BalanceQty               float64 `json:"balanceqty" gorm:"column:balanceqty"`
+	MainBarcodeRef           string  `json:"mainbarcoderef" gorm:"column:mainbarcoderef"`
+}
+
+func (ProductBarcodePg) TableName() string {
+	return "productbarcode"
+}
+
+type JSONB []models.NameX
+
+// Value Marshal
+func (a JSONB) Value() (driver.Value, error) {
+
+	j, err := json.Marshal(a)
+	return j, err
+	//return json.Marshal(a)
+}
+
+// Scan Unmarshal
+func (a *JSONB) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(b, &a)
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype/models"
@@ -16,11 +17,11 @@ type ISectionBusinessTypeHttp interface{}
 
 type SectionBusinessTypeHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISectionBusinessTypeHttpService
 }
 
-func NewSectionBusinessTypeHttp(ms *microservice.Microservice, cfg microservice.IConfig) SectionBusinessTypeHttp {
+func NewSectionBusinessTypeHttp(ms *microservice.Microservice, cfg config.IConfig) SectionBusinessTypeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -36,7 +37,7 @@ func NewSectionBusinessTypeHttp(ms *microservice.Microservice, cfg microservice.
 	}
 }
 
-func (h SectionBusinessTypeHttp) RouteSetup() {
+func (h SectionBusinessTypeHttp) RegisterHttp() {
 
 	h.ms.POST("/product-section/business-type/bulk", h.SaveBulk)
 

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -35,13 +36,17 @@ type SectionDepartmentHttpService struct {
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.SectionDepartmentActivity, models.SectionDepartmentDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewSectionDepartmentHttpService(repo repositories.ISectionDepartmentRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SectionDepartmentHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &SectionDepartmentHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.SectionDepartmentActivity, models.SectionDepartmentDeleteActivity](repo)
@@ -49,11 +54,23 @@ func NewSectionDepartmentHttpService(repo repositories.ISectionDepartmentReposit
 	return insSvc
 }
 
+func (svc SectionDepartmentHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc SectionDepartmentHttpService) SaveSectionDepartment(shopID string, authUsername string, doc models.SectionDepartment) (string, error) {
-	findDoc, err := svc.repo.FindOneFilter(shopID, map[string]interface{}{
-		"branchcode":     doc.BranchCode,
-		"departmentcode": doc.DepartmentCode,
-	})
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindOneFilter(
+		ctx,
+		shopID,
+		map[string]interface{}{
+			"branchcode":     doc.BranchCode,
+			"departmentcode": doc.DepartmentCode,
+		},
+	)
 
 	if err != nil {
 		return "", err
@@ -61,9 +78,9 @@ func (svc SectionDepartmentHttpService) SaveSectionDepartment(shopID string, aut
 
 	guidFixed := ""
 	if len(findDoc.GuidFixed) < 1 {
-		guidFixed, err = svc.create(findDoc, shopID, authUsername, doc)
+		guidFixed, err = svc.create(ctx, findDoc, shopID, authUsername, doc)
 	} else {
-		err = svc.update(findDoc, shopID, authUsername, doc)
+		err = svc.update(ctx, findDoc, shopID, authUsername, doc)
 		guidFixed = findDoc.GuidFixed
 	}
 
@@ -74,7 +91,7 @@ func (svc SectionDepartmentHttpService) SaveSectionDepartment(shopID string, aut
 	return guidFixed, nil
 }
 
-func (svc SectionDepartmentHttpService) create(findDoc models.SectionDepartmentDoc, shopID, authUsername string, doc models.SectionDepartment) (string, error) {
+func (svc SectionDepartmentHttpService) create(ctx context.Context, findDoc models.SectionDepartmentDoc, shopID, authUsername string, doc models.SectionDepartment) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
@@ -86,7 +103,7 @@ func (svc SectionDepartmentHttpService) create(findDoc models.SectionDepartmentD
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err := svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -97,7 +114,7 @@ func (svc SectionDepartmentHttpService) create(findDoc models.SectionDepartmentD
 	return newGuidFixed, nil
 }
 
-func (svc SectionDepartmentHttpService) update(findDoc models.SectionDepartmentDoc, shopID, authUsername string, doc models.SectionDepartment) error {
+func (svc SectionDepartmentHttpService) update(ctx context.Context, findDoc models.SectionDepartmentDoc, shopID, authUsername string, doc models.SectionDepartment) error {
 
 	if len(findDoc.GuidFixed) < 1 {
 		return errors.New("document not found")
@@ -108,7 +125,7 @@ func (svc SectionDepartmentHttpService) update(findDoc models.SectionDepartmentD
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err := svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+	err := svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 	if err != nil {
 		return err
@@ -121,7 +138,10 @@ func (svc SectionDepartmentHttpService) update(findDoc models.SectionDepartmentD
 
 func (svc SectionDepartmentHttpService) DeleteSectionDepartment(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -131,7 +151,7 @@ func (svc SectionDepartmentHttpService) DeleteSectionDepartment(shopID string, g
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -143,11 +163,14 @@ func (svc SectionDepartmentHttpService) DeleteSectionDepartment(shopID string, g
 
 func (svc SectionDepartmentHttpService) DeleteSectionDepartmentByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -157,7 +180,10 @@ func (svc SectionDepartmentHttpService) DeleteSectionDepartmentByGUIDs(shopID st
 
 func (svc SectionDepartmentHttpService) InfoSectionDepartment(shopID string, guid string) (models.SectionDepartmentInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.SectionDepartmentInfo{}, err
@@ -172,7 +198,10 @@ func (svc SectionDepartmentHttpService) InfoSectionDepartment(shopID string, gui
 
 func (svc SectionDepartmentHttpService) InfoSectionDepartmentByCode(shopID, branchCode, departmentCode string) (models.SectionDepartmentInfo, error) {
 
-	findDoc, err := svc.repo.FindOneByCode(shopID, branchCode, departmentCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindOneByCode(ctx, shopID, branchCode, departmentCode)
 
 	if err != nil {
 		return models.SectionDepartmentInfo{}, err
@@ -186,11 +215,15 @@ func (svc SectionDepartmentHttpService) InfoSectionDepartmentByCode(shopID, bran
 }
 
 func (svc SectionDepartmentHttpService) SearchSectionDepartment(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionDepartmentInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"departmentcode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.SectionDepartmentInfo{}, pagination, err
@@ -200,6 +233,10 @@ func (svc SectionDepartmentHttpService) SearchSectionDepartment(shopID string, f
 }
 
 func (svc SectionDepartmentHttpService) SearchSectionDepartmentStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"departmentcode",
 	}
@@ -212,7 +249,7 @@ func (svc SectionDepartmentHttpService) SearchSectionDepartmentStep(shopID strin
 		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.SectionDepartmentInfo{}, 0, err
@@ -223,6 +260,9 @@ func (svc SectionDepartmentHttpService) SearchSectionDepartmentStep(shopID strin
 
 func (svc SectionDepartmentHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.SectionDepartment) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.SectionDepartment](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -230,7 +270,7 @@ func (svc SectionDepartmentHttpService) SaveInBatch(shopID string, authUsername 
 		itemCodeGuidList = append(itemCodeGuidList, doc.DepartmentCode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "departmentcode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "departmentcode", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -269,7 +309,7 @@ func (svc SectionDepartmentHttpService) SaveInBatch(shopID string, authUsername 
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.SectionDepartmentDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "departmentcode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "departmentcode", guid)
 		},
 		func(doc models.SectionDepartmentDoc) bool {
 			return doc.DepartmentCode != ""
@@ -280,7 +320,7 @@ func (svc SectionDepartmentHttpService) SaveInBatch(shopID string, authUsername 
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -289,7 +329,7 @@ func (svc SectionDepartmentHttpService) SaveInBatch(shopID string, authUsername 
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

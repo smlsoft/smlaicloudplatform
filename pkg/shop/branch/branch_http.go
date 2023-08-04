@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop/branch/models"
@@ -16,11 +17,11 @@ type IBranchHttp interface{}
 
 type BranchHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IBranchHttpService
 }
 
-func NewBranchHttp(ms *microservice.Microservice, cfg microservice.IConfig) BranchHttp {
+func NewBranchHttp(ms *microservice.Microservice, cfg config.IConfig) BranchHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -36,7 +37,7 @@ func NewBranchHttp(ms *microservice.Microservice, cfg microservice.IConfig) Bran
 	}
 }
 
-func (h BranchHttp) RouteSetup() {
+func (h BranchHttp) RegisterHttp() {
 
 	h.ms.GET("/shop/branch", h.SearchBranchPage)
 	h.ms.GET("/shop/branch/list", h.SearchBranchStep)

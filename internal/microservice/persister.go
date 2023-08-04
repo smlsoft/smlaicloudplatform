@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"fmt"
+	"smlcloudplatform/pkg/config"
 	"sync"
 
 	"gorm.io/driver/postgres"
@@ -36,27 +37,15 @@ type IPersister interface {
 	DBClient() *gorm.DB
 }
 
-// IPersisterConfig is interface for persister
-type IPersisterConfig interface {
-	Host() string
-	Port() string
-	DB() string
-	Username() string
-	Password() string
-	SSLMode() string
-	TimeZone() string
-	LoggerLevel() string
-}
-
 // Persister is persister
 type Persister struct {
-	config  IPersisterConfig
+	config  config.IPersisterConfig
 	db      *gorm.DB
 	dbMutex sync.Mutex
 }
 
 // NewPersister return new persister
-func NewPersister(config IPersisterConfig) *Persister {
+func NewPersister(config config.IPersisterConfig) *Persister {
 	pst := &Persister{
 		config: config,
 	}

@@ -13,7 +13,7 @@ type UserDetail struct {
 }
 
 type UsernameCode struct {
-	Username string `json:"username,omitempty" bson:"username" validate:"required,gte=5,max=233"`
+	Username string `json:"username,omitempty" bson:"username" validate:"required,alphanum,gte=5,max=233"`
 }
 
 type UserPassword struct {
@@ -55,6 +55,10 @@ type UserProfile struct {
 	CreatedAt    time.Time `json:"-" bson:"created_at,omitempty"`
 }
 
+func (UserProfile) CollectionName() string {
+	return userCollectionName
+}
+
 type UserProfileRequest struct {
 	UserDetail `bson:"inline"`
 }
@@ -83,13 +87,17 @@ const (
 	ROLE_SYSTEM = 255 // APP MANAGER
 )
 
+type ShopUserBase struct {
+	Username string   `json:"username" bson:"username"`
+	ShopID   string   `json:"shopid" bson:"shopid"`
+	Role     UserRole `json:"role" bson:"role"`
+}
+
 type ShopUser struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Username       string             `json:"username" bson:"username"`
-	ShopID         string             `json:"shopid" bson:"shopid"`
-	Role           UserRole           `json:"role" bson:"role"`
-	IsFavorite     bool               `json:"isfavorite" bson:"isfavorite"`
-	LastAccessedAt time.Time          `json:"lastaccessedat" bson:"lastaccessedat"`
+	ShopUserBase   `bson:"inline"`
+	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`
+	LastAccessedAt time.Time `json:"lastaccessedat" bson:"lastaccessedat"`
 }
 
 func (*ShopUser) CollectionName() string {
@@ -103,6 +111,7 @@ type ShopUserInfo struct {
 	Role           UserRole  `json:"role" bson:"role"`
 	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`
 	LastAccessedAt time.Time `json:"lastaccessedat" bson:"lastaccessedat"`
+	CreatedBy      string    `json:"createdby" bson:"createdby"`
 }
 
 func (*ShopUserInfo) CollectionName() string {
@@ -110,9 +119,10 @@ func (*ShopUserInfo) CollectionName() string {
 }
 
 type UserRoleRequest struct {
-	ShopID   string   `json:"shopid" bson:"shopid"`
-	Username string   `json:"username" bson:"username"`
-	Role     UserRole `json:"role" bson:"role"`
+	ShopID       string   `json:"shopid" bson:"shopid"`
+	EditUsername string   `json:"editusername" bson:"editusername"`
+	Username     string   `json:"username" bson:"username"`
+	Role         UserRole `json:"role" bson:"role"`
 }
 
 type ShopUserAccessLog struct {
@@ -125,6 +135,11 @@ type ShopUserAccessLog struct {
 
 func (*ShopUserAccessLog) CollectionName() string {
 	return "shopUserAccessLogs"
+}
+
+type ShopUserProfile struct {
+	ShopUserBase    `bson:"inline"`
+	UserProfileName string `json:"userprofilename" bson:"userprofilename"`
 }
 
 // func (u UserRole) EqualString(userRoleStr string)  bool {

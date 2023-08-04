@@ -2,6 +2,7 @@ package images
 
 import (
 	"bytes"
+	"context"
 	"mime/multipart"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/images/models"
@@ -9,6 +10,7 @@ import (
 	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strings"
+	"time"
 
 	"errors"
 )
@@ -23,19 +25,26 @@ type ImagesService struct {
 	persisterImage *microservice.PersisterImage
 	invRepo        inventoryRepo.IInventoryRepository
 	NewGUIDFn      func() string
+	contextTimeout time.Duration
 }
 
 func NewImageService(persisterImage *microservice.PersisterImage,
 	inventoryRepo inventoryRepo.IInventoryRepository,
 ) *ImagesService {
 
+	contextTimeout := time.Duration(15) * time.Second
 	// check config storage location
 
 	return &ImagesService{
 		persisterImage: persisterImage,
 		invRepo:        inventoryRepo,
 		NewGUIDFn:      func() string { return utils.NewGUID() },
+		contextTimeout: contextTimeout,
 	}
+}
+
+func (svc ImagesService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
 func (svc ImagesService) UploadImage(shopId string, fh *multipart.FileHeader) (*models.Image, error) {
@@ -59,13 +68,16 @@ func (svc ImagesService) UploadImage(shopId string, fh *multipart.FileHeader) (*
 
 func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileHeader) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")
 
 	// find product by code
 	fileName := fileUploadMetadataSlice[0]
 	fileExtension := fileUploadMetadataSlice[1]
 
-	findDoc, err := svc.invRepo.FindByItemBarcode(shopID, fileName)
+	findDoc, err := svc.invRepo.FindByItemBarcode(ctx, shopID, fileName)
 	if err != nil {
 		return err
 	}
@@ -90,13 +102,16 @@ func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileH
 	findDoc.Images = &imageSlice
 
 	// save and return
-	err = svc.invRepo.Update(shopID, findDoc.GuidFixed, findDoc)
+	err = svc.invRepo.Update(context.Background(), shopID, findDoc.GuidFixed, findDoc)
 	return err
 }
 
 func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, index int) (string, *bytes.Buffer, error) {
 
-	findDoc, err := svc.invRepo.FindByItemGuid(shopid, itemguid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.invRepo.FindByItemGuid(ctx, shopid, itemguid)
 
 	if err != nil {
 		return "", nil, err

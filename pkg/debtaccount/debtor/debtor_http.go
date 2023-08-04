@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/debtor/models"
 	"smlcloudplatform/pkg/debtaccount/debtor/repositories"
 	"smlcloudplatform/pkg/debtaccount/debtor/services"
@@ -11,17 +12,18 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IDebtorHttp interface{}
 
 type DebtorHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IDebtorHttpService
 }
 
-func NewDebtorHttp(ms *microservice.Microservice, cfg microservice.IConfig) DebtorHttp {
+func NewDebtorHttp(ms *microservice.Microservice, cfg config.IConfig) DebtorHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -38,7 +40,7 @@ func NewDebtorHttp(ms *microservice.Microservice, cfg microservice.IConfig) Debt
 	}
 }
 
-func (h DebtorHttp) RouteSetup() {
+func (h DebtorHttp) RegisterHttp() {
 
 	h.ms.POST("/debtaccount/debtor/bulk", h.SaveBulk)
 
@@ -271,6 +273,7 @@ func (h DebtorHttp) InfoDebtorByCode(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Debtor
 // @Param		q		query	string		false  "Search Value"
+// @Param		groups		query	string		false  "groups guidfixed"
 // @Param		page	query	integer		false  "page"
 // @Param		limit	query	integer		false  "limit"
 // @Accept 		json
@@ -284,7 +287,14 @@ func (h DebtorHttp) SearchDebtorPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchDebtor(shopID, map[string]interface{}{}, pageable)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "groups",
+			Field: "groups",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+	docList, pagination, err := h.svc.SearchDebtor(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -303,6 +313,7 @@ func (h DebtorHttp) SearchDebtorPage(ctx microservice.IContext) error {
 // @Description search limit offset
 // @Tags		Debtor
 // @Param		q		query	string		false  "Search Value"
+// @Param		groups		query	string		false  "groups guidfixed"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -319,7 +330,15 @@ func (h DebtorHttp) SearchDebtorStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchDebtorStep(shopID, lang, pageableStep)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "groups",
+			Field: "groups",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	docList, total, err := h.svc.SearchDebtorStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

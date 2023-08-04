@@ -4,30 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stocktransfer/models"
 	"smlcloudplatform/pkg/transaction/stocktransfer/repositories"
 	"smlcloudplatform/pkg/transaction/stocktransfer/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IStockTransferHttp interface{}
 
 type StockTransferHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IStockTransferHttpService
 }
 
-func NewStockTransferHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockTransferHttp {
+func NewStockTransferHttp(ms *microservice.Microservice, cfg config.IConfig) StockTransferHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockTransferRepository(pst)
+	repoMq := repositories.NewStockTransferMessageQueueRepository(producer)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockTransferHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockTransferHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockTransferHttp{
 		ms:  ms,
@@ -36,7 +42,7 @@ func NewStockTransferHttp(ms *microservice.Microservice, cfg microservice.IConfi
 	}
 }
 
-func (h StockTransferHttp) RouteSetup() {
+func (h StockTransferHttp) RegisterHttp() {
 
 	h.ms.GET("/transaction/stock-transfer", h.SearchStockTransferPage)
 	h.ms.GET("/transaction/stock-transfer/list", h.SearchStockTransferStep)
@@ -75,7 +81,7 @@ func (h StockTransferHttp) CreateStockTransfer(ctx microservice.IContext) error 
 		return err
 	}
 
-	idx, err := h.svc.CreateStockTransfer(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockTransfer(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -85,6 +91,7 @@ func (h StockTransferHttp) CreateStockTransfer(ctx microservice.IContext) error 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }
@@ -284,15 +291,15 @@ func (h StockTransferHttp) SearchStockTransferPage(ctx microservice.IContext) er
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 
@@ -333,15 +340,15 @@ func (h StockTransferHttp) SearchStockTransferStep(ctx microservice.IContext) er
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "custcode",
-			Type:  "string",
+			Type:  requestfilter.FieldTypeString,
 		},
 		{
 			Param: "-",
 			Field: "docdatetime",
-			Type:  "rangeDate",
+			Type:  requestfilter.FieldTypeRangeDate,
 		},
 	})
 

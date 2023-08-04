@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/color/models"
 	"smlcloudplatform/pkg/product/color/repositories"
@@ -15,11 +16,11 @@ type IColorHttp interface{}
 
 type ColorHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IColorHttpService
 }
 
-func NewColorHttp(ms *microservice.Microservice, cfg microservice.IConfig) ColorHttp {
+func NewColorHttp(ms *microservice.Microservice, cfg config.IConfig) ColorHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewColorRepository(pst)
@@ -33,7 +34,7 @@ func NewColorHttp(ms *microservice.Microservice, cfg microservice.IConfig) Color
 	}
 }
 
-func (h ColorHttp) RouteSetup() {
+func (h ColorHttp) RegisterHttp() {
 
 	h.ms.POST("/color/bulk", h.SaveBulk)
 

@@ -1,6 +1,7 @@
 package documentimage
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/services"
@@ -22,7 +24,7 @@ import (
 )
 
 type IDocumentImageHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	SearchDocumentImage(ctx microservice.IContext) error
 	GetDocumentImageInfo(ctx microservice.IContext) error
 	UploadDocumentImage(ctx microservice.IContext) error
@@ -33,12 +35,12 @@ type IDocumentImageHttp interface {
 type DocumentImageHttp struct {
 	Module       string
 	ms           *microservice.Microservice
-	cfg          microservice.IConfig
+	cfg          config.IConfig
 	service      services.IDocumentImageService
 	svcWsJournal journalSvc.IJournalWebsocketService
 }
 
-func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfig) *DocumentImageHttp {
+func NewDocumentImageHttp(ms *microservice.Microservice, cfg config.IConfig) *DocumentImageHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
@@ -65,7 +67,7 @@ func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfi
 	}
 }
 
-func (h DocumentImageHttp) RouteSetup() {
+func (h DocumentImageHttp) RegisterHttp() {
 	h.ms.GET("/documentimage", h.SearchDocumentImage)
 	// h.ms.GET("/documentimage/special", h.DocumentImageSpecial)
 	h.ms.GET("/documentimage/:guid", h.GetDocumentImageInfo)
@@ -1155,7 +1157,7 @@ func (h DocumentImageHttp) UpdateXSort(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.XSortsUpdate(shopID, authUsername, taskGUID, reqBody)
+	err = h.service.XSortsUpdate(context.Background(), shopID, authUsername, taskGUID, reqBody)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err

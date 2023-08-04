@@ -15,7 +15,16 @@ type Employee struct {
 	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
 	Roles          *[]string `json:"roles" bson:"roles"`
 	IsEnabled      bool      `json:"isenabled" bson:"isenabled"`
+	IsUsePOS       bool      `json:"isusepos" bson:"isusepos"`
 	Contact        Contact   `json:"contact" bson:"contact"`
+	PinCode        string    `json:"pincode" bson:"pincode"`
+	Branches       *[]Branch `json:"branches" bson:"branches"`
+}
+
+type Branch struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
 type Contact struct {
@@ -97,8 +106,9 @@ type EmployeeRequestUpdate struct {
 }
 
 type EmployeeRequestPassword struct {
-	Code     string `json:"code" bson:"code"`
-	Password string `json:"password" bson:"password"`
+	Code            string `json:"code" bson:"code"`
+	CurrentPassword string `json:"currentpassword" bson:"currentpassword"`
+	NewPassword     string `json:"newpassword" bson:"newpassword"`
 }
 
 type EmployeePassword struct {

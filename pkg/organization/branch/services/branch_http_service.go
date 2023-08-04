@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -40,15 +41,19 @@ type BranchHttpService struct {
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.BranchActivity, models.BranchDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewBranchHttpService(repo repositories.IBranchRepository, repoDepartment deparmentRepositories.IDepartmentRepository, repoBusinessType businessTypeRepositories.IBusinessTypeRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *BranchHttpService {
+
+	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &BranchHttpService{
 		repo:             repo,
 		repoDepartment:   repoDepartment,
 		repoBusinessType: repoBusinessType,
 		syncCacheRepo:    syncCacheRepo,
+		contextTimeout:   contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.BranchActivity, models.BranchDeleteActivity](repo)
@@ -56,9 +61,16 @@ func NewBranchHttpService(repo repositories.IBranchRepository, repoDepartment de
 	return insSvc
 }
 
+func (svc BranchHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc BranchHttpService) CreateBranch(shopID string, authUsername string, doc models.Branch) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
@@ -91,7 +103,7 @@ func (svc BranchHttpService) CreateBranch(shopID string, authUsername string, do
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -104,7 +116,10 @@ func (svc BranchHttpService) CreateBranch(shopID string, authUsername string, do
 
 func (svc BranchHttpService) UpdateBranch(shopID string, guid string, authUsername string, doc models.Branch) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -134,7 +149,7 @@ func (svc BranchHttpService) UpdateBranch(shopID string, guid string, authUserna
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, docData)
+	err = svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
 		return err
@@ -147,7 +162,10 @@ func (svc BranchHttpService) UpdateBranch(shopID string, guid string, authUserna
 
 func (svc BranchHttpService) DeleteBranch(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -157,7 +175,7 @@ func (svc BranchHttpService) DeleteBranch(shopID string, guid string, authUserna
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -169,11 +187,14 @@ func (svc BranchHttpService) DeleteBranch(shopID string, guid string, authUserna
 
 func (svc BranchHttpService) DeleteBranchByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -183,7 +204,10 @@ func (svc BranchHttpService) DeleteBranchByGUIDs(shopID string, authUsername str
 
 func (svc BranchHttpService) InfoBranch(shopID string, guid string) (models.BranchInfoResponse, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.BranchInfoResponse{}, err
@@ -204,6 +228,9 @@ func (svc BranchHttpService) InfoBranch(shopID string, guid string) (models.Bran
 
 func (svc BranchHttpService) mapBranchInfo(findInfo models.BranchInfo, shopID string) (models.BranchInfoResponse, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	if findInfo.Branch.Departments == nil {
 		findInfo.Branch.Departments = &[]models.Department{}
 	}
@@ -214,7 +241,7 @@ func (svc BranchHttpService) mapBranchInfo(findInfo models.BranchInfo, shopID st
 
 	businesstypes := []models.BusinessType{}
 	for _, businesstypeGUID := range *findInfo.Branch.BusinessTypes {
-		findBusinessTypeDoc, err := svc.repoBusinessType.FindByGuid(shopID, businesstypeGUID)
+		findBusinessTypeDoc, err := svc.repoBusinessType.FindByGuid(ctx, shopID, businesstypeGUID)
 
 		if err != nil {
 			return models.BranchInfoResponse{}, err
@@ -243,9 +270,13 @@ func (svc BranchHttpService) mapBranchInfo(findInfo models.BranchInfo, shopID st
 }
 
 func (svc BranchHttpService) mapDepartmentToBranch(shopID string, departmentGUIDs []string) ([]models.Department, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	departments := []models.Department{}
 	for _, departmentGUID := range departmentGUIDs {
-		findDepartmentDoc, err := svc.repoDepartment.FindByGuid(shopID, departmentGUID)
+		findDepartmentDoc, err := svc.repoDepartment.FindByGuid(ctx, shopID, departmentGUID)
 
 		if err != nil {
 			return nil, err
@@ -265,7 +296,10 @@ func (svc BranchHttpService) mapDepartmentToBranch(shopID string, departmentGUID
 
 func (svc BranchHttpService) InfoBranchByCode(shopID string, code string) (models.BranchInfoResponse, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", code)
 
 	if err != nil {
 		return models.BranchInfoResponse{}, err
@@ -285,12 +319,16 @@ func (svc BranchHttpService) InfoBranchByCode(shopID string, code string) (model
 }
 
 func (svc BranchHttpService) SearchBranch(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchInfoResponse, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.BranchInfoResponse{}, pagination, err
@@ -312,6 +350,10 @@ func (svc BranchHttpService) SearchBranch(shopID string, filters map[string]inte
 }
 
 func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BranchInfoResponse, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -319,7 +361,7 @@ func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pa
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.BranchInfoResponse{}, 0, err
@@ -342,6 +384,9 @@ func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pa
 
 func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Branch) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.Branch](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []interface{}{}
@@ -349,7 +394,7 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuids(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuids(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -388,7 +433,7 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.BranchDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", guid)
 		},
 		func(doc models.BranchDoc) bool {
 			return doc.Code != ""
@@ -399,7 +444,7 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -408,7 +453,7 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/payment/bankmaster/models"
@@ -16,11 +17,11 @@ type IBankMasterHttp interface{}
 
 type BankMasterHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IBankMasterHttpService
 }
 
-func NewBankMasterHttp(ms *microservice.Microservice, cfg microservice.IConfig) BankMasterHttp {
+func NewBankMasterHttp(ms *microservice.Microservice, cfg config.IConfig) BankMasterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -36,7 +37,7 @@ func NewBankMasterHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	}
 }
 
-func (h BankMasterHttp) RouteSetup() {
+func (h BankMasterHttp) RegisterHttp() {
 
 	h.ms.POST("/payment/bankmaster/bulk", h.SaveBulk)
 

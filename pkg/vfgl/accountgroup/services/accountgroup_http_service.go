@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
@@ -25,21 +26,32 @@ type IAccountGroupHttpService interface {
 }
 
 type AccountGroupHttpService struct {
-	repo   repositories.AccountGroupMongoRepository
-	mqRepo repositories.AccountGroupMqRepository
+	repo           repositories.AccountGroupMongoRepository
+	mqRepo         repositories.AccountGroupMqRepository
+	contextTimeout time.Duration
 }
 
 func NewAccountGroupHttpService(repo repositories.AccountGroupMongoRepository, mqRepo repositories.AccountGroupMqRepository) AccountGroupHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	return AccountGroupHttpService{
-		repo:   repo,
-		mqRepo: mqRepo,
+		repo:           repo,
+		mqRepo:         mqRepo,
+		contextTimeout: contextTimeout,
 	}
+}
+
+func (svc AccountGroupHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
 func (svc AccountGroupHttpService) Create(shopID string, authUsername string, doc models.AccountGroup) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindOne(ctx, shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return "", err
@@ -59,7 +71,7 @@ func (svc AccountGroupHttpService) Create(shopID string, authUsername string, do
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -75,7 +87,10 @@ func (svc AccountGroupHttpService) Create(shopID string, authUsername string, do
 
 func (svc AccountGroupHttpService) Update(guid string, shopID string, authUsername string, doc models.AccountGroup) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -85,7 +100,7 @@ func (svc AccountGroupHttpService) Update(guid string, shopID string, authUserna
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
+	findDocCode, err := svc.repo.FindOne(ctx, shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return err
@@ -100,7 +115,7 @@ func (svc AccountGroupHttpService) Update(guid string, shopID string, authUserna
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -109,7 +124,11 @@ func (svc AccountGroupHttpService) Update(guid string, shopID string, authUserna
 }
 
 func (svc AccountGroupHttpService) Delete(guid string, shopID string, authUsername string) error {
-	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -119,7 +138,10 @@ func (svc AccountGroupHttpService) Delete(guid string, shopID string, authUserna
 
 func (svc AccountGroupHttpService) Info(guid string, shopID string) (models.AccountGroupInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.AccountGroupInfo{}, err
@@ -134,12 +156,16 @@ func (svc AccountGroupHttpService) Info(guid string, shopID string) (models.Acco
 }
 
 func (svc AccountGroupHttpService) Search(shopID string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.AccountGroupInfo{}, pagination, err
@@ -149,6 +175,9 @@ func (svc AccountGroupHttpService) Search(shopID string, pageable micromodels.Pa
 }
 
 func (svc AccountGroupHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.AccountGroup) (common.BulkImport, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	createDataList := []models.AccountGroupDoc{}
 	duplicateDataList := []models.AccountGroup{}
@@ -160,7 +189,7 @@ func (svc AccountGroupHttpService) SaveInBatch(shopID string, authUsername strin
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "docno", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -199,7 +228,7 @@ func (svc AccountGroupHttpService) SaveInBatch(shopID string, authUsername strin
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.AccountGroupDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", guid)
 		},
 		func(doc models.AccountGroupDoc) bool {
 			if doc.Code != "" {
@@ -213,7 +242,7 @@ func (svc AccountGroupHttpService) SaveInBatch(shopID string, authUsername strin
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -222,7 +251,7 @@ func (svc AccountGroupHttpService) SaveInBatch(shopID string, authUsername strin
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

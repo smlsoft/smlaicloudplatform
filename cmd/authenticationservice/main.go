@@ -3,11 +3,13 @@ package main
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/config"
+	"time"
 )
 
 func main() {
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)
@@ -16,7 +18,7 @@ func main() {
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
-	authService := microservice.NewAuthService(cacher, 24*3)
+	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	publicPath := []string{
 		"/login",
@@ -28,7 +30,7 @@ func main() {
 	}
 
 	ms.HttpMiddleware(authService.MWFuncWithShop(cacher, publicPath...))
-	svc.RouteSetup()
+	svc.RegisterHttp()
 
 	// ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 

@@ -2,7 +2,6 @@ package firebase
 
 import (
 	"context"
-	"log"
 
 	firebase "firebase.google.com/go/v4"
 )
@@ -19,7 +18,7 @@ func NewFirebaseAdapter() IFirebaseAdapter {
 
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
+		// log.Fatalf("error initializing app: %v\n", err)
 	}
 
 	return &FirebaseAdapter{

@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
 	"smlcloudplatform/pkg/product/unit/services"
@@ -18,18 +20,22 @@ type IUnitHttp interface{}
 
 type UnitHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IUnitHttpService
 }
 
-func NewUnitHttp(ms *microservice.Microservice, cfg microservice.IConfig) UnitHttp {
+func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewUnitRepository(pst)
+	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
+	repoMessageQueue := repositories.NewUnitMessageQueueRepository(prod)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewUnitHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewUnitHttpService(repo, repoProductBarcode, repoMessageQueue, masterSyncCacheRepo)
 
 	return UnitHttp{
 		ms:  ms,
@@ -38,7 +44,7 @@ func NewUnitHttp(ms *microservice.Microservice, cfg microservice.IConfig) UnitHt
 	}
 }
 
-func (h UnitHttp) RouteSetup() {
+func (h UnitHttp) RegisterHttp() {
 
 	h.ms.POST("/unit/bulk", h.SaveBulk)
 

@@ -1,10 +1,12 @@
 package syncdata
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/member"
 	memberModel "smlcloudplatform/pkg/member/models"
@@ -20,12 +22,12 @@ import (
 
 type SyncDataHttp struct {
 	ms               *microservice.Microservice
-	cfg              microservice.IConfig
+	cfg              config.IConfig
 	inventoryService inventoryService.IInventoryService
 	memberService    member.IMemberService
 }
 
-func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) SyncDataHttp {
+func NewSyncDataHttp(ms *microservice.Microservice, cfg config.IConfig) SyncDataHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
@@ -50,7 +52,7 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sy
 	}
 }
 
-func (h SyncDataHttp) RouteSetup() {
+func (h SyncDataHttp) RegisterHttp() {
 
 	h.ms.POST("/sync", h.Save)
 	h.ms.POST("/syncproduct", h.SyncInventory)
@@ -92,7 +94,7 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 				return h.inventoryService.IsExistsGuid(userInfo.ShopID, syncData.MyGuid)
 			},
 			func() (string, error) {
-				idx, err := h.inventoryService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, inv)
+				idx, err := h.inventoryService.CreateWithGuid(context.Background(), userInfo.ShopID, userInfo.Username, syncData.MyGuid, inv)
 				if err != nil {
 					return "", err
 				}

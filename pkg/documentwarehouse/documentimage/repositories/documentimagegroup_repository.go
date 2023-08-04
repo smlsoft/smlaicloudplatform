@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/repositories"
@@ -14,40 +15,40 @@ import (
 )
 
 type IDocumentImageGroupRepository interface {
-	CountByTask(shopID string, taskGUID string) (int, error)
-	CountRejectByTask(shopID string, taskGUID string) (int, error)
-	Create(doc models.DocumentImageGroupDoc) (string, error)
-	CreateInBatch(doc []models.DocumentImageGroupDoc) error
-	Update(shopID string, guid string, doc models.DocumentImageGroupDoc) error
-	UpdateXOrder(shopID string, taskGUID string, GUID string, xorder uint) error
-	DeleteByGuidfixed(shopID string, guid string) error
-	DeleteByDocumentImageGUIDsHasOne(shopID string, imageGUIDs []string) error
-	DeleteByGUIDsIsDocumentImageEmpty(shopID string, GUIDs []string) error
-	RemoveDocumentImageByDocumentImageGUIDs(shopID string, imageGUIDs []string) error
-	DeleteByDocumentImageGUIDsHasOneWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error
-	DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, GUIDs []string) error
-	DeleteByGUIDIsDocumentImageEmpty(shopID string, imageGroupGUID string) error
-	RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error
-	FindOne(shopID string, filters interface{}) (models.DocumentImageGroupDoc, error)
-	FindByGuid(shopID string, guid string) (models.DocumentImageGroupDoc, error)
+	CountByTask(ctx context.Context, shopID string, taskGUID string) (int, error)
+	CountRejectByTask(ctx context.Context, shopID string, taskGUID string) (int, error)
+	Create(ctx context.Context, doc models.DocumentImageGroupDoc) (string, error)
+	CreateInBatch(ctx context.Context, doc []models.DocumentImageGroupDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.DocumentImageGroupDoc) error
+	UpdateXOrder(ctx context.Context, shopID string, taskGUID string, GUID string, xorder uint) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string) error
+	DeleteByDocumentImageGUIDsHasOne(ctx context.Context, shopID string, imageGUIDs []string) error
+	DeleteByGUIDsIsDocumentImageEmpty(ctx context.Context, shopID string, GUIDs []string) error
+	RemoveDocumentImageByDocumentImageGUIDs(ctx context.Context, shopID string, imageGUIDs []string) error
+	DeleteByDocumentImageGUIDsHasOneWithoutDocumentImageGroupGUID(ctx context.Context, shopID string, withoutGUID string, imageGUIDs []string) error
+	DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(ctx context.Context, shopID string, withoutGUID string, GUIDs []string) error
+	DeleteByGUIDIsDocumentImageEmpty(ctx context.Context, shopID string, imageGroupGUID string) error
+	RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(ctx context.Context, shopID string, withoutGUID string, imageGUIDs []string) error
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.DocumentImageGroupDoc, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.DocumentImageGroupDoc, error)
 
-	FindStatusByDocumentImageGroupTask(shopID string, taskGUID string) ([]models.DocumentImageGroupStatus, error)
-	FindLastOneByTask(shopID string, taskGUID string) (models.DocumentImageGroupDoc, error)
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
-	FindByTaskGUID(shopID string, taskGUID string) ([]models.DocumentImageGroupDoc, error)
+	FindStatusByDocumentImageGroupTask(ctx context.Context, shopID string, taskGUID string) ([]models.DocumentImageGroupStatus, error)
+	FindLastOneByTask(ctx context.Context, shopID string, taskGUID string) (models.DocumentImageGroupDoc, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
+	FindByTaskGUID(ctx context.Context, shopID string, taskGUID string) ([]models.DocumentImageGroupDoc, error)
 
-	UpdateTaskIsCompletedByTaskGUID(shopID string, taskGUID string, isCompleted bool) error
-	FindOneByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error)
-	FindOneByDocumentImageGUID(shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error)
-	FindByDocumentImageGUIDs(shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error)
-	FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error)
-	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageGroupDoc, error)
-	FindPageImageGroup(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
-	Transaction(fnc func() error) error
+	UpdateTaskIsCompletedByTaskGUID(ctx context.Context, shopID string, taskGUID string, isCompleted bool) error
+	FindOneByReference(ctx context.Context, shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error)
+	FindOneByDocumentImageGUID(ctx context.Context, shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error)
+	FindByDocumentImageGUIDs(ctx context.Context, shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error)
+	FindByReference(ctx context.Context, shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error)
+	FindByReferenceDocNo(ctx context.Context, shopID string, docNo string) ([]models.DocumentImageGroupDoc, error)
+	FindPageImageGroup(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
+	Transaction(ctx context.Context, fnc func(ctx context.Context) error) error
 
-	FindOneByDocumentImageGUIDAll(documentImageGUID string) (models.DocumentImageGroupDoc, error)
-	UpdateStatusByTask(shopID string, taskGUID string, status int8) error
+	FindOneByDocumentImageGUIDAll(ctx context.Context, documentImageGUID string) (models.DocumentImageGroupDoc, error)
+	UpdateStatusByTask(ctx context.Context, shopID string, taskGUID string, status int8) error
 }
 
 type DocumentImageGroupRepository struct {
@@ -67,15 +68,15 @@ func NewDocumentImageGroupRepository(pst microservice.IPersisterMongo) DocumentI
 	return insRepo
 }
 
-func (repo DocumentImageGroupRepository) Transaction(fnc func() error) error {
-	return repo.pst.Transaction(fnc)
+func (repo DocumentImageGroupRepository) Transaction(ctx context.Context, fnc func(ctx context.Context) error) error {
+	return repo.pst.Transaction(ctx, fnc)
 }
 
-func (repo DocumentImageGroupRepository) UpdateStatusByTask(shopID string, taskGUID string, status int8) error {
-	return repo.pst.Update(models.DocumentImageGroupDoc{}, bson.M{"shopid": shopID, "taskguid": taskGUID}, bson.M{"$set": bson.M{"status": status}})
+func (repo DocumentImageGroupRepository) UpdateStatusByTask(ctx context.Context, shopID string, taskGUID string, status int8) error {
+	return repo.pst.Update(ctx, models.DocumentImageGroupDoc{}, bson.M{"shopid": shopID, "taskguid": taskGUID}, bson.M{"$set": bson.M{"status": status}})
 }
 
-func (repo DocumentImageGroupRepository) FindStatusByDocumentImageGroupTask(shopID string, taskGUID string) ([]models.DocumentImageGroupStatus, error) {
+func (repo DocumentImageGroupRepository) FindStatusByDocumentImageGroupTask(ctx context.Context, shopID string, taskGUID string) ([]models.DocumentImageGroupStatus, error) {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -83,7 +84,7 @@ func (repo DocumentImageGroupRepository) FindStatusByDocumentImageGroupTask(shop
 		"deletedat": bson.M{"$exists": false},
 	}
 	docList := []models.DocumentImageGroupStatus{}
-	err := repo.pst.Find(models.DocumentImageGroupDoc{}, filters, &docList)
+	err := repo.pst.Find(ctx, models.DocumentImageGroupDoc{}, filters, &docList)
 
 	if err != nil {
 		return []models.DocumentImageGroupStatus{}, err
@@ -92,7 +93,7 @@ func (repo DocumentImageGroupRepository) FindStatusByDocumentImageGroupTask(shop
 	return docList, nil
 }
 
-func (repo DocumentImageGroupRepository) CountByTask(shopID string, taskGUID string) (int, error) {
+func (repo DocumentImageGroupRepository) CountByTask(ctx context.Context, shopID string, taskGUID string) (int, error) {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -100,10 +101,10 @@ func (repo DocumentImageGroupRepository) CountByTask(shopID string, taskGUID str
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	return repo.pst.Count(models.DocumentImageGroupDoc{}, filters)
+	return repo.pst.Count(ctx, models.DocumentImageGroupDoc{}, filters)
 }
 
-func (repo DocumentImageGroupRepository) CountRejectByTask(shopID string, taskGUID string) (int, error) {
+func (repo DocumentImageGroupRepository) CountRejectByTask(ctx context.Context, shopID string, taskGUID string) (int, error) {
 
 	filters := bson.M{
 		"shopid":   shopID,
@@ -115,10 +116,10 @@ func (repo DocumentImageGroupRepository) CountRejectByTask(shopID string, taskGU
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	return repo.pst.Count(models.DocumentImageGroupDoc{}, filters)
+	return repo.pst.Count(ctx, models.DocumentImageGroupDoc{}, filters)
 }
 
-func (repo DocumentImageGroupRepository) UpdateTaskIsCompletedByTaskGUID(shopID string, taskGUID string, isCompleted bool) error {
+func (repo DocumentImageGroupRepository) UpdateTaskIsCompletedByTaskGUID(ctx context.Context, shopID string, taskGUID string, isCompleted bool) error {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -126,7 +127,7 @@ func (repo DocumentImageGroupRepository) UpdateTaskIsCompletedByTaskGUID(shopID 
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	err := repo.pst.Update(models.DocumentImageGroupDoc{}, filters, bson.M{"$set": bson.M{"iscompleted": isCompleted}})
+	err := repo.pst.Update(ctx, models.DocumentImageGroupDoc{}, filters, bson.M{"$set": bson.M{"iscompleted": isCompleted}})
 
 	if err != nil {
 		return err
@@ -135,7 +136,7 @@ func (repo DocumentImageGroupRepository) UpdateTaskIsCompletedByTaskGUID(shopID 
 	return nil
 }
 
-func (repo DocumentImageGroupRepository) UpdateXOrder(shopID string, taskGUID string, GUID string, xorder uint) error {
+func (repo DocumentImageGroupRepository) UpdateXOrder(ctx context.Context, shopID string, taskGUID string, GUID string, xorder uint) error {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -144,7 +145,7 @@ func (repo DocumentImageGroupRepository) UpdateXOrder(shopID string, taskGUID st
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	err := repo.pst.UpdateOne(models.DocumentImageGroupDoc{}, filters, bson.M{"xorder": xorder})
+	err := repo.pst.UpdateOne(ctx, models.DocumentImageGroupDoc{}, filters, bson.M{"xorder": xorder})
 
 	if err != nil {
 		return err
@@ -153,10 +154,10 @@ func (repo DocumentImageGroupRepository) UpdateXOrder(shopID string, taskGUID st
 	return nil
 }
 
-func (repo DocumentImageGroupRepository) FindLastOneByTask(shopID string, taskGUID string) (models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindLastOneByTask(ctx context.Context, shopID string, taskGUID string) (models.DocumentImageGroupDoc, error) {
 
 	results := []models.DocumentImageGroupDoc{}
-	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+	err := repo.pst.Aggregate(ctx, models.DocumentImageGroupDoc{}, []interface{}{
 		bson.M{"$match": bson.M{
 			"shopid":    shopID,
 			"taskguid":  taskGUID,
@@ -178,10 +179,10 @@ func (repo DocumentImageGroupRepository) FindLastOneByTask(shopID string, taskGU
 
 }
 
-func (repo DocumentImageGroupRepository) FindOneByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindOneByReference(ctx context.Context, shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error) {
 
 	results := []models.DocumentImageGroupDoc{}
-	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+	err := repo.pst.Aggregate(ctx, models.DocumentImageGroupDoc{}, []interface{}{
 		bson.M{"$match": bson.M{
 			"shopid":            shopID,
 			"references.module": reference.Module,
@@ -203,14 +204,14 @@ func (repo DocumentImageGroupRepository) FindOneByReference(shopID string, refer
 
 }
 
-func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUIDAll(documentImageGUID string) (models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUIDAll(ctx context.Context, documentImageGUID string) (models.DocumentImageGroupDoc, error) {
 
 	matchQuery := bson.M{"$match": bson.M{
 		"imagereferences.documentimageguid": documentImageGUID,
 	}}
 
 	results := []models.DocumentImageGroupDoc{}
-	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+	err := repo.pst.Aggregate(ctx, models.DocumentImageGroupDoc{}, []interface{}{
 		matchQuery,
 		bson.M{"$limit": 1},
 	}, &results)
@@ -226,7 +227,7 @@ func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUIDAll(documentI
 	return results[0], nil
 }
 
-func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUID(shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUID(ctx context.Context, shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error) {
 
 	matchQuery := bson.M{"$match": bson.M{
 		"shopid":                            shopID,
@@ -236,7 +237,7 @@ func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUID(shopID strin
 	}}
 
 	results := []models.DocumentImageGroupDoc{}
-	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+	err := repo.pst.Aggregate(ctx, models.DocumentImageGroupDoc{}, []interface{}{
 		matchQuery,
 		bson.M{"$limit": 1},
 	}, &results)
@@ -252,7 +253,7 @@ func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUID(shopID strin
 	return results[0], nil
 }
 
-func (repo DocumentImageGroupRepository) FindWithoutGUIDByDocumentImageGUIDs(shopID string, documentImageGroupGUID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error) {
+func (repo DocumentImageGroupRepository) FindWithoutGUIDByDocumentImageGUIDs(ctx context.Context, shopID string, documentImageGroupGUID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error) {
 
 	matchQuery := bson.M{"$match": bson.M{
 		"shopid":                            shopID,
@@ -263,7 +264,7 @@ func (repo DocumentImageGroupRepository) FindWithoutGUIDByDocumentImageGUIDs(sho
 	}}
 
 	results := []models.DocumentImageGroupInfo{}
-	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+	err := repo.pst.Aggregate(ctx, models.DocumentImageGroupDoc{}, []interface{}{
 		matchQuery,
 	}, &results)
 
@@ -274,7 +275,7 @@ func (repo DocumentImageGroupRepository) FindWithoutGUIDByDocumentImageGUIDs(sho
 	return results, nil
 }
 
-func (repo DocumentImageGroupRepository) FindByDocumentImageGUIDs(shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error) {
+func (repo DocumentImageGroupRepository) FindByDocumentImageGUIDs(ctx context.Context, shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error) {
 
 	matchQuery := bson.M{"$match": bson.M{
 		"shopid":                            shopID,
@@ -284,7 +285,7 @@ func (repo DocumentImageGroupRepository) FindByDocumentImageGUIDs(shopID string,
 	}}
 
 	results := []models.DocumentImageGroupInfo{}
-	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+	err := repo.pst.Aggregate(ctx, models.DocumentImageGroupDoc{}, []interface{}{
 		matchQuery,
 	}, &results)
 
@@ -295,9 +296,9 @@ func (repo DocumentImageGroupRepository) FindByDocumentImageGUIDs(shopID string,
 	return results, nil
 }
 
-func (repo DocumentImageGroupRepository) FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindByReferenceDocNo(ctx context.Context, shopID string, docNo string) ([]models.DocumentImageGroupDoc, error) {
 	docList := []models.DocumentImageGroupDoc{}
-	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
+	err := repo.pst.Find(ctx, models.DocumentImageGroupDoc{}, bson.M{
 		"references.docno": docNo,
 		"deletedat":        bson.M{"$exists": false},
 	}, &docList)
@@ -309,9 +310,9 @@ func (repo DocumentImageGroupRepository) FindByReferenceDocNo(shopID string, doc
 	return docList, nil
 }
 
-func (repo DocumentImageGroupRepository) FindByTaskGUID(shopID string, taskGUID string) ([]models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindByTaskGUID(ctx context.Context, shopID string, taskGUID string) ([]models.DocumentImageGroupDoc, error) {
 	docList := []models.DocumentImageGroupDoc{}
-	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
+	err := repo.pst.Find(ctx, models.DocumentImageGroupDoc{}, bson.M{
 		"taskguid":  taskGUID,
 		"deletedat": bson.M{"$exists": false},
 	}, &docList)
@@ -323,9 +324,9 @@ func (repo DocumentImageGroupRepository) FindByTaskGUID(shopID string, taskGUID 
 	return docList, nil
 }
 
-func (repo DocumentImageGroupRepository) FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindByReference(ctx context.Context, shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error) {
 	docList := []models.DocumentImageGroupDoc{}
-	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
+	err := repo.pst.Find(ctx, models.DocumentImageGroupDoc{}, bson.M{
 		"references.module": reference.Module,
 		"references.docno":  reference.DocNo,
 		"deletedat":         bson.M{"$exists": false},
@@ -338,15 +339,15 @@ func (repo DocumentImageGroupRepository) FindByReference(shopID string, referenc
 	return docList, nil
 }
 
-func (repo DocumentImageGroupRepository) DeleteByGuidfixed(shopID string, guid string) error {
-	return repo.pst.Delete(models.DocumentImageGroupDoc{}, bson.M{
+func (repo DocumentImageGroupRepository) DeleteByGuidfixed(ctx context.Context, shopID string, guid string) error {
+	return repo.pst.Delete(ctx, models.DocumentImageGroupDoc{}, bson.M{
 		"shopid":    shopID,
 		"guidfixed": guid,
 	})
 }
 
-func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmpty(shopID string, GUIDs []string) error {
-	return repo.pst.Delete(models.DocumentImageGroupDoc{}, bson.M{
+func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmpty(ctx context.Context, shopID string, GUIDs []string) error {
+	return repo.pst.Delete(ctx, models.DocumentImageGroupDoc{}, bson.M{
 		"shopid":          shopID,
 		"imagereferences": bson.M{"$exists": true, "$size": 0},
 		"$or": []interface{}{
@@ -357,8 +358,8 @@ func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmpty(shopI
 	})
 }
 
-func (repo DocumentImageGroupRepository) DeleteByDocumentImageGUIDsHasOne(shopID string, imageGUIDs []string) error {
-	return repo.pst.Delete(models.DocumentImageGroupDoc{}, bson.M{
+func (repo DocumentImageGroupRepository) DeleteByDocumentImageGUIDsHasOne(ctx context.Context, shopID string, imageGUIDs []string) error {
+	return repo.pst.Delete(ctx, models.DocumentImageGroupDoc{}, bson.M{
 		"shopid":                            shopID,
 		"imagereferences":                   bson.M{"$exists": true, "$size": 1},
 		"imagereferences.documentimageguid": bson.M{"$in": imageGUIDs},
@@ -369,7 +370,7 @@ func (repo DocumentImageGroupRepository) DeleteByDocumentImageGUIDsHasOne(shopID
 	})
 }
 
-func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDs(shopID string, imageGUIDs []string) error {
+func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDs(ctx context.Context, shopID string, imageGUIDs []string) error {
 
 	filterQuery := bson.M{
 		"shopid":                            shopID,
@@ -386,10 +387,10 @@ func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDs
 		"$pull": bson.M{"imagereferences": bson.M{"documentimageguid": bson.M{"$in": imageGUIDs}}},
 	}
 
-	return repo.pst.Update(models.DocumentImageGroupDoc{}, filterQuery, removeQuery)
+	return repo.pst.Update(ctx, models.DocumentImageGroupDoc{}, filterQuery, removeQuery)
 }
 
-func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, GUIDs []string) error {
+func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(ctx context.Context, shopID string, withoutGUID string, GUIDs []string) error {
 
 	filterQuery := bson.D{
 		{Key: "shopid", Value: shopID},
@@ -405,10 +406,10 @@ func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmptyWithou
 		}},
 	}
 
-	return repo.pst.Delete(models.DocumentImageGroupDoc{}, filterQuery)
+	return repo.pst.Delete(ctx, models.DocumentImageGroupDoc{}, filterQuery)
 }
 
-func (repo DocumentImageGroupRepository) DeleteByGUIDIsDocumentImageEmpty(shopID string, imageGroupGUID string) error {
+func (repo DocumentImageGroupRepository) DeleteByGUIDIsDocumentImageEmpty(ctx context.Context, shopID string, imageGroupGUID string) error {
 
 	filterQuery := bson.D{
 		{Key: "shopid", Value: shopID},
@@ -423,11 +424,11 @@ func (repo DocumentImageGroupRepository) DeleteByGUIDIsDocumentImageEmpty(shopID
 		}},
 	}
 
-	return repo.pst.Delete(models.DocumentImageGroupDoc{}, filterQuery)
+	return repo.pst.Delete(ctx, models.DocumentImageGroupDoc{}, filterQuery)
 }
 
-func (repo DocumentImageGroupRepository) DeleteByDocumentImageGUIDsHasOneWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error {
-	return repo.pst.Delete(models.DocumentImageGroupDoc{}, bson.M{
+func (repo DocumentImageGroupRepository) DeleteByDocumentImageGUIDsHasOneWithoutDocumentImageGroupGUID(ctx context.Context, shopID string, withoutGUID string, imageGUIDs []string) error {
+	return repo.pst.Delete(ctx, models.DocumentImageGroupDoc{}, bson.M{
 		"shopid":                            shopID,
 		"guidfixed":                         bson.M{"$ne": withoutGUID},
 		"imagereferences":                   bson.M{"$exists": true, "$size": 1},
@@ -439,7 +440,7 @@ func (repo DocumentImageGroupRepository) DeleteByDocumentImageGUIDsHasOneWithout
 	})
 }
 
-func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error {
+func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(ctx context.Context, shopID string, withoutGUID string, imageGUIDs []string) error {
 
 	filterQuery := bson.M{
 		"shopid":                            shopID,
@@ -456,10 +457,10 @@ func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDs
 		"$pull": bson.M{"imagereferences": bson.M{"documentimageguid": bson.M{"$in": imageGUIDs}}},
 	}
 
-	return repo.pst.Update(models.DocumentImageGroupDoc{}, filterQuery, removeQuery)
+	return repo.pst.Update(ctx, models.DocumentImageGroupDoc{}, filterQuery, removeQuery)
 }
 
-func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
+func (repo DocumentImageGroupRepository) FindPageImageGroup(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
 
 	matchFilterList := []interface{}{}
 
@@ -508,7 +509,7 @@ func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, filte
 		"$sort": sortFields,
 	}
 
-	aggData, err := repo.pst.AggregatePage(models.DocumentImageGroupInfo{}, pageable, matchQuery, sortQuery)
+	aggData, err := repo.pst.AggregatePage(ctx, models.DocumentImageGroupInfo{}, pageable, matchQuery, sortQuery)
 
 	if err != nil {
 		return []models.DocumentImageGroupInfo{}, mongopagination.PaginationData{}, err

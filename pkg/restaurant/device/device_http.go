@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/device/models"
@@ -16,11 +17,11 @@ type IDeviceHttp interface{}
 
 type DeviceHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IDeviceHttpService
 }
 
-func NewDeviceHttp(ms *microservice.Microservice, cfg microservice.IConfig) DeviceHttp {
+func NewDeviceHttp(ms *microservice.Microservice, cfg config.IConfig) DeviceHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -36,7 +37,7 @@ func NewDeviceHttp(ms *microservice.Microservice, cfg microservice.IConfig) Devi
 	}
 }
 
-func (h DeviceHttp) RouteSetup() {
+func (h DeviceHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/device/bulk", h.SaveBulk)
 

@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/firebase"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop"
 	shopmodel "smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
+	"time"
 )
 
 type IAuthenticationHttp interface {
@@ -20,23 +22,25 @@ type IAuthenticationHttp interface {
 }
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
-	cfg                   microservice.IConfig
+	cfg                   config.IConfig
 	authService           *microservice.AuthService
 	authenticationService IAuthenticationService
 	shopService           shop.IShopService
 	shopUserService       shop.IShopUserService
 }
 
-func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) AuthenticationHttp {
+func NewAuthenticationHttp(ms *microservice.Microservice, cfg config.IConfig) AuthenticationHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
-	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3*time.Hour, 24*30*time.Hour)
 
 	shopRepo := shop.NewShopRepository(pst)
 	shopUserRepo := shop.NewShopUserRepository(pst)
 	shopUserAccessLogRepo := shop.NewShopUserAccessLogRepository(pst)
-	authRepo := NewAuthenticationRepository(pst)
+	// authRepo := NewAuthenticationRepository(pst)
+	authRepo := NewAuthenticationMongoCacheRepository(pst, cache)
 	firebaseAdapter := firebase.NewFirebaseAdapter()
 	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow, firebaseAdapter)
 
@@ -52,11 +56,12 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 	}
 }
 
-func (h AuthenticationHttp) RouteSetup() {
+func (h AuthenticationHttp) RegisterHttp() {
 
 	h.ms.POST("/login", h.Login)
 	h.ms.POST("/tokenlogin", h.TokenLogin)
 	h.ms.POST("/logout", h.Logout)
+	h.ms.POST("/refresh", h.RefreshToken)
 
 	h.ms.POST("/register", h.Register)
 	h.ms.GET("/profile", h.Profile)
@@ -103,16 +108,58 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 		Ip: ctx.RealIp(),
 	}
 
-	tokenString, err := h.authenticationService.Login(userReq, authContext)
+	result, err := h.authenticationService.Login(userReq, authContext)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")
 		return err
 	}
 
-	ctx.Response(http.StatusOK, common.AuthResponse{
-		Success: true,
-		Token:   tokenString,
+	ctx.Response(http.StatusOK, map[string]interface{}{
+		"success": true,
+		"token":   result.Token,
+		"refresh": result.Refresh,
+	})
+
+	return nil
+}
+
+// Login refresh
+// @Description refresh token
+// @Tags		Authentication
+// @Param		TokenLoginRequest  body      TokenLoginRequest  true  "Reresh Token"
+// @Accept 		json
+// @Success		200	{object}	common.AuthResponse
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Router /refresh [post]
+func (h AuthenticationHttp) RefreshToken(ctx microservice.IContext) error {
+
+	input := ctx.ReadInput()
+
+	reqBody := TokenLoginRequest{}
+	err := json.Unmarshal([]byte(input), &reqBody)
+
+	if err != nil {
+		ctx.ResponseError(400, "payload invalid")
+		return err
+	}
+
+	if err = ctx.Validate(reqBody); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	result, err := h.authenticationService.RefreshToken(reqBody)
+
+	if err != nil {
+		ctx.ResponseError(400, "login failed.")
+		return err
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{
+		"success": true,
+		"token":   result.Token,
+		"refresh": result.Refresh,
 	})
 
 	return nil
@@ -304,6 +351,7 @@ func (h AuthenticationHttp) Logout(ctx microservice.IContext) error {
 // @Router /profile [get]
 func (h AuthenticationHttp) Profile(ctx microservice.IContext) error {
 
+	// stime := time.Now()
 	userProfile, err := h.authenticationService.Profile(ctx.UserInfo().Username)
 
 	if err != nil {
@@ -318,6 +366,8 @@ func (h AuthenticationHttp) Profile(ctx microservice.IContext) error {
 		Success: true,
 		Data:    userProfile,
 	})
+
+	// fmt.Println("Time Profile", time.Since(stime))
 	return nil
 }
 

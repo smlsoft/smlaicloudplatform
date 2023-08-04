@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -9,28 +10,32 @@ import (
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IStockTransferRepository interface {
-	FindDocOne(shopID, docno string, transFlag int) (models.StockTransferDoc, error)
-	Count(shopID string) (int, error)
-	Create(doc models.StockTransferDoc) (string, error)
-	CreateInBatch(docList []models.StockTransferDoc) error
-	Update(shopID string, guid string, doc models.StockTransferDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.StockTransferDoc, error)
+	FindDocOne(ctx context.Context, shopID, docno string, transFlag int) (models.StockTransferDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.StockTransferDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.StockTransferDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.StockTransferDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.StockTransferDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.StockTransferDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.StockTransferItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.StockTransferDoc, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.StockTransferInfo, int, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.StockTransferItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.StockTransferDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.StockTransferInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferActivity, error)
+
+	FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.StockTransferDoc, error)
 }
 
 type StockTransferRepository struct {
@@ -55,9 +60,35 @@ func NewStockTransferRepository(pst microservice.IPersisterMongo) *StockTransfer
 	return insRepo
 }
 
-func (repo StockTransferRepository) FindDocOne(shopID, docno string, transFlag int) (models.StockTransferDoc, error) {
+func (repo StockTransferRepository) FindDocOne(ctx context.Context, shopID, docno string, transFlag int) (models.StockTransferDoc, error) {
 	doc := models.StockTransferDoc{}
-	err := repo.pst.FindOne(models.StockTransferDoc{}, bson.M{"shopid": shopID, "docno": docno, "transflag": transFlag}, &doc)
+	err := repo.pst.FindOne(ctx, models.StockTransferDoc{}, bson.M{"shopid": shopID, "docno": docno, "transflag": transFlag}, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
+}
+
+func (repo StockTransferRepository) FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.StockTransferDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"docno": bson.M{
+			"$regex": "^" + prefixDocNo + ".*$",
+		},
+	}
+
+	optSort := options.FindOneOptions{}
+	optSort.SetSort(bson.M{
+		"docno": -1,
+	})
+
+	doc := models.StockTransferDoc{}
+	err := repo.pst.FindOne(ctx, models.StockTransferDoc{}, filters, &doc, &optSort)
 
 	if err != nil {
 		return doc, err

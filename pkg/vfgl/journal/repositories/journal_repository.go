@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -13,16 +14,16 @@ import (
 )
 
 type IJournalRepository interface {
-	FindAll() ([]models.JournalDoc, error)
-	Count(shopID string) (int, error)
-	Create(category models.JournalDoc) (string, error)
-	CreateInBatch(docList []models.JournalDoc) error
-	Update(shopID string, guid string, category models.JournalDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.JournalDoc, error)
-	FindOne(shopID string, filters interface{}) (models.JournalDoc, error)
-	IsAccountCodeUsed(shopID string, accountCode string) (bool, error)
+	FindAll(ctx context.Context) ([]models.JournalDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.JournalDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.JournalDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.JournalDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.JournalDoc, error)
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.JournalDoc, error)
+	IsAccountCodeUsed(ctx context.Context, shopID string, accountCode string) (bool, error)
 
 	// FindLastDocno(shopID string, docFormat string) (string, error)
 }
@@ -47,7 +48,7 @@ func NewJournalRepository(pst microservice.IPersisterMongo) JournalRepository {
 	return insRepo
 }
 
-func (repo *JournalRepository) IsAccountCodeUsed(shopID string, accountCode string) (bool, error) {
+func (repo *JournalRepository) IsAccountCodeUsed(ctx context.Context, shopID string, accountCode string) (bool, error) {
 
 	findDoc := models.JournalDoc{}
 
@@ -57,7 +58,7 @@ func (repo *JournalRepository) IsAccountCodeUsed(shopID string, accountCode stri
 		"deletedat":                 bson.M{"$exists": false},
 	}
 
-	err := repo.pst.FindOne(models.JournalDoc{}, filters, &findDoc)
+	err := repo.pst.FindOne(ctx, models.JournalDoc{}, filters, &findDoc)
 
 	if err != nil {
 		return true, nil
@@ -67,7 +68,7 @@ func (repo *JournalRepository) IsAccountCodeUsed(shopID string, accountCode stri
 
 }
 
-func (repo *JournalRepository) FindLastDocno(shopID string, docFormat string) (string, error) {
+func (repo *JournalRepository) FindLastDocno(ctx context.Context, shopID string, docFormat string) (string, error) {
 
 	findDocList := []models.JournalDoc{}
 
@@ -90,7 +91,7 @@ func (repo *JournalRepository) FindLastDocno(shopID string, docFormat string) (s
 	findOptions.SetSort(bson.M{"docformat": -1})
 	findOptions.SetLimit(1)
 
-	err := repo.pst.Find(models.JournalDoc{}, filters, &findDocList, findOptions)
+	err := repo.pst.Find(ctx, models.JournalDoc{}, filters, &findDocList, findOptions)
 
 	if err != nil {
 		return "", nil

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
@@ -14,11 +15,11 @@ type IKitchenHttp interface{}
 
 type KitchenHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IKitchenService
 }
 
-func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) KitchenHttp {
+func NewKitchenHttp(ms *microservice.Microservice, cfg config.IConfig) KitchenHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -33,12 +34,13 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) Kit
 	}
 }
 
-func (h KitchenHttp) RouteSetup() {
+func (h KitchenHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/kitchen/bulk", h.SaveBulk)
 
 	h.ms.GET("/restaurant/kitchen", h.SearchKitchen)
 	h.ms.GET("/restaurant/kitchen/list", h.SearchKitchenStep)
+	h.ms.GET("/restaurant/kitchen/products", h.GetKitchenProductBarcode)
 	h.ms.POST("/restaurant/kitchen", h.CreateKitchen)
 	h.ms.GET("/restaurant/kitchen/:id", h.InfoKitchen)
 	h.ms.PUT("/restaurant/kitchen/:id", h.UpdateKitchen)
@@ -211,6 +213,32 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Restaurant Kitchen product barcode godoc
+// @Description List Restaurant Kitchen product barcode
+// @Tags		Restaurant
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen/products [get]
+func (h KitchenHttp) GetKitchenProductBarcode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docList, err := h.svc.GetProductBarcodeKitchen(shopID)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
 	})
 	return nil
 }

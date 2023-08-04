@@ -1,6 +1,7 @@
 package microservice
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,10 +16,10 @@ import (
 
 	"smlcloudplatform/internal/microservice/models"
 	msValidator "smlcloudplatform/internal/validator"
+	"smlcloudplatform/pkg/config"
+	"smlcloudplatform/pkg/logger"
+	"smlcloudplatform/pkg/middlewares"
 
-	_ "smlcloudplatform/logger"
-
-	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo-contrib/jaegertracing"
@@ -65,15 +66,20 @@ type Microservice struct {
 	prodMutex                 sync.Mutex
 	websocketPool             *WebsocketPool
 	pathPrefix                string
-	config                    IConfig
+	config                    config.IConfig
 	jaegerCloser              io.Closer
-	Logger                    *log.Entry
+	Logger                    logger.ILogger
 	Mode                      string
+	middlewareManager         middlewares.IMiddlewareManager
 }
 
 type ServiceHandleFunc func(context IContext) error
 
-func NewMicroservice(config IConfig) (*Microservice, error) {
+func NewMicroservice(config config.IConfig) (*Microservice, error) {
+
+	logger := logger.NewAppLogger(config.LoggerConfig())
+	logger.InitLogger()
+
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
@@ -84,10 +90,6 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
-
-	logctx := log.WithFields(log.Fields{
-		"name": config.ApplicationName(),
-	})
 
 	websocketPool := WebsocketPool{
 		Handler: websocket.Upgrader{
@@ -110,10 +112,13 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		prods:                map[string]IProducer{},
 		pathPrefix:           config.PathPrefix(),
 		config:               config,
-		Logger:               logctx,
+		Logger:               logger,
 		Mode:                 os.Getenv("MODE"),
 		websocketPool:        &websocketPool,
 	}
+
+	// Init logger
+	m.middlewareManager = middlewares.NewMiddlewareManager(logger, config, m.getHttpMetricsCb())
 
 	m.Logger.Info("Initial Microservice.")
 	err := m.CheckReadyToStart()
@@ -132,9 +137,9 @@ func (ms *Microservice) CheckReadyToStart() error {
 	if mongodbUri != "" {
 		ms.Logger.Debug("[MONGODB]Test Connection.")
 		pst := NewPersisterMongo(ms.config.MongoPersisterConfig())
-		err := pst.TestConnect()
+		err := pst.TestConnect(context.Background())
 		if err != nil {
-			ms.Logger.WithError(err).Errorf("[MONGODB]Connection Failed(%v).", mongodbUri)
+			ms.Logger.Errorf("[MONGODB]Connection Failed(%v)., with error %v", mongodbUri, err)
 			return err
 		}
 		ms.mongoPersisters[mongodbUri] = pst
@@ -148,7 +153,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		producer := ms.Producer(ms.config.MQConfig())
 		err := producer.TestConnect()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[KAFKA]Connection Failed.")
+			ms.Logger.Error("[KAFKA]Connection Failed.", err)
 			return err
 		}
 
@@ -169,7 +174,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		}
 		err := cacher.Healthcheck()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[REDIS_CACHER]Connection Failed.")
+			ms.Logger.Error("[REDIS_CACHER]Connection Failed.", err)
 			return err
 		}
 		ms.Logger.Debug("[REDIS_CACHER]Connection Success.")
@@ -183,7 +188,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		postgresqlPst := ms.Persister(persisterConfig)
 		err := postgresqlPst.TestConnect()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[PostgreSQL]Connection Failed.")
+			ms.Logger.Error("[PostgreSQL]Connection Failed.", err)
 			return err
 		}
 	}
@@ -261,7 +266,7 @@ func (ms *Microservice) Cleanup() error {
 
 	if ms.mongoPersisters != nil {
 		for _, pst := range ms.mongoPersisters {
-			pst.Cleanup()
+			pst.Cleanup(context.TODO())
 		}
 	}
 
@@ -290,7 +295,7 @@ func (ms *Microservice) Log(tag string, message string) {
 
 }
 
-func (ms *Microservice) Persister(cfg IPersisterConfig) IPersister {
+func (ms *Microservice) Persister(cfg config.IPersisterConfig) IPersister {
 	pst, ok := ms.persisters[cfg.Host()]
 	if !ok {
 		pst = NewPersister(cfg)
@@ -301,7 +306,7 @@ func (ms *Microservice) Persister(cfg IPersisterConfig) IPersister {
 	return pst
 }
 
-func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMongo {
+func (ms *Microservice) MongoPersister(cfg config.IPersisterMongoConfig) IPersisterMongo {
 	pst, ok := ms.mongoPersisters[cfg.MongodbURI()]
 	if !ok {
 		pst = NewPersisterMongo(cfg)
@@ -312,7 +317,7 @@ func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMong
 	return pst
 }
 
-func (ms *Microservice) ClickHousePersister(cfg IPersisterClickHouseConfig) IPersisterClickHouse {
+func (ms *Microservice) ClickHousePersister(cfg config.IPersisterClickHouseConfig) IPersisterClickHouse {
 
 	indexCfg := strings.Join(cfg.ServerAddress(), "_")
 
@@ -328,7 +333,7 @@ func (ms *Microservice) ClickHousePersister(cfg IPersisterClickHouseConfig) IPer
 	return pst
 }
 
-func (ms *Microservice) ElkPersister(cfg IPersisterElkConfig) IPersisterElk {
+func (ms *Microservice) ElkPersister(cfg config.IPersisterElkConfig) IPersisterElk {
 	if len(cfg.ElkAddress()) < 1 {
 		return nil
 	}
@@ -345,7 +350,7 @@ func (ms *Microservice) ElkPersister(cfg IPersisterElkConfig) IPersisterElk {
 	return pst
 }
 
-func (ms *Microservice) SearchPersister(cfg IPersisterOpenSearchConfig) IPersisterOpenSearch {
+func (ms *Microservice) SearchPersister(cfg config.IPersisterOpenSearchConfig) IPersisterOpenSearch {
 	if len(cfg.Address()) < 1 {
 		return nil
 	}
@@ -362,7 +367,7 @@ func (ms *Microservice) SearchPersister(cfg IPersisterOpenSearchConfig) IPersist
 	return pst
 }
 
-func (ms *Microservice) Cacher(cfg ICacherConfig) ICacher {
+func (ms *Microservice) Cacher(cfg config.ICacherConfig) ICacher {
 	cacher, ok := ms.cachers[cfg.Endpoint()]
 	if !ok {
 		cacher = NewCacher(cfg)
@@ -373,7 +378,7 @@ func (ms *Microservice) Cacher(cfg ICacherConfig) ICacher {
 	return cacher
 }
 
-func (ms *Microservice) Producer(cfg IMQConfig) IProducer {
+func (ms *Microservice) Producer(cfg config.IMQConfig) IProducer {
 	prod, ok := ms.prods[cfg.URI()]
 	if !ok {
 		prod = NewProducer(cfg.URI(), ms.Logger)

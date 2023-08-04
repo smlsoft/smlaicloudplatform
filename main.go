@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
+	migrationAPI "smlcloudplatform/cmd/migrationapi/api"
 	"smlcloudplatform/docs"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/channel/salechannel"
 	"smlcloudplatform/pkg/channel/transportchannel"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/creditor"
 	"smlcloudplatform/pkg/debtaccount/creditorgroup"
 	"smlcloudplatform/pkg/debtaccount/customer"
@@ -26,16 +28,21 @@ import (
 	"smlcloudplatform/pkg/payment/bookbank"
 	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
+	pos_media "smlcloudplatform/pkg/pos/media"
+	pos_setting "smlcloudplatform/pkg/pos/setting"
 	"smlcloudplatform/pkg/product/color"
+	"smlcloudplatform/pkg/product/eorder"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
-	"smlcloudplatform/pkg/product/product"
+	"smlcloudplatform/pkg/product/ordertype"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
+	"smlcloudplatform/pkg/product/producttype"
+	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
@@ -43,16 +50,17 @@ import (
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
-	"smlcloudplatform/pkg/restaurant/restaurantsettings"
-	"smlcloudplatform/pkg/restaurant/shoptable"
-	"smlcloudplatform/pkg/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/settings"
 	"smlcloudplatform/pkg/restaurant/staff"
+	"smlcloudplatform/pkg/restaurant/table"
+	"smlcloudplatform/pkg/restaurant/zone"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
+	"smlcloudplatform/pkg/transaction/documentformate"
 	"smlcloudplatform/pkg/transaction/paid"
 	"smlcloudplatform/pkg/transaction/pay"
 	"smlcloudplatform/pkg/transaction/purchase"
@@ -72,6 +80,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journalbook"
 	"smlcloudplatform/pkg/vfgl/journalreport"
 	"smlcloudplatform/pkg/warehouse"
+	"time"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -114,7 +123,7 @@ func main() {
 		docs.SwaggerInfo.Host = host
 	}
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)
@@ -127,8 +136,9 @@ func main() {
 		ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 
 		cacher := ms.Cacher(cfg.CacherConfig())
-		authService := microservice.NewAuthService(cacher, 24*3)
+		authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 		publicPath := []string{
+			"/migrationtools/",
 			"/swagger",
 			"/login",
 			"/tokenlogin",
@@ -142,6 +152,9 @@ func main() {
 			"/healthz",
 			"/ws",
 			"/metrics",
+			"/e-order/product",
+			"/e-order/category",
+			"/e-order/product-barcode",
 		}
 
 		exceptShopPath := []string{
@@ -162,7 +175,7 @@ func main() {
 		azureFileBlob := microservice.NewPersisterAzureBlob()
 		imagePersister := microservice.NewPersisterImage(azureFileBlob)
 
-		httpServices := []HttpRouteSetup{
+		httpServices := []HttpRegister{
 
 			apikeyservice.NewApiKeyServiceHttp(ms, cfg),
 			authentication.NewAuthenticationHttp(ms, cfg),
@@ -181,8 +194,9 @@ func main() {
 			//product
 			productcategory.NewProductCategoryHttp(ms, cfg),
 			productbarcode.NewProductBarcodeHttp(ms, cfg),
-			product.NewProductHttp(ms, cfg),
+			// product.NewProductHttp(ms, cfg),
 			productgroup.NewProductGroupHttp(ms, cfg),
+			producttype.NewProductTypeHttp(ms, cfg),
 
 			inventoryimport.NewInventoryImportHttp(ms, cfg),
 			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
@@ -191,12 +205,12 @@ func main() {
 			images.NewImagesHttp(ms, cfg, imagePersister),
 
 			// restaurant
-			shopzone.NewShopZoneHttp(ms, cfg),
-			shoptable.NewShopTableHttp(ms, cfg),
+			zone.NewZoneHttp(ms, cfg),
+			table.NewTableHttp(ms, cfg),
 			printer.NewPrinterHttp(ms, cfg),
 			kitchen.NewKitchenHttp(ms, cfg),
 			zonedesign.NewZoneDesignHttp(ms, cfg),
-			restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
+			settings.NewRestaurantSettingsHttp(ms, cfg),
 			device.NewDeviceHttp(ms, cfg),
 			staff.NewStaffHttp(ms, cfg),
 
@@ -257,9 +271,21 @@ func main() {
 			//channel
 			salechannel.NewSaleChannelHttp(ms, cfg),
 			transportchannel.NewTransportChannelHttp(ms, cfg),
+
+			// e-order
+			eorder.NewEOrderHttp(ms, cfg),
+
+			// promiotions
+			promotion.NewPromotionHttp(ms, cfg),
+
+			ordertype.NewOrderTypeHttp(ms, cfg),
+
+			pos_setting.NewSettingHttp(ms, cfg),
+			pos_media.NewMediaHttp(ms, cfg),
+			documentformate.NewDocumentFormateHttp(ms, cfg),
 		}
 
-		startHttpServices(httpServices...)
+		serviceStartHttp(ms, httpServices...)
 
 	}
 
@@ -287,19 +313,36 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
-		task.NewTaskConsumer(ms, cfg).RegisterConsumer()
+		// transactionconsumer.MigrationDatabase(ms, cfg)
 
+		consumerServices := []ConsumerRegister{
+			task.NewTaskConsumer(ms, cfg),
+			productbarcode.NewProductBarcodeConsumer(ms, cfg),
+		}
+
+		serviceStartConsumer(ms, consumerServices...)
 	}
+	ms.RegisterHttp(migrationAPI.NewMigrationAPI(ms, cfg))
 
 	ms.Start()
 }
 
-type HttpRouteSetup interface {
-	RouteSetup()
+type HttpRegister interface {
+	RegisterHttp()
 }
 
-func startHttpServices(services ...HttpRouteSetup) {
+func serviceStartHttp(ms *microservice.Microservice, services ...HttpRegister) {
 	for _, service := range services {
-		service.RouteSetup()
+		ms.RegisterHttp(service)
+	}
+}
+
+type ConsumerRegister interface {
+	RegisterConsumer()
+}
+
+func serviceStartConsumer(ms *microservice.Microservice, services ...ConsumerRegister) {
+	for _, service := range services {
+		ms.RegisterConsumer(service)
 	}
 }

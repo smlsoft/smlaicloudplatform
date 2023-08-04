@@ -10,13 +10,9 @@ const deviceCollectionName = "restarantDevices"
 
 type Device struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string `json:"code" bson:"code" validate:"required" `
-	Type                     int16  `json:"type" bson:"type" `
-	Name1                    string `json:"name1" bson:"name1" `
-	Name2                    string `json:"name2,omitempty" bson:"name2,omitempty"`
-	Name3                    string `json:"name3,omitempty" bson:"name3,omitempty"`
-	Name4                    string `json:"name4,omitempty" bson:"name4,omitempty"`
-	Name5                    string `json:"name5,omitempty" bson:"name5,omitempty"`
+	Code                     string          `json:"code" bson:"code" validate:"required" `
+	Type                     int16           `json:"type" bson:"type" `
+	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 
 type DeviceInfo struct {

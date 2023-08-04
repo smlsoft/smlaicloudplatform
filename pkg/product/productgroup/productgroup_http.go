@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/productgroup/models"
 	"smlcloudplatform/pkg/product/productgroup/repositories"
 	"smlcloudplatform/pkg/product/productgroup/services"
@@ -17,18 +19,21 @@ type IProductGroupHttp interface{}
 
 type ProductGroupHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IProductGroupHttpService
 }
 
-func NewProductGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductGroupHttp {
+func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) ProductGroupHttp {
+	prod := ms.Producer(cfg.MQConfig())
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewProductGroupRepository(pst)
+	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+	repoMessageQueue := repositories.NewProductGroupMessageQueueRepository(prod)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductGroupHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewProductGroupHttpService(repo, repoMessageQueue, repoProductBarcode, cfg.ProductGroupServiceConfig(), masterSyncCacheRepo)
 
 	return ProductGroupHttp{
 		ms:  ms,
@@ -37,7 +42,7 @@ func NewProductGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig
 	}
 }
 
-func (h ProductGroupHttp) RouteSetup() {
+func (h ProductGroupHttp) RegisterHttp() {
 
 	h.ms.POST("/product/group/bulk", h.SaveBulk)
 

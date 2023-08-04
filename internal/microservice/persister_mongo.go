@@ -15,42 +15,37 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 )
 
 // IPersister is interface for persister
 type IPersisterMongo interface {
-	Aggregate(model interface{}, pipeline interface{}, decode interface{}) error
-	AggregatePage(model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error)
-	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
-	FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
-	// FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
-	// FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
-	FindOne(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error
-	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
-	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
-	UpdateOne(model interface{}, filterConditions map[string]interface{}, data interface{}) error
-	Update(model interface{}, filter interface{}, data interface{}, opts ...*options.UpdateOptions) error
-	CreateInBatch(model interface{}, data []interface{}) error
-	Count(model interface{}, filter interface{}) (int, error)
-	Exec(model interface{}) (*mongo.Collection, error)
-	Delete(model interface{}, filter interface{}) error
-	DeleteByID(model interface{}, id string) error
-	SoftDelete(model interface{}, username string, filter interface{}) error
-	SoftDeleteLastUpdate(model interface{}, username string, filter interface{}) error
-	SoftBatchDeleteByID(model interface{}, username string, ids []string) error
-	SoftDeleteByID(model interface{}, id string, username string) error
-	Transaction(queryFunc func() error) error
-	Cleanup() error
-	TestConnect() error
-	Healthcheck() error
-	CreateIndex(model interface{}, indexName string, keys interface{}) (string, error)
-}
-
-// IPersisterConfig is interface for persister
-type IPersisterMongoConfig interface {
-	MongodbURI() string
-	DB() string
-	Debug() bool
+	Aggregate(ctx context.Context, model interface{}, pipeline interface{}, decode interface{}) error
+	AggregatePage(ctx context.Context, model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error)
+	Find(ctx context.Context, model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
+	FindPage(ctx context.Context, model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
+	FindSelectPage(ctx context.Context, model interface{}, selectFields interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
+	// FindPage(ctx context.Context, model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
+	// FindPageSort(ctx context.Context, model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
+	FindOne(ctx context.Context, model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error
+	FindByID(ctx context.Context, model interface{}, keyName string, id interface{}, decode interface{}) error
+	Create(ctx context.Context, model interface{}, data interface{}) (primitive.ObjectID, error)
+	UpdateOne(ctx context.Context, model interface{}, filterConditions map[string]interface{}, data interface{}) error
+	Update(ctx context.Context, model interface{}, filter interface{}, data interface{}, opts ...*options.UpdateOptions) error
+	CreateInBatch(ctx context.Context, model interface{}, data []interface{}) error
+	Count(ctx context.Context, model interface{}, filter interface{}) (int, error)
+	Exec(ctx context.Context, model interface{}) (*mongo.Collection, error)
+	Delete(ctx context.Context, model interface{}, filter interface{}) error
+	DeleteByID(ctx context.Context, model interface{}, id string) error
+	SoftDelete(ctx context.Context, model interface{}, username string, filter interface{}) error
+	SoftDeleteLastUpdate(ctx context.Context, model interface{}, username string, filter interface{}) error
+	SoftBatchDeleteByID(ctx context.Context, model interface{}, username string, ids []string) error
+	SoftDeleteByID(ctx context.Context, model interface{}, id string, username string) error
+	Transaction(ctx context.Context, queryFunc func(ctx context.Context) error) error
+	Cleanup(ctx context.Context) error
+	TestConnect(ctx context.Context) error
+	Healthcheck(ctx context.Context) error
+	CreateIndex(ctx context.Context, model interface{}, indexName string, keys interface{}) (string, error)
 }
 
 type MongoModel interface {
@@ -58,31 +53,31 @@ type MongoModel interface {
 }
 
 type PersisterMongo struct {
-	config    IPersisterMongoConfig
-	db        *mongo.Database
-	dbMutex   sync.Mutex
-	client    *mongo.Client
-	ctx       context.Context
+	config  config.IPersisterMongoConfig
+	db      *mongo.Database
+	dbMutex sync.Mutex
+	client  *mongo.Client
+	// ctx       context.Context
 	ctxCancel context.CancelFunc
 }
 
-func NewPersisterMongo(config IPersisterMongoConfig) *PersisterMongo {
+func NewPersisterMongo(config config.IPersisterMongoConfig) *PersisterMongo {
 	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	ctx := context.Background()
+	// ctx := context.Background()
 	// defer cancel()
 
 	return &PersisterMongo{
-		config:    config,
-		ctx:       ctx,
+		config: config,
+		// ctx:       ctx,
 		ctxCancel: nil,
 	}
 }
 
 func NewPersisterMongoWithDBContext(db *mongo.Database) *PersisterMongo {
-	ctx := context.Background()
+	// ctx := context.Background()
 	return &PersisterMongo{
-		db:  db,
-		ctx: ctx,
+		db: db,
+		// ctx: ctx,
 	}
 }
 
@@ -92,8 +87,8 @@ func (pst *PersisterMongo) getConnectionString() (string, error) {
 	return cfg.MongodbURI(), nil
 }
 
-func (pst *PersisterMongo) TestConnect() error {
-	_, err := pst.getClient()
+func (pst *PersisterMongo) TestConnect(ctx context.Context) error {
+	_, err := pst.getClient(ctx)
 
 	if err != nil {
 		return err
@@ -102,7 +97,7 @@ func (pst *PersisterMongo) TestConnect() error {
 	return nil
 }
 
-func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
+func (pst *PersisterMongo) getClient(ctx context.Context) (*mongo.Database, error) {
 	if pst.db != nil {
 		return pst.db, nil
 	}
@@ -135,7 +130,7 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		}
 	}
 
-	err = pst.client.Connect(pst.ctx)
+	err = pst.client.Connect(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -180,31 +175,31 @@ func (pst *PersisterMongo) toDoc(v interface{}) (doc *bson.D, err error) {
 	return
 }
 
-func (pst *PersisterMongo) Count(model interface{}, filter interface{}) (int, error) {
+func (pst *PersisterMongo) Count(ctx context.Context, model interface{}, filter interface{}) (int, error) {
 
 	collectionName, err := pst.getCollectionName(model)
 	if err != nil {
 		return 0, err
 	}
-	return pst.PersisterCount(collectionName, filter)
+	return pst.PersisterCount(ctx, collectionName, filter)
 }
 
-func (pst *PersisterMongo) PersisterCount(collectionName string, filter interface{}) (int, error) {
+func (pst *PersisterMongo) PersisterCount(ctx context.Context, collectionName string, filter interface{}) (int, error) {
 
-	db, err := pst.getClient()
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return 0, err
 	}
 
-	count, err := db.Collection(collectionName).CountDocuments(pst.ctx, filter)
+	count, err := db.Collection(collectionName).CountDocuments(ctx, filter)
 	if err != nil {
 		return 0, err
 	}
 	return int(count), nil
 }
 
-func (pst *PersisterMongo) FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error) {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) FindPage(ctx context.Context, model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error) {
+	db, err := pst.getClient(ctx)
 
 	emptyPage := mongopagination.PaginationData{}
 
@@ -220,7 +215,7 @@ func (pst *PersisterMongo) FindPage(model interface{}, filter interface{}, pagea
 	var limit64 int64 = int64(pageable.Limit)
 	var page64 int64 = int64(pageable.Page)
 
-	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
+	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(ctx).Limit(limit64).Page(page64).Filter(filter)
 
 	for _, tempSort := range pageable.Sorts {
 		tempSortVal := 1
@@ -238,8 +233,43 @@ func (pst *PersisterMongo) FindPage(model interface{}, filter interface{}, pagea
 	return paginatedData.Pagination, nil
 }
 
-func (pst *PersisterMongo) Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) FindSelectPage(ctx context.Context, model interface{}, selectFields interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error) {
+	db, err := pst.getClient(ctx)
+
+	emptyPage := mongopagination.PaginationData{}
+
+	if err != nil {
+		return emptyPage, err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return emptyPage, err
+	}
+
+	var limit64 int64 = int64(pageable.Limit)
+	var page64 int64 = int64(pageable.Page)
+
+	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(ctx).Select(selectFields).Limit(limit64).Page(page64).Filter(filter)
+
+	for _, tempSort := range pageable.Sorts {
+		tempSortVal := 1
+		if tempSort.Value < 1 {
+			tempSortVal = -1
+		}
+		pagingQuery = pagingQuery.Sort(tempSort.Key, tempSortVal)
+	}
+
+	paginatedData, err := pagingQuery.Decode(decode).Find()
+	if err != nil {
+		return emptyPage, err
+	}
+
+	return paginatedData.Pagination, nil
+}
+
+func (pst *PersisterMongo) Find(ctx context.Context, model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -249,20 +279,20 @@ func (pst *PersisterMongo) Find(model interface{}, filter interface{}, decode in
 		return err
 	}
 
-	filterCursor, err := db.Collection(collectionName).Find(pst.ctx, filter, opts...)
+	filterCursor, err := db.Collection(collectionName).Find(ctx, filter, opts...)
 	if err != nil {
 		return err
 	}
 
-	if err = filterCursor.All(pst.ctx, decode); err != nil {
+	if err = filterCursor.All(ctx, decode); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) FindOne(ctx context.Context, model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -282,8 +312,8 @@ func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode
 	return nil
 }
 
-func (pst *PersisterMongo) FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) FindByID(ctx context.Context, model interface{}, keyName string, id interface{}, decode interface{}) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -293,7 +323,7 @@ func (pst *PersisterMongo) FindByID(model interface{}, keyName string, id interf
 		return err
 	}
 
-	err = db.Collection(collectionName).FindOne(pst.ctx, bson.D{{Key: keyName, Value: id}}).Decode(decode)
+	err = db.Collection(collectionName).FindOne(ctx, bson.D{{Key: keyName, Value: id}}).Decode(decode)
 	if err != nil {
 		return err
 	}
@@ -301,23 +331,23 @@ func (pst *PersisterMongo) FindByID(model interface{}, keyName string, id interf
 	return nil
 }
 
-func (pst *PersisterMongo) Create(model interface{}, data interface{}) (primitive.ObjectID, error) {
+func (pst *PersisterMongo) Create(ctx context.Context, model interface{}, data interface{}) (primitive.ObjectID, error) {
 
 	collectionName, err := pst.getCollectionName(model)
 	if err != nil {
 		return primitive.NilObjectID, err
 	}
-	return pst.PersisterCreate(collectionName, data)
+	return pst.PersisterCreate(ctx, collectionName, data)
 }
 
-func (pst *PersisterMongo) PersisterCreate(collectionName string, data interface{}) (primitive.ObjectID, error) {
+func (pst *PersisterMongo) PersisterCreate(ctx context.Context, collectionName string, data interface{}) (primitive.ObjectID, error) {
 
-	db, err := pst.getClient()
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return primitive.NilObjectID, err
 	}
 
-	result, err := db.Collection(collectionName).InsertOne(pst.ctx, &data)
+	result, err := db.Collection(collectionName).InsertOne(ctx, &data)
 	if err != nil {
 		return primitive.NilObjectID, err
 	}
@@ -325,8 +355,8 @@ func (pst *PersisterMongo) PersisterCreate(collectionName string, data interface
 	return result.InsertedID.(primitive.ObjectID), nil
 }
 
-func (pst *PersisterMongo) CreateInBatch(model interface{}, data []interface{}) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) CreateInBatch(ctx context.Context, model interface{}, data []interface{}) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -336,7 +366,7 @@ func (pst *PersisterMongo) CreateInBatch(model interface{}, data []interface{}) 
 		return err
 	}
 
-	_, err = db.Collection(collectionName).InsertMany(pst.ctx, data)
+	_, err = db.Collection(collectionName).InsertMany(ctx, data)
 
 	if err != nil {
 		return err
@@ -345,8 +375,8 @@ func (pst *PersisterMongo) CreateInBatch(model interface{}, data []interface{}) 
 	return nil
 }
 
-func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data interface{}, opts ...*options.UpdateOptions) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) Update(ctx context.Context, model interface{}, filter interface{}, data interface{}, opts ...*options.UpdateOptions) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -357,7 +387,7 @@ func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data in
 	}
 
 	_, err = db.Collection(collectionName).UpdateMany(
-		pst.ctx,
+		ctx,
 		filter,
 		data,
 		opts...,
@@ -370,8 +400,8 @@ func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data in
 	return nil
 }
 
-func (pst *PersisterMongo) UpdateOne(model interface{}, filterConditions map[string]interface{}, data interface{}) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) UpdateOne(ctx context.Context, model interface{}, filterConditions map[string]interface{}, data interface{}) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -393,7 +423,7 @@ func (pst *PersisterMongo) UpdateOne(model interface{}, filterConditions map[str
 	}
 
 	_, err = db.Collection(collectionName).UpdateOne(
-		pst.ctx,
+		ctx,
 		filterDoc,
 		bson.D{
 			{Key: "$set", Value: updateDoc},
@@ -407,8 +437,8 @@ func (pst *PersisterMongo) UpdateOne(model interface{}, filterConditions map[str
 	return nil
 }
 
-func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string, username string) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) SoftDeleteByID(ctx context.Context, model interface{}, id string, username string) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -422,7 +452,7 @@ func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string, username
 	// _, err := pst.UpdateOne(model, "guidfixed", id, map[string]interface{}{"deletedat": deletedAt})
 
 	_, err = db.Collection(collectionName).UpdateOne(
-		pst.ctx,
+		ctx,
 		bson.D{{
 			Key:   "guidfixed",
 			Value: id,
@@ -443,9 +473,9 @@ func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string, username
 	return nil
 }
 
-func (pst *PersisterMongo) SoftDelete(model interface{}, username string, filter interface{}) error {
+func (pst *PersisterMongo) SoftDelete(ctx context.Context, model interface{}, username string, filter interface{}) error {
 
-	db, err := pst.getClient()
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -457,7 +487,7 @@ func (pst *PersisterMongo) SoftDelete(model interface{}, username string, filter
 
 	deletedAt := time.Now()
 
-	_, err = db.Collection(collectionName).UpdateMany(pst.ctx, filter, bson.D{
+	_, err = db.Collection(collectionName).UpdateMany(ctx, filter, bson.D{
 		{Key: "$set", Value: bson.M{"deletedat": deletedAt, "deletedby": username}},
 	})
 
@@ -468,9 +498,9 @@ func (pst *PersisterMongo) SoftDelete(model interface{}, username string, filter
 	return nil
 }
 
-func (pst *PersisterMongo) SoftDeleteLastUpdate(model interface{}, username string, filter interface{}) error {
+func (pst *PersisterMongo) SoftDeleteLastUpdate(ctx context.Context, model interface{}, username string, filter interface{}) error {
 
-	db, err := pst.getClient()
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -482,7 +512,7 @@ func (pst *PersisterMongo) SoftDeleteLastUpdate(model interface{}, username stri
 
 	deletedAt := time.Now()
 
-	_, err = db.Collection(collectionName).UpdateMany(pst.ctx, filter, bson.D{
+	_, err = db.Collection(collectionName).UpdateMany(ctx, filter, bson.D{
 		{Key: "$set", Value: bson.M{"deletedat": deletedAt, "deletedby": username, "lastupdatedat": deletedAt}},
 	})
 
@@ -493,8 +523,8 @@ func (pst *PersisterMongo) SoftDeleteLastUpdate(model interface{}, username stri
 	return nil
 }
 
-func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, username string, ids []string) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) SoftBatchDeleteByID(ctx context.Context, model interface{}, username string, ids []string) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -516,7 +546,7 @@ func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, username strin
 
 	deletedAt := time.Now()
 
-	_, err = db.Collection(collectionName).UpdateMany(pst.ctx,
+	_, err = db.Collection(collectionName).UpdateMany(ctx,
 		bson.M{"_id": bson.M{"$in": objIDs}},
 		bson.D{
 			{Key: "$set", Value: bson.M{"deletedat": deletedAt, "deletedby": username}},
@@ -529,8 +559,8 @@ func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, username strin
 	return nil
 }
 
-func (pst *PersisterMongo) Delete(model interface{}, filter interface{}) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) Delete(ctx context.Context, model interface{}, filter interface{}) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -540,7 +570,7 @@ func (pst *PersisterMongo) Delete(model interface{}, filter interface{}) error {
 		return err
 	}
 
-	_, err = db.Collection(collectionName).DeleteMany(pst.ctx, filter)
+	_, err = db.Collection(collectionName).DeleteMany(ctx, filter)
 	if err != nil {
 		return err
 	}
@@ -548,8 +578,8 @@ func (pst *PersisterMongo) Delete(model interface{}, filter interface{}) error {
 	return nil
 }
 
-func (pst *PersisterMongo) DeleteByID(model interface{}, id string) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) DeleteByID(ctx context.Context, model interface{}, id string) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -560,7 +590,7 @@ func (pst *PersisterMongo) DeleteByID(model interface{}, id string) error {
 	}
 
 	idx, _ := primitive.ObjectIDFromHex(id)
-	_, err = db.Collection(collectionName).DeleteOne(pst.ctx, bson.M{"_id": idx})
+	_, err = db.Collection(collectionName).DeleteOne(ctx, bson.M{"_id": idx})
 	if err != nil {
 		return err
 	}
@@ -568,8 +598,8 @@ func (pst *PersisterMongo) DeleteByID(model interface{}, id string) error {
 	return nil
 }
 
-func (pst *PersisterMongo) Exec(model interface{}) (*mongo.Collection, error) {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) Exec(ctx context.Context, model interface{}) (*mongo.Collection, error) {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -584,8 +614,8 @@ func (pst *PersisterMongo) Exec(model interface{}) (*mongo.Collection, error) {
 	return mongoCollection, nil
 }
 
-func (pst *PersisterMongo) Aggregate(model interface{}, pipeline interface{}, decode interface{}) error {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) Aggregate(ctx context.Context, model interface{}, pipeline interface{}, decode interface{}) error {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return err
 	}
@@ -600,21 +630,21 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline interface{}, de
 	// 	aggregationFilter = append(aggregationFilter, filter.(bson.M))
 	// }
 
-	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, pipeline)
+	filterCursor, err := db.Collection(collectionName).Aggregate(ctx, pipeline)
 
 	if err != nil {
 		return err
 	}
 
-	if err = filterCursor.All(pst.ctx, decode); err != nil {
+	if err = filterCursor.All(ctx, decode); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (pst *PersisterMongo) AggregatePage(model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) AggregatePage(ctx context.Context, model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
+	db, err := pst.getClient(ctx)
 
 	emptyPage := &mongopagination.PaginatedData{}
 
@@ -630,7 +660,7 @@ func (pst *PersisterMongo) AggregatePage(model interface{}, pageable models.Page
 	var page64 int64 = int64(pageable.Page)
 	var limit64 int64 = int64(pageable.Limit)
 
-	paginatedData, err := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Aggregate(criteria...)
+	paginatedData, err := mongopagination.New(db.Collection(collectionName)).Context(ctx).Limit(limit64).Page(page64).Aggregate(criteria...)
 	if err != nil {
 		return emptyPage, err
 	}
@@ -638,8 +668,8 @@ func (pst *PersisterMongo) AggregatePage(model interface{}, pageable models.Page
 	return paginatedData, nil
 }
 
-func (pst *PersisterMongo) Cleanup() error {
-	err := pst.client.Disconnect(pst.ctx)
+func (pst *PersisterMongo) Cleanup(ctx context.Context) error {
+	err := pst.client.Disconnect(ctx)
 	if err != nil {
 		return err
 	}
@@ -651,7 +681,7 @@ func (pst *PersisterMongo) Cleanup() error {
 	return nil
 }
 
-func (pst *PersisterMongo) Healthcheck() error {
+func (pst *PersisterMongo) Healthcheck(ctx context.Context) error {
 	retry := 5
 	// We will try to getClient 5 times
 	for {
@@ -660,7 +690,7 @@ func (pst *PersisterMongo) Healthcheck() error {
 		}
 		retry--
 
-		_, err := pst.getClient()
+		_, err := pst.getClient(ctx)
 		if err != nil {
 			// Healthcheck failed, wait 250ms then try again
 			time.Sleep(250 * time.Millisecond)
@@ -670,40 +700,36 @@ func (pst *PersisterMongo) Healthcheck() error {
 	}
 }
 
-func (pst *PersisterMongo) Transaction(queryFunc func() error) error {
-	pst.getClient()
+func (pst *PersisterMongo) Transaction(ctx context.Context, queryFunc func(context.Context) error) error {
+	pst.getClient(ctx)
 	client := pst.client
 
-	session, err := client.StartSession()
-	if err != nil {
-		return err
-	}
-
-	if err := session.StartTransaction(); err != nil {
-		return err
-	}
-
-	if err := mongo.WithSession(pst.ctx, session, func(sc mongo.SessionContext) error {
-		err := queryFunc()
-
+	client.UseSession(ctx, func(sessionContext mongo.SessionContext) error {
+		err := sessionContext.StartTransaction()
 		if err != nil {
 			return err
 		}
 
-		if err = session.CommitTransaction(sc); err != nil {
+		err = queryFunc(sessionContext)
+
+		if err != nil {
+
+			err = sessionContext.AbortTransaction(sessionContext)
 			return err
 		}
-		return nil
-	}); err != nil {
-		return err
-	}
-	session.EndSession(pst.ctx)
 
+		err = sessionContext.CommitTransaction(sessionContext)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 	return nil
 }
 
-func (pst *PersisterMongo) CreateIndex(model interface{}, indexName string, keys interface{}) (string, error) {
-	db, err := pst.getClient()
+func (pst *PersisterMongo) CreateIndex(ctx context.Context, model interface{}, indexName string, keys interface{}) (string, error) {
+	db, err := pst.getClient(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -720,7 +746,7 @@ func (pst *PersisterMongo) CreateIndex(model interface{}, indexName string, keys
 
 	mongoCollection := db.Collection(collectionName)
 
-	resultIndexName, err := mongoCollection.Indexes().CreateOne(pst.ctx, indexModel)
+	resultIndexName, err := mongoCollection.Indexes().CreateOne(ctx, indexModel)
 
 	if err != nil {
 		return "", err

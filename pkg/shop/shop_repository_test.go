@@ -1,6 +1,7 @@
 package shop_test
 
 import (
+	"context"
 	"errors"
 	"os"
 	"smlcloudplatform/internal/microservice"
@@ -43,7 +44,7 @@ func TestFindShop(t *testing.T) {
 	want.Name1 = "shop test"
 	want.ActivityDoc = activity
 
-	get, err := repository.Create(give)
+	get, err := repository.Create(context.TODO(), give)
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -55,7 +56,7 @@ func TestFindShop(t *testing.T) {
 
 	t.Logf("Create shop Success With ID %v", get)
 
-	getUser, err := repository.FindByGuid(want.GuidFixed)
+	getUser, err := repository.FindByGuid(context.TODO(), want.GuidFixed)
 	if err != nil {
 		t.Error(err.Error())
 		return
