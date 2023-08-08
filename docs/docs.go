@@ -32685,12 +32685,27 @@ const docTemplate = `{
         },
         "models.Location": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
-                "lat": {
+                "code": {
                     "type": "string"
                 },
-                "lng": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 }
             }
         },
@@ -35409,6 +35424,12 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Slip"
                     }
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "integer"
                 },
                 "vatrate": {
                     "type": "number"

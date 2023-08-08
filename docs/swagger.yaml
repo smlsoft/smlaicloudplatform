@@ -2241,10 +2241,21 @@ definitions:
     type: object
   models.Location:
     properties:
-      lat:
+      code:
         type: string
-      lng:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.LocationRequest:
     properties:
@@ -4078,6 +4089,10 @@ definitions:
         items:
           $ref: '#/definitions/models.Slip'
         type: array
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: integer
       vatrate:
         type: number
       vattype:
