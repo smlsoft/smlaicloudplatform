@@ -3,13 +3,17 @@ package models
 import (
 	"time"
 
+	timezone "smlcloudplatform/pkg/models/timezone"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const userCollectionName = "users"
 
 type UserDetail struct {
-	Name string `json:"name,omitempty"  validate:"required"`
+	Name              string `json:"name,omitempty"  validate:"required"`
+	Avatar            string `json:"avatar"`
+	timezone.Timezone `bson:"inline"`
 }
 
 type UsernameCode struct {

@@ -16107,6 +16107,41 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "For User Update Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Update profile",
+                "parameters": [
+                    {
+                        "description": "Update account",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
             }
         },
         "/profileshop": {
@@ -32613,25 +32648,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.KitchenBarcode": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "models.KitchenInfo": {
             "type": "object",
             "required": [
@@ -33794,10 +33810,31 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
-                "kitchens": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.KitchenBarcode"
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 }
             }
@@ -36723,7 +36760,16 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
+                "avatar": {
+                    "type": "string"
+                },
                 "name": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
                     "type": "string"
                 },
                 "username": {
@@ -36744,6 +36790,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.UserProfileRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                }
+            }
+        },
         "models.UserRequest": {
             "type": "object",
             "required": [
@@ -36752,6 +36818,9 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
+                "avatar": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -36759,6 +36828,12 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 233,
                     "minLength": 5
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string",

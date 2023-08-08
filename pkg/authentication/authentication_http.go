@@ -244,6 +244,15 @@ func (h AuthenticationHttp) Register(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update User Profile godoc
+// @Summary		Update profile
+// @Description	For User Update Profile
+// @Tags		Authentication
+// @Param		User  body      shopmodel.UserProfileRequest  true  "Update account"
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Accept 		json
+// @Router		/profile [put]
 func (h AuthenticationHttp) Update(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()

@@ -2193,19 +2193,6 @@ definitions:
     required:
     - names
     type: object
-  models.KitchenBarcode:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2990,9 +2977,23 @@ definitions:
     properties:
       barcode:
         type: string
-      kitchens:
+      guidfixed:
+        type: string
+      itemcode:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
         items:
-          $ref: '#/definitions/models.KitchenBarcode'
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      prices:
+        items:
+          $ref: '#/definitions/models.ProductPrice'
         type: array
     type: object
   models.ProductBarcodeRequest:
@@ -4960,7 +4961,13 @@ definitions:
     type: object
   models.UserProfile:
     properties:
+      avatar:
+        type: string
       name:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
         type: string
       username:
         maxLength: 233
@@ -4977,13 +4984,32 @@ definitions:
       success:
         type: boolean
     type: object
+  models.UserProfileRequest:
+    properties:
+      avatar:
+        type: string
+      name:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+    required:
+    - name
+    type: object
   models.UserRequest:
     properties:
+      avatar:
+        type: string
       name:
         type: string
       password:
         maxLength: 233
         minLength: 5
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
         type: string
       username:
         maxLength: 233
@@ -15461,6 +15487,29 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      tags:
+      - Authentication
+    put:
+      consumes:
+      - application/json
+      description: For User Update Profile
+      parameters:
+      - description: Update account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserProfileRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Update profile
       tags:
       - Authentication
   /profileshop:
