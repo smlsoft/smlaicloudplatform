@@ -862,12 +862,16 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.Detail:
     properties:
@@ -1223,8 +1227,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2251,12 +2253,10 @@ definitions:
     type: object
   models.Location:
     properties:
-      code:
+      lat:
         type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
+      lng:
+        type: string
     type: object
   models.LocationRequest:
     properties:
@@ -3965,6 +3965,10 @@ definitions:
         items:
           $ref: '#/definitions/models.Slip'
         type: array
+      timeforsales:
+        items:
+          $ref: '#/definitions/models.TimeForSale'
+        type: array
       timezonelabel:
         type: string
       timezoneoffset:
@@ -4753,6 +4757,17 @@ definitions:
         type: number
       taxrate:
         type: number
+    type: object
+  models.TimeForSale:
+    properties:
+      from:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      to:
+        type: string
     type: object
   models.TotalStatus:
     properties:

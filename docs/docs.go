@@ -30670,13 +30670,18 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -31206,9 +31211,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -32701,14 +32703,11 @@ const docTemplate = `{
         "models.Location": {
             "type": "object",
             "properties": {
-                "code": {
+                "lat": {
                     "type": "string"
                 },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "lng": {
+                    "type": "string"
                 }
             }
         },
@@ -35243,6 +35242,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Slip"
                     }
                 },
+                "timeforsales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TimeForSale"
+                    }
+                },
                 "timezonelabel": {
                     "type": "string"
                 },
@@ -36425,6 +36430,23 @@ const docTemplate = `{
                 },
                 "taxrate": {
                     "type": "number"
+                }
+            }
+        },
+        "models.TimeForSale": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "to": {
+                    "type": "string"
                 }
             }
         },
