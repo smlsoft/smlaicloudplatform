@@ -14,6 +14,14 @@ type UserDetail struct {
 	Name              string `json:"name,omitempty"  validate:"required"`
 	Avatar            string `json:"avatar"`
 	timezone.Timezone `bson:"inline"`
+	YearType          string   `json:"yeartype" bson:"yeartype" validate:"max=21"`
+	DedeZoom          DedeZoom `json:"dedezoom" bson:"dedezoom"`
+}
+
+type DedeZoom struct {
+	Email       string `json:"email" bson:"email"`
+	PhoneNumber string `json:"phonenumber" bson:"phonenumber"`
+	Address     string `json:"address" bson:"address"`
 }
 
 type UsernameCode struct {
