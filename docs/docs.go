@@ -30720,7 +30720,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -32665,6 +32664,25 @@ const docTemplate = `{
                 }
             }
         },
+        "models.KitchenBarcode": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.KitchenInfo": {
             "type": "object",
             "required": [
@@ -32735,26 +32753,14 @@ const docTemplate = `{
         },
         "models.Location": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
                     }
                 }
             }
@@ -33838,157 +33844,14 @@ const docTemplate = `{
         },
         "models.ProductBarcode": {
             "type": "object",
-            "required": [
-                "barcode",
-                "names"
-            ],
             "properties": {
                 "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "colorselect": {
                     "type": "string"
                 },
-                "colorselecthex": {
-                    "type": "string"
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupnames": {
+                "kitchens": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
-                    }
-                },
-                "imageuri": {
-                    "type": "string"
-                },
-                "isalacarte": {
-                    "type": "boolean"
-                },
-                "isdividend": {
-                    "type": "boolean"
-                },
-                "isonlystaff": {
-                    "type": "boolean"
-                },
-                "issplitunitprint": {
-                    "type": "boolean"
-                },
-                "issumpoint": {
-                    "type": "boolean"
-                },
-                "isusesubbarcodes": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemunitsize": {
-                    "type": "number"
-                },
-                "maxdiscount": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOption"
-                    }
-                },
-                "ordertypes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOrderType"
-                    }
-                },
-                "prices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
-                    }
-                },
-                "producttype": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "refbarcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RefProductBarcode"
-                    }
-                },
-                "refdividevalue": {
-                    "type": "number"
-                },
-                "refstandvalue": {
-                    "type": "number"
-                },
-                "refunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "stockbarcode": {
-                    "type": "string"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "useimageorcolor": {
-                    "type": "boolean"
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "xsorts": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.XSort"
+                        "$ref": "#/definitions/models.KitchenBarcode"
                     }
                 }
             }
@@ -34015,6 +33878,9 @@ const docTemplate = `{
                 },
                 "dividevalue": {
                     "type": "number"
+                },
+                "foodtype": {
+                    "type": "integer"
                 },
                 "groupcode": {
                     "type": "string"
@@ -34810,48 +34676,6 @@ const docTemplate = `{
                 },
                 "wallettype": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.RefProductBarcode": {
-            "type": "object",
-            "required": [
-                "barcode"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "standvalue": {
-                    "type": "number"
                 }
             }
         },

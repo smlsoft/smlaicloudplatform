@@ -879,7 +879,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -2204,6 +2203,19 @@ definitions:
     required:
     - names
     type: object
+  models.KitchenBarcode:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2256,16 +2268,7 @@ definitions:
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.LocationRequest:
     properties:
@@ -2998,108 +3001,11 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
-        minLength: 1
         type: string
-      colorselect:
-        type: string
-      colorselecthex:
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      groupcode:
-        type: string
-      groupnames:
+      kitchens:
         items:
-          $ref: '#/definitions/models.NameX'
+          $ref: '#/definitions/models.KitchenBarcode'
         type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
-        type: array
-      imageuri:
-        type: string
-      isalacarte:
-        type: boolean
-      isdividend:
-        type: boolean
-      isonlystaff:
-        type: boolean
-      issplitunitprint:
-        type: boolean
-      issumpoint:
-        type: boolean
-      isusesubbarcodes:
-        type: boolean
-      itemcode:
-        type: string
-      itemtype:
-        type: integer
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemunitsize:
-        type: number
-      maxdiscount:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      options:
-        items:
-          $ref: '#/definitions/models.ProductOption'
-        type: array
-      ordertypes:
-        items:
-          $ref: '#/definitions/models.ProductOrderType'
-        type: array
-      prices:
-        items:
-          $ref: '#/definitions/models.ProductPrice'
-        type: array
-      producttype:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
-      qty:
-        type: number
-      refbarcodes:
-        items:
-          $ref: '#/definitions/models.RefProductBarcode'
-        type: array
-      refdividevalue:
-        type: number
-      refstandvalue:
-        type: number
-      refunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      standvalue:
-        type: number
-      stockbarcode:
-        type: string
-      taxtype:
-        type: integer
-      useimageorcolor:
-        type: boolean
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - barcode
-    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3114,6 +3020,8 @@ definitions:
         type: boolean
       dividevalue:
         type: number
+      foodtype:
+        type: integer
       groupcode:
         type: string
       groupnames:
@@ -3656,34 +3564,6 @@ definitions:
         type: integer
     required:
     - names
-    type: object
-  models.RefProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
     type: object
   models.Reference:
     properties:
