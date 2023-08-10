@@ -20,7 +20,8 @@ jobs:
           git config --global user.name "userplant"
           echo ${{ github.sha }}
           echo ${GITHUB_SHA::7}
-          sed -i "s|ghcr.io/smlsoft/smlcloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlcloudapi:sha-${GITHUB_SHA::7}|g" /dedepos-api-dev/deployment.yaml
+          ls
+          sed -i "s|ghcr.io/smlsoft/smlcloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlcloudapi:sha-${GITHUB_SHA::7}|g" dedepos-api-dev/deployment.yaml
           git add -A
           git commit -am "Update dedepos-api-dev sha-${GITHUB_SHA::7}"
       - run: echo ${{ github }}
