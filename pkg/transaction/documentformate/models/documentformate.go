@@ -12,7 +12,7 @@ type DocumentFormate struct {
 	models.PartitionIdentity `bson:"inline"`
 	DocCode                  string                   `json:"doccode" bson:"doccode" validate:"required,min=1"`
 	Module                   string                   `json:"module" bson:"module" validate:"min=1"`
-	DateFormate              string                   `json:"dateformate" bson:"dateformate" validate:"min=1"`
+	DateFormate              string                   `json:"dateformate" bson:"dateformate"`
 	DocNumber                int                      `json:"docnumber" bson:"docnumber"`
 	DocFormat                string                   `json:"docformat" bson:"docformat"`
 	Description              string                   `json:"description" bson:"description"`
