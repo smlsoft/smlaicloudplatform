@@ -55,3 +55,10 @@ jobs:
           git commit -am "Update dedepos-api-dev sha-${GITHUB_SHA::7}"
       - run: echo ${{ github }}
       - run: git push origin main
+  notify-deploy:
+    runs-on: ubuntu-latest
+    needs: ['update-mainfest-argocd']
+    steps:
+      - name: send discord notification
+        run: |
+          curl -X POST -H "Content-Type: application/json" -H "Authorization: Bot MTEzOTEyMzQ5NTI5MzQ0MDAzMA.G9ntTB.0CQ870lJ-3qY90plLmxcX5yzXtEwbFRlSszBi0" -d '{"content": "New deploy available: ghcr.io/smlsoft/smlcloudapi:sha-${GITHUB_SHA::7}"}' https://discordapp.com/api/channels/1139124359731093614/messages
