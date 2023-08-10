@@ -53,6 +53,7 @@ type ProductBarcodeBase struct {
 	ProductType      ProductType         `json:"producttype" bson:"producttype"`
 	IsSplitUnitPrint bool                `json:"issplitunitprint" bson:"issplitunitprint"`
 	IsOnlyStaff      bool                `json:"isonlystaff" bson:"isonlystaff"`
+	FoodType         int                 `json:"foodtype" bson:"foodtype"`
 }
 
 type RefProductBarcode struct {

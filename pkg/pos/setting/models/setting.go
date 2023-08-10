@@ -2,6 +2,7 @@ package models
 
 import (
 	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/models/timezone"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -32,6 +33,14 @@ type Setting struct {
 	BillFooter               string                    `json:"billfooter" bson:"billfooter"`
 	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
 	MediaGUID                string                    `json:"mediaguid" bson:"mediaguid"`
+	timezone.Timezone        `bson:"inline"`
+	TimeForSales             *[]TimeForSale `json:"timeforsales" bson:"timeforsales"`
+}
+
+type TimeForSale struct {
+	Names *[]models.NameX `json:"names" bson:"names"`
+	From  string          `json:"from" bson:"from"`
+	To    string          `json:"to" bson:"to"`
 }
 
 type Slip struct {

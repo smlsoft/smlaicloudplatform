@@ -859,18 +859,24 @@ definitions:
     required:
     - names
     type: object
+  models.DedeZoom:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      phonenumber:
+        type: string
+    type: object
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -986,7 +992,6 @@ definitions:
         minLength: 1
         type: string
       docformat:
-        minLength: 1
         type: string
       docnumber:
         type: integer
@@ -998,14 +1003,12 @@ definitions:
       yeartype:
         type: integer
     required:
-    - dateformate
     - doccode
-    - docformat
-    - docnumber
-    - module
     type: object
   models.DocumentFormateDetail:
     properties:
+      accountcode:
+        type: string
       actioncode:
         minLength: 1
         type: string
@@ -2942,7 +2945,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2977,108 +2980,25 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
-        minLength: 1
         type: string
-      colorselect:
+      guidfixed:
         type: string
-      colorselecthex:
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      groupcode:
-        type: string
-      groupnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
-        type: array
-      imageuri:
-        type: string
-      isalacarte:
-        type: boolean
-      isdividend:
-        type: boolean
-      isonlystaff:
-        type: boolean
-      issplitunitprint:
-        type: boolean
-      issumpoint:
-        type: boolean
-      isusesubbarcodes:
-        type: boolean
       itemcode:
         type: string
-      itemtype:
-        type: integer
       itemunitcode:
         type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      itemunitsize:
-        type: number
-      maxdiscount:
-        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      options:
-        items:
-          $ref: '#/definitions/models.ProductOption'
-        type: array
-      ordertypes:
-        items:
-          $ref: '#/definitions/models.ProductOrderType'
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
         type: array
-      producttype:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
-      qty:
-        type: number
-      refbarcodes:
-        items:
-          $ref: '#/definitions/models.RefProductBarcode'
-        type: array
-      refdividevalue:
-        type: number
-      refstandvalue:
-        type: number
-      refunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      standvalue:
-        type: number
-      stockbarcode:
-        type: string
-      taxtype:
-        type: integer
-      useimageorcolor:
-        type: boolean
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - barcode
-    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3093,6 +3013,8 @@ definitions:
         type: boolean
       dividevalue:
         type: number
+      foodtype:
+        type: integer
       groupcode:
         type: string
       groupnames:
@@ -3147,7 +3069,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3308,13 +3230,6 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      price:
-        type: number
-    type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
       price:
         type: number
     type: object
@@ -3635,34 +3550,6 @@ definitions:
         type: integer
     required:
     - names
-    type: object
-  models.RefProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
     type: object
   models.Reference:
     properties:
@@ -4078,6 +3965,14 @@ definitions:
         items:
           $ref: '#/definitions/models.Slip'
         type: array
+      timeforsales:
+        items:
+          $ref: '#/definitions/models.TimeForSale'
+        type: array
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
       vatrate:
         type: number
       vattype:
@@ -4863,6 +4758,17 @@ definitions:
       taxrate:
         type: number
     type: object
+  models.TimeForSale:
+    properties:
+      from:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      to:
+        type: string
+    type: object
   models.TotalStatus:
     properties:
       status:
@@ -5054,11 +4960,22 @@ definitions:
     type: object
   models.UserProfile:
     properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/models.DedeZoom'
       name:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
         type: string
       username:
         maxLength: 233
         minLength: 5
+        type: string
+      yeartype:
+        maxLength: 21
         type: string
     required:
     - name
@@ -5071,17 +4988,46 @@ definitions:
       success:
         type: boolean
     type: object
+  models.UserProfileRequest:
+    properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/models.DedeZoom'
+      name:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      yeartype:
+        maxLength: 21
+        type: string
+    required:
+    - name
+    type: object
   models.UserRequest:
     properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/models.DedeZoom'
       name:
         type: string
       password:
         maxLength: 233
         minLength: 5
         type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
       username:
         maxLength: 233
         minLength: 5
+        type: string
+      yeartype:
+        maxLength: 21
         type: string
     required:
     - name
@@ -5324,12 +5270,26 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
@@ -15557,6 +15517,29 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+    put:
+      consumes:
+      - application/json
+      description: For User Update Profile
+      parameters:
+      - description: Update account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserProfileRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Update profile
+      tags:
+      - Authentication
   /profileshop:
     get:
       consumes:
@@ -19450,6 +19433,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: module ex.TF,RF,GL
+        in: query
+        name: module
+        type: string
       - description: Page
         in: query
         name: page
@@ -19651,6 +19638,10 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: module ex.TF,RF,GL
+        in: query
+        name: module
         type: string
       - description: offset
         in: query

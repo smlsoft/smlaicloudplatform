@@ -11,10 +11,10 @@ const documentformateCollectionName = "documentFormate"
 type DocumentFormate struct {
 	models.PartitionIdentity `bson:"inline"`
 	DocCode                  string                   `json:"doccode" bson:"doccode" validate:"required,min=1"`
-	Module                   string                   `json:"module" bson:"module" validate:"required,min=1"`
-	DateFormate              string                   `json:"dateformate" bson:"dateformate" validate:"required,min=1"`
-	DocNumber                int                      `json:"docnumber" bson:"docnumber" validate:"required"`
-	DocFormat                string                   `json:"docformat" bson:"docformat" validate:"required,min=1"`
+	Module                   string                   `json:"module" bson:"module" validate:"min=1"`
+	DateFormate              string                   `json:"dateformate" bson:"dateformate" validate:"min=1"`
+	DocNumber                int                      `json:"docnumber" bson:"docnumber"`
+	DocFormat                string                   `json:"docformat" bson:"docformat"`
 	Description              string                   `json:"description" bson:"description"`
 	Details                  *[]DocumentFormateDetail `json:"details" bson:"details"`
 	IsAutoFormat             bool                     `json:"isautoformat" bson:"isautoformat"`
@@ -22,6 +22,7 @@ type DocumentFormate struct {
 }
 
 type DocumentFormateDetail struct {
+	AccountCode        string `json:"accountcode,omitempty" bson:"accountcode,omitempty"`
 	ActionCode         string `json:"actioncode" bson:"actioncode" validate:"required,min=1"`
 	Detail             string `json:"detail" bson:"detail"`
 	Debit              string `json:"debit" bson:"debit"`

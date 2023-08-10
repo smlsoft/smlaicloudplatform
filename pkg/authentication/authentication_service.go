@@ -3,9 +3,9 @@ package authentication
 import (
 	"context"
 	"errors"
-	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/firebase"
+	"smlcloudplatform/pkg/logger"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
@@ -119,8 +119,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 
 		err = svc.shopUserRepo.UpdateLastAccess(context.Background(), userLoginReq.ShopID, userLoginReq.Username, lastAccessedAt)
 		if err != nil {
-			// implement log
-			fmt.Println("error :: ", err.Error())
+			logger.GetLogger().Error(err.Error())
 		}
 
 		err = svc.shopUserAccessLogRepo.Create(context.Background(), models.ShopUserAccessLog{
@@ -131,8 +130,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 		})
 
 		if err != nil {
-			// implement log
-			fmt.Println("error :: ", err.Error())
+			logger.GetLogger().Error(err.Error())
 		}
 	}
 
@@ -206,7 +204,7 @@ func (svc AuthenticationService) Update(username string, userRequest models.User
 		return errors.New("username is not exists")
 	}
 
-	userFind.Name = userRequest.Name
+	userFind.UserDetail = userRequest.UserDetail
 	userFind.UpdatedAt = svc.timeNow()
 
 	err = svc.authRepo.UpdateUser(context.Background(), username, *userFind)
@@ -262,15 +260,15 @@ func (svc AuthenticationService) Logout(authorizationHeader string) error {
 }
 
 func (svc AuthenticationService) Profile(username string) (models.UserProfile, error) {
-	stime := time.Now()
+
 	userProfile := models.UserProfile{}
 	user, err := svc.authRepo.FindUser(context.Background(), username)
 	if err != nil {
 		return userProfile, err
 	}
 	userProfile.Username = user.Username
-	userProfile.Name = user.Name
-	fmt.Println("total time :: ", time.Since(stime))
+	userProfile.UserDetail = user.UserDetail
+
 	return userProfile, nil
 }
 
@@ -313,8 +311,7 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 	lastAccessedAt := svc.timeNow()
 	err = svc.shopUserRepo.UpdateLastAccess(context.Background(), shopID, username, lastAccessedAt)
 	if err != nil {
-		// implement log
-		fmt.Println("error :: ", err.Error())
+		logger.GetLogger().Error(err.Error())
 	}
 
 	err = svc.shopUserAccessLogRepo.Create(
@@ -327,8 +324,7 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 		})
 
 	if err != nil {
-		// implement log
-		fmt.Println("error :: ", err.Error())
+		logger.GetLogger().Error(err.Error())
 	}
 
 	return nil

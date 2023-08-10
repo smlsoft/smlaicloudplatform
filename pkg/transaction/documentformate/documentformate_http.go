@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/transaction/documentformate/repositories"
 	"smlcloudplatform/pkg/transaction/documentformate/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IDocumentFormateHttp interface{}
@@ -46,7 +47,6 @@ func (h DocumentFormateHttp) RegisterHttp() {
 	h.ms.POST("/transaction/document-formate", h.CreateDocumentFormate)
 	h.ms.GET("/transaction/document-formate/:id", h.InfoDocumentFormate)
 	h.ms.GET("/transaction/document-formate/code/:code", h.InfoDocumentFormateByCode)
-	h.ms.GET("/transaction/document-formate/default", h.InfoDocumentFormateByCode)
 	h.ms.PUT("/transaction/document-formate/:id", h.UpdateDocumentFormate)
 	h.ms.DELETE("/transaction/document-formate/:id", h.DeleteDocumentFormate)
 	h.ms.DELETE("/transaction/document-formate", h.DeleteDocumentFormateByGUIDs)
@@ -297,6 +297,7 @@ func (h DocumentFormateHttp) InfoDocumentFormateByCode(ctx microservice.IContext
 // @Description get list step
 // @Tags		DocumentFormate
 // @Param		q		query	string		false  "Search Value"
+// @Param		module		query	string		false  "module ex.TF,RF,GL"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -310,7 +311,14 @@ func (h DocumentFormateHttp) SearchDocumentFormatePage(ctx microservice.IContext
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchDocumentFormate(shopID, map[string]interface{}{}, pageable)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "module",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchDocumentFormate(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -329,6 +337,7 @@ func (h DocumentFormateHttp) SearchDocumentFormatePage(ctx microservice.IContext
 // @Description search limit offset
 // @Tags		DocumentFormate
 // @Param		q		query	string		false  "Search Value"
+// @Param		module		query	string		false  "module ex.TF,RF,GL"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -343,9 +352,16 @@ func (h DocumentFormateHttp) SearchDocumentFormateStep(ctx microservice.IContext
 
 	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "module",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchDocumentFormateStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchDocumentFormateStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
