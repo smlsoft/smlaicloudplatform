@@ -27,7 +27,7 @@ type IDocumentFormateHttpService interface {
 	InfoDocumentFormate(shopID string, guid string) (models.DocumentFormateInfo, error)
 	InfoDocumentFormateByCode(shopID string, code string) (models.DocumentFormateInfo, error)
 	SearchDocumentFormate(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentFormateInfo, mongopagination.PaginationData, error)
-	SearchDocumentFormateStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DocumentFormateInfo, int, error)
+	SearchDocumentFormateStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DocumentFormateInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.DocumentFormate) (common.BulkImport, error)
 	GetModuleDefault() ([]map[string]interface{}, error)
 
@@ -224,7 +224,7 @@ func (svc DocumentFormateHttpService) SearchDocumentFormate(shopID string, filte
 	return docList, pagination, nil
 }
 
-func (svc DocumentFormateHttpService) SearchDocumentFormateStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DocumentFormateInfo, int, error) {
+func (svc DocumentFormateHttpService) SearchDocumentFormateStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DocumentFormateInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -243,7 +243,7 @@ func (svc DocumentFormateHttpService) SearchDocumentFormateStep(shopID string, l
 		}
 	*/
 
-	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.DocumentFormateInfo{}, 0, err
@@ -383,7 +383,7 @@ func (svc DocumentFormateHttpService) GetModuleName() string {
 
 func (svc DocumentFormateHttpService) GetModuleDefault() ([]map[string]interface{}, error) {
 	defaultModule := `
-	[{"name":"Purchase","doccode":"PU","dateformate":"YYYYMMDD","docnumber":5},{"name":"Purchase Return","doccode":"PT","dateformate":"YYYYMMDD","docnumber":5},{"name":"SaleInvoice","doccode":"SI","dateformate":"YYYYMMDD","docnumber":5},{"name":"Sale Invoice Return","doccode":"ST","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Adjustment","doccode":"AJ","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Pickup Product","doccode":"IM","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Receive Product","doccode":"IF","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Return Product","doccode":"IR","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Transfer","doccode":"TF","dateformate":"YYYYMMDD","docnumber":5}]
+	[{"name":"Purchase","doccode":"PU","dateformate":"YYYYMMDD","docnumber":5},{"name":"Purchase Return","doccode":"PT","dateformate":"YYYYMMDD","docnumber":5},{"name":"SaleInvoice","doccode":"SI","dateformate":"YYYYMMDD","docnumber":5},{"name":"Sale Invoice Return","doccode":"ST","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Adjustment","doccode":"AJ","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Pickup Product","doccode":"IM","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Receive Product","doccode":"IF","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Return Product","doccode":"IR","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Transfer","doccode":"TF","dateformate":"YYYYMMDD","docnumber":5},{"name":"General Ledger","doccode":"GL","dateformate":"","docnumber":0}]
 	`
 
 	jsonData := []map[string]interface{}{}
