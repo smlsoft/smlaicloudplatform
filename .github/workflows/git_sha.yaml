@@ -12,6 +12,5 @@ jobs:
         uses: actions/checkout@v3
       - name: setup git config
         run: |
-          echo ${{ github.sha}}
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo $GITHUB_OUTPUT
+          echo ${{ github.sha }}
+          echo ${{ github.sha::7 }}
