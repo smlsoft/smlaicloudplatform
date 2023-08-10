@@ -42,5 +42,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: setup git config
-        run: /
+        run: |
           echo ${{ github.sha}}
