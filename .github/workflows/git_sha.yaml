@@ -7,10 +7,12 @@ env:
 jobs:
   update-mainfest-stage:
     runs-on: ubuntu-latest
+    env:
+        SHA7: ${GITHUB_SHA::7}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: setup git config
         run: |
           echo ${{ github.sha }}
-          echo ${{ github.sha::7 }}
+          echo $SHA7
