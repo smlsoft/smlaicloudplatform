@@ -3,7 +3,7 @@ on: [workflow_dispatch]
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: smlsoft/smlcloudapi
-  DISCORD_CHANNEL: 1139124359731093614
+  DISCORD_CHANNEL: "1139124359731093614"
 
 jobs:
   notify-deploy:
