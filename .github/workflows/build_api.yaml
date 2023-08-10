@@ -44,7 +44,7 @@ jobs:
         with:
           repository: smlsoft/sml-ols-cluster-config
           ref: 'main'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_SECRET }}
       - name: setup git config
         run: |
           echo ${{ github.sha }}
