@@ -5,25 +5,12 @@ env:
   IMAGE_NAME: smlsoft/smlcloudapi
 
 jobs:
-  update-mainfest-stage:
+  notify-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          repository: smlsoft/sml-ols-cluster-config
-          ref: 'main'
-          token: ${{ secrets.GH_SECRET }}
-      - name: setup git config
+      - name: send discord notification
         run: |
-          git config --global user.email "woranich@gmail.com"
-          git config --global user.name "userplant"
-          echo ${{ github.sha }}
-          echo ${GITHUB_SHA::7}
-          ls
-          sed -i "s|ghcr.io/smlsoft/smlcloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlcloudapi:sha-${GITHUB_SHA::7}|g" dedepos-api-dev/deployment.yaml
-          git add -A
-          git commit -am "Update dedepos-api-dev sha-${GITHUB_SHA::7}"
-      - run: echo ${{ github }}
-      - run: git push origin main
+            SHORT_SHA="${GITHUB_SHA::7}"
+            BOT_TOKEN="${{ secrets.DISCORD_BOT }}"
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: Bot $BOT_TOKEN" -d "{\"content\": \"New deploy available: $REGISTRY/$IMAGE_NAME:sha-$SHORT_SHA\"}" https://discordapp.com/api/channels/1139124359731093614/messages
   
