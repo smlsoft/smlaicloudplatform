@@ -73,7 +73,7 @@ func (svc DocumentFormateHttpService) CreateDocumentFormate(shopID string, authU
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("DocCode is exists")
+		return "", errors.New("doccode is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
