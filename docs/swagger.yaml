@@ -274,8 +274,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -291,14 +291,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -878,15 +871,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1017,6 +1007,8 @@ definitions:
     type: object
   models.DocumentFormateDetail:
     properties:
+      accountcode:
+        type: string
       actioncode:
         minLength: 1
         type: string
@@ -1361,8 +1353,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1380,8 +1372,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1397,11 +1387,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1510,8 +1495,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1529,8 +1514,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1546,11 +1529,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1709,8 +1687,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1728,8 +1706,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1745,11 +1721,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2273,12 +2244,10 @@ definitions:
     type: object
   models.Location:
     properties:
-      code:
+      lat:
         type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
+      lng:
+        type: string
     type: object
   models.LocationRequest:
     properties:
@@ -2976,7 +2945,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3011,110 +2980,25 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
-        minLength: 1
         type: string
-      colorselect:
+      guidfixed:
         type: string
-      colorselecthex:
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      foodtype:
-        type: integer
-      groupcode:
-        type: string
-      groupnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
-        type: array
-      imageuri:
-        type: string
-      isalacarte:
-        type: boolean
-      isdividend:
-        type: boolean
-      isonlystaff:
-        type: boolean
-      issplitunitprint:
-        type: boolean
-      issumpoint:
-        type: boolean
-      isusesubbarcodes:
-        type: boolean
       itemcode:
         type: string
-      itemtype:
-        type: integer
       itemunitcode:
         type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      itemunitsize:
-        type: number
-      maxdiscount:
-        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      options:
-        items:
-          $ref: '#/definitions/models.ProductOption'
-        type: array
-      ordertypes:
-        items:
-          $ref: '#/definitions/models.ProductOrderType'
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
         type: array
-      producttype:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
-      qty:
-        type: number
-      refbarcodes:
-        items:
-          $ref: '#/definitions/models.RefProductBarcode'
-        type: array
-      refdividevalue:
-        type: number
-      refstandvalue:
-        type: number
-      refunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      standvalue:
-        type: number
-      stockbarcode:
-        type: string
-      taxtype:
-        type: integer
-      useimageorcolor:
-        type: boolean
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - barcode
-    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3185,7 +3069,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3347,20 +3231,6 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       price:
-        type: number
-    type: object
-  models.ProductPrice:
-    properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3680,34 +3550,6 @@ definitions:
         type: integer
     required:
     - names
-    type: object
-  models.RefProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
     type: object
   models.Reference:
     properties:
@@ -5428,12 +5270,26 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:

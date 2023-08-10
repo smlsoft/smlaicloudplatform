@@ -22,6 +22,7 @@ type DocumentFormate struct {
 }
 
 type DocumentFormateDetail struct {
+	AccountCode        string `json:"accountcode,omitempty" bson:"accountcode,omitempty"`
 	ActionCode         string `json:"actioncode" bson:"actioncode" validate:"required,min=1"`
 	Detail             string `json:"detail" bson:"detail"`
 	Debit              string `json:"debit" bson:"debit"`

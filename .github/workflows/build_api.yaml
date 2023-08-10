@@ -35,3 +35,12 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  update-mainfest-stage:
+    runs-on: ubuntu-latest
+    needs: ['build-and-push-vfapi']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: setup git config
+        run: /
+          echo ${{ github.sha}}
