@@ -44,14 +44,12 @@ jobs:
         with:
           repository: smlsoft/sml-ols-cluster-config
           ref: 'main'
-          token: ${{ secrets.GH_SECRET }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: setup git config
         run: |
-          git config --global user.email "woranich@gmail.com"
-          git config --global user.name "userplant"
           echo ${{ github.sha }}
           sed -i "s|ghcr.io/smlsoft/smlcloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlcloudapi:sha-${GITHUB_SHA::7}|g" dedepos-api-dev/deployment.yaml
           git add -A
           git commit -am "Update dedepos-api-dev sha-${GITHUB_SHA::7}"
       - run: echo ${{ github }}
-      - run: git push origin master
+      - run: git push origin main
