@@ -1,0 +1,15 @@
+name: Discord Notification
+on: [workflow_dispatch]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: smlsoft/smlcloudapi
+
+jobs:
+    notify-deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: send discord notification
+            run: |
+                SHORT_SHA="${GITHUB_SHA::7}"
+                BOT_TOKEN="${{ secrets.DISCORD_BOT }}"
+                curl -X POST -H "Content-Type: application/json" -H "Authorization: Bot $BOT_TOKEN" -d "{\"content\": \"New deploy available: $REGISTRY/$IMAGE_NAME:sha-$SHORT_SHA\"}" https://discordapp.com/api/channels/1139124359731093614/messages
