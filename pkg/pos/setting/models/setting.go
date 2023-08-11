@@ -29,12 +29,13 @@ type Setting struct {
 	IsEJournal               bool                      `json:"isejournal" bson:"isejournal"`
 	Wallet                   string                    `json:"wallet" bson:"wallet"`
 	QRCodes                  *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
-	BillHeader               string                    `json:"billheader" bson:"billheader"`
-	BillFooter               string                    `json:"billfooter" bson:"billfooter"`
+	BillHeader               *[]models.NameX           `json:"billheader" bson:"billheader"`
+	BillFooter               *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
 	MediaGUID                string                    `json:"mediaguid" bson:"mediaguid"`
 	timezone.Timezone        `bson:"inline"`
 	TimeForSales             *[]TimeForSale `json:"timeforsales" bson:"timeforsales"`
+	LogoUrl                  string         `json:"logourl" bson:"logourl"`
 }
 
 type TimeForSale struct {
