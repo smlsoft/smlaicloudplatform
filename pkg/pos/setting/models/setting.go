@@ -45,11 +45,12 @@ type TimeForSale struct {
 }
 
 type Slip struct {
-	Code      string          `json:"code" bson:"code"`
-	Name      string          `json:"name" bson:"name"`
-	IsRequire bool            `json:"isrequire" bson:"isrequire"`
-	FormCode  string          `json:"formcode" bson:"formcode"`
-	FormNames *[]models.NameX `json:"formnames" bson:"formnames"`
+	Code        string          `json:"code" bson:"code"`
+	Name        string          `json:"name" bson:"name"`
+	IsRequire   bool            `json:"isrequire" bson:"isrequire"`
+	FormCode    string          `json:"formcode" bson:"formcode"`
+	FormNames   *[]models.NameX `json:"formnames" bson:"formnames"`
+	HeaderNames *[]models.NameX `json:"headernames" bson:"headernames"`
 }
 
 type POSEmployee struct {
