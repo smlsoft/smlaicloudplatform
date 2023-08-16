@@ -8372,7 +8372,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
+                            "$ref": "#/definitions/models.Branch"
                         }
                     }
                 ],
@@ -8457,7 +8457,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
+                                "$ref": "#/definitions/models.Branch"
                             }
                         }
                     }
@@ -8641,7 +8641,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
+                            "$ref": "#/definitions/models.Branch"
                         }
                     }
                 ],
@@ -13051,7 +13051,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.ProductBarcode"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode"
                             }
                         }
                     }
@@ -20112,7 +20112,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
+                            "$ref": "#/definitions/models.Branch"
                         }
                     }
                 ],
@@ -20298,7 +20298,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
+                            "$ref": "#/definitions/models.Branch"
                         }
                     }
                 ],
@@ -28599,7 +28599,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Warehouse"
+                            "$ref": "#/definitions/models.Warehouse"
                         }
                     }
                 ],
@@ -28684,7 +28684,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Warehouse"
+                                "$ref": "#/definitions/models.Warehouse"
                             }
                         }
                     }
@@ -28974,7 +28974,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Warehouse"
+                            "$ref": "#/definitions/models.Warehouse"
                         }
                     }
                 ],
@@ -29980,6 +29980,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Branch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.BulkInsertResponse": {
             "type": "object",
             "properties": {
@@ -30463,6 +30480,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -30732,7 +30781,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -31185,14 +31233,14 @@ const docTemplate = `{
                 "branches": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch"
+                        "$ref": "#/definitions/models.Branch"
                     }
                 },
                 "code": {
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                    "$ref": "#/definitions/models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -31229,14 +31277,14 @@ const docTemplate = `{
                 "branches": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch"
+                        "$ref": "#/definitions/models.Branch"
                     }
                 },
                 "code": {
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                    "$ref": "#/definitions/models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -32674,25 +32722,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.KitchenBarcode": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "models.KitchenInfo": {
             "type": "object",
             "required": [
@@ -32763,12 +32792,27 @@ const docTemplate = `{
         },
         "models.Location": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
-                "lat": {
+                "code": {
                     "type": "string"
                 },
-                "lng": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 }
             }
         },
@@ -32966,6 +33010,25 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.NameNormal": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "isauto": {
+                    "type": "boolean"
+                },
+                "isdelete": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -33669,6 +33732,100 @@ const docTemplate = `{
                 }
             }
         },
+        "models.PosSettingBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.PosSettingLocation": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameNormal"
+                    }
+                }
+            }
+        },
+        "models.PosSettingSlip": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "formcode": {
+                    "type": "string"
+                },
+                "formnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "headernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "isrequire": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PosSettingTimeForSale": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PosSettingWarehouse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameNormal"
+                    }
+                }
+            }
+        },
         "models.Printer": {
             "type": "object",
             "required": [
@@ -33807,7 +33964,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -33846,20 +34003,6 @@ const docTemplate = `{
                 },
                 "vattype": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.ProductBarcode": {
-            "type": "object",
-            "properties": {
-                "barcode": {
-                    "type": "string"
-                },
-                "kitchens": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.KitchenBarcode"
-                    }
                 }
             }
         },
@@ -33969,7 +34112,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -34204,17 +34347,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
         "models.ProductUnit": {
             "type": "object",
             "properties": {
@@ -34374,7 +34506,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "productbarcode": {
-                    "$ref": "#/definitions/models.ProductBarcode"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode"
                 },
                 "promotiontype": {
                     "type": "integer"
@@ -34404,7 +34536,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "productbarcode": {
-                    "$ref": "#/definitions/models.ProductBarcode"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode"
                 }
             }
         },
@@ -34683,6 +34815,48 @@ const docTemplate = `{
                 },
                 "wallettype": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.RefProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
                 }
             }
         },
@@ -35258,7 +35432,7 @@ const docTemplate = `{
                     }
                 },
                 "branch": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Branch"
+                    "$ref": "#/definitions/models.PosSettingBranch"
                 },
                 "code": {
                     "type": "string"
@@ -35291,7 +35465,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "location": {
-                    "$ref": "#/definitions/models.Location"
+                    "$ref": "#/definitions/models.PosSettingLocation"
                 },
                 "logourl": {
                     "type": "string"
@@ -35312,13 +35486,13 @@ const docTemplate = `{
                 "slips": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Slip"
+                        "$ref": "#/definitions/models.PosSettingSlip"
                     }
                 },
                 "timeforsales": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.TimeForSale"
+                        "$ref": "#/definitions/models.PosSettingTimeForSale"
                     }
                 },
                 "timezonelabel": {
@@ -35337,7 +35511,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "warehouse": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Warehouse"
+                    "$ref": "#/definitions/models.PosSettingWarehouse"
                 }
             }
         },
@@ -35454,35 +35628,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Slip": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "formcode": {
-                    "type": "string"
-                },
-                "formnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "headernames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "isrequire": {
-                    "type": "boolean"
-                },
-                "name": {
                     "type": "string"
                 }
             }
@@ -36512,23 +36657,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.TimeForSale": {
-            "type": "object",
-            "properties": {
-                "from": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "to": {
-                    "type": "string"
-                }
-            }
-        },
         "models.TotalStatus": {
             "type": "object",
             "properties": {
@@ -36981,6 +37109,32 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Warehouse": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Location"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.XOrderRequest": {
             "type": "object",
             "required": [
@@ -37119,112 +37273,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_organization_branch_models.Branch": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "businesstypes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
-                },
-                "departments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Department"
-                    }
-                },
-                "languages": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_organization_branch_models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_pos_setting_models.Branch": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_pos_setting_models.Warehouse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -37259,6 +37307,177 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode",
+                "names"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "foodtype": {
+                    "type": "integer"
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                    }
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "isalacarte": {
+                    "type": "boolean"
+                },
+                "isdividend": {
+                    "type": "boolean"
+                },
+                "isonlystaff": {
+                    "type": "boolean"
+                },
+                "issplitunitprint": {
+                    "type": "boolean"
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
+                "isusesubbarcodes": {
+                    "type": "boolean"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemunitsize": {
+                    "type": "number"
+                },
+                "maxdiscount": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "ordertypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOrderType"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                    }
+                },
+                "producttype": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "refbarcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RefProductBarcode"
+                    }
+                },
+                "refdividevalue": {
+                    "type": "number"
+                },
+                "refstandvalue": {
+                    "type": "number"
+                },
+                "refunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "stockbarcode": {
+                    "type": "string"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
             "type": "object",
             "properties": {
@@ -37267,6 +37486,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -37302,6 +37532,41 @@ const docTemplate = `{
                     "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_promotion_models.ProductBarcode": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
@@ -37452,88 +37717,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_shop_branch_models.Branch": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "departments": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Department"
-                    }
-                },
-                "location": {
-                    "$ref": "#/definitions/models.Location"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "telephone": {
-                    "type": "string",
-                    "maxLength": 100
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_employee_models.Branch": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_employee_models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "smlcloudplatform_pkg_storefront_models.Device": {
             "type": "object",
             "properties": {
@@ -37542,32 +37725,6 @@ const docTemplate = `{
                 },
                 "uuid": {
                     "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_warehouse_models.Warehouse": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "location": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Location"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
                 }
             }
         }

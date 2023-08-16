@@ -2,7 +2,7 @@ package models
 
 import "smlcloudplatform/pkg/models"
 
-type ProductBarcode struct {
+type KitchenProductBarcode struct {
 	Barcode  string           `json:"barcode" bson:"barcode"`
 	Kitchens []KitchenBarcode `json:"kitchens" bson:"kitchens"`
 }

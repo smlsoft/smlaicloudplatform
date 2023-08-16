@@ -26,7 +26,7 @@ type IKitchenService interface {
 	SearchKitchen(shopID string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
 	SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
-	GetProductBarcodeKitchen(shopID string) ([]models.ProductBarcode, error)
+	GetProductBarcodeKitchen(shopID string) ([]models.KitchenProductBarcode, error)
 
 	// LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 
@@ -324,7 +324,7 @@ func (svc KitchenService) GetModuleName() string {
 	return "restaurant-kitchen"
 }
 
-func (svc KitchenService) GetProductBarcodeKitchen(shopID string) ([]models.ProductBarcode, error) {
+func (svc KitchenService) GetProductBarcodeKitchen(shopID string) ([]models.KitchenProductBarcode, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -343,7 +343,7 @@ func (svc KitchenService) GetProductBarcodeKitchen(shopID string) ([]models.Prod
 		})
 
 		if err != nil {
-			return []models.ProductBarcode{}, err
+			return []models.KitchenProductBarcode{}, err
 		}
 
 		for _, doc := range findDocs {
@@ -365,7 +365,7 @@ func (svc KitchenService) GetProductBarcodeKitchen(shopID string) ([]models.Prod
 
 	}
 
-	docs := []models.ProductBarcode{}
+	docs := []models.KitchenProductBarcode{}
 	for barcode, doc := range tempDocs {
 
 		kitchens := []models.KitchenBarcode{}
@@ -376,7 +376,7 @@ func (svc KitchenService) GetProductBarcodeKitchen(shopID string) ([]models.Prod
 			})
 		}
 
-		docs = append(docs, models.ProductBarcode{
+		docs = append(docs, models.KitchenProductBarcode{
 			Barcode:  barcode,
 			Kitchens: kitchens,
 		})

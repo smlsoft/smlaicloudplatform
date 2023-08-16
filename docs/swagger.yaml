@@ -360,6 +360,17 @@ definitions:
     - banknames
     - names
     type: object
+  models.Branch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -689,6 +700,27 @@ definitions:
       comment:
         type: string
     type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -879,7 +911,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -1176,12 +1207,12 @@ definitions:
     properties:
       branches:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch'
+          $ref: '#/definitions/models.Branch'
         type: array
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1205,12 +1236,12 @@ definitions:
     properties:
       branches:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Branch'
+          $ref: '#/definitions/models.Branch'
         type: array
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -2200,19 +2231,6 @@ definitions:
     required:
     - names
     type: object
-  models.KitchenBarcode:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2260,10 +2278,21 @@ definitions:
     type: object
   models.Location:
     properties:
-      lat:
+      code:
         type: string
-      lng:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.LocationRequest:
     properties:
@@ -2393,6 +2422,19 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.NameNormal:
+    properties:
+      code:
+        maxLength: 255
+        type: string
+      isauto:
+        type: boolean
+      isdelete:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
     type: object
   models.NameX:
     properties:
@@ -2871,6 +2913,67 @@ definitions:
       docdatetime:
         type: string
     type: object
+  models.PosSettingBranch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.PosSettingLocation:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameNormal'
+        type: array
+    type: object
+  models.PosSettingSlip:
+    properties:
+      code:
+        type: string
+      formcode:
+        type: string
+      formnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      headernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      isrequire:
+        type: boolean
+      name:
+        type: string
+    type: object
+  models.PosSettingTimeForSale:
+    properties:
+      from:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      to:
+        type: string
+    type: object
+  models.PosSettingWarehouse:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameNormal'
+        type: array
+    type: object
   models.Printer:
     properties:
       address:
@@ -2961,7 +3064,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2992,15 +3095,6 @@ definitions:
     - itemcode
     - names
     - unit
-    type: object
-  models.ProductBarcode:
-    properties:
-      barcode:
-        type: string
-      kitchens:
-        items:
-          $ref: '#/definitions/models.KitchenBarcode'
-        type: array
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3071,7 +3165,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3235,13 +3329,6 @@ definitions:
       price:
         type: number
     type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   models.ProductUnit:
     properties:
       divider:
@@ -3353,7 +3440,7 @@ definitions:
       name:
         type: string
       productbarcode:
-        $ref: '#/definitions/models.ProductBarcode'
+        $ref: '#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode'
       promotiontype:
         type: integer
       remark:
@@ -3373,7 +3460,7 @@ definitions:
       minimum:
         type: number
       productbarcode:
-        $ref: '#/definitions/models.ProductBarcode'
+        $ref: '#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode'
     type: object
   models.Purchase:
     properties:
@@ -3559,6 +3646,34 @@ definitions:
         type: integer
     required:
     - names
+    type: object
+  models.RefProductBarcode:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      guidfixed:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      qty:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
     type: object
   models.Reference:
     properties:
@@ -3942,7 +4057,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       branch:
-        $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Branch'
+        $ref: '#/definitions/models.PosSettingBranch'
       code:
         type: string
       devicenumber:
@@ -3964,7 +4079,7 @@ definitions:
       isvatregister:
         type: boolean
       location:
-        $ref: '#/definitions/models.Location'
+        $ref: '#/definitions/models.PosSettingLocation'
       logourl:
         type: string
       mediaguid:
@@ -3978,11 +4093,11 @@ definitions:
         type: string
       slips:
         items:
-          $ref: '#/definitions/models.Slip'
+          $ref: '#/definitions/models.PosSettingSlip'
         type: array
       timeforsales:
         items:
-          $ref: '#/definitions/models.TimeForSale'
+          $ref: '#/definitions/models.PosSettingTimeForSale'
         type: array
       timezonelabel:
         type: string
@@ -3995,7 +4110,7 @@ definitions:
       wallet:
         type: string
       warehouse:
-        $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Warehouse'
+        $ref: '#/definitions/models.PosSettingWarehouse'
     required:
     - code
     type: object
@@ -4074,25 +4189,6 @@ definitions:
       role:
         type: integer
       shopid:
-        type: string
-    type: object
-  models.Slip:
-    properties:
-      code:
-        type: string
-      formcode:
-        type: string
-      formnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      headernames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      isrequire:
-        type: boolean
-      name:
         type: string
     type: object
   models.SmsPaymentSettings:
@@ -4777,17 +4873,6 @@ definitions:
       taxrate:
         type: number
     type: object
-  models.TimeForSale:
-    properties:
-      from:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      to:
-        type: string
-    type: object
   models.TotalStatus:
     properties:
       status:
@@ -5103,6 +5188,24 @@ definitions:
       vatyear:
         type: integer
     type: object
+  models.Warehouse:
+    properties:
+      code:
+        type: string
+      location:
+        items:
+          $ref: '#/definitions/models.Location'
+        type: array
+        uniqueItems: true
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.XOrderRequest:
     properties:
       guidfixed:
@@ -5197,76 +5300,6 @@ definitions:
       success:
         type: boolean
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Branch:
-    properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
-      code:
-        type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-      languages:
-        items:
-          type: string
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
-  smlcloudplatform_pkg_pos_setting_models.Branch:
-    properties:
-      code:
-        type: string
-      guidfixed:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_pos_setting_models.Warehouse:
-    properties:
-      code:
-        type: string
-      guidfixed:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -5289,12 +5322,134 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      colorselect:
+        type: string
+      colorselecthex:
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      foodtype:
+        type: integer
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+        type: array
+      imageuri:
+        type: string
+      isalacarte:
+        type: boolean
+      isdividend:
+        type: boolean
+      isonlystaff:
+        type: boolean
+      issplitunitprint:
+        type: boolean
+      issumpoint:
+        type: boolean
+      isusesubbarcodes:
+        type: boolean
+      itemcode:
+        type: string
+      itemtype:
+        type: integer
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      itemunitsize:
+        type: number
+      maxdiscount:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      options:
+        items:
+          $ref: '#/definitions/models.ProductOption'
+        type: array
+      ordertypes:
+        items:
+          $ref: '#/definitions/models.ProductOrderType'
+        type: array
+      prices:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+        type: array
+      producttype:
+        $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
+      qty:
+        type: number
+      refbarcodes:
+        items:
+          $ref: '#/definitions/models.RefProductBarcode'
+        type: array
+      refdividevalue:
+        type: number
+      refstandvalue:
+        type: number
+      refunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      standvalue:
+        type: number
+      stockbarcode:
+        type: string
+      taxtype:
+        type: integer
+      useimageorcolor:
+        type: boolean
+      vatcal:
+        type: integer
+      vattype:
+        type: integer
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
+    required:
+    - barcode
+    - names
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
@@ -5319,6 +5474,29 @@ definitions:
         uniqueItems: true
     required:
     - names
+    type: object
+  smlcloudplatform_pkg_product_promotion_models.ProductBarcode:
+    properties:
+      barcode:
+        type: string
+      guidfixed:
+        type: string
+      itemcode:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      prices:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+        type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -5419,85 +5597,12 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Branch:
-    properties:
-      code:
-        type: integer
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-        uniqueItems: true
-      location:
-        $ref: '#/definitions/models.Location'
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      telephone:
-        maxLength: 100
-        type: string
-    required:
-    - names
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Branch:
-    properties:
-      code:
-        type: string
-      guidfixed:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
       os:
         type: string
       uuid:
         type: string
-    type: object
-  smlcloudplatform_pkg_warehouse_models.Warehouse:
-    properties:
-      code:
-        type: string
-      location:
-        items:
-          $ref: '#/definitions/models.Location'
-        type: array
-        uniqueItems: true
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
 info:
   contact:
@@ -10745,7 +10850,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
+          $ref: '#/definitions/models.Branch'
       responses:
         "201":
           description: Created
@@ -10821,7 +10926,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
+          $ref: '#/definitions/models.Branch'
       responses:
         "201":
           description: Created
@@ -10847,7 +10952,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
+            $ref: '#/definitions/models.Branch'
           type: array
       responses:
         "201":
@@ -13778,7 +13883,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.ProductBarcode'
+            $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode'
           type: array
       responses:
         "201":
@@ -18106,7 +18211,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch'
+          $ref: '#/definitions/models.Branch'
       responses:
         "201":
           description: Created
@@ -18182,7 +18287,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch'
+          $ref: '#/definitions/models.Branch'
       responses:
         "201":
           description: Created
@@ -23316,7 +23421,7 @@ paths:
         name: Warehouse
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Warehouse'
+          $ref: '#/definitions/models.Warehouse'
       responses:
         "201":
           description: Created
@@ -23392,7 +23497,7 @@ paths:
         name: Warehouse
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Warehouse'
+          $ref: '#/definitions/models.Warehouse'
       responses:
         "201":
           description: Created
@@ -23687,7 +23792,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Warehouse'
+            $ref: '#/definitions/models.Warehouse'
           type: array
       responses:
         "201":
