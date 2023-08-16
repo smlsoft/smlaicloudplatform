@@ -17,15 +17,15 @@ type Setting struct {
 	DocFormatTaxInv          string                    `json:"docformattaxinv" bson:"docformattaxinv"`
 	DocFormatInv             string                    `json:"docformatinv" bson:"docformatinv"`
 	ReceiptForm              string                    `json:"receiptform" bson:"receiptform"`
-	Warehouse                Warehouse                 `json:"warehouse" bson:"warehouse"`
-	Location                 Location                  `json:"location" bson:"location"`
-	Branch                   Branch                    `json:"branch" bson:"branch"`
+	Warehouse                PosSettingWarehouse       `json:"warehouse" bson:"warehouse"`
+	Location                 PosSettingLocation        `json:"location" bson:"location"`
+	Branch                   PosSettingBranch          `json:"branch" bson:"branch"`
 	ActivePin                string                    `json:"activepin" bson:"activepin"`
 	Employees                []POSEmployee             `json:"employees" bson:"employees"`
 	DocFormateSaleReturn     string                    `json:"docformatesalereturn" bson:"docformatesalereturn"`
 	VatType                  int8                      `json:"vattype" bson:"vattype"`
 	VatRate                  float64                   `json:"vatrate" bson:"vatrate"`
-	Slips                    *[]Slip                   `json:"slips" bson:"slips"`
+	Slips                    *[]PosSettingSlip         `json:"slips" bson:"slips"`
 	IsEJournal               bool                      `json:"isejournal" bson:"isejournal"`
 	Wallet                   string                    `json:"wallet" bson:"wallet"`
 	QRCodes                  *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
@@ -34,17 +34,17 @@ type Setting struct {
 	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
 	MediaGUID                string                    `json:"mediaguid" bson:"mediaguid"`
 	timezone.Timezone        `bson:"inline"`
-	TimeForSales             *[]TimeForSale `json:"timeforsales" bson:"timeforsales"`
-	LogoUrl                  string         `json:"logourl" bson:"logourl"`
+	TimeForSales             *[]PosSettingTimeForSale `json:"timeforsales" bson:"timeforsales"`
+	LogoUrl                  string                   `json:"logourl" bson:"logourl"`
 }
 
-type TimeForSale struct {
+type PosSettingTimeForSale struct {
 	Names *[]models.NameX `json:"names" bson:"names"`
 	From  string          `json:"from" bson:"from"`
 	To    string          `json:"to" bson:"to"`
 }
 
-type Slip struct {
+type PosSettingSlip struct {
 	Code        string          `json:"code" bson:"code"`
 	Name        string          `json:"name" bson:"name"`
 	IsRequire   bool            `json:"isrequire" bson:"isrequire"`
@@ -60,21 +60,21 @@ type POSEmployee struct {
 	Permissions        *[]string `json:"permissions" bson:"permissions"`
 }
 
-type Branch struct {
+type PosSettingBranch struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
 	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
-type Warehouse struct {
+type PosSettingWarehouse struct {
 	models.DocIdentity `bson:"inline"`
-	Code               string          `json:"code" bson:"code"`
-	Names              *[]models.NameX `json:"names" bson:"names"`
+	Code               string               `json:"code" bson:"code"`
+	Names              *[]models.NameNormal `json:"names" bson:"names"`
 }
 
-type Location struct {
-	Code  string          `json:"code" bson:"code"`
-	Names *[]models.NameX `json:"names" bson:"names"`
+type PosSettingLocation struct {
+	Code  string               `json:"code" bson:"code"`
+	Names *[]models.NameNormal `json:"names" bson:"names"`
 }
 
 type SettingInfo struct {

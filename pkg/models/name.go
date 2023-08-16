@@ -37,6 +37,13 @@ type NameX struct {
 	IsDelete bool    `json:"isdelete"`
 }
 
+type NameNormal struct {
+	Code     *string `json:"code" bson:"code" validate:"max=255"`
+	Name     *string `json:"name" bson:"name" validate:"max=255"`
+	IsAuto   bool    `json:"isauto" bson:"isauto"`
+	IsDelete bool    `json:"isdelete"`
+}
+
 func NewNameXWithCodeName(code, name string) *NameX {
 	return &NameX{Code: &code, Name: &name, IsAuto: false, IsDelete: false}
 }
