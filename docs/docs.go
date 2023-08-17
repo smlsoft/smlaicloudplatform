@@ -30995,6 +30995,12 @@ const docTemplate = `{
                 "accountcode": {
                     "type": "string"
                 },
+                "accountcredit": {
+                    "$ref": "#/definitions/models.ChartOfAccountInfo"
+                },
+                "accountdebit": {
+                    "$ref": "#/definitions/models.ChartOfAccountInfo"
+                },
                 "actioncode": {
                     "type": "string",
                     "minLength": 1

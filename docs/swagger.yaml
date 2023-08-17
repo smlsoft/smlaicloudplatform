@@ -1043,6 +1043,10 @@ definitions:
     properties:
       accountcode:
         type: string
+      accountcredit:
+        $ref: '#/definitions/models.ChartOfAccountInfo'
+      accountdebit:
+        $ref: '#/definitions/models.ChartOfAccountInfo'
       actioncode:
         minLength: 1
         type: string

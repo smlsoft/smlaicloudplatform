@@ -2,6 +2,7 @@ package models
 
 import (
 	"smlcloudplatform/pkg/models"
+	chartofaccount_models "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -22,12 +23,14 @@ type DocumentFormate struct {
 }
 
 type DocumentFormateDetail struct {
-	AccountCode        string `json:"accountcode,omitempty" bson:"accountcode,omitempty"`
-	ActionCode         string `json:"actioncode" bson:"actioncode" validate:"required,min=1"`
-	Detail             string `json:"detail" bson:"detail"`
-	Debit              string `json:"debit" bson:"debit"`
-	Credit             string `json:"credit" bson:"credit"`
-	IsEntrySelfAccount bool   `json:"isentryselfaccount" bson:"isentryselfaccount"`
+	AccountCode        string                                   `json:"accountcode,omitempty" bson:"accountcode,omitempty"`
+	ActionCode         string                                   `json:"actioncode" bson:"actioncode" validate:"required,min=1"`
+	Detail             string                                   `json:"detail" bson:"detail"`
+	Debit              string                                   `json:"debit" bson:"debit"`
+	Credit             string                                   `json:"credit" bson:"credit"`
+	IsEntrySelfAccount bool                                     `json:"isentryselfaccount" bson:"isentryselfaccount"`
+	AccountDebit       chartofaccount_models.ChartOfAccountInfo `json:"accountdebit" bson:"accountdebit"`
+	AccountCredit      chartofaccount_models.ChartOfAccountInfo `json:"accountcredit" bson:"accountcredit"`
 }
 
 type DocumentFormateInfo struct {
