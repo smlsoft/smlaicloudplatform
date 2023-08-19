@@ -13,8 +13,8 @@ import (
 )
 
 type IOcrService interface {
-	UploadOcr(resourceKey string, urlResources []string) (map[string]interface{}, error)
-	ResultOcr(resourceKey string, urlResources []string) (map[string]interface{}, error)
+	UploadOcr(resourceKey string, urlResources []string) ([]map[string]interface{}, error)
+	ResultOcr(resourceKey string, urlResources []string) ([]map[string]interface{}, error)
 }
 
 type OcrService struct {
@@ -30,11 +30,11 @@ func NewOcrService() OcrService {
 	return insSvc
 }
 
-func (svc OcrService) UploadOcr(resourceKey string, urlResources []string) (map[string]interface{}, error) {
+func (svc OcrService) UploadOcr(resourceKey string, urlResources []string) ([]map[string]interface{}, error) {
 
 	urlApi := fmt.Sprintf("%s/upload", svc.apiUrl)
 
-	result := map[string]interface{}{}
+	result := []map[string]interface{}{}
 
 	for idx, urlResource := range urlResources {
 
@@ -46,7 +46,7 @@ func (svc OcrService) UploadOcr(resourceKey string, urlResources []string) (map[
 
 		}
 
-		resultUpload, err := svc.postFile(urlApi, OcrUpload{
+		resultUpload, _ := svc.postFile(urlApi, OcrUpload{
 			TrackingID: trackingID,
 			FormIndex:  0,
 		}, FileContent{
@@ -54,21 +54,22 @@ func (svc OcrService) UploadOcr(resourceKey string, urlResources []string) (map[
 			Content:  fileContent,
 		})
 
-		if err != nil {
-			return map[string]interface{}{}, err
-		}
+		// if err != nil {
+		// 	return map[string]interface{}{}, err
+		// }
 
-		result[trackingID] = resultUpload
+		resultUpload["tracking_id"] = trackingID
+		result = append(result, resultUpload)
 	}
 
 	return result, nil
 }
 
-func (svc OcrService) ResultOcr(resourceKey string, urlResources []string) (map[string]interface{}, error) {
+func (svc OcrService) ResultOcr(resourceKey string, urlResources []string) ([]map[string]interface{}, error) {
 
 	urlApi := fmt.Sprintf("%s/result", svc.apiUrl)
 
-	result := map[string]interface{}{}
+	result := []map[string]interface{}{}
 
 	for idx, urlResource := range urlResources {
 
@@ -80,7 +81,7 @@ func (svc OcrService) ResultOcr(resourceKey string, urlResources []string) (map[
 
 		}
 
-		resultUpload, err := svc.postResult(urlApi, OcrResault{
+		resultUpload, _ := svc.postResult(urlApi, OcrResault{
 			TrackingID:    trackingID,
 			Type:          "json",
 			Url:           1,
@@ -94,11 +95,8 @@ func (svc OcrService) ResultOcr(resourceKey string, urlResources []string) (map[
 			Content:  fileContent,
 		})
 
-		if err != nil {
-			return map[string]interface{}{}, err
-		}
-
-		result[trackingID] = resultUpload
+		resultUpload["tracking_id"] = trackingID
+		result = append(result, resultUpload)
 	}
 
 	return result, nil
@@ -184,9 +182,9 @@ func (svc OcrService) postFile(url string, ocrUpload OcrUpload, fileContent File
 		return map[string]interface{}{}, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return map[string]interface{}{}, fmt.Errorf("bad status: %s", resp.Status)
-	}
+	// if resp.StatusCode != http.StatusOK {
+	// 	return map[string]interface{}{}, fmt.Errorf("bad status: %s", resp.Status)
+	// }
 
 	return resultJson, nil
 }
@@ -230,10 +228,6 @@ func (svc OcrService) postResult(url string, ocrResault OcrResault, fileContent 
 	err = json.Unmarshal(resultBytes, &resultJson)
 	if err != nil {
 		return map[string]interface{}{}, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return map[string]interface{}{}, fmt.Errorf("bad status: %s", resp.Status)
 	}
 
 	return resultJson, nil
