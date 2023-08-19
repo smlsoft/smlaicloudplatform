@@ -21,6 +21,7 @@ import (
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/ocr"
 	"smlcloudplatform/pkg/organization/branch"
 	"smlcloudplatform/pkg/organization/businesstype"
 	"smlcloudplatform/pkg/organization/department"
@@ -265,6 +266,8 @@ func main() {
 		producttype.NewProductTypeHttp(ms, cfg),
 
 		media.NewMediaHttp(ms, cfg),
+
+		ocr.NewOcrHttp(ms, cfg),
 	}
 
 	serviceStartHttp(ms, httpServices...)

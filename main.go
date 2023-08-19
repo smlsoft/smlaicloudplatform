@@ -21,6 +21,7 @@ import (
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/ocr"
 	"smlcloudplatform/pkg/organization/branch"
 	"smlcloudplatform/pkg/organization/businesstype"
 	"smlcloudplatform/pkg/organization/department"
@@ -283,6 +284,7 @@ func main() {
 			pos_setting.NewSettingHttp(ms, cfg),
 			pos_media.NewMediaHttp(ms, cfg),
 			documentformate.NewDocumentFormateHttp(ms, cfg),
+			ocr.NewOcrHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)
