@@ -362,30 +362,14 @@ definitions:
     type: object
   models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
         type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-      languages:
-        items:
-          type: string
-        type: array
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -714,6 +698,27 @@ definitions:
   models.CommentRequest:
     properties:
       comment:
+        type: string
+    type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
         type: string
     type: object
   models.CreditorGroup:
@@ -1211,7 +1216,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1240,7 +1245,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -5308,27 +5313,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -5625,27 +5609,6 @@ definitions:
     required:
     - code
     - names
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -10386,7 +10349,7 @@ paths:
       - AccessToken: []
       tags:
       - Member
-  /ocr/upload:
+  /ocr/result:
     post:
       consumes:
       - application/json
@@ -10410,6 +10373,32 @@ paths:
       security:
       - AccessToken: []
       summary: Result Ocr
+      tags:
+      - OCR
+  /ocr/upload:
+    post:
+      consumes:
+      - application/json
+      description: Upload Ocr
+      parameters:
+      - description: Ocr Request
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/ocr.OcrRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Upload Ocr
       tags:
       - OCR
   /optgroup:

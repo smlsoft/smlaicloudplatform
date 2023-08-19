@@ -75,7 +75,7 @@ func (h OcrHttp) OcrUpload(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /ocr/upload [post]
+// @Router /ocr/result [post]
 func (h OcrHttp) OcrResault(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
