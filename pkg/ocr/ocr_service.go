@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type IOcrService interface {
@@ -36,31 +37,33 @@ func (svc OcrService) UploadOcr(resourceKey string, urlResources []string) ([]ma
 
 	result := []map[string]interface{}{}
 
+	wg := sync.WaitGroup{}
 	for idx, urlResource := range urlResources {
+		wg.Add(1)
 
-		trackingID := fmt.Sprintf("%s-%d", resourceKey, idx+1)
+		go func(idx int, urlResource string) {
+			trackingID := fmt.Sprintf("%s-%d", resourceKey, idx+1)
 
-		fileContent, filename, err := svc.downloadFileFromURL(urlResource)
-		if err != nil {
-			fmt.Println("Error downloading file:", err)
+			fileContent, filename, err := svc.downloadFileFromURL(urlResource)
+			if err != nil {
+				fmt.Println("Error downloading file:", err)
 
-		}
+			}
 
-		resultUpload, _ := svc.postFile(urlApi, OcrUpload{
-			TrackingID: trackingID,
-			FormIndex:  0,
-		}, FileContent{
-			FileName: filename,
-			Content:  fileContent,
-		})
+			resultUpload, _ := svc.postFile(urlApi, OcrUpload{
+				TrackingID: trackingID,
+				FormIndex:  0,
+			}, FileContent{
+				FileName: filename,
+				Content:  fileContent,
+			})
 
-		// if err != nil {
-		// 	return map[string]interface{}{}, err
-		// }
-
-		resultUpload["tracking_id"] = trackingID
-		result = append(result, resultUpload)
+			resultUpload["tracking_id"] = trackingID
+			result = append(result, resultUpload)
+			wg.Done()
+		}(idx, urlResource)
 	}
+	wg.Wait()
 
 	return result, nil
 }
@@ -71,33 +74,39 @@ func (svc OcrService) ResultOcr(resourceKey string, urlResources []string) ([]ma
 
 	result := []map[string]interface{}{}
 
+	wg := sync.WaitGroup{}
 	for idx, urlResource := range urlResources {
+		wg.Add(1)
+		go func(idx int, urlResource string) {
 
-		trackingID := fmt.Sprintf("%s-%d", resourceKey, idx+1)
+			trackingID := fmt.Sprintf("%s-%d", resourceKey, idx+1)
 
-		fileContent, filename, err := svc.downloadFileFromURL(urlResource)
-		if err != nil {
-			fmt.Println("Error downloading file:", err)
+			fileContent, filename, err := svc.downloadFileFromURL(urlResource)
+			if err != nil {
+				fmt.Println("Error downloading file:", err)
 
-		}
+			}
 
-		resultUpload, _ := svc.postResult(urlApi, OcrResault{
-			TrackingID:    trackingID,
-			Type:          "json",
-			Url:           1,
-			RawHeader:     1,
-			Confident:     1,
-			SignatureCode: 1,
-			Startdate:     "",
-			Stopdate:      "",
-		}, FileContent{
-			FileName: filename,
-			Content:  fileContent,
-		})
+			resultUpload, _ := svc.postResult(urlApi, OcrResault{
+				TrackingID:    trackingID,
+				Type:          "json",
+				Url:           1,
+				RawHeader:     1,
+				Confident:     1,
+				SignatureCode: 1,
+				Startdate:     "",
+				Stopdate:      "",
+			}, FileContent{
+				FileName: filename,
+				Content:  fileContent,
+			})
 
-		resultUpload["tracking_id"] = trackingID
-		result = append(result, resultUpload)
+			resultUpload["tracking_id"] = trackingID
+			result = append(result, resultUpload)
+			wg.Done()
+		}(idx, urlResource)
 	}
+	wg.Wait()
 
 	return result, nil
 }
