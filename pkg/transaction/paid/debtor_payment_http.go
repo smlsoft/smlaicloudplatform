@@ -28,10 +28,11 @@ func NewPaidHttp(ms *microservice.Microservice, cfg config.IConfig) PaidHttp {
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewPaidRepository(pst)
+	repoMq := repositories.NewPaidMessageQueueRepository(ms.Producer(cfg.MQConfig()))
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPaidHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewPaidHttpService(repo, repoMq, transRepo, masterSyncCacheRepo)
 
 	return PaidHttp{
 		ms:  ms,

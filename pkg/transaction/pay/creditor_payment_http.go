@@ -25,13 +25,15 @@ type PayHttp struct {
 
 func NewPayHttp(ms *microservice.Microservice, cfg config.IConfig) PayHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	producer := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewPayRepository(pst)
+	repoMq := repositories.NewPaidMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPayHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewPayHttpService(repo, repoMq, transRepo, masterSyncCacheRepo)
 
 	return PayHttp{
 		ms:  ms,

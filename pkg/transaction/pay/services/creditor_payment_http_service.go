@@ -42,18 +42,20 @@ type IPayHttpService interface {
 type PayHttpService struct {
 	repo             repositories.IPayRepository
 	repoCache        trancache.ICacheRepository
+	repoMq           repositories.ICreditorPaymentMessageQueueRepository
 	cacheExpireDocNo time.Duration
 	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.PayActivity, models.PayDeleteActivity]
 	contextTimeout time.Duration
 }
 
-func NewPayHttpService(repo repositories.IPayRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PayHttpService {
+func NewPayHttpService(repo repositories.IPayRepository, repoMq repositories.ICreditorPaymentMessageQueueRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PayHttpService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &PayHttpService{
 		repo:             repo,
+		repoMq:           repoMq,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
@@ -146,6 +148,10 @@ func (svc PayHttpService) CreatePay(shopID string, authUsername string, doc mode
 
 	svc.saveMasterSync(shopID)
 
+	go func() {
+		svc.repoMq.Create(docData)
+	}()
+
 	return newGuidFixed, newDocNo, nil
 }
 
@@ -177,6 +183,10 @@ func (svc PayHttpService) UpdatePay(shopID string, guid string, authUsername str
 
 	svc.saveMasterSync(shopID)
 
+	go func() {
+		svc.repoMq.Update(findDoc)
+	}()
+
 	return nil
 }
 
@@ -201,6 +211,10 @@ func (svc PayHttpService) DeletePay(shopID string, guid string, authUsername str
 	}
 
 	svc.saveMasterSync(shopID)
+
+	go func() {
+		svc.repoMq.Delete(findDoc)
+	}()
 
 	return nil
 }
@@ -362,6 +376,11 @@ func (svc PayHttpService) SaveInBatch(shopID string, authUsername string, dataLi
 			if err != nil {
 				return nil
 			}
+
+			go func() {
+				svc.repoMq.Update(doc)
+			}()
+
 			return nil
 		},
 	)
@@ -372,6 +391,10 @@ func (svc PayHttpService) SaveInBatch(shopID string, authUsername string, dataLi
 		if err != nil {
 			return common.BulkImport{}, err
 		}
+
+		go func() {
+			svc.repoMq.CreateInBatch(createDataList)
+		}()
 
 	}
 

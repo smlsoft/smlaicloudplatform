@@ -42,19 +42,21 @@ const (
 type PaidHttpService struct {
 	repo             repositories.IPaidRepository
 	repoCache        trancache.ICacheRepository
+	repoMq           repositories.IDebtorPaymentMessageQueueRepository
 	cacheExpireDocNo time.Duration
 	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.PaidActivity, models.PaidDeleteActivity]
 	contextTimeout time.Duration
 }
 
-func NewPaidHttpService(repo repositories.IPaidRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PaidHttpService {
+func NewPaidHttpService(repo repositories.IPaidRepository, repoMq repositories.IDebtorPaymentMessageQueueRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PaidHttpService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &PaidHttpService{
 		repo:             repo,
 		repoCache:        repoCache,
+		repoMq:           repoMq,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
 		contextTimeout:   contextTimeout,
@@ -145,6 +147,10 @@ func (svc PaidHttpService) CreatePaid(shopID string, authUsername string, doc mo
 
 	svc.saveMasterSync(shopID)
 
+	go func() {
+		svc.repoMq.Create(docData)
+	}()
+
 	return newGuidFixed, newDocNo, nil
 }
 
@@ -176,6 +182,10 @@ func (svc PaidHttpService) UpdatePaid(shopID string, guid string, authUsername s
 
 	svc.saveMasterSync(shopID)
 
+	go func() {
+		svc.repoMq.Update(findDoc)
+	}()
+
 	return nil
 }
 
@@ -200,6 +210,10 @@ func (svc PaidHttpService) DeletePaid(shopID string, guid string, authUsername s
 	}
 
 	svc.saveMasterSync(shopID)
+
+	go func() {
+		svc.repoMq.Delete(findDoc)
+	}()
 
 	return nil
 }
@@ -361,6 +375,11 @@ func (svc PaidHttpService) SaveInBatch(shopID string, authUsername string, dataL
 			if err != nil {
 				return nil
 			}
+
+			go func() {
+				svc.repoMq.Update(doc)
+			}()
+
 			return nil
 		},
 	)
@@ -371,6 +390,10 @@ func (svc PaidHttpService) SaveInBatch(shopID string, authUsername string, dataL
 		if err != nil {
 			return common.BulkImport{}, err
 		}
+
+		go func() {
+			svc.repoMq.CreateInBatch(createDataList)
+		}()
 
 	}
 
