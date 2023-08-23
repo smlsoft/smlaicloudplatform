@@ -187,40 +187,31 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 		tempRefBarcodes[item.Barcode] = item
 	}
 
-	err = svc.repo.Transaction(ctx, func(ctx context.Context) error {
+	findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
 
-		findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
+	if err != nil {
+		return err
+	}
 
-		if err != nil {
-			return err
-		}
+	docData.RefBarcodes = &[]models.RefProductBarcode{}
+	for _, childDoc := range findChildrenDocs {
+		tempRef := childDoc.ToRefBarcode()
 
-		docData.RefBarcodes = &[]models.RefProductBarcode{}
-		for _, childDoc := range findChildrenDocs {
-			tempRef := childDoc.ToRefBarcode()
+		tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
+		tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
+		tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
+		tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
 
-			tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
-			tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
-			tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
-			tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
+		*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
+	}
 
-			*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
-		}
+	err = svc.updateMetaInRefBarcode(shopID, docData)
 
-		err = svc.updateMetaInRefBarcode(shopID, docData)
+	if err != nil {
+		return err
+	}
 
-		if err != nil {
-			return err
-		}
-
-		err = svc.repo.Update(ctx, shopID, guid, docData)
-
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
+	err = svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
 		return err
@@ -567,14 +558,14 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 		func(doc models.ProductBarcodeDoc) bool {
 			return doc.Barcode != ""
 		},
-		func(shopID string, authUsername string, data models.ProductBarcode, doc models.ProductBarcodeDoc) error {
+		func(shopID string, authUsername string, dataReq models.ProductBarcode, doc models.ProductBarcodeDoc) error {
 
 			docReq := models.ProductBarcodeRequest{}
-			docReq.ProductBarcodeBase = doc.ProductBarcodeBase
+			docReq.ProductBarcodeBase = dataReq.ProductBarcodeBase
 
 			tempBarcodes := []models.BarcodeRequest{}
 
-			for _, docBarcode := range *doc.RefBarcodes {
+			for _, docBarcode := range *dataReq.RefBarcodes {
 				tempBarcodes = append(tempBarcodes, models.BarcodeRequest{
 					Barcode:     docBarcode.Barcode,
 					Condition:   docBarcode.Condition,
@@ -586,10 +577,10 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 
 			svc.UpdateProductBarcode(shopID, doc.GuidFixed, authUsername, docReq)
 
-			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
-			if err != nil {
-				return nil
-			}
+			// err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
+			// if err != nil {
+			// 	return nil
+			// }
 			return nil
 		},
 	)
