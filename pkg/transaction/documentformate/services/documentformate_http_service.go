@@ -383,7 +383,80 @@ func (svc DocumentFormateHttpService) GetModuleName() string {
 
 func (svc DocumentFormateHttpService) GetModuleDefault() ([]map[string]interface{}, error) {
 	defaultModule := `
-	[{"name":"Purchase","doccode":"PU","dateformate":"YYYYMMDD","docnumber":5},{"name":"Purchase Return","doccode":"PT","dateformate":"YYYYMMDD","docnumber":5},{"name":"SaleInvoice","doccode":"SI","dateformate":"YYYYMMDD","docnumber":5},{"name":"Sale Invoice Return","doccode":"ST","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Adjustment","doccode":"AJ","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Pickup Product","doccode":"IM","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Receive Product","doccode":"IF","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Return Product","doccode":"IR","dateformate":"YYYYMMDD","docnumber":5},{"name":"Stock Transfer","doccode":"TF","dateformate":"YYYYMMDD","docnumber":5},{"name":"General Ledger","doccode":"GL","dateformate":"","docnumber":0}]
+	[
+  {
+    "name": "Purchase",
+    "doccode": "PU",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "Purchase Return",
+    "doccode": "PT",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "SaleInvoice",
+    "doccode": "SI",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "Sale Invoice Return",
+    "doccode": "ST",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "Stock Adjustment",
+    "doccode": "AJ",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "Stock Pickup Product",
+    "doccode": "IM",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "Stock Receive Product",
+    "doccode": "IF",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "Stock Return Product",
+    "doccode": "IR",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "Stock Transfer",
+    "doccode": "TF",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+    {
+    "name": "Paid",
+    "doccode": "EE",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+    {
+    "name": "Pay",
+    "doccode": "DE",
+    "dateformate": "YYYYMMDD",
+    "docnumber": 5
+  },
+  {
+    "name": "General Ledger",
+    "doccode": "GL",
+    "dateformate": "",
+    "docnumber": 0
+  }
+]
 	`
 
 	jsonData := []map[string]interface{}{}
