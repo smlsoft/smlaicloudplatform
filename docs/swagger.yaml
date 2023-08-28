@@ -274,8 +274,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -291,14 +291,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -369,28 +362,24 @@ definitions:
     type: object
   models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
-        type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
+        type: integer
       departments:
         items:
           $ref: '#/definitions/models.Department'
         type: array
-      languages:
-        items:
-          type: string
-        type: array
+        uniqueItems: true
+      location:
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true
+      telephone:
+        maxLength: 100
+        type: string
     required:
     - names
     type: object
@@ -723,6 +712,27 @@ definitions:
       comment:
         type: string
     type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -905,12 +915,15 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.Detail:
     properties:
@@ -1219,7 +1232,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1248,7 +1261,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1394,8 +1407,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1413,8 +1426,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1430,11 +1441,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1543,8 +1549,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1562,8 +1568,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1579,11 +1583,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1742,8 +1741,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1761,8 +1760,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1778,11 +1775,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2303,24 +2295,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.Location:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.LocationRequest:
     properties:
@@ -3092,7 +3066,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3193,7 +3167,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3354,6 +3328,13 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      price:
+        type: number
+    type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
       price:
         type: number
     type: object
@@ -4104,6 +4085,9 @@ definitions:
         type: array
       isejournal:
         type: boolean
+      isusecreadit:
+        description: ขายเชื่อได้
+        type: boolean
       isvatregister:
         type: boolean
       location:
@@ -4484,23 +4468,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    type: object
-  models.StockBalanceImport:
-    properties:
-      barcode:
-        type: string
-      price:
-        type: number
-      qty:
-        type: number
-      shelfcode:
-        type: string
-      sumamount:
-        type: number
-      unitcode:
-        type: string
-      whcode:
-        type: string
     type: object
   models.StockPickupProduct:
     properties:
@@ -5318,7 +5285,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/models.Location'
+          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
         type: array
         uniqueItems: true
       names:
@@ -5433,41 +5400,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
-  smlcloudplatform_pkg_product_inventory_models.ProductPrice:
-    properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -5559,7 +5491,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -5605,13 +5537,6 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
       code:
@@ -5656,7 +5581,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
@@ -5758,25 +5683,11 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
+  smlcloudplatform_pkg_shop_branch_models.Location:
     properties:
-      address:
+      lat:
         type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
+      lng:
         type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
@@ -5785,6 +5696,24 @@ definitions:
         type: string
       uuid:
         type: string
+    type: object
+  smlcloudplatform_pkg_warehouse_models.Location:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
 info:
   contact:
@@ -19256,31 +19185,6 @@ paths:
       summary: รับข้อมูล sms
       tags:
       - SMS
-  /stockbalanceimport:
-    post:
-      consumes:
-      - application/json
-      description: Create StockBalanceImport
-      parameters:
-      - description: StockBalanceImport
-        in: body
-        name: StockBalanceImport
-        required: true
-        schema:
-          $ref: '#/definitions/models.StockBalanceImport'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - StockBalanceImport
   /storefront:
     get:
       consumes:

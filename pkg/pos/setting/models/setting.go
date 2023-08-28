@@ -36,6 +36,7 @@ type Setting struct {
 	timezone.Timezone        `bson:"inline"`
 	TimeForSales             *[]PosSettingTimeForSale `json:"timeforsales" bson:"timeforsales"`
 	LogoUrl                  string                   `json:"logourl" bson:"logourl"`
+	IsUseCreadit             bool                     `json:"isusecreadit" bson:"isusecreadit"` // ขายเชื่อได้
 }
 
 type PosSettingTimeForSale struct {
