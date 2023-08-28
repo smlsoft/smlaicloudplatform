@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Transaction struct {
+type TransactionHeader struct {
 	DocNo            string          `json:"docno" bson:"docno"`
 	DocDatetime      time.Time       `json:"docdatetime" bson:"docdatetime"`
 	GuidRef          string          `json:"guidref" bson:"guidref"`
@@ -39,9 +39,13 @@ type Transaction struct {
 	IsCancel         bool            `json:"iscancel" bson:"iscancel"`
 	IsManualAmount   bool            `json:"ismanualamount" bson:"ismanualamount"`
 	Status           int8            `json:"status" bson:"status"`
-	Details          *[]Detail       `json:"details" bson:"details"`
 	PaymentDetail    PaymentDetail   `json:"paymentdetail" bson:"paymentdetail"`
 	PaymentDetailRaw string          `json:"paymentdetailraw" bson:"paymentdetailraw"`
+}
+
+type Transaction struct {
+	TransactionHeader `bson:"inline"`
+	Details           *[]Detail `json:"details" bson:"details"`
 }
 
 type Detail struct {

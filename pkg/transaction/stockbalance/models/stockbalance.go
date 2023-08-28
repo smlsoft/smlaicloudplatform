@@ -9,9 +9,18 @@ import (
 
 const stockbalanceCollectionName = "transactionStockBalance"
 
+type StockBalanceHeader struct {
+	transmodels.TransactionHeader `bson:"inline"`
+}
+
 type StockBalance struct {
 	models.PartitionIdentity `bson:"inline"`
-	transmodels.Transaction  `bson:"inline"`
+	StockBalanceHeader       `bson:"inline"`
+	Details                  *[]StockBalanceDetail `json:"details" bson:"details"`
+}
+
+type StockBalanceDetail struct {
+	transmodels.Detail
 }
 
 type StockBalanceInfo struct {

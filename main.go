@@ -59,6 +59,7 @@ import (
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
+	"smlcloudplatform/pkg/stockbalanceimport"
 	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/transaction/documentformate"
@@ -287,6 +288,7 @@ func main() {
 			pos_media.NewMediaHttp(ms, cfg),
 			documentformate.NewDocumentFormateHttp(ms, cfg),
 			ocr.NewOcrHttp(ms, cfg),
+			stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)

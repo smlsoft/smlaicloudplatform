@@ -43,6 +43,8 @@ type ICacher interface {
 	SetS(key string, value string, expire time.Duration) error
 	SetNoExpire(key string, value interface{}) error
 	SetSNoExpire(key string, value string) error
+	SetNX(key string, value interface{}, expire time.Duration) error
+	SetXX(key string, value interface{}, expire time.Duration) error
 	IncrBy(key string, val int) (int, error)
 	DecrBy(key string, val int) (int, error)
 	Incr(key string) (int, error)
@@ -625,6 +627,56 @@ func (cache *Cacher) Set(key string, value interface{}, expire time.Duration) er
 	}
 
 	err = c.Set(context.Background(), key, str, expire).Err()
+	if err != nil {
+		if err == redis.Nil {
+			// Key does not exists
+			return nil
+		} else {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (cache *Cacher) SetNX(key string, value interface{}, expire time.Duration) error {
+
+	c, err := cache.getClient()
+	if err != nil {
+		return err
+	}
+
+	str, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+
+	err = c.SetNX(context.Background(), key, str, expire).Err()
+	if err != nil {
+		if err == redis.Nil {
+			// Key does not exists
+			return nil
+		} else {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (cache *Cacher) SetXX(key string, value interface{}, expire time.Duration) error {
+
+	c, err := cache.getClient()
+	if err != nil {
+		return err
+	}
+
+	str, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+
+	err = c.SetXX(context.Background(), key, str, expire).Err()
 	if err != nil {
 		if err == redis.Nil {
 			// Key does not exists

@@ -46,6 +46,7 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
 	"smlcloudplatform/pkg/report/reportquerym"
+	"smlcloudplatform/pkg/stockbalanceimport"
 	"time"
 
 	// "smlcloudplatform/pkg/report/reportquery"
@@ -270,6 +271,7 @@ func main() {
 		media.NewMediaHttp(ms, cfg),
 
 		ocr.NewOcrHttp(ms, cfg),
+		stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
 	}
 
 	serviceStartHttp(ms, httpServices...)
