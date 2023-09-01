@@ -130,7 +130,7 @@ func (svc *StockBalanceImportService) GetTaskMeta(shopID string, TaskID string) 
 		return result, nil
 	}
 
-	if taskMeta.Status == models.TaskStatusSaved {
+	if taskMeta.Status == models.TaskStatusSaveSucceded {
 		return taskMeta, nil
 	}
 
@@ -195,7 +195,7 @@ func (svc *StockBalanceImportService) SaveTaskComplete(shopID string, authUserna
 		return result, err
 	}
 
-	if meta.Status == models.TaskStatusSaved {
+	if meta.Status == models.TaskStatusSaveSucceded {
 		return meta, nil
 	}
 
@@ -229,7 +229,7 @@ func (svc *StockBalanceImportService) SaveTaskComplete(shopID string, authUserna
 
 	svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
 
-	result.Status = models.TaskStatusSaved
+	result.Status = models.TaskStatusSaveSucceded
 	svc.cacheRepo.UpdateMeta(shopID, taskID, result)
 
 	return result, nil

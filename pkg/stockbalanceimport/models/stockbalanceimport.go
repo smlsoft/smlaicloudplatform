@@ -57,7 +57,8 @@ const (
 	TaskStatusPending TaskStatus = iota
 	TaskStatusProcessing
 	TaskStatusDone
-	TaskStatusSaved
 	TaskStatusError
+	TaskStatusSaveSucceded
+	TaskStatusSaveFailed
 	TaskStatusNotFound
 )
