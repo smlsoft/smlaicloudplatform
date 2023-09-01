@@ -29,6 +29,7 @@ type Setting struct {
 	IsEJournal               bool                      `json:"isejournal" bson:"isejournal"`
 	Wallet                   string                    `json:"wallet" bson:"wallet"`
 	QRCodes                  *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
+	CreditCards              *[]map[string]interface{} `json:"creditcards" bson:"creditcards"`
 	BillHeader               *[]models.NameX           `json:"billheader" bson:"billheader"`
 	BillFooter               *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
@@ -36,6 +37,7 @@ type Setting struct {
 	timezone.Timezone        `bson:"inline"`
 	TimeForSales             *[]PosSettingTimeForSale `json:"timeforsales" bson:"timeforsales"`
 	LogoUrl                  string                   `json:"logourl" bson:"logourl"`
+	IsUseCreadit             bool                     `json:"isusecreadit" bson:"isusecreadit"` // ขายเชื่อได้
 }
 
 type PosSettingTimeForSale struct {
