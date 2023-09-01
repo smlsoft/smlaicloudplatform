@@ -31303,6 +31303,7 @@
         "models.Department": {
             "type": "object",
             "required": [
+                "code",
                 "names"
             ],
             "properties": {
@@ -35955,6 +35956,13 @@
                 },
                 "code": {
                     "type": "string"
+                },
+                "creditcards": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
                 },
                 "devicenumber": {
                     "type": "string"

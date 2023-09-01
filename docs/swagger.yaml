@@ -923,6 +923,7 @@ definitions:
         type: array
         uniqueItems: true
     required:
+    - code
     - names
     type: object
   models.Detail:
@@ -4069,6 +4070,11 @@ definitions:
         $ref: '#/definitions/models.PosSettingBranch'
       code:
         type: string
+      creditcards:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
       devicenumber:
         type: string
       doccode:

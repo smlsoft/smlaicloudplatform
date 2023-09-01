@@ -31309,6 +31309,7 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
+                "code",
                 "names"
             ],
             "properties": {
@@ -35961,6 +35962,13 @@ const docTemplate = `{
                 },
                 "code": {
                     "type": "string"
+                },
+                "creditcards": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
                 },
                 "devicenumber": {
                     "type": "string"

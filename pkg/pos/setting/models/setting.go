@@ -29,6 +29,7 @@ type Setting struct {
 	IsEJournal               bool                      `json:"isejournal" bson:"isejournal"`
 	Wallet                   string                    `json:"wallet" bson:"wallet"`
 	QRCodes                  *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
+	CreditCards              *[]map[string]interface{} `json:"creditcards" bson:"creditcards"`
 	BillHeader               *[]models.NameX           `json:"billheader" bson:"billheader"`
 	BillFooter               *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
