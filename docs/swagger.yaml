@@ -3632,30 +3632,56 @@ definitions:
     type: object
   models.QrPayment:
     properties:
+      accesscode:
+        type: string
+      apikey:
+        type: string
+      bankcharge:
+        type: string
       bankcode:
+        type: string
+      banknames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      billercode:
+        type: string
+      billerid:
         type: string
       bookbankcode:
         type: string
-      countrycode:
+      bookbanknames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      closeqr:
+        description: 0 = เงินเข้าทันที , 1 = สิ้นวัน , 2 = วันถัดไป
+        type: integer
+      code:
         type: string
-      feerate:
-        type: number
-      names:
+      customercharge:
+        type: string
+      isactive:
+        type: boolean
+      merchantname:
+        type: string
+      qrcode:
+        type: string
+      qrnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true
-      paymentcode:
-        type: string
-      paymentlogo:
-        type: string
-      paymenttype:
+      qrtype:
         type: integer
-      wallettype:
-        type: integer
+      storeid:
+        type: string
+      terminalid:
+        type: string
     required:
-    - names
+    - code
+    - qrnames
     type: object
   models.RefProductBarcode:
     properties:

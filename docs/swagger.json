@@ -35301,22 +35301,63 @@
         "models.QrPayment": {
             "type": "object",
             "required": [
-                "names"
+                "code",
+                "qrnames"
             ],
             "properties": {
+                "accesscode": {
+                    "type": "string"
+                },
+                "apikey": {
+                    "type": "string"
+                },
+                "bankcharge": {
+                    "type": "string"
+                },
                 "bankcode": {
+                    "type": "string"
+                },
+                "banknames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "billercode": {
+                    "type": "string"
+                },
+                "billerid": {
                     "type": "string"
                 },
                 "bookbankcode": {
                     "type": "string"
                 },
-                "countrycode": {
+                "bookbanknames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "closeqr": {
+                    "description": "0 = เงินเข้าทันที , 1 = สิ้นวัน , 2 = วันถัดไป",
+                    "type": "integer"
+                },
+                "code": {
                     "type": "string"
                 },
-                "feerate": {
-                    "type": "number"
+                "customercharge": {
+                    "type": "string"
                 },
-                "names": {
+                "isactive": {
+                    "type": "boolean"
+                },
+                "merchantname": {
+                    "type": "string"
+                },
+                "qrcode": {
+                    "type": "string"
+                },
+                "qrnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -35324,17 +35365,14 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "paymentcode": {
-                    "type": "string"
-                },
-                "paymentlogo": {
-                    "type": "string"
-                },
-                "paymenttype": {
+                "qrtype": {
                     "type": "integer"
                 },
-                "wallettype": {
-                    "type": "integer"
+                "storeid": {
+                    "type": "string"
+                },
+                "terminalid": {
+                    "type": "string"
                 }
             }
         },

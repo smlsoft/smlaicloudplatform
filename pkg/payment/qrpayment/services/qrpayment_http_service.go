@@ -64,14 +64,14 @@ func (svc QrPaymentHttpService) CreateQrPayment(shopID string, authUsername stri
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "paymentcode", doc.PaymentCode)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
 	}
 
-	if findDoc.PaymentCode != "" {
-		return "", errors.New("PaymentCode is exists")
+	if findDoc.Code != "" {
+		return "", errors.New("code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -193,8 +193,8 @@ func (svc QrPaymentHttpService) SearchQrPayment(shopID string, pageable micromod
 	defer ctxCancel()
 
 	searchInFields := []string{
-		"paymentcode",
-		"names.name",
+		"code",
+		"qrnames.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
@@ -212,27 +212,11 @@ func (svc QrPaymentHttpService) SearchQrPaymentStep(shopID string, langCode stri
 	defer ctxCancel()
 
 	searchInFields := []string{
-		"paymentcode",
-		"names.name",
+		"code",
+		"qrnames.name",
 	}
 
-	selectFields := map[string]interface{}{
-		"guidfixed":    1,
-		"paymentcode":  1,
-		"countrycode":  1,
-		"paymentlogo":  1,
-		"paymenttype":  1,
-		"feerate":      1,
-		"wallettype":   1,
-		"bookbankcode": 1,
-		"bankcode":     1,
-	}
-
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
+	selectFields := map[string]interface{}{}
 
 	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
@@ -252,10 +236,10 @@ func (svc QrPaymentHttpService) SaveInBatch(shopID string, authUsername string, 
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.PaymentCode)
+		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "paymentcode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -263,7 +247,7 @@ func (svc QrPaymentHttpService) SaveInBatch(shopID string, authUsername string, 
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.PaymentCode)
+		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.QrPayment, models.QrPaymentDoc](
@@ -294,10 +278,10 @@ func (svc QrPaymentHttpService) SaveInBatch(shopID string, authUsername string, 
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.QrPaymentDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "paymentcode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", guid)
 		},
 		func(doc models.QrPaymentDoc) bool {
-			return doc.PaymentCode != ""
+			return doc.Code != ""
 		},
 		func(shopID string, authUsername string, data models.QrPayment, doc models.QrPaymentDoc) error {
 
@@ -325,18 +309,18 @@ func (svc QrPaymentHttpService) SaveInBatch(shopID string, authUsername string, 
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.PaymentCode)
+		createDataKey = append(createDataKey, doc.Code)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.PaymentCode)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Code)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.PaymentCode)
+		updateDataKey = append(updateDataKey, doc.Code)
 	}
 
 	updateFailDataKey := []string{}
@@ -355,7 +339,7 @@ func (svc QrPaymentHttpService) SaveInBatch(shopID string, authUsername string, 
 }
 
 func (svc QrPaymentHttpService) getDocIDKey(doc models.QrPayment) string {
-	return doc.PaymentCode
+	return doc.Code
 }
 
 func (svc QrPaymentHttpService) saveMasterSync(shopID string) {
