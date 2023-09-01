@@ -63,6 +63,16 @@ func (svc RestaurantSettingsService) CreateRestaurantSettings(shopID string, aut
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
+
+	if err != nil {
+		return "", err
+	}
+
+	if findDoc.ID != primitive.NilObjectID {
+		return "", errors.New("document already exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.RestaurantSettingsDoc{}
@@ -75,7 +85,7 @@ func (svc RestaurantSettingsService) CreateRestaurantSettings(shopID string, aut
 
 	docData.LastUpdatedAt = time.Now()
 
-	_, err := svc.repo.Create(ctx, docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err

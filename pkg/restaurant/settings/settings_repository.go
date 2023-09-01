@@ -23,6 +23,7 @@ type IRestaurantSettingsRepository interface {
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.RestaurantSettingsItemGuid, error)
 	FindOne(ctx context.Context, shopID string, filters interface{}) (models.RestaurantSettingsDoc, error)
 	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.RestaurantSettingsDoc, error)
 
 	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.RestaurantSettingsDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.RestaurantSettingsActivity, mongopagination.PaginationData, error)
