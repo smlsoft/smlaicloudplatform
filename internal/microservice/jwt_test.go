@@ -119,7 +119,7 @@ func TestParseTokenReal(t *testing.T) {
 
 /*
 func getKey() (*rsa.PrivateKey, *rsa.PublicKey, error) {
-	signBytes, err := ioutil.ReadFile("./../../private.key")
+	signBytes, err := io.ReadFile("./../../private.key")
 
 	if err != nil {
 		return nil, nil, err
@@ -131,7 +131,7 @@ func getKey() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 		return nil, nil, err
 	}
 
-	verifyBytes, err := ioutil.ReadFile("./../../public.key")
+	verifyBytes, err := io.ReadFile("./../../public.key")
 
 	if err != nil {
 		return nil, nil, err

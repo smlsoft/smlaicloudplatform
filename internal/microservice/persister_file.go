@@ -3,7 +3,7 @@ package microservice
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/url"
 	"os"
@@ -52,13 +52,13 @@ func (pst *PersisterFile) Save(fh *multipart.FileHeader, fileName string, fileEx
 	defer file.Close()
 
 	// upload Now
-	tempFile, err := ioutil.TempFile(pst.StoreFilePath, "upload-*."+fileExtension)
+	tempFile, err := os.CreateTemp(pst.StoreFilePath, "upload-*."+fileExtension)
 	if err != nil {
 		return "", err
 	}
 	defer tempFile.Close()
 
-	fileBytes, err := ioutil.ReadAll(file)
+	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
 	}
@@ -87,7 +87,7 @@ func (pst *PersisterFile) Save(fh *multipart.FileHeader, fileName string, fileEx
 	return imageUri, nil
 
 	//storeFilePath := filepath.Join(pst.StoreFilePath, fileName)
-	//return ioutil.WriteFile(storeFilePath, file.Data, 0600)
+	// return os.WriteFile(storeFilePath, file.Data, 0600)
 }
 
 func (pst *PersisterFile) LoadFile(fileName string) (string, *bytes.Buffer, error) {

@@ -136,13 +136,18 @@ func GenerateFilters(getParamFunc func(string) string, filterFields []FilterRequ
 	}
 
 	for _, field := range filterFields {
-		if field.Param == "" || field.Param == "-" {
+		// if field.Param == "" || field.Param == "-" {
+		if field.Param == "" {
 			continue
 		}
 
-		filterValue := getParamFunc(field.Param)
-		if filterValue == "" {
-			continue
+		filterValue := ""
+
+		if field.Param != "-" {
+			filterValue := getParamFunc(field.Param)
+			if filterValue == "" {
+				continue
+			}
 		}
 
 		if field.Field == "" {

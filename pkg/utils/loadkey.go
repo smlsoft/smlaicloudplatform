@@ -2,14 +2,14 @@ package utils
 
 import (
 	"crypto/rsa"
-	"io/ioutil"
+	"os"
 
 	"github.com/golang-jwt/jwt"
 )
 
 func LoadFile(filePath string) ([]byte, error) {
 
-	fileBytes, err := ioutil.ReadFile(filePath)
+	fileBytes, err := os.ReadFile(filePath)
 
 	if err != nil {
 		return nil, err

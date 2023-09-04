@@ -3,15 +3,16 @@ package swagger
 import (
 	"html/template"
 	"net/http"
+	"os"
 	"path/filepath"
 	"regexp"
 	"sync"
+
 	// "os"
-	"io/ioutil"
 
 	"github.com/labstack/echo/v4"
+	swaggerFiles "github.com/swaggo/files"
 	"golang.org/x/net/webdav"
-	"github.com/swaggo/files"
 )
 
 type Config struct {
@@ -40,12 +41,8 @@ func SwaggerWarpHandler(configFns ...func(c *Config)) echo.HandlerFunc {
 		configFn(config)
 	}
 
-
 	t := template.New("swagger_index.html")
 	index, _ := t.Parse(indexTemplate)
-
-	
-
 
 	var re = regexp.MustCompile(`^(.*/)([^?].*)?[?|.]*$`)
 
@@ -53,7 +50,7 @@ func SwaggerWarpHandler(configFns ...func(c *Config)) echo.HandlerFunc {
 		FileSystem: swaggerFiles.FS,
 		LockSystem: webdav.NewMemLS(),
 	}
-	return func (c echo.Context) error {
+	return func(c echo.Context) error {
 		matches := re.FindStringSubmatch(c.Request().RequestURI)
 		path := matches[2]
 
@@ -86,26 +83,26 @@ func SwaggerWarpHandler(configFns ...func(c *Config)) echo.HandlerFunc {
 		case "index.html":
 			_ = index.Execute(c.Response().Writer, config)
 		case "doc.json":
-		// 	doc, err := swag.ReadDoc()
-		// 	if err != nil {
-		// 		c.Error(err)
+			// 	doc, err := swag.ReadDoc()
+			// 	if err != nil {
+			// 		c.Error(err)
 
-		// 		return nil
-		// 	}
+			// 		return nil
+			// 	}
 
-		// 	_, _ = c.Response().Writer.Write([]byte(doc))
-		var data []byte
-		data, _ = ioutil.ReadFile("../../api/swagger/swagger.json")
+			// 	_, _ = c.Response().Writer.Write([]byte(doc))
+			var data []byte
+			data, _ = os.ReadFile("../../api/swagger/swagger.json")
 
-		// jsonFile, err := os.Open("./swagger.json")
-		// if err != nil {
-		// 	c.Error(err)
-		// 	return nil
-		// 	// fmt.Println(err)
-		// }
-		// defer jsonFile.Close()
+			// jsonFile, err := os.Open("./swagger.json")
+			// if err != nil {
+			// 	c.Error(err)
+			// 	return nil
+			// 	// fmt.Println(err)
+			// }
+			// defer jsonFile.Close()
 
-		_, _ = c.Response().Writer.Write(data)
+			_, _ = c.Response().Writer.Write(data)
 
 		default:
 			h.ServeHTTP(c.Response().Writer, c.Request())
@@ -114,7 +111,6 @@ func SwaggerWarpHandler(configFns ...func(c *Config)) echo.HandlerFunc {
 		return nil
 	}
 }
-
 
 const indexTemplate = `<!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>

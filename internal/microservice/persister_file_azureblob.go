@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -33,7 +33,7 @@ func (p *PersisterAzureBlob) Save(fh *multipart.FileHeader, fileName string, fil
 
 	imageFileName := fmt.Sprintf("%s.%s", fileName, fileExtension)
 
-	fileBytes, err := ioutil.ReadAll(file)
+	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
 	}
