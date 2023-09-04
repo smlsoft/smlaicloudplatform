@@ -21,6 +21,7 @@ type IStockBalanceImportService interface {
 type StockBalanceImportService struct {
 	chunkSize           int
 	sizeID              int
+	cacheExpire         time.Duration
 	cacheRepo           repositories.IStockBalanceImportCacheRepository
 	stockBalanceService services.IStockBalanceHttpService
 	GenerateID          func(int) string
@@ -34,6 +35,7 @@ func NewStockBalanceImportService(
 	return &StockBalanceImportService{
 		chunkSize:           500,
 		sizeID:              12,
+		cacheExpire:         time.Minute * 60,
 		cacheRepo:           cacheRepo,
 		stockBalanceService: stockBalanceService,
 		GenerateID:          GenerateID,
@@ -52,6 +54,7 @@ func (svc *StockBalanceImportService) CreateTask(shopID string, req models.Stock
 	result.Parts = []models.StockBalanceImportPart{}
 
 	totalPart := math.Ceil(float64(req.TotalItem) / float64(svc.chunkSize))
+	result.ChunkSize = svc.chunkSize
 
 	for i := 0; i < int(totalPart); i++ {
 		partNumber := i + 1
@@ -85,7 +88,7 @@ func (svc *StockBalanceImportService) createTaskInMemory(shopID string, task mod
 		partCache.Status = 0
 		partCache.Detail = []stockbalance_models.StockBalanceDetail{}
 
-		svc.cacheRepo.CreatePart(shopID, part.PartID, partCache, time.Minute*60)
+		svc.cacheRepo.CreatePart(shopID, part.PartID, partCache, svc.cacheExpire)
 
 		metaCache.Parts = append(metaCache.Parts, models.StockBalanceImportPartMeta{
 			PartID:     part.PartID,
@@ -94,7 +97,7 @@ func (svc *StockBalanceImportService) createTaskInMemory(shopID string, task mod
 		})
 	}
 
-	svc.cacheRepo.CreateMeta(shopID, task.TaskID, metaCache, time.Minute*60)
+	svc.cacheRepo.CreateMeta(shopID, task.TaskID, metaCache, svc.cacheExpire)
 }
 
 func (svc *StockBalanceImportService) GetTaskPart(shopID string, partID string) (models.StockBalanceImportPartCache, error) {

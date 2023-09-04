@@ -60,7 +60,7 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 // Create StockBalanceImport godoc
 // @Description Create StockBalanceImport
 // @Tags		StockBalanceImport
-// @Param		StockBalanceImport  body      models.StockBalanceImport  true  "StockBalanceImport"
+// @Param		StockBalanceImport  body      models.StockBalanceImportTaskRequest  true  "StockBalanceImport"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -103,7 +103,7 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 // @Tags		StockBalanceImport
 // @Param		id		path		string		true		"StockBalanceImport ID"
 // @Accept 		json
-// @Success		201	{object}	StockBalanceImportPartResponse
+// @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /stockbalanceimport/task/part/{id} [get]
@@ -131,7 +131,7 @@ func (h StockBalanceImportHttp) GetStockBalanceImportPart(ctx microservice.ICont
 // @Tags		StockBalanceImport
 // @Param		id		path		string		true		"StockBalanceImport ID"
 // @Accept 		json
-// @Success		201	{object}	StockBalanceImportMeta
+// @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /stockbalanceimport/task/{id} [get]
@@ -157,7 +157,7 @@ func (h StockBalanceImportHttp) GetStockBalanceImportMeta(ctx microservice.ICont
 // Create StockBalanceImport godoc
 // @Description Create StockBalanceImport
 // @Tags		StockBalanceImport
-// @Param		StockBalanceImport  body      []models.StockBalanceImport  true  "StockBalanceImport"
+// @Param		StockBalanceImport  body      []stockbalance_models.StockBalanceDetail  true  "StockBalanceImport"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -196,6 +196,14 @@ func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.ICon
 	return nil
 }
 
+// Save StockBalanceImport godoc
+// @Description Save StockBalanceImport
+// @Tags		StockBalanceImport
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /stockbalanceimport/task/{id} [post]
 func (h StockBalanceImportHttp) SaveTaskComplete(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 

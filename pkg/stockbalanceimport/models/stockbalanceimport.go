@@ -9,6 +9,7 @@ type StockBalanceImportTaskRequest struct {
 
 type StockBalanceImportTask struct {
 	TaskID    string                                 `json:"taskid"`
+	ChunkSize int                                    `json:"chunksize"`
 	TotalItem int                                    `json:"totalitem"`
 	Header    stockbalance_models.StockBalanceHeader `json:"header"`
 	Parts     []StockBalanceImportPart               `json:"parts"`

@@ -363,25 +363,13 @@ definitions:
   models.Branch:
     properties:
       code:
-        type: integer
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-        uniqueItems: true
-      location:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
+        type: string
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-      telephone:
-        maxLength: 100
-        type: string
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -915,16 +903,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - code
-    - names
     type: object
   models.Detail:
     properties:
@@ -2297,6 +2281,24 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Location:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.LocationRequest:
     properties:
       locationcode:
@@ -3067,7 +3069,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3168,7 +3170,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3329,13 +3331,6 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      price:
-        type: number
-    type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
       price:
         type: number
     type: object
@@ -4410,7 +4405,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/models.Detail'
+          $ref: '#/definitions/models.StockBalanceDetail'
         type: array
       discountword:
         type: string
@@ -4473,6 +4468,187 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+    type: object
+  models.StockBalanceDetail:
+    properties:
+      averagecost:
+        type: number
+      barcode:
+        type: string
+      calcflag:
+        type: integer
+      discount:
+        type: string
+      discountamount:
+        type: number
+      dividevalue:
+        type: number
+      docdatetime:
+        type: string
+      docref:
+        type: string
+      docrefdatetime:
+        type: string
+      inquirytype:
+        type: integer
+      ispos:
+        type: integer
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      itemtype:
+        type: integer
+      laststatus:
+        type: integer
+      linenumber:
+        type: integer
+      locationcode:
+        type: string
+      locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      multiunit:
+        type: boolean
+      price:
+        type: number
+      priceexcludevat:
+        type: number
+      qty:
+        type: number
+      remark:
+        type: string
+      shelfcode:
+        type: string
+      standvalue:
+        type: number
+      sumamount:
+        type: number
+      sumamountexcludevat:
+        type: number
+      sumofcost:
+        type: number
+      taxtype:
+        type: integer
+      tolocationcode:
+        type: string
+      tolocationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      totalqty:
+        type: number
+      totalvaluevat:
+        type: number
+      towhcode:
+        type: string
+      towhnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      unitcode:
+        type: string
+      unitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      vatcal:
+        type: integer
+      vattype:
+        type: integer
+      whcode:
+        type: string
+      whnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.StockBalanceHeader:
+    properties:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      description:
+        type: string
+      discountword:
+        type: string
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      docrefdate:
+        type: string
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      iscancel:
+        type: boolean
+      ismanualamount:
+        type: boolean
+      membercode:
+        type: string
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
+        type: number
+      totalamount:
+        type: number
+      totalbeforevat:
+        type: number
+      totalcost:
+        type: number
+      totaldiscount:
+        type: number
+      totalexceptvat:
+        type: number
+      totalvalue:
+        type: number
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: number
+      vattype:
+        type: integer
+    type: object
+  models.StockBalanceImportTaskRequest:
+    properties:
+      header:
+        $ref: '#/definitions/models.StockBalanceHeader'
+      totalitem:
         type: integer
     type: object
   models.StockPickupProduct:
@@ -5291,7 +5467,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
+          $ref: '#/definitions/models.Location'
         type: array
         uniqueItems: true
       names:
@@ -5428,6 +5604,13 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
       barcode:
@@ -5497,7 +5680,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -5543,6 +5726,13 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
       code:
@@ -5587,7 +5777,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
         type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
@@ -5689,37 +5879,12 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Location:
-    properties:
-      lat:
-        type: string
-      lng:
-        type: string
-    type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
       os:
         type: string
       uuid:
         type: string
-    type: object
-  smlcloudplatform_pkg_warehouse_models.Location:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
 info:
   contact:
@@ -19191,6 +19356,122 @@ paths:
       summary: รับข้อมูล sms
       tags:
       - SMS
+  /stockbalanceimport:
+    post:
+      consumes:
+      - application/json
+      description: Create StockBalanceImport
+      parameters:
+      - description: StockBalanceImport
+        in: body
+        name: StockBalanceImport
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockBalanceImportTaskRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+  /stockbalanceimport/task/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get StockBalanceImport Meta
+      parameters:
+      - description: StockBalanceImport ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+    post:
+      consumes:
+      - application/json
+      description: Save StockBalanceImport
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+  /stockbalanceimport/task/part/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get StockBalanceImport Part
+      parameters:
+      - description: StockBalanceImport ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+    post:
+      consumes:
+      - application/json
+      description: Create StockBalanceImport
+      parameters:
+      - description: StockBalanceImport
+        in: body
+        name: StockBalanceImport
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.StockBalanceDetail'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
   /storefront:
     get:
       consumes:
