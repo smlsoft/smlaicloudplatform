@@ -83,6 +83,7 @@ func TestNewStockBalanceImportService(t *testing.T) {
 
 		want := models.StockBalanceImportTask{
 			TaskID:    "123",
+			ChunkSize: 500,
 			TotalItem: 1000,
 			Parts: []models.StockBalanceImportPart{
 				{
@@ -110,6 +111,7 @@ func TestNewStockBalanceImportService(t *testing.T) {
 
 		want := models.StockBalanceImportTask{
 			TaskID:    "123",
+			ChunkSize: 500,
 			TotalItem: 800,
 			Parts: []models.StockBalanceImportPart{
 				{
