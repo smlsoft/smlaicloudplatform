@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
@@ -296,7 +296,7 @@ func main() {
 			return err
 		}
 
-		ioutil.WriteFile("routes.json", data, 0644)
+		os.WriteFile("routes.json", data, 0644)
 
 		// ctx.JSON(http.StatusOK, data)
 		ctx.JSON(http.StatusOK, map[string]interface{}{"success": true, "data": ms.Echo().Routes()})

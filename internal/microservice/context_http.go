@@ -2,7 +2,7 @@ package microservice
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"smlcloudplatform/internal/microservice/models"
@@ -43,7 +43,7 @@ func (ctx *HTTPContext) QueryParam(name string) string {
 
 // ReadInput read the request body and return it as string
 func (ctx *HTTPContext) ReadInput() string {
-	body, err := ioutil.ReadAll(ctx.c.Request().Body)
+	body, err := io.ReadAll(ctx.c.Request().Body)
 	if err != nil {
 		return ""
 	}
@@ -120,6 +120,10 @@ func (ctx *HTTPContext) ResponseWriter() http.ResponseWriter {
 
 func (ctx *HTTPContext) Request() *http.Request {
 	return ctx.c.Request()
+}
+
+func (ctx *HTTPContext) Bind(obj any) {
+	ctx.c.Bind(obj)
 }
 
 func (ctx *HTTPContext) EchoContext() echo.Context {
