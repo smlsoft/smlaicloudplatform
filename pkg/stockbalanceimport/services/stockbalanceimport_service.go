@@ -166,10 +166,6 @@ func (svc *StockBalanceImportService) SaveTaskPart(shopID string, taskID string,
 		return fmt.Errorf("part not found")
 	}
 
-	if doc.Status == models.PartStatusDone {
-		return fmt.Errorf("part is done")
-	}
-
 	doc.Detail = details
 	doc.Status = models.PartStatusDone
 	err = svc.cacheRepo.UpdatePart(shopID, taskID, doc)
