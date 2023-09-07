@@ -199,6 +199,7 @@ func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.ICon
 // Save StockBalanceImport godoc
 // @Description Save StockBalanceImport
 // @Tags		StockBalanceImport
+// @Param		StockBalanceHeader  body      models.StockBalanceHeader  true  "Stock Balance Header"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -206,12 +207,21 @@ func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.ICon
 // @Router /stockbalanceimport/task/{id} [post]
 func (h StockBalanceImportHttp) SaveTaskComplete(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
-
 	authUsername := ctx.UserInfo().Username
 
 	taskID := ctx.Param("id")
 
-	result, err := h.svc.SaveTaskComplete(shopID, authUsername, taskID)
+	input := ctx.ReadInput()
+
+	docReq := stockbalance_models.StockBalanceHeader{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	result, err := h.svc.SaveTaskComplete(shopID, authUsername, taskID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

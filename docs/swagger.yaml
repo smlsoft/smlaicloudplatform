@@ -274,8 +274,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -291,14 +291,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -370,25 +363,13 @@ definitions:
   models.Branch:
     properties:
       code:
-        type: integer
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-        uniqueItems: true
-      location:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
+        type: string
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-      telephone:
-        maxLength: 100
-        type: string
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -930,7 +911,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -1415,8 +1395,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1434,8 +1414,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1451,11 +1429,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1564,8 +1537,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1583,8 +1556,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1600,11 +1571,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1763,8 +1729,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1782,8 +1748,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1799,11 +1763,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2324,6 +2283,24 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.Location:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.LocationRequest:
     properties:
@@ -3095,7 +3072,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3196,7 +3173,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3357,6 +3334,13 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      price:
+        type: number
+    type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
       price:
         type: number
     type: object
@@ -4700,8 +4684,6 @@ definitions:
     type: object
   models.StockBalanceImportTaskRequest:
     properties:
-      header:
-        $ref: '#/definitions/models.StockBalanceHeader'
       totalitem:
         type: integer
     type: object
@@ -5521,7 +5503,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
+          $ref: '#/definitions/models.Location'
         type: array
         uniqueItems: true
       names:
@@ -5636,20 +5618,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_product_inventory_models.ProductPrice:
-    properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -5741,7 +5709,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -5787,13 +5755,6 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
       code:
@@ -5838,7 +5799,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
@@ -5940,37 +5901,12 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Location:
-    properties:
-      lat:
-        type: string
-      lng:
-        type: string
-    type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
       os:
         type: string
       uuid:
         type: string
-    type: object
-  smlcloudplatform_pkg_warehouse_models.Location:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
 info:
   contact:
@@ -19495,6 +19431,13 @@ paths:
       consumes:
       - application/json
       description: Save StockBalanceImport
+      parameters:
+      - description: Stock Balance Header
+        in: body
+        name: StockBalanceHeader
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockBalanceHeader'
       responses:
         "201":
           description: Created

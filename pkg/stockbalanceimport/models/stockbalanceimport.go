@@ -3,16 +3,19 @@ package models
 import stockbalance_models "smlcloudplatform/pkg/transaction/stockbalance/models"
 
 type StockBalanceImportTaskRequest struct {
-	TotalItem int                                    `json:"totalitem"`
-	Header    stockbalance_models.StockBalanceHeader `json:"header"`
+	TotalItem int `json:"totalitem"`
+}
+
+type StockBalanceImportHeaderRequest struct {
+	Header stockbalance_models.StockBalanceHeader `json:"header"`
 }
 
 type StockBalanceImportTask struct {
-	TaskID    string                                 `json:"taskid"`
-	ChunkSize int                                    `json:"chunksize"`
-	TotalItem int                                    `json:"totalitem"`
-	Header    stockbalance_models.StockBalanceHeader `json:"header"`
-	Parts     []StockBalanceImportPart               `json:"parts"`
+	TaskID    string `json:"taskid"`
+	ChunkSize int    `json:"chunksize"`
+	TotalItem int    `json:"totalitem"`
+	// Header    stockbalance_models.StockBalanceHeader `json:"header"`
+	Parts []StockBalanceImportPart `json:"parts"`
 }
 
 type StockBalanceImportPart struct {
@@ -32,11 +35,11 @@ type StockBalanceImportPartMeta struct {
 }
 
 type StockBalanceImportMeta struct {
-	TaskID    string                                 `json:"taskid"`
-	TotalItem int                                    `json:"totalitem"`
-	Status    TaskStatus                             `json:"status"`
-	Header    stockbalance_models.StockBalanceHeader `json:"header"`
-	Parts     []StockBalanceImportPartMeta           `json:"parts"`
+	TaskID    string     `json:"taskid"`
+	TotalItem int        `json:"totalitem"`
+	Status    TaskStatus `json:"status"`
+	// Header    stockbalance_models.StockBalanceHeader `json:"header"`
+	Parts []StockBalanceImportPartMeta `json:"parts"`
 }
 
 type StockBalanceImportPartCache struct {

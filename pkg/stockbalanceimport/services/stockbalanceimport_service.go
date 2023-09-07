@@ -15,7 +15,7 @@ type IStockBalanceImportService interface {
 	GetTaskPart(shopID string, partID string) (models.StockBalanceImportPartCache, error)
 	GetTaskMeta(shopID string, taskID string) (models.StockBalanceImportMeta, error)
 	SaveTaskPart(shopID string, partID string, details []stockbalance_models.StockBalanceDetail) error
-	SaveTaskComplete(shopID string, authUsername string, taskID string) (models.StockBalanceImportMeta, error)
+	SaveTaskComplete(shopID string, authUsername string, taskID string, headerBodyRequest stockbalance_models.StockBalanceHeader) (models.StockBalanceImportMeta, error)
 }
 
 type StockBalanceImportService struct {
@@ -50,7 +50,7 @@ func (svc *StockBalanceImportService) CreateTask(shopID string, req models.Stock
 
 	result.TaskID = taskID
 	result.TotalItem = req.TotalItem
-	result.Header = req.Header
+	// result.Header = req.Header
 	result.Parts = []models.StockBalanceImportPart{}
 
 	totalPart := math.Ceil(float64(req.TotalItem) / float64(svc.chunkSize))
@@ -76,7 +76,6 @@ func (svc *StockBalanceImportService) createTaskInMemory(shopID string, task mod
 		TaskID:    task.TaskID,
 		TotalItem: task.TotalItem,
 		Status:    models.TaskStatusPending,
-		Header:    task.Header,
 	}
 
 	for _, part := range task.Parts {
@@ -185,7 +184,7 @@ func (svc *StockBalanceImportService) SaveTaskPart(shopID string, taskID string,
 	return nil
 }
 
-func (svc *StockBalanceImportService) SaveTaskComplete(shopID string, authUsername string, taskID string) (models.StockBalanceImportMeta, error) {
+func (svc *StockBalanceImportService) SaveTaskComplete(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (models.StockBalanceImportMeta, error) {
 
 	result := models.StockBalanceImportMeta{
 		TaskID: taskID,
@@ -227,7 +226,8 @@ func (svc *StockBalanceImportService) SaveTaskComplete(shopID string, authUserna
 	}
 
 	tempTransaction := stockbalance_models.StockBalance{}
-	tempTransaction.StockBalanceHeader = meta.Header
+
+	tempTransaction.StockBalanceHeader = headerDoc
 	tempTransaction.Details = &tempDetails
 
 	svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
