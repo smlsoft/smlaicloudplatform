@@ -69,6 +69,7 @@ func (h JournalHttp) RegisterHttp() {
 	h.ms.GET("/gl/journal/docref/:doc", h.InfoJournalByDocumentRef)
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
+	h.ms.DELETE("/gl/journal", h.DeleteJournalByGUIDs)
 	h.ms.DELETE("/gl/journal/batchid/:batchid", h.DeleteJournalByBatchID)
 
 }
@@ -283,7 +284,7 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/journal/ [delete]
-func (h JournalHttp) DeleteStockBalanceByGUIDs(ctx microservice.IContext) error {
+func (h JournalHttp) DeleteJournalByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
