@@ -20,6 +20,7 @@ type IJournalHttpService interface {
 	CreateJournal(shopID string, authUsername string, doc models.Journal) (string, error)
 	UpdateJournal(guid string, shopID string, authUsername string, doc models.Journal) error
 	DeleteJournal(guid string, shopID string, authUsername string) error
+	DeleteJournalByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	DeleteJournalByBatchID(shopID string, authUsername string, batchID string) error
 	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
 	InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error)
@@ -154,6 +155,30 @@ func (svc JournalHttpService) DeleteJournal(guid string, shopID string, authUser
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (svc JournalHttpService) DeleteJournalByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docs, _ := svc.repo.FindByGuids(ctx, shopID, GUIDs)
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
+
+	func() {
+
+		svc.mqRepo.DeleteInBatch(docs)
+	}()
+
 	return nil
 }
 

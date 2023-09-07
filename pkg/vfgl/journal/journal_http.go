@@ -274,6 +274,44 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Journal godoc
+// @Description Delete Journal
+// @Tags		GL
+// @Param		GL  body      []string  true  "GL GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/journal/ [delete]
+func (h JournalHttp) DeleteStockBalanceByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteJournalByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
 // Delete Journal By Batch ID godoc
 // @Summary		ลบข้อมูลรายวัน By Batch ID
 // @Description ลบข้อมูลรายวัน By Batch ID
