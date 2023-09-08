@@ -446,6 +446,7 @@ func (h JournalHttp) InfoJournalByDocumentRef(ctx microservice.IContext) error {
 // @Tags		GL
 // @Param		q		query	string		false  "Search Value"
 // @Param		docno		query	string		false  "DocNo"
+// @Param		appname		query	string		false  "AppName"
 // @Param		docdate		query	string		false  "DocDate ex. 2020-01-01"
 // @Param		accountyear		query	int		false  "Account Year"
 // @Param		accountperiod		query	int		false  "Account Period"
@@ -453,6 +454,8 @@ func (h JournalHttp) InfoJournalByDocumentRef(ctx microservice.IContext) error {
 // @Param		amount		query	int		false  "Amount"
 // @Param		createdby		query	string		false  "Created By"
 // @Param		createdat		query	string		false  "Create Date ex. 2020-01-01"
+// @Param		startdate  query	string		false  "Start Date ex 2020-01-01"
+// @Param		enddate  query	string		false  "End Date ex 2020-01-01"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
@@ -496,6 +499,10 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 	filterFields := []common.SearchFilter{
 		{
 			Field: "docno",
+			Type:  "string",
+		},
+		{
+			Field: "appname",
 			Type:  "string",
 		},
 		{

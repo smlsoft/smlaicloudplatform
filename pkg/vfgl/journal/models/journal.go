@@ -28,6 +28,7 @@ type JournalBody struct {
 	ExDocRefNo         string    `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
 	ExDocRefDate       time.Time `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
 	DocFormat          string    `json:"docformat" bson:"docformat" gorm:"column:docformat"`
+	AppName            string    `json:"appname" bson:"appname" gorm:"column:appname"`
 }
 
 type Journal struct {
