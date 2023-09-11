@@ -30,7 +30,7 @@ type Setting struct {
 	Wallet                   string                    `json:"wallet" bson:"wallet"`
 	QRCodes                  *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
 	CreditCards              *[]map[string]interface{} `json:"creditcards" bson:"creditcards"`
-	BookBanks                *[]map[string]interface{} `json:"bookbanks" bson:"bookbanks"`
+	Transfers                *[]map[string]interface{} `json:"transfers" bson:"transfers"` // Book Bank Transfer เงินโอน
 	BillHeader               *[]models.NameX           `json:"billheader" bson:"billheader"`
 	BillFooter               *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
