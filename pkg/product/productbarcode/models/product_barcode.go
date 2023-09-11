@@ -55,6 +55,7 @@ type ProductBarcodeBase struct {
 	IsOnlyStaff      bool                      `json:"isonlystaff" bson:"isonlystaff"`
 	FoodType         int                       `json:"foodtype" bson:"foodtype"`
 	BOM              *[]map[string]interface{} `json:"bom" bson:"bom"`
+	IsBOM            bool                      `json:"isbom" bson:"isbom"`
 }
 
 type RefProductBarcode struct {
