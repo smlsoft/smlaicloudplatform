@@ -79,7 +79,8 @@ func getBooleanHandler(field FilterRequest, filterValue string, getParamFunc fun
 		}
 		return nil
 	}
-	return nil
+	boolValues := parseToBools(values)
+	return bson.M{"$in": boolValues}
 }
 
 // getRangeDateHandler handles date range filter requests.
@@ -123,6 +124,17 @@ func parseToFloats(values []string) []float64 {
 	return floats
 }
 
+// parseToBools converts an array of strings into an array of booleans.
+func parseToBools(values []string) []bool {
+	bools := make([]bool, 0, len(values))
+	for _, val := range values {
+		if boolVal, err := strconv.ParseBool(val); err == nil {
+			bools = append(bools, boolVal)
+		}
+	}
+	return bools
+}
+
 // GenerateFilters generates a map of filters for the given filter fields using the provided function to get the value of parameters.
 // If the type of the filter field is not recognized, the raw string value is used.
 func GenerateFilters(getParamFunc func(string) string, filterFields []FilterRequest) map[string]interface{} {
@@ -144,7 +156,7 @@ func GenerateFilters(getParamFunc func(string) string, filterFields []FilterRequ
 		filterValue := ""
 
 		if field.Param != "-" {
-			filterValue := getParamFunc(field.Param)
+			filterValue = getParamFunc(field.Param)
 			if filterValue == "" {
 				continue
 			}

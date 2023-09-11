@@ -5,13 +5,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func TestGenerateFilters(t *testing.T) {
 	filterFields := []requestfilter.FilterRequest{
 		{Param: "strparam", Field: "strfield", Type: requestfilter.FieldTypeString},
-		{Param: "strparamarr", Field: "strfieldarr", Type: requestfilter.FieldTypeString},
 		{Param: "intparam", Field: "intfield", Type: requestfilter.FieldTypeInt},
 		{Param: "floatparam", Field: "floatfield", Type: requestfilter.FieldTypeFloat64},
 		{Param: "boolparam", Field: "boolfield", Type: requestfilter.FieldTypeBoolean},
@@ -22,8 +22,6 @@ func TestGenerateFilters(t *testing.T) {
 		switch param {
 		case "strparam":
 			return "strvalue"
-		case "strparamarr":
-			return "strvalue1,strvalue2,strvalue3"
 		case "intparam":
 			return "42"
 		case "floatparam":
@@ -81,13 +79,6 @@ func TestGenerateFilters(t *testing.T) {
 }
 
 func TestGenerateFiltersComma(t *testing.T) {
-	// Adding test for parameters with comma-separated values
-	filterFields := []requestfilter.FilterRequest{
-		{Param: "strparam", Field: "strfield", Type: requestfilter.FieldTypeString},
-		{Param: "intparam", Field: "intfield", Type: requestfilter.FieldTypeInt},
-		{Param: "floatparam", Field: "floatfield", Type: requestfilter.FieldTypeFloat64},
-	}
-
 	getParamFunc := func(param string) string {
 		switch param {
 		case "strparam":
@@ -96,59 +87,58 @@ func TestGenerateFiltersComma(t *testing.T) {
 			return "42,43"
 		case "floatparam":
 			return "42.42,43.43"
+		case "boolparam":
+			return "true,false"
 		default:
 			return ""
 		}
 	}
 
-	filters := requestfilter.GenerateFilters(getParamFunc, filterFields)
-
-	// Test for FieldTypeString
-	if values, ok := filters["strfield"].(bson.M); ok {
-		if valSlice, ok := values["$in"].([]interface{}); ok {
-			if !contains(valSlice, "value1") || !contains(valSlice, "value2") {
-				t.Errorf("Unexpected value for strfield: got %v", values["$in"])
-			}
-		} else {
-			t.Errorf("Unexpected type for strfield")
+	t.Run("string array", func(t *testing.T) {
+		filterField := []requestfilter.FilterRequest{
+			{Param: "strparam", Field: "strfield", Type: requestfilter.FieldTypeString},
 		}
-	} else {
-		t.Errorf("Unexpected type for strfield: got")
-	}
 
-	// Test for FieldTypeInt
-	if values, ok := filters["intfield"].(bson.M); ok {
-		if valSlice, ok := values["$in"].([]interface{}); ok {
-			if !contains(valSlice, 42) || !contains(valSlice, 43) {
-				t.Errorf("Unexpected value for intfield: got %v", values["$in"])
-			}
-		} else {
-			t.Errorf("Unexpected type for intfield")
-		}
-	} else {
-		t.Errorf("Unexpected type for intfield: got %T", filters["intfield"])
-	}
+		stringField := requestfilter.GenerateFilters(getParamFunc, filterField)
 
-	// Test for FieldTypeFloat64
-	if values, ok := filters["floatfield"].(bson.M); ok {
-		if valSlice, ok := values["$in"].([]interface{}); ok {
-			if !contains(valSlice, 42.42) || !contains(valSlice, 43.43) {
-				t.Errorf("Unexpected value for floatfield: got %v", values["$in"])
-			}
-		} else {
-			t.Errorf("Unexpected type for floatfield")
-		}
-	} else {
-		t.Errorf("Unexpected type for floatfield: got %T", filters["floatfield"])
-	}
-}
+		fieldValue := stringField["strfield"].(bson.M)["$in"].([]string)
 
-// Helper function to check if a slice contains a certain value
-func contains(s []interface{}, e interface{}) bool {
-	for _, a := range s {
-		if a == e {
-			return true
+		assert.Equal(t, []string{"value1", "value2"}, fieldValue)
+	})
+
+	t.Run("int array", func(t *testing.T) {
+		filterField := []requestfilter.FilterRequest{
+			{Param: "intparam", Field: "intfield", Type: requestfilter.FieldTypeInt},
 		}
-	}
-	return false
+
+		intField := requestfilter.GenerateFilters(getParamFunc, filterField)
+
+		fieldValue := intField["intfield"].(bson.M)["$in"].([]int)
+
+		assert.Equal(t, []int{42, 43}, fieldValue)
+	})
+
+	t.Run("float array", func(t *testing.T) {
+		filterField := []requestfilter.FilterRequest{
+			{Param: "floatparam", Field: "floatfield", Type: requestfilter.FieldTypeFloat64},
+		}
+
+		floatField := requestfilter.GenerateFilters(getParamFunc, filterField)
+
+		fieldValue := floatField["floatfield"].(bson.M)["$in"].([]float64)
+
+		assert.Equal(t, []float64{42.42, 43.43}, fieldValue)
+	})
+
+	t.Run("bool array", func(t *testing.T) {
+		filterField := []requestfilter.FilterRequest{
+			{Param: "boolparam", Field: "boolfield", Type: requestfilter.FieldTypeBoolean},
+		}
+
+		boolField := requestfilter.GenerateFilters(getParamFunc, filterField)
+
+		fieldValue := boolField["boolfield"].(bson.M)["$in"].([]bool)
+
+		assert.Equal(t, []bool{true, false}, fieldValue)
+	})
 }
