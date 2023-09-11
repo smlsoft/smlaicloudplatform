@@ -30626,8 +30626,8 @@
                 "isprimary": {
                     "type": "boolean"
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "name1": {
                     "type": "string",
@@ -30649,17 +30649,7 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -31575,6 +31565,7 @@
         "models.Department": {
             "type": "object",
             "required": [
+                "code",
                 "names"
             ],
             "properties": {
@@ -32123,9 +32114,6 @@
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -32307,8 +32295,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -32333,9 +32321,6 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -32357,13 +32342,6 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -32516,8 +32494,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -32542,9 +32520,6 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -32566,13 +32541,6 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -32802,8 +32770,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -32828,9 +32796,6 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -32852,13 +32817,6 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -34780,7 +34738,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -34832,6 +34790,13 @@
                 "barcode": {
                     "type": "string",
                     "minLength": 1
+                },
+                "bom": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
                 },
                 "colorselect": {
                     "type": "string"
@@ -34928,7 +34893,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -38552,27 +38517,6 @@
                 }
             }
         },
-        "smlcloudplatform_pkg_product_inventory_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "memberprice": {
-                    "type": "number"
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -38607,6 +38551,17 @@
                 }
             }
         },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode": {
             "type": "object",
             "required": [
@@ -38617,6 +38572,13 @@
                 "barcode": {
                     "type": "string",
                     "minLength": 1
+                },
+                "bom": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
                 },
                 "colorselect": {
                     "type": "string"
@@ -38713,7 +38675,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
