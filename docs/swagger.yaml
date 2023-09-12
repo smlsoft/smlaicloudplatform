@@ -161,6 +161,50 @@ definitions:
       qty:
         type: number
     type: object
+  models.BOMProductBarcode:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      guidfixed:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      qty:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
+    type: object
+  models.BOMRequest:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      qty:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
+    type: object
   models.BalanceSheetAccountDetail:
     properties:
       accountbalancetype:
@@ -3135,8 +3179,7 @@ definitions:
         type: string
       bom:
         items:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/models.BOMRequest'
         type: array
       colorselect:
         type: string
@@ -3161,8 +3204,6 @@ definitions:
       imageuri:
         type: string
       isalacarte:
-        type: boolean
-      isbom:
         type: boolean
       isdividend:
         type: boolean
@@ -5737,8 +5778,7 @@ definitions:
         type: string
       bom:
         items:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/models.BOMProductBarcode'
         type: array
       colorselect:
         type: string
@@ -5763,8 +5803,6 @@ definitions:
       imageuri:
         type: string
       isalacarte:
-        type: boolean
-      isbom:
         type: boolean
       isdividend:
         type: boolean

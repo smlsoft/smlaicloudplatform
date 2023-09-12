@@ -18,6 +18,8 @@ type IProductBarcodeRepository interface {
 	Count(ctx context.Context, shopID string) (int, error)
 	CountByRefBarcode(ctx context.Context, shopID string, refBarcode string) (int, error)
 	CountByRefGuids(ctx context.Context, shopID string, GUIDs []string) (int, error)
+	CountByBOM(ctx context.Context, shopID string, bomBarcode string) (int, error)
+	CountByBOMGuids(ctx context.Context, shopID string, GUIDs []string) (int, error)
 	CountByUnitCodes(ctx context.Context, shopID string, unitCodes []string) (int, error)
 	CountByGroupCodes(ctx context.Context, shopID string, unitCodes []string) (int, error)
 	CountByOrderTypes(ctx context.Context, shopID string, GUIDs []string) (int, error)
@@ -47,6 +49,7 @@ type IProductBarcodeRepository interface {
 	UpdateParentGuidByGuids(ctx context.Context, shopID string, parentGUID string, guids []string) error
 	Transaction(ctx context.Context, fnc func(ctx context.Context) error) error
 	FindByRefBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
+	FindByBOMBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 
 	FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 	FindPageByUnits(ctx context.Context, shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
@@ -87,8 +90,16 @@ func (repo ProductBarcodeRepository) CountByRefBarcode(ctx context.Context, shop
 	return repo.CountByKey(ctx, shopID, "refbarcodes.barcode", refBarcode)
 }
 
+func (repo ProductBarcodeRepository) CountByBOM(ctx context.Context, shopID string, bomBarcode string) (int, error) {
+	return repo.CountByKey(ctx, shopID, "bom.barcode", bomBarcode)
+}
+
 func (repo ProductBarcodeRepository) CountByRefGuids(ctx context.Context, shopID string, GUIDs []string) (int, error) {
 	return repo.CountByInKeys(ctx, shopID, "refbarcodes.guidfixed", GUIDs)
+}
+
+func (repo ProductBarcodeRepository) CountByBOMGuids(ctx context.Context, shopID string, GUIDs []string) (int, error) {
+	return repo.CountByInKeys(ctx, shopID, "bom.guidfixed", GUIDs)
 }
 
 func (repo ProductBarcodeRepository) CountByUnitCodes(ctx context.Context, shopID string, unitCodes []string) (int, error) {
@@ -153,6 +164,26 @@ func (repo ProductBarcodeRepository) FindByRefBarcode(ctx context.Context, shopI
 		"refbarcodes.barcode": barcode,
 		"itemtype":            bson.M{"$ne": 2},
 		"deletedat":           bson.M{"$exists": false},
+	}
+
+	err := repo.pst.Find(ctx, models.ProductBarcodeDoc{}, filters, &docList)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return docList, nil
+}
+
+func (repo ProductBarcodeRepository) FindByBOMBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error) {
+
+	docList := []models.ProductBarcodeDoc{}
+
+	filters := bson.M{
+		"shopid":      shopID,
+		"bom.barcode": barcode,
+		"itemtype":    bson.M{"$ne": 2},
+		"deletedat":   bson.M{"$exists": false},
 	}
 
 	err := repo.pst.Find(ctx, models.ProductBarcodeDoc{}, filters, &docList)

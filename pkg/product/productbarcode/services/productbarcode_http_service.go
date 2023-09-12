@@ -115,30 +115,16 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 		}
 	}
 
-	tempChildrenBarcodes := []string{}
-	tempRefBarcodes := map[string]models.BarcodeRequest{}
-
-	for _, item := range docReq.RefBarcodes {
-		tempChildrenBarcodes = append(tempChildrenBarcodes, item.Barcode)
-		tempRefBarcodes[item.Barcode] = item
-	}
-
-	findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
+	docData.RefBarcodes, err = svc.prepareRefBarcode(ctx, shopID, docReq.RefBarcodes)
 
 	if err != nil {
 		return "", err
 	}
 
-	docData.RefBarcodes = &[]models.RefProductBarcode{}
-	for _, childDoc := range findChildrenDocs {
-		tempRef := childDoc.ToRefBarcode()
+	docData.BOM, err = svc.prepareBOM(ctx, shopID, docReq.BOM)
 
-		tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
-		tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
-		tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
-		tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
-
-		*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
+	if err != nil {
+		return "", err
 	}
 
 	_, err = svc.repo.Create(ctx, docData)
@@ -176,36 +162,31 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 
 	docData.ProductBarcode = docReq.ToProductBarcode()
 
+	docData.Barcode = findDoc.Barcode
+	docData.ItemCode = findDoc.ItemCode
+
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 
-	tempChildrenBarcodes := []string{}
-	tempRefBarcodes := map[string]models.BarcodeRequest{}
-
-	for _, item := range docReq.RefBarcodes {
-		tempChildrenBarcodes = append(tempChildrenBarcodes, item.Barcode)
-		tempRefBarcodes[item.Barcode] = item
-	}
-
-	findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
+	docData.RefBarcodes, err = svc.prepareRefBarcode(ctx, shopID, docReq.RefBarcodes)
 
 	if err != nil {
 		return err
 	}
 
-	docData.RefBarcodes = &[]models.RefProductBarcode{}
-	for _, childDoc := range findChildrenDocs {
-		tempRef := childDoc.ToRefBarcode()
+	docData.BOM, err = svc.prepareBOM(ctx, shopID, docReq.BOM)
 
-		tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
-		tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
-		tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
-		tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
-
-		*docData.RefBarcodes = append(*docData.RefBarcodes, tempRef)
+	if err != nil {
+		return err
 	}
 
-	err = svc.updateMetaInRefBarcode(shopID, docData)
+	err = svc.updateMetaInRefBarcode(ctx, shopID, docData)
+
+	if err != nil {
+		return err
+	}
+
+	err = svc.updateMetaInBOMBarcode(ctx, shopID, docData)
 
 	if err != nil {
 		return err
@@ -227,10 +208,67 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	return nil
 }
 
-func (svc ProductBarcodeHttpService) updateMetaInRefBarcode(shopID string, docData models.ProductBarcodeDoc) error {
+func (svc ProductBarcodeHttpService) prepareRefBarcode(ctx context.Context, shopID string, barcodes []models.BarcodeRequest) (*[]models.RefProductBarcode, error) {
+	tempChildrenBarcodes := []string{}
+	tempRefBarcodes := map[string]models.BarcodeRequest{}
 
-	ctx, ctxCancel := svc.getContextTimeout()
-	defer ctxCancel()
+	for _, item := range barcodes {
+		tempChildrenBarcodes = append(tempChildrenBarcodes, item.Barcode)
+		tempRefBarcodes[item.Barcode] = item
+	}
+
+	findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
+
+	if err != nil {
+		return &[]models.RefProductBarcode{}, err
+	}
+
+	tempBarcodes := []models.RefProductBarcode{}
+	for _, childDoc := range findChildrenDocs {
+		tempRef := childDoc.ToRefBarcode()
+
+		tempRef.Condition = tempRefBarcodes[tempRef.Barcode].Condition
+		tempRef.StandValue = tempRefBarcodes[tempRef.Barcode].StandValue
+		tempRef.DivideValue = tempRefBarcodes[tempRef.Barcode].DivideValue
+		tempRef.Qty = tempRefBarcodes[tempRef.Barcode].Qty
+
+		tempBarcodes = append(tempBarcodes, tempRef)
+	}
+
+	return &tempBarcodes, nil
+}
+
+func (svc ProductBarcodeHttpService) prepareBOM(ctx context.Context, shopID string, barcodes []models.BOMRequest) (*[]models.BOMProductBarcode, error) {
+	tempChildrenBarcodes := []string{}
+	tempBOM := map[string]models.BOMRequest{}
+
+	for _, item := range barcodes {
+		tempChildrenBarcodes = append(tempChildrenBarcodes, item.Barcode)
+		tempBOM[item.Barcode] = item
+	}
+
+	findChildrenDocs, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", tempChildrenBarcodes)
+
+	if err != nil {
+		return &[]models.BOMProductBarcode{}, err
+	}
+
+	tempBarcodes := []models.BOMProductBarcode{}
+	for _, childDoc := range findChildrenDocs {
+		temp := childDoc.ToBOM()
+
+		temp.Condition = tempBOM[temp.Barcode].Condition
+		temp.StandValue = tempBOM[temp.Barcode].StandValue
+		temp.DivideValue = tempBOM[temp.Barcode].DivideValue
+		temp.Qty = tempBOM[temp.Barcode].Qty
+
+		tempBarcodes = append(tempBarcodes, temp)
+	}
+
+	return &tempBarcodes, nil
+}
+
+func (svc ProductBarcodeHttpService) updateMetaInRefBarcode(ctx context.Context, shopID string, docData models.ProductBarcodeDoc) error {
 
 	findDocs, err := svc.repo.FindByRefBarcode(ctx, shopID, docData.Barcode)
 	if err != nil {
@@ -258,7 +296,36 @@ func (svc ProductBarcodeHttpService) updateMetaInRefBarcode(shopID string, docDa
 	}
 
 	return nil
+}
 
+func (svc ProductBarcodeHttpService) updateMetaInBOMBarcode(ctx context.Context, shopID string, docData models.ProductBarcodeDoc) error {
+
+	findDocs, err := svc.repo.FindByBOMBarcode(ctx, shopID, docData.Barcode)
+	if err != nil {
+		return err
+	}
+
+	for _, findDoc := range findDocs {
+		tempBOMBarcodes := []models.BOMProductBarcode{}
+		for _, refBarcode := range *findDoc.BOM {
+			if refBarcode.Barcode == docData.Barcode {
+				refBarcode.Names = docData.Names
+				refBarcode.ItemUnitCode = docData.ItemUnitCode
+				refBarcode.ItemUnitNames = docData.ItemUnitNames
+			}
+
+			tempBOMBarcodes = append(tempBOMBarcodes, refBarcode)
+		}
+
+		findDoc.BOM = &tempBOMBarcodes
+
+		err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid string, authUsername string) error {
@@ -276,13 +343,23 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid st
 		return errors.New("document not found")
 	}
 
-	docCount, err := svc.repo.CountByRefBarcode(ctx, shopID, findDoc.Barcode)
+	countRef, err := svc.repo.CountByRefBarcode(ctx, shopID, findDoc.Barcode)
 
 	if err != nil {
 		return err
 	}
 
-	if docCount > 1 {
+	if countRef > 0 {
+		return errors.New("document has refenced")
+	}
+
+	countBOM, err := svc.repo.CountByBOM(ctx, shopID, findDoc.Barcode)
+
+	if err != nil {
+		return err
+	}
+
+	if countBOM > 0 {
 		return errors.New("document has refenced")
 	}
 
@@ -730,13 +807,23 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	docCount, err := svc.repo.CountByRefGuids(ctx, shopID, GUIDs)
+	countRefBarcode, err := svc.repo.CountByRefGuids(ctx, shopID, GUIDs)
 
 	if err != nil {
 		return err
 	}
 
-	if docCount > 0 {
+	if countRefBarcode > 0 {
+		return errors.New("document has refenced")
+	}
+
+	countBOM, err := svc.repo.CountByBOMGuids(ctx, shopID, GUIDs)
+
+	if err != nil {
+		return err
+	}
+
+	if countBOM > 0 {
 		return errors.New("document has refenced")
 	}
 

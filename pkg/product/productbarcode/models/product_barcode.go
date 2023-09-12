@@ -42,23 +42,33 @@ type ProductBarcodeBase struct {
 	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
 	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
 
-	RefUnitNames     *[]models.NameX           `json:"refunitnames" bson:"refunitnames"`
-	StockBarcode     string                    `json:"stockbarcode" bson:"stockbarcode"`
-	Qty              float64                   `json:"qty" bson:"qty"`
-	RefDivideValue   float64                   `json:"refdividevalue" bson:"refdividevalue"`
-	RefStandValue    float64                   `json:"refstandvalue" bson:"refstandvalue"`
-	VatCal           int                       `json:"vatcal" bson:"vatcal"`
-	IsALaCarte       bool                      `json:"isalacarte" bson:"isalacarte"`
-	OrderTypes       *[]ProductOrderType       `json:"ordertypes" bson:"ordertypes"`
-	ProductType      ProductType               `json:"producttype" bson:"producttype"`
-	IsSplitUnitPrint bool                      `json:"issplitunitprint" bson:"issplitunitprint"`
-	IsOnlyStaff      bool                      `json:"isonlystaff" bson:"isonlystaff"`
-	FoodType         int                       `json:"foodtype" bson:"foodtype"`
-	BOM              *[]map[string]interface{} `json:"bom" bson:"bom"`
-	IsBOM            bool                      `json:"isbom" bson:"isbom"`
+	RefUnitNames     *[]models.NameX     `json:"refunitnames" bson:"refunitnames"`
+	StockBarcode     string              `json:"stockbarcode" bson:"stockbarcode"`
+	Qty              float64             `json:"qty" bson:"qty"`
+	RefDivideValue   float64             `json:"refdividevalue" bson:"refdividevalue"`
+	RefStandValue    float64             `json:"refstandvalue" bson:"refstandvalue"`
+	VatCal           int                 `json:"vatcal" bson:"vatcal"`
+	IsALaCarte       bool                `json:"isalacarte" bson:"isalacarte"`
+	OrderTypes       *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
+	ProductType      ProductType         `json:"producttype" bson:"producttype"`
+	IsSplitUnitPrint bool                `json:"issplitunitprint" bson:"issplitunitprint"`
+	IsOnlyStaff      bool                `json:"isonlystaff" bson:"isonlystaff"`
+	FoodType         int                 `json:"foodtype" bson:"foodtype"`
 }
 
 type RefProductBarcode struct {
+	GuidFixed     string          `json:"guidfixed" bson:"guidfixed"`
+	Names         *[]models.NameX `json:"names" bson:"names"`
+	ItemUnitCode  string          `json:"itemunitcode" bson:"itemunitcode"`
+	ItemUnitNames *[]models.NameX `json:"itemunitnames" bson:"itemunitnames"`
+	Barcode       string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	Condition     bool            `json:"condition" bson:"condition"`
+	DivideValue   float64         `json:"dividevalue" bson:"dividevalue"`
+	StandValue    float64         `json:"standvalue" bson:"standvalue"`
+	Qty           float64         `json:"qty" bson:"qty"`
+}
+
+type BOMProductBarcode struct {
 	GuidFixed     string          `json:"guidfixed" bson:"guidfixed"`
 	Names         *[]models.NameX `json:"names" bson:"names"`
 	ItemUnitCode  string          `json:"itemunitcode" bson:"itemunitcode"`
@@ -74,6 +84,7 @@ type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
 	ProductBarcodeBase       `bson:"inline"`
 	RefBarcodes              *[]RefProductBarcode `json:"refbarcodes" bson:"refbarcodes"`
+	BOM                      *[]BOMProductBarcode `json:"bom" bson:"bom"`
 }
 
 type ProductImage struct {
@@ -120,6 +131,17 @@ func (doc ProductBarcodeDoc) ToRefBarcode() RefProductBarcode {
 	}
 }
 
+func (doc ProductBarcodeDoc) ToBOM() BOMProductBarcode {
+
+	return BOMProductBarcode{
+		GuidFixed:     doc.GuidFixed,
+		Names:         doc.Names,
+		ItemUnitCode:  doc.ItemUnitCode,
+		ItemUnitNames: doc.ItemUnitNames,
+		Barcode:       doc.Barcode,
+	}
+}
+
 type ProductBarcodeItemGuid struct {
 	Barcode string `json:"barcode" bson:"barcode"`
 }
@@ -149,6 +171,13 @@ func (ProductBarcodeDeleteActivity) CollectionName() string {
 type ProductBarcodeRequest struct {
 	ProductBarcodeBase
 	RefBarcodes []BarcodeRequest `json:"refbarcodes"`
+	BOM         []BOMRequest     `json:"bom"`
+}
+
+func (p ProductBarcodeRequest) ToProductBarcode() ProductBarcode {
+	return ProductBarcode{
+		ProductBarcodeBase: p.ProductBarcodeBase,
+	}
 }
 
 type BarcodeRequest struct {
@@ -159,10 +188,12 @@ type BarcodeRequest struct {
 	Qty         float64 `json:"qty" bson:"qty"`
 }
 
-func (p ProductBarcodeRequest) ToProductBarcode() ProductBarcode {
-	return ProductBarcode{
-		ProductBarcodeBase: p.ProductBarcodeBase,
-	}
+type BOMRequest struct {
+	Barcode     string  `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	Condition   bool    `json:"condition" bson:"condition"`
+	DivideValue float64 `json:"dividevalue" bson:"dividevalue"`
+	StandValue  float64 `json:"standvalue" bson:"standvalue"`
+	Qty         float64 `json:"qty" bson:"qty"`
 }
 
 type ProductBarcodeSearch struct {

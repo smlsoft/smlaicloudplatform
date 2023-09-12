@@ -30880,6 +30880,72 @@ const docTemplate = `{
                 }
             }
         },
+        "models.BOMProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.BOMRequest": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
+                }
+            }
+        },
         "models.BalanceSheetAccountDetail": {
             "type": "object",
             "properties": {
@@ -35249,8 +35315,7 @@ const docTemplate = `{
                 "bom": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "additionalProperties": true
+                        "$ref": "#/definitions/models.BOMRequest"
                     }
                 },
                 "colorselect": {
@@ -35287,9 +35352,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
-                    "type": "boolean"
-                },
-                "isbom": {
                     "type": "boolean"
                 },
                 "isdividend": {
@@ -39114,8 +39176,7 @@ const docTemplate = `{
                 "bom": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "additionalProperties": true
+                        "$ref": "#/definitions/models.BOMProductBarcode"
                     }
                 },
                 "colorselect": {
@@ -39152,9 +39213,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
-                    "type": "boolean"
-                },
-                "isbom": {
                     "type": "boolean"
                 },
                 "isdividend": {
