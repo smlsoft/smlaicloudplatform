@@ -62,6 +62,7 @@ import (
 	// "smlcloudplatform/pkg/shop/branch"
 	"smlcloudplatform/pkg/pos/media"
 	pos_setting "smlcloudplatform/pkg/pos/setting"
+	"smlcloudplatform/pkg/pos/shift"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smspatterns"
@@ -260,7 +261,10 @@ func main() {
 		eorder.NewEOrderHttp(ms, cfg),
 
 		ordertype.NewOrderTypeHttp(ms, cfg),
+
+		// POS
 		pos_setting.NewSettingHttp(ms, cfg),
+		shift.NewShiftHttp(ms, cfg),
 
 		documentformate.NewDocumentFormateHttp(ms, cfg),
 

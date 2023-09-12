@@ -31,6 +31,7 @@ import (
 	"smlcloudplatform/pkg/paymentmaster"
 	pos_media "smlcloudplatform/pkg/pos/media"
 	pos_setting "smlcloudplatform/pkg/pos/setting"
+	"smlcloudplatform/pkg/pos/shift"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/eorder"
 	"smlcloudplatform/pkg/product/inventory"
@@ -286,6 +287,8 @@ func main() {
 
 			pos_setting.NewSettingHttp(ms, cfg),
 			pos_media.NewMediaHttp(ms, cfg),
+			shift.NewShiftHttp(ms, cfg),
+
 			documentformate.NewDocumentFormateHttp(ms, cfg),
 			ocr.NewOcrHttp(ms, cfg),
 			stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),

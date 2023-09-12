@@ -11812,6 +11812,416 @@ const docTemplate = `{
                 }
             }
         },
+        "/pos/shift": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "DocType",
+                        "name": "doctype",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Shift",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "description": "Shift",
+                        "name": "Shift",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Shift"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Shift",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "description": "Shift GUIDs",
+                        "name": "Shift",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/shift/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Shift",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "description": "Shift",
+                        "name": "Shift",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Shift"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/shift/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Shift info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shift Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/shift/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "DocType",
+                        "name": "doctype",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/shift/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Shift info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shift guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Shift",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shift ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shift",
+                        "name": "Shift",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Shift"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Shift",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shift"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shift ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product": {
             "get": {
                 "security": [
@@ -30632,8 +31042,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -30655,7 +31065,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -32274,8 +32694,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -32300,6 +32720,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -32321,6 +32744,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -32473,8 +32903,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -32499,6 +32929,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -32520,6 +32953,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -32749,8 +33189,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -32775,6 +33215,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -32796,6 +33239,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -34743,7 +35193,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -34901,7 +35351,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -35130,17 +35580,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -36408,6 +36847,44 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "warehousecode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Shift": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "cheque": {
+                    "type": "number"
+                },
+                "coupon": {
+                    "type": "number"
+                },
+                "creditcard": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "promptpay": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "transfer": {
+                    "type": "number"
+                },
+                "usercode": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -38568,6 +39045,27 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_product_inventory_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -38718,7 +39216,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -38780,6 +39278,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -38849,7 +39358,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
