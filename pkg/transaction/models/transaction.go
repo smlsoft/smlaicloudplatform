@@ -41,6 +41,7 @@ type TransactionHeader struct {
 	Status           int8            `json:"status" bson:"status"`
 	PaymentDetail    PaymentDetail   `json:"paymentdetail" bson:"paymentdetail"`
 	PaymentDetailRaw string          `json:"paymentdetailraw" bson:"paymentdetailraw"`
+	PayCashAmount    float64         `json:"paycashamount" bson:"paycashamount"`
 }
 
 type Transaction struct {
