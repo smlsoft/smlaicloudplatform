@@ -64,7 +64,7 @@ type TransactionHeader struct {
 	WomanCount                      int      `json:"womancount" bson:"womancount"`
 	ChildCount                      int      `json:"childcount" bson:"childcount"`
 	IsTableAllacrateMode            bool     `json:"istableallacratemode" bson:"istableallacratemode"`
-	BuffetCode                      bool     `json:"buffetcode" bson:"buffetcode"`
+	BuffetCode                      string   `json:"buffetcode" bson:"buffetcode"`
 	CustomerTelephone               string   `json:"customertelephone" bson:"customertelephone"`
 	TotalQty                        float64  `json:"totalqty" bson:"totalqty"`
 	TotalDiscountVatAmount          float64  `json:"totaldiscountvatamount" bson:"totaldiscountvatamount"`
