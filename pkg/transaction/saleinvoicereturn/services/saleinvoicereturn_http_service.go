@@ -31,6 +31,7 @@ type ISaleInvoiceReturnHttpService interface {
 	SearchSaleInvoiceReturn(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceReturnInfo, mongopagination.PaginationData, error)
 	SearchSaleInvoiceReturnStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceReturnInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoiceReturn) (common.BulkImport, error)
+	GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error)
 
 	GetModuleName() string
 }
@@ -308,6 +309,19 @@ func (svc SaleInvoiceReturnHttpService) InfoSaleInvoiceReturnByCode(shopID strin
 	}
 
 	return findDoc.SaleInvoiceReturnInfo, nil
+}
+
+func (svc SaleInvoiceReturnHttpService) GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	lastDocNo, err := svc.repo.FindLastPOSDocNo(ctx, shopID, posID, maxDocNo)
+
+	if err != nil {
+		return "", err
+	}
+
+	return lastDocNo, nil
 }
 
 func (svc SaleInvoiceReturnHttpService) SearchSaleInvoiceReturn(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceReturnInfo, mongopagination.PaginationData, error) {

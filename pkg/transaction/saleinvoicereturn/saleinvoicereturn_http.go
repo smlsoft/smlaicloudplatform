@@ -51,6 +51,7 @@ func (h SaleInvoiceReturnHttp) RegisterHttp() {
 	h.ms.POST("/transaction/sale-invoice-return", h.CreateSaleInvoiceReturn)
 	h.ms.GET("/transaction/sale-invoice-return/:id", h.InfoSaleInvoiceReturn)
 	h.ms.GET("/transaction/sale-invoice-return/code/:code", h.InfoSaleInvoiceReturnByCode)
+	h.ms.GET("/transaction/sale-invoice-return/last-pos-docno", h.GetLastPOSDocNo)
 	h.ms.PUT("/transaction/sale-invoice-return/:id", h.UpdateSaleInvoiceReturn)
 	h.ms.DELETE("/transaction/sale-invoice-return/:id", h.DeleteSaleInvoiceReturn)
 	h.ms.DELETE("/transaction/sale-invoice-return", h.DeleteSaleInvoiceReturnByGUIDs)
@@ -260,6 +261,42 @@ func (h SaleInvoiceReturnHttp) InfoSaleInvoiceReturnByCode(ctx microservice.ICon
 	code := ctx.Param("code")
 
 	doc, err := h.svc.InfoSaleInvoiceReturnByCode(shopID, code)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get SaleInvoiceReturn By Code godoc
+// @Description get SaleInvoiceReturn info by Code
+// @Tags		SaleInvoiceReturn
+// @Param		posid	query	string		false  "POS ID"
+// @Param		maxdocno	query	string		false  "Max DocNo"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice-return/last-pos-docno [get]
+func (h SaleInvoiceReturnHttp) GetLastPOSDocNo(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	posID := ctx.QueryParam("posid")
+	maxDocNo := ctx.QueryParam("maxdocno")
+
+	if posID == "" || maxDocNo == "" {
+		ctx.ResponseError(http.StatusBadRequest, "posid and maxdocno is required")
+		return nil
+	}
+
+	doc, err := h.svc.GetLastPOSDocNo(shopID, posID, maxDocNo)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

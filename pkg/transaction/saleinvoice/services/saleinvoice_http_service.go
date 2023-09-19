@@ -31,6 +31,7 @@ type ISaleInvoiceHttpService interface {
 	SearchSaleInvoice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error)
 	SearchSaleInvoiceStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error)
+	GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error)
 
 	GetModuleName() string
 }
@@ -269,6 +270,19 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUs
 	}()
 
 	return nil
+}
+
+func (svc SaleInvoiceHttpService) GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	lastDocNo, err := svc.repo.FindLastPOSDocNo(ctx, shopID, posID, maxDocNo)
+
+	if err != nil {
+		return "", err
+	}
+
+	return lastDocNo, nil
 }
 
 func (svc SaleInvoiceHttpService) InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error) {

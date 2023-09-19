@@ -34,6 +34,7 @@ type ISaleInvoiceReturnRepository interface {
 	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceReturnDeleteActivity, error)
 	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceReturnActivity, error)
 
+	FindLastPOSDocNo(ctx context.Context, shopID string, posID string, maxDocNo string) (string, error)
 	FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.SaleInvoiceReturnDoc, error)
 }
 
@@ -57,6 +58,29 @@ func NewSaleInvoiceReturnRepository(pst microservice.IPersisterMongo) *SaleInvoi
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.SaleInvoiceReturnActivity, models.SaleInvoiceReturnDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo SaleInvoiceReturnRepository) FindLastPOSDocNo(ctx context.Context, shopID string, posID string, maxDocNo string) (string, error) {
+
+	opts := options.FindOneOptions{}
+	opts.SetSort(bson.M{"docno": -1})
+
+	filters := bson.M{
+		"shopid": shopID,
+		"posid":  posID,
+		"docno": bson.M{
+			"$lte": maxDocNo,
+		},
+	}
+
+	doc := models.SaleInvoiceReturnDoc{}
+	err := repo.pst.FindOne(ctx, models.SaleInvoiceReturnDoc{}, filters, &doc, &opts)
+
+	if err != nil {
+		return "", err
+	}
+
+	return doc.DocNo, nil
 }
 
 func (repo SaleInvoiceReturnRepository) FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.SaleInvoiceReturnDoc, error) {
