@@ -42,6 +42,46 @@ type TransactionHeader struct {
 	PaymentDetail    PaymentDetail   `json:"paymentdetail" bson:"paymentdetail"`
 	PaymentDetailRaw string          `json:"paymentdetailraw" bson:"paymentdetailraw"`
 	PayCashAmount    float64         `json:"paycashamount" bson:"paycashamount"`
+
+	BillTaxType                     int8      `json:"billtaxtype" bson:"billtaxtype"`
+	CancelDateTime                  string    `json:"canceldatetime" bson:"canceldatetime"`
+	CancelUserCode                  string    `json:"cancelusercode" bson:"cancelusercode"`
+	CancelUserName                  string    `json:"cancelusername" bson:"cancelusername"`
+	CancelDescription               string    `json:"canceldescription" bson:"canceldescription"`
+	CancelReason                    string    `json:"cancelreason" bson:"cancelreason"`
+	FullVatAddress                  string    `json:"fullvataddress" bson:"fullvataddress"`
+	FullVatBranchNumber             string    `json:"fullvatbranchnumber" bson:"fullvatbranchnumber"`
+	FullVatName                     string    `json:"fullvatname" bson:"fullvatname"`
+	FullVatDocNumber                string    `json:"fullvatdocnumber" bson:"fullvatdocnumber"`
+	FullVatTaxID                    string    `json:"fullvattaxid" bson:"fullvattaxid"`
+	FullVatPrint                    bool      `json:"fullvatprint" bson:"fullvatprint"`
+	IsVatRegister                   bool      `json:"isvatregister" bson:"isvatregister"`
+	PrintCopyBillDateTime           []string  `json:"printcopybilldatetime" bson:"printcopybilldatetime"`
+	TableNumber                     string    `json:"tablenumber" bson:"tablenumber"`
+	TableOpenDateTime               time.Time `json:"tableopendatetime" bson:"tableopendatetime"`
+	TableCloseDateTime              time.Time `json:"tableclosedatetime" bson:"tableclosedatetime"`
+	ManCount                        int       `json:"mancount" bson:"mancount"`
+	WomanCount                      int       `json:"womancount" bson:"womancount"`
+	ChildCount                      int       `json:"childcount" bson:"childcount"`
+	IsTableAllacrateMode            bool      `json:"istableallacratemode" bson:"istableallacratemode"`
+	BuffetCode                      bool      `json:"buffetcode" bson:"buffetcode"`
+	CustomerTelephone               string    `json:"customertelephone" bson:"customertelephone"`
+	TotalQty                        float64   `json:"totalqty" bson:"totalqty"`
+	TotalDiscountVatAmount          float64   `json:"totaldiscountvatamount" bson:"totaldiscountvatamount"`
+	TotalDiscountExceptVatAmount    float64   `json:"totaldiscountexceptvatamount" bson:"totaldiscountexceptvatamount"`
+	CashierName                     string    `json:"cashiername" bson:"cashiername"`
+	PayCashChange                   float64   `json:"paycashchange" bson:"paycashchange"`
+	SumQRCode                       float64   `json:"sumqrcode" bson:"sumqrcode"`
+	SumCreditCard                   float64   `json:"sumcreditcard" bson:"sumcreditcard"`
+	SumMoneyTransfer                float64   `json:"summoneytransfer" bson:"summoneytransfer"`
+	SumCheque                       float64   `json:"sumcheque" bson:"sumcheque"`
+	SumCoupon                       float64   `json:"sumcoupon" bson:"sumcoupon"`
+	DetailDiscountFormula           string    `json:"detaildiscountformula" bson:"detaildiscountformula"`
+	DetailTotalAmount               float64   `json:"detailtotalamount" bson:"detailtotalamount"`
+	DetailTotalDiscount             float64   `json:"detailtotaldiscount" bson:"detailtotaldiscount"`
+	RoundAmount                     float64   `json:"roundamount" bson:"roundamount"`
+	TotalAmountAfterDiscount        float64   `json:"totalamountafterdiscount" bson:"totalamountafterdiscount"`
+	DetailTotalAmountBeforeDiscount float64   `json:"detailtotalamountbeforediscount" bson:"detailtotalamountbeforediscount"`
 }
 
 type Transaction struct {
@@ -92,6 +132,8 @@ type Detail struct {
 	LocationNames       *[]models.NameX `json:"locationnames" bson:"locationnames"`
 	ToWhNames           *[]models.NameX `json:"towhnames" bson:"towhnames"`
 	ToLocationNames     *[]models.NameX `json:"tolocationnames" bson:"tolocationnames" `
+	SKU                 string          `json:"sku" bson:"sku"`
+	ExtraJson           string          `json:"extrajson" bson:"extrajson"`
 }
 
 type PaymentDetail struct {

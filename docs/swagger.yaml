@@ -406,24 +406,28 @@ definitions:
     type: object
   models.Branch:
     properties:
+      businesstypes:
+        items:
+          type: string
+        type: array
       code:
-        type: integer
+        type: string
+      contact:
+        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
       departments:
         items:
           $ref: '#/definitions/models.Department'
         type: array
-        uniqueItems: true
-      location:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
+      languages:
+        items:
+          type: string
+        type: array
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true
-      telephone:
-        maxLength: 100
-        type: string
     required:
     - names
     type: object
@@ -756,27 +760,6 @@ definitions:
       comment:
         type: string
     type: object
-  models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -959,15 +942,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -988,6 +968,8 @@ definitions:
       docref:
         type: string
       docrefdatetime:
+        type: string
+      extrajson:
         type: string
       inquirytype:
         type: integer
@@ -1024,6 +1006,8 @@ definitions:
       remark:
         type: string
       shelfcode:
+        type: string
+      sku:
         type: string
       standvalue:
         type: number
@@ -1276,7 +1260,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/models.Contact'
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
       email:
         type: string
       isenabled:
@@ -1305,7 +1289,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/models.Contact'
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
       email:
         type: string
       isenabled:
@@ -2344,6 +2328,24 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Location:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.LocationRequest:
     properties:
       locationcode:
@@ -3114,7 +3116,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3219,7 +3221,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3383,6 +3385,13 @@ definitions:
       price:
         type: number
     type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   models.ProductUnit:
     properties:
       divider:
@@ -3518,20 +3527,48 @@ definitions:
     type: object
   models.Purchase:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -3546,6 +3583,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -3554,9 +3603,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -3564,12 +3621,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -3578,13 +3657,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -3595,24 +3682,54 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.PurchaseReturn:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -3627,6 +3744,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -3635,9 +3764,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -3645,12 +3782,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -3659,13 +3818,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -3676,6 +3843,8 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.QrPayment:
@@ -3901,7 +4070,23 @@ definitions:
     type: object
   models.SaleInvoice:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
+        type: string
+      cashiername:
         type: string
       chequeamount:
         type: number
@@ -3913,6 +4098,8 @@ definitions:
         type: string
       chequeno:
         type: string
+      childcount:
+        type: integer
       couponamount:
         type: number
       coupondescription:
@@ -3925,12 +4112,22 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -3945,6 +4142,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -3955,9 +4164,17 @@ definitions:
         type: boolean
       ispos:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -3965,9 +4182,15 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
       qrcode:
         type: string
       qrcodeamount:
+        type: number
+      roundamount:
         type: number
       salecode:
         type: string
@@ -3975,6 +4198,22 @@ definitions:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -3983,13 +4222,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -4000,11 +4247,29 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.SaleInvoiceReturn:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
+        type: string
+      cashiername:
         type: string
       chequeamount:
         type: number
@@ -4016,6 +4281,8 @@ definitions:
         type: string
       chequeno:
         type: string
+      childcount:
+        type: integer
       couponamount:
         type: number
       coupondescription:
@@ -4028,12 +4295,22 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -4048,6 +4325,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -4058,9 +4347,17 @@ definitions:
         type: boolean
       ispos:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -4068,9 +4365,15 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
       qrcode:
         type: string
       qrcodeamount:
+        type: number
+      roundamount:
         type: number
       salecode:
         type: string
@@ -4078,6 +4381,22 @@ definitions:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -4086,13 +4405,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -4103,6 +4430,8 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.SectionBranch:
@@ -4430,20 +4759,48 @@ definitions:
     type: object
   models.StockAdjustment:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -4458,6 +4815,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -4466,9 +4835,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -4476,12 +4853,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -4490,13 +4889,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -4508,23 +4915,53 @@ definitions:
         type: number
       vattype:
         type: integer
+      womancount:
+        type: integer
     type: object
   models.StockBalance:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.StockBalanceDetail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -4539,6 +4976,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -4547,9 +4996,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -4557,12 +5014,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -4571,13 +5050,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -4588,6 +5075,8 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.StockBalanceDetail:
@@ -4609,6 +5098,8 @@ definitions:
       docref:
         type: string
       docrefdatetime:
+        type: string
+      extrajson:
         type: string
       inquirytype:
         type: integer
@@ -4645,6 +5136,8 @@ definitions:
       remark:
         type: string
       shelfcode:
+        type: string
+      sku:
         type: string
       standvalue:
         type: number
@@ -4691,16 +5184,44 @@ definitions:
     type: object
   models.StockBalanceHeader:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
         type: string
+      detaildiscountformula:
+        type: string
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -4715,6 +5236,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -4723,9 +5256,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -4733,12 +5274,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -4747,13 +5310,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -4764,6 +5335,8 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.StockBalanceImportTaskRequest:
@@ -4773,20 +5346,48 @@ definitions:
     type: object
   models.StockPickupProduct:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -4801,6 +5402,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -4809,9 +5422,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -4819,12 +5440,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -4833,13 +5476,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -4850,24 +5501,54 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.StockReceiveProduct:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -4882,6 +5563,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -4890,9 +5583,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -4900,12 +5601,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -4914,13 +5637,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -4931,24 +5662,54 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.StockReturnProduct:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -4963,6 +5724,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -4971,9 +5744,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -4981,12 +5762,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -4995,13 +5798,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -5012,24 +5823,54 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.StockTransfer:
     properties:
+      billtaxtype:
+        type: integer
+      buffetcode:
+        type: boolean
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
       cashiercode:
         type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
       custcode:
         type: string
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      customertelephone:
+        type: string
       description:
+        type: string
+      detaildiscountformula:
         type: string
       details:
         items:
           $ref: '#/definitions/models.Detail'
         type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
       discountword:
         type: string
       docdatetime:
@@ -5044,6 +5885,18 @@ definitions:
         type: integer
       doctype:
         type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
       guidref:
         type: string
       inquirytype:
@@ -5052,9 +5905,17 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
       membercode:
         type: string
       paycashamount:
+        type: number
+      paycashchange:
         type: number
       paymentdetail:
         $ref: '#/definitions/models.PaymentDetail'
@@ -5062,12 +5923,34 @@ definitions:
         type: string
       posid:
         type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
         type: string
       status:
         type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
       taxdocdate:
         type: string
       taxdocno:
@@ -5076,13 +5959,21 @@ definitions:
         type: number
       totalamount:
         type: number
+      totalamountafterdiscount:
+        type: number
       totalbeforevat:
         type: number
       totalcost:
         type: number
       totaldiscount:
         type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
       totalexceptvat:
+        type: number
+      totalqty:
         type: number
       totalvalue:
         type: number
@@ -5093,6 +5984,8 @@ definitions:
       vatrate:
         type: number
       vattype:
+        type: integer
+      womancount:
         type: integer
     type: object
   models.Storefront:
@@ -5595,7 +6488,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
+          $ref: '#/definitions/models.Location'
         type: array
         uniqueItems: true
       names:
@@ -5710,6 +6603,27 @@ definitions:
           type: string
         type: array
     type: object
+  smlcloudplatform_pkg_organization_branch_models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -5731,13 +6645,6 @@ definitions:
         type: string
       xorder:
         type: integer
-    type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
@@ -5812,7 +6719,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -5858,13 +6765,6 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
       code:
@@ -5909,7 +6809,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
@@ -6011,11 +6911,25 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Location:
+  smlcloudplatform_pkg_shop_employee_models.Contact:
     properties:
-      lat:
+      address:
         type: string
-      lng:
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
         type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
@@ -6024,24 +6938,6 @@ definitions:
         type: string
       uuid:
         type: string
-    type: object
-  smlcloudplatform_pkg_warehouse_models.Location:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
 info:
   contact:

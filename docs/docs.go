@@ -31324,18 +31324,29 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
-                    "type": "integer"
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
                 },
                 "departments": {
                     "type": "array",
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.Department"
                     }
                 },
-                "location": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -31344,10 +31355,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "telephone": {
-                    "type": "string",
-                    "maxLength": 100
                 }
             }
         },
@@ -31834,38 +31841,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -32134,17 +32109,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -32179,6 +32150,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "docrefdatetime": {
+                    "type": "string"
+                },
+                "extrajson": {
                     "type": "string"
                 },
                 "inquirytype": {
@@ -32233,6 +32207,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "shelfcode": {
+                    "type": "string"
+                },
+                "sku": {
                     "type": "string"
                 },
                 "standvalue": {
@@ -32606,7 +32583,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -32650,7 +32627,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -34162,6 +34139,32 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Location": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
+                }
+            }
+        },
         "models.LocationRequest": {
             "type": "object",
             "required": [
@@ -35310,7 +35313,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -35464,7 +35467,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -35699,6 +35702,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "models.ProductUnit": {
             "type": "object",
             "properties": {
@@ -35895,8 +35909,35 @@ const docTemplate = `{
         "models.Purchase": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -35907,7 +35948,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -35915,6 +35962,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -35937,6 +35993,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -35949,10 +36023,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -35964,6 +36050,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -35972,6 +36067,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -35985,6 +36104,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -35994,7 +36116,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -36010,6 +36141,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -36017,8 +36151,35 @@ const docTemplate = `{
         "models.PurchaseReturn": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -36029,7 +36190,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -36037,6 +36204,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -36059,6 +36235,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -36071,10 +36265,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -36086,6 +36292,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -36094,6 +36309,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -36107,6 +36346,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -36116,7 +36358,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -36132,6 +36383,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -36463,7 +36717,31 @@ const docTemplate = `{
         "models.SaleInvoice": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
+                    "type": "string"
+                },
+                "cashiername": {
                     "type": "string"
                 },
                 "chequeamount": {
@@ -36480,6 +36758,9 @@ const docTemplate = `{
                 },
                 "chequeno": {
                     "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "couponamount": {
                     "type": "number"
@@ -36499,7 +36780,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -36507,6 +36794,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -36529,6 +36825,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -36544,10 +36858,22 @@ const docTemplate = `{
                 "ispos": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -36559,10 +36885,19 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "qrcode": {
                     "type": "string"
                 },
                 "qrcodeamount": {
+                    "type": "number"
+                },
+                "roundamount": {
                     "type": "number"
                 },
                 "salecode": {
@@ -36573,6 +36908,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -36586,6 +36945,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -36595,7 +36957,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -36611,6 +36982,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -36618,7 +36992,31 @@ const docTemplate = `{
         "models.SaleInvoiceReturn": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
+                    "type": "string"
+                },
+                "cashiername": {
                     "type": "string"
                 },
                 "chequeamount": {
@@ -36635,6 +37033,9 @@ const docTemplate = `{
                 },
                 "chequeno": {
                     "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "couponamount": {
                     "type": "number"
@@ -36654,7 +37055,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -36662,6 +37069,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -36684,6 +37100,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -36699,10 +37133,22 @@ const docTemplate = `{
                 "ispos": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -36714,10 +37160,19 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "qrcode": {
                     "type": "string"
                 },
                 "qrcodeamount": {
+                    "type": "number"
+                },
+                "roundamount": {
                     "type": "number"
                 },
                 "salecode": {
@@ -36728,6 +37183,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -36741,6 +37220,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -36750,7 +37232,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -36766,6 +37257,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -37260,8 +37754,35 @@ const docTemplate = `{
         "models.StockAdjustment": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -37272,7 +37793,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -37281,6 +37808,15 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Detail"
                     }
                 },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -37302,6 +37838,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -37314,10 +37868,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -37329,6 +37895,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -37337,6 +37912,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -37350,6 +37949,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -37359,7 +37961,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -37376,14 +37987,44 @@ const docTemplate = `{
                 },
                 "vattype": {
                     "type": "integer"
+                },
+                "womancount": {
+                    "type": "integer"
                 }
             }
         },
         "models.StockBalance": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -37394,7 +38035,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -37402,6 +38049,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.StockBalanceDetail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -37424,6 +38080,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -37436,10 +38110,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -37451,6 +38137,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -37459,6 +38154,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -37472,6 +38191,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -37481,7 +38203,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -37497,6 +38228,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -37529,6 +38263,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "docrefdatetime": {
+                    "type": "string"
+                },
+                "extrajson": {
                     "type": "string"
                 },
                 "inquirytype": {
@@ -37583,6 +38320,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "shelfcode": {
+                    "type": "string"
+                },
+                "sku": {
                     "type": "string"
                 },
                 "standvalue": {
@@ -37653,8 +38393,35 @@ const docTemplate = `{
         "models.StockBalanceHeader": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -37665,8 +38432,23 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
+                },
+                "detaildiscountformula": {
+                    "type": "string"
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -37689,6 +38471,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -37701,10 +38501,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -37716,6 +38528,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -37724,6 +38545,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -37737,6 +38582,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -37746,7 +38594,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -37762,6 +38619,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -37777,8 +38637,35 @@ const docTemplate = `{
         "models.StockPickupProduct": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -37789,7 +38676,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -37797,6 +38690,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -37819,6 +38721,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -37831,10 +38751,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -37846,6 +38778,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -37854,6 +38795,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -37867,6 +38832,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -37876,7 +38844,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -37892,6 +38869,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -37899,8 +38879,35 @@ const docTemplate = `{
         "models.StockReceiveProduct": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -37911,7 +38918,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -37919,6 +38932,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -37941,6 +38963,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -37953,10 +38993,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -37968,6 +39020,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -37976,6 +39037,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -37989,6 +39074,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -37998,7 +39086,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -38014,6 +39111,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -38021,8 +39121,35 @@ const docTemplate = `{
         "models.StockReturnProduct": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -38033,7 +39160,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -38041,6 +39174,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -38063,6 +39205,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -38075,10 +39235,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -38090,6 +39262,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -38098,6 +39279,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -38111,6 +39316,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -38120,7 +39328,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -38136,6 +39353,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -38143,8 +39363,35 @@ const docTemplate = `{
         "models.StockTransfer": {
             "type": "object",
             "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "buffetcode": {
+                    "type": "boolean"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
                 "cashiercode": {
                     "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
                 },
                 "custcode": {
                     "type": "string"
@@ -38155,7 +39402,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "customertelephone": {
+                    "type": "string"
+                },
                 "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
                     "type": "string"
                 },
                 "details": {
@@ -38163,6 +39416,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Detail"
                     }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
                 },
                 "discountword": {
                     "type": "string"
@@ -38185,6 +39447,24 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
                 "guidref": {
                     "type": "string"
                 },
@@ -38197,10 +39477,22 @@ const docTemplate = `{
                 "ismanualamount": {
                     "type": "boolean"
                 },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
                 "membercode": {
                     "type": "string"
                 },
                 "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
                     "type": "number"
                 },
                 "paymentdetail": {
@@ -38212,6 +39504,15 @@ const docTemplate = `{
                 "posid": {
                     "type": "string"
                 },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -38220,6 +39521,30 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
                 },
                 "taxdocdate": {
                     "type": "string"
@@ -38233,6 +39558,9 @@ const docTemplate = `{
                 "totalamount": {
                     "type": "number"
                 },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -38242,7 +39570,16 @@ const docTemplate = `{
                 "totaldiscount": {
                     "type": "number"
                 },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
                 "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
                     "type": "number"
                 },
                 "totalvalue": {
@@ -38258,6 +39595,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
                     "type": "integer"
                 }
             }
@@ -38994,7 +40334,7 @@ const docTemplate = `{
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Location"
+                        "$ref": "#/definitions/models.Location"
                     }
                 },
                 "names": {
@@ -39159,6 +40499,38 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -39190,17 +40562,6 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -39316,7 +40677,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -39378,17 +40739,6 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -39458,7 +40808,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 }
             }
@@ -39609,13 +40959,34 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_shop_branch_models.Location": {
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
             "type": "object",
             "properties": {
-                "lat": {
+                "address": {
                     "type": "string"
                 },
-                "lng": {
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
                     "type": "string"
                 }
             }
@@ -39628,32 +40999,6 @@ const docTemplate = `{
                 },
                 "uuid": {
                     "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_warehouse_models.Location": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
-                    }
                 }
             }
         }
