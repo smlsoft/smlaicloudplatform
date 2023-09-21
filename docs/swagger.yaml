@@ -406,30 +406,14 @@ definitions:
     type: object
   models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
         type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-      languages:
-        items:
-          type: string
-        type: array
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -760,6 +744,27 @@ definitions:
       comment:
         type: string
     type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -942,12 +947,16 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.Detail:
     properties:
@@ -1260,7 +1269,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1289,7 +1298,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -3116,7 +3125,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3221,7 +3230,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3382,13 +3391,6 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      price:
-        type: number
-    type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
       price:
         type: number
     type: object
@@ -3637,6 +3639,8 @@ definitions:
         type: number
       sumcoupon:
         type: number
+      sumcredit:
+        type: number
       sumcreditcard:
         type: number
       summoneytransfer:
@@ -3797,6 +3801,8 @@ definitions:
       sumcheque:
         type: number
       sumcoupon:
+        type: number
+      sumcredit:
         type: number
       sumcreditcard:
         type: number
@@ -4202,6 +4208,8 @@ definitions:
         type: number
       sumcoupon:
         type: number
+      sumcredit:
+        type: number
       sumcreditcard:
         type: number
       summoneytransfer:
@@ -4384,6 +4392,8 @@ definitions:
       sumcheque:
         type: number
       sumcoupon:
+        type: number
+      sumcredit:
         type: number
       sumcreditcard:
         type: number
@@ -4869,6 +4879,8 @@ definitions:
         type: number
       sumcoupon:
         type: number
+      sumcredit:
+        type: number
       sumcreditcard:
         type: number
       summoneytransfer:
@@ -5029,6 +5041,8 @@ definitions:
       sumcheque:
         type: number
       sumcoupon:
+        type: number
+      sumcredit:
         type: number
       sumcreditcard:
         type: number
@@ -5290,6 +5304,8 @@ definitions:
         type: number
       sumcoupon:
         type: number
+      sumcredit:
+        type: number
       sumcreditcard:
         type: number
       summoneytransfer:
@@ -5456,6 +5472,8 @@ definitions:
         type: number
       sumcoupon:
         type: number
+      sumcredit:
+        type: number
       sumcreditcard:
         type: number
       summoneytransfer:
@@ -5616,6 +5634,8 @@ definitions:
       sumcheque:
         type: number
       sumcoupon:
+        type: number
+      sumcredit:
         type: number
       sumcreditcard:
         type: number
@@ -5778,6 +5798,8 @@ definitions:
         type: number
       sumcoupon:
         type: number
+      sumcredit:
+        type: number
       sumcreditcard:
         type: number
       summoneytransfer:
@@ -5938,6 +5960,8 @@ definitions:
       sumcheque:
         type: number
       sumcoupon:
+        type: number
+      sumcredit:
         type: number
       sumcreditcard:
         type: number
@@ -6603,27 +6627,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -6645,6 +6648,13 @@ definitions:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
@@ -6719,7 +6729,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -6765,6 +6775,13 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
       code:
@@ -6809,7 +6826,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
         type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
@@ -6910,27 +6927,6 @@ definitions:
     required:
     - code
     - names
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:

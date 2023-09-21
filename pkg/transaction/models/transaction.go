@@ -82,6 +82,7 @@ type TransactionHeader struct {
 	RoundAmount                     float64  `json:"roundamount" bson:"roundamount"`
 	TotalAmountAfterDiscount        float64  `json:"totalamountafterdiscount" bson:"totalamountafterdiscount"`
 	DetailTotalAmountBeforeDiscount float64  `json:"detailtotalamountbeforediscount" bson:"detailtotalamountbeforediscount"`
+	SumCredit                       float64  `json:"sumcredit" bson:"sumcredit"`
 }
 
 type Transaction struct {
