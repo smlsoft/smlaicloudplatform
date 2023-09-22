@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IProductCategoryRepository interface {
@@ -23,13 +24,14 @@ type IProductCategoryRepository interface {
 
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.ProductCategoryItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.ProductCategoryDoc, error)
-
 	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error)
 
 	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryDeleteActivity, error)
 	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryActivity, error)
+
+	UpdateCodeList(ctx context.Context, shopID string, codeXSort models.CodeXSort) error
 }
 
 type ProductCategoryRepository struct {
@@ -52,4 +54,28 @@ func NewProductCategoryRepository(pst microservice.IPersisterMongo) *ProductCate
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.ProductCategoryActivity, models.ProductCategoryDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo ProductCategoryRepository) UpdateCodeList(ctx context.Context, shopID string, codeXSort models.CodeXSort) error {
+
+	filters := bson.M{
+		"shopid":           shopID,
+		"codelist.barcode": codeXSort.Barcode,
+	}
+
+	doc := bson.M{
+		"$set": bson.M{
+			"codelist.$.code":      codeXSort.Code,
+			"codelist.$.names":     codeXSort.Names,
+			"codelist.$.unitcode":  codeXSort.UnitCode,
+			"codelist.$.unitnames": codeXSort.UnitNames,
+		},
+	}
+
+	return repo.pst.Update(
+		ctx,
+		models.ProductCategoryDoc{},
+		filters,
+		doc,
+	)
 }

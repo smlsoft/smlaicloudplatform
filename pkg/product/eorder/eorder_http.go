@@ -40,7 +40,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	clickHouseRepo := repositoryproduct.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repositoryproduct.NewProductBarcodeMessageQueueRepository(prod)
 
-	svcProduct := serviceproduct.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, masterSyncCacheRepo)
+	svcProduct := serviceproduct.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
 
 	return EOrderHttp{
 		ms:          ms,

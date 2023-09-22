@@ -11,6 +11,8 @@ import (
 	"smlcloudplatform/pkg/product/productbarcode/models"
 	"smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/productbarcode/services"
+	productcategory_repositories "smlcloudplatform/pkg/product/productcategory/repositories"
+	productcategory_services "smlcloudplatform/pkg/product/productcategory/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/requestfilter"
 	"strings"
@@ -34,7 +36,11 @@ func NewProductBarcodeHttp(ms *microservice.Microservice, cfg config.IConfig) Pr
 	clickHouseRepo := repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repositories.NewProductBarcodeMessageQueueRepository(prod)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, masterSyncCacheRepo)
+
+	productcategoryRepo := productcategory_repositories.NewProductCategoryRepository(pst)
+	productcategorySvc := productcategory_services.NewProductCategoryHttpService(productcategoryRepo, masterSyncCacheRepo)
+
+	svc := services.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, productcategorySvc, masterSyncCacheRepo)
 
 	return ProductBarcodeHttp{
 		ms:  ms,

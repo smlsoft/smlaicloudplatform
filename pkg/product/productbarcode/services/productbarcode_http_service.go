@@ -9,6 +9,8 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productbarcode/models"
 	"smlcloudplatform/pkg/product/productbarcode/repositories"
+	productcategory_models "smlcloudplatform/pkg/product/productcategory/models"
+	productcategory_services "smlcloudplatform/pkg/product/productcategory/services"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -49,11 +51,18 @@ type ProductBarcodeHttpService struct {
 	chRepo        repositories.IProductBarcodeClickhouseRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	mqRepo        repositories.IProductBarcodeMessageQueueRepository
+	categorySvc   productcategory_services.IProductCategoryHttpService
 	services.ActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity]
 	contextTimeout time.Duration
 }
 
-func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, mqRepo repositories.IProductBarcodeMessageQueueRepository, chRepo repositories.IProductBarcodeClickhouseRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
+func NewProductBarcodeHttpService(
+	repo repositories.IProductBarcodeRepository,
+	mqRepo repositories.IProductBarcodeMessageQueueRepository,
+	chRepo repositories.IProductBarcodeClickhouseRepository,
+	categorySvc productcategory_services.IProductCategoryHttpService,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *ProductBarcodeHttpService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
@@ -62,6 +71,7 @@ func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, m
 		chRepo:         chRepo,
 		syncCacheRepo:  syncCacheRepo,
 		mqRepo:         mqRepo,
+		categorySvc:    categorySvc,
 		contextTimeout: contextTimeout,
 	}
 	insSvc.ActivityService = services.NewActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity](repo)
@@ -202,6 +212,16 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	if err != nil {
 		return err
 	}
+
+	categoryBarcode := productcategory_models.CodeXSort{
+		Barcode:   docData.Barcode,
+		Code:      docData.ItemCode,
+		Names:     docData.Names,
+		UnitCode:  docData.ItemUnitCode,
+		UnitNames: docData.ItemUnitNames,
+	}
+
+	svc.categorySvc.UpdateBarcode(shopID, categoryBarcode)
 
 	svc.saveMasterSync(shopID)
 

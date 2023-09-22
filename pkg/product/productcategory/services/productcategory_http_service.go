@@ -30,6 +30,7 @@ type IProductCategoryHttpService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductCategory) error
 	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
 	XBarcodesSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
+	UpdateBarcode(shopID string, codeXSort models.CodeXSort) error
 
 	GetModuleName() string
 }
@@ -116,6 +117,14 @@ func (svc ProductCategoryHttpService) UpdateProductCategory(shopID string, guid 
 	svc.saveMasterSync(shopID)
 
 	return nil
+}
+
+func (svc ProductCategoryHttpService) UpdateBarcode(shopID string, codeXSort models.CodeXSort) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	return svc.repo.UpdateCodeList(ctx, shopID, codeXSort)
 }
 
 func (svc ProductCategoryHttpService) DeleteProductCategory(shopID string, guid string, authUsername string) error {
