@@ -39,6 +39,7 @@ type Setting struct {
 	TimeForSales             *[]PosSettingTimeForSale `json:"timeforsales" bson:"timeforsales"`
 	LogoUrl                  string                   `json:"logourl" bson:"logourl"`
 	IsUseCreadit             bool                     `json:"isusecreadit" bson:"isusecreadit"` // ขายเชื่อได้
+	BusinessType             int8                     `json:"businesstype" bson:"businesstype"` // ประเภทธุรกิจ
 }
 
 type PosSettingTimeForSale struct {
