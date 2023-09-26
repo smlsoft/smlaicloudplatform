@@ -27,6 +27,14 @@ type Pay struct {
 	Details                  *[]PayDetail              `json:"details" bson:"details"`
 	PaymentDetail            transmodels.PaymentDetail `json:"paymentdetail" bson:"paymentdetail"`
 	PaymentDetailRaw         string                    `json:"paymentdetailraw" bson:"paymentdetailraw"`
+
+	PayCashAmount    float64 `json:"paycashamount" bson:"paycashamount"`
+	SumQrCode        float64 `json:"sumqrcode" bson:"sumqrcode"`               // ชำระเงินโดย QR Code
+	SumCreditCard    float64 `json:"sumcreditcard" bson:"sumcreditcard"`       // ชำระเงินโดย Credit Card
+	SumMoneyTransfer float64 `json:"summoneytransfer" bson:"summoneytransfer"` // ชำระเงินโดยเงินโอน
+	SumCheque        float64 `json:"sumcheque" bson:"sumcheque"`               // ชำระเงินโดยเช็ค
+	SumCoupon        float64 `json:"sumcoupon" bson:"sumcoupon"`               // ชำระเงินโดย Coupon
+	SumCredit        float64 `json:"sumcredit" bson:"sumcredit"`
 }
 
 type PayDetail struct {
