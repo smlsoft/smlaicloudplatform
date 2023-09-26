@@ -26,6 +26,7 @@ type Paid struct {
 	TotalValue               float64                   `json:"totalvalue" bson:"totalvalue"`
 	Details                  *[]PaidDetail             `json:"details" bson:"details"`
 	PaymentDetail            transmodels.PaymentDetail `json:"paymentdetail" bson:"paymentdetail"`
+	PaymentDetailRaw         string                    `json:"paymentdetailraw" bson:"paymentdetailraw"`
 }
 
 type PaidDetail struct {
