@@ -32112,13 +32112,18 @@
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         `json:\"guidfixed\"`",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -34770,6 +34775,9 @@
                 "paymentdetailraw": {
                     "type": "string"
                 },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -34877,6 +34885,9 @@
                 },
                 "paymentdetailraw": {
                     "type": "string"
+                },
+                "roundamount": {
+                    "type": "number"
                 },
                 "salecode": {
                     "type": "string"

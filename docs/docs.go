@@ -32118,13 +32118,18 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -34776,6 +34781,9 @@ const docTemplate = `{
                 "paymentdetailraw": {
                     "type": "string"
                 },
+                "roundamount": {
+                    "type": "number"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -34883,6 +34891,9 @@ const docTemplate = `{
                 },
                 "paymentdetailraw": {
                     "type": "string"
+                },
+                "roundamount": {
+                    "type": "number"
                 },
                 "salecode": {
                     "type": "string"

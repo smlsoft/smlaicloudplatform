@@ -947,12 +947,16 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.Detail:
     properties:
@@ -2761,6 +2765,8 @@ definitions:
         $ref: '#/definitions/models.PaymentDetail'
       paymentdetailraw:
         type: string
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
@@ -2834,6 +2840,8 @@ definitions:
         $ref: '#/definitions/models.PaymentDetail'
       paymentdetailraw:
         type: string
+      roundamount:
+        type: number
       salecode:
         type: string
       salename:
