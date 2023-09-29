@@ -407,13 +407,25 @@ definitions:
   models.Branch:
     properties:
       code:
-        type: string
-      guidfixed:
-        type: string
+        type: integer
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+        uniqueItems: true
+      location:
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+      telephone:
+        maxLength: 100
+        type: string
+    required:
+    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -955,7 +967,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -1320,8 +1331,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2336,24 +2345,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.Location:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.LocationRequest:
     properties:
@@ -4577,6 +4568,9 @@ definitions:
         type: string
       mediaguid:
         type: string
+      paymenttype:
+        description: ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
+        type: integer
       qrcodes:
         items:
           additionalProperties: true
@@ -6568,7 +6562,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/models.Location'
+          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
         type: array
         uniqueItems: true
       names:
@@ -6970,12 +6964,37 @@ definitions:
     - code
     - names
     type: object
+  smlcloudplatform_pkg_shop_branch_models.Location:
+    properties:
+      lat:
+        type: string
+      lng:
+        type: string
+    type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
       os:
         type: string
       uuid:
         type: string
+    type: object
+  smlcloudplatform_pkg_warehouse_models.Location:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
 info:
   contact:

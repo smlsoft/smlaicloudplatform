@@ -40,6 +40,7 @@ type Setting struct {
 	LogoUrl                  string                   `json:"logourl" bson:"logourl"`
 	IsUseCreadit             bool                     `json:"isusecreadit" bson:"isusecreadit"` // ขายเชื่อได้
 	BusinessType             int8                     `json:"businesstype" bson:"businesstype"` // ประเภทธุรกิจ
+	PaymentType              int8                     `json:"paymenttype" bson:"paymenttype"`   // ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
 }
 
 type PosSettingTimeForSale struct {
