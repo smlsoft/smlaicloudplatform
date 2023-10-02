@@ -11486,7 +11486,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Setting"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Setting"
                         }
                     }
                 ],
@@ -11571,7 +11571,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Setting"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Setting"
                             }
                         }
                     }
@@ -11755,7 +11755,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Setting"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Setting"
                         }
                     }
                 ],
@@ -31324,18 +31324,29 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
-                    "type": "integer"
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
                 },
                 "departments": {
                     "type": "array",
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.Department"
                     }
                 },
-                "location": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -31344,10 +31355,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "telephone": {
-                    "type": "string",
-                    "maxLength": 100
                 }
             }
         },
@@ -31834,38 +31841,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -32134,17 +32109,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -32612,7 +32583,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -32656,7 +32627,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -32689,6 +32660,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -34165,6 +34139,32 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Location": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
+                }
+            }
+        },
         "models.LocationRequest": {
             "type": "object",
             "required": [
@@ -34637,6 +34637,40 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.OrderSettingBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.OrderSettingTimeForSale": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "to": {
+                    "type": "string"
                 }
             }
         },
@@ -35377,7 +35411,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -35531,7 +35565,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -35760,17 +35794,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -37382,138 +37405,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "models.Setting": {
-            "type": "object",
-            "required": [
-                "code"
-            ],
-            "properties": {
-                "activepin": {
-                    "type": "string"
-                },
-                "billfooter": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "billheader": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "branch": {
-                    "$ref": "#/definitions/models.PosSettingBranch"
-                },
-                "businesstype": {
-                    "description": "ประเภทธุรกิจ",
-                    "type": "integer"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "creditcards": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": true
-                    }
-                },
-                "devicenumber": {
-                    "type": "string"
-                },
-                "doccode": {
-                    "type": "string"
-                },
-                "docformatesalereturn": {
-                    "type": "string"
-                },
-                "docformatinv": {
-                    "type": "string"
-                },
-                "docformattaxinv": {
-                    "type": "string"
-                },
-                "employees": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.POSEmployee"
-                    }
-                },
-                "isejournal": {
-                    "type": "boolean"
-                },
-                "isusecreadit": {
-                    "description": "ขายเชื่อได้",
-                    "type": "boolean"
-                },
-                "isvatregister": {
-                    "type": "boolean"
-                },
-                "location": {
-                    "$ref": "#/definitions/models.PosSettingLocation"
-                },
-                "logourl": {
-                    "type": "string"
-                },
-                "mediaguid": {
-                    "type": "string"
-                },
-                "paymenttype": {
-                    "description": "ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน",
-                    "type": "integer"
-                },
-                "qrcodes": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": true
-                    }
-                },
-                "receiptform": {
-                    "type": "string"
-                },
-                "slips": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PosSettingSlip"
-                    }
-                },
-                "timeforsales": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PosSettingTimeForSale"
-                    }
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "transfers": {
-                    "description": "Book Bank Transfer เงินโอน",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": true
-                    }
-                },
-                "vatrate": {
-                    "type": "number"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "wallet": {
-                    "type": "string"
-                },
-                "warehouse": {
-                    "$ref": "#/definitions/models.PosSettingWarehouse"
                 }
             }
         },
@@ -40439,7 +40330,7 @@ const docTemplate = `{
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Location"
+                        "$ref": "#/definitions/models.Location"
                     }
                 },
                 "names": {
@@ -40604,6 +40495,218 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_order_setting_models.Setting": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "activepin": {
+                    "type": "string"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.OrderSettingBranch"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "devicenumber": {
+                    "type": "string"
+                },
+                "devicetype": {
+                    "description": "ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน",
+                    "type": "integer"
+                },
+                "doccode": {
+                    "type": "string"
+                },
+                "docformat": {
+                    "type": "string"
+                },
+                "logourl": {
+                    "type": "string"
+                },
+                "mediaguid": {
+                    "description": "Slips             *[]OrderSettingSlip       ` + "`" + `json:\"slips\" bson:\"slips\"` + "`" + `\nQRCodes           *[]map[string]interface{} ` + "`" + `json:\"qrcodes\" bson:\"qrcodes\"` + "`" + `\nBillHeader *[]models.NameX ` + "`" + `json:\"billheader\" bson:\"billheader\"` + "`" + `\nBillFooter        *[]models.NameX           ` + "`" + `json:\"billfooter\" bson:\"billfooter\"` + "`" + `",
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "description": "เลขโต๊ะ",
+                    "type": "string"
+                },
+                "timeforsales": {
+                    "description": "timezone.Timezone ` + "`" + `bson:\"inline\"` + "`" + `",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OrderSettingTimeForSale"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_pos_setting_models.Setting": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "activepin": {
+                    "type": "string"
+                },
+                "billfooter": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "billheader": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.PosSettingBranch"
+                },
+                "businesstype": {
+                    "description": "ประเภทธุรกิจ",
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "creditcards": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "devicenumber": {
+                    "type": "string"
+                },
+                "doccode": {
+                    "type": "string"
+                },
+                "docformatesalereturn": {
+                    "type": "string"
+                },
+                "docformatinv": {
+                    "type": "string"
+                },
+                "docformattaxinv": {
+                    "type": "string"
+                },
+                "employees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.POSEmployee"
+                    }
+                },
+                "isejournal": {
+                    "type": "boolean"
+                },
+                "isusecreadit": {
+                    "description": "ขายเชื่อได้",
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "$ref": "#/definitions/models.PosSettingLocation"
+                },
+                "logourl": {
+                    "type": "string"
+                },
+                "mediaguid": {
+                    "type": "string"
+                },
+                "paymenttype": {
+                    "description": "ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน",
+                    "type": "integer"
+                },
+                "qrcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "receiptform": {
+                    "type": "string"
+                },
+                "slips": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PosSettingSlip"
+                    }
+                },
+                "timeforsales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PosSettingTimeForSale"
+                    }
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "transfers": {
+                    "description": "Book Bank Transfer เงินโอน",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "wallet": {
+                    "type": "string"
+                },
+                "warehouse": {
+                    "$ref": "#/definitions/models.PosSettingWarehouse"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -40635,6 +40738,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -40750,7 +40864,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -40812,6 +40926,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -40881,7 +41006,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
@@ -41032,13 +41157,34 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_shop_branch_models.Location": {
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
             "type": "object",
             "properties": {
-                "lat": {
+                "address": {
                     "type": "string"
                 },
-                "lng": {
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
                     "type": "string"
                 }
             }
@@ -41051,32 +41197,6 @@ const docTemplate = `{
                 },
                 "uuid": {
                     "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_warehouse_models.Location": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
-                    }
                 }
             }
         }
