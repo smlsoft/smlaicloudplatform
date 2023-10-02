@@ -59,7 +59,7 @@ func (h SettingHttp) RegisterHttp() {
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting [post]
+// @Router /order/setting [post]
 func (h SettingHttp) CreateSetting(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -101,7 +101,7 @@ func (h SettingHttp) CreateSetting(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting/{id} [put]
+// @Router /order/setting/{id} [put]
 func (h SettingHttp) UpdateSetting(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -146,7 +146,7 @@ func (h SettingHttp) UpdateSetting(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting/{id} [delete]
+// @Router /order/setting/{id} [delete]
 func (h SettingHttp) DeleteSetting(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -177,7 +177,7 @@ func (h SettingHttp) DeleteSetting(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting [delete]
+// @Router /order/setting [delete]
 func (h SettingHttp) DeleteSettingByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -215,7 +215,7 @@ func (h SettingHttp) DeleteSettingByGUIDs(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting/{id} [get]
+// @Router /order/setting/{id} [get]
 func (h SettingHttp) InfoSetting(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -246,7 +246,7 @@ func (h SettingHttp) InfoSetting(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting/code/{code} [get]
+// @Router /order/setting/code/{code} [get]
 func (h SettingHttp) InfoSettingByCode(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -277,7 +277,7 @@ func (h SettingHttp) InfoSettingByCode(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting [get]
+// @Router /order/setting [get]
 func (h SettingHttp) SearchSettingPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -310,7 +310,7 @@ func (h SettingHttp) SearchSettingPage(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting/list [get]
+// @Router /order/setting/list [get]
 func (h SettingHttp) SearchSettingStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -342,7 +342,7 @@ func (h SettingHttp) SearchSettingStep(ctx microservice.IContext) error {
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /pos/setting/bulk [post]
+// @Router /order/setting/bulk [post]
 func (h SettingHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
