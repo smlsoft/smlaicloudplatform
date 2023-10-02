@@ -8,7 +8,7 @@ import (
 
 const settingCollectionName = "posSettings"
 
-type Setting struct {
+type OrderSetting struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string             `json:"code" bson:"code" validate:"required"`
 	DocCode                  string             `json:"doccode" bson:"doccode"`
@@ -17,7 +17,7 @@ type Setting struct {
 	Branch                   OrderSettingBranch `json:"branch" bson:"branch"`
 	ActivePin                string             `json:"activepin" bson:"activepin"`
 	// Slips             *[]OrderSettingSlip       `json:"slips" bson:"slips"`
-	// QRCodes           *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
+	QRCodes *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
 	// BillHeader *[]models.NameX `json:"billheader" bson:"billheader"`
 	// BillFooter        *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	MediaGUID string `json:"mediaguid" bson:"mediaguid"`
@@ -69,7 +69,7 @@ type OrderSettingLocation struct {
 
 type SettingInfo struct {
 	models.DocIdentity `bson:"inline"`
-	Setting            `bson:"inline"`
+	OrderSetting       `bson:"inline"`
 }
 
 func (SettingInfo) CollectionName() string {

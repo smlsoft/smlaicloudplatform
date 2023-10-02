@@ -51,9 +51,9 @@ func (h SettingHttp) RegisterHttp() {
 	h.ms.DELETE("/order/setting", h.DeleteSettingByGUIDs)
 }
 
-// Create Setting godoc
-// @Description Create Setting
-// @Tags		Setting
+// Create Order Setting godoc
+// @Description Order Setting
+// @Tags		OrderSetting
 // @Param		Setting  body      models.Setting  true  "Setting"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
@@ -65,7 +65,7 @@ func (h SettingHttp) CreateSetting(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.Setting{}
+	docReq := &models.OrderSetting{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -92,9 +92,9 @@ func (h SettingHttp) CreateSetting(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Setting godoc
-// @Description Update Setting
-// @Tags		Setting
+// Update Order Setting godoc
+// @Description Update Order Setting
+// @Tags		OrderSetting
 // @Param		id  path      string  true  "Setting ID"
 // @Param		Setting  body      models.Setting  true  "Setting"
 // @Accept 		json
@@ -110,7 +110,7 @@ func (h SettingHttp) UpdateSetting(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.Setting{}
+	docReq := &models.OrderSetting{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -138,9 +138,9 @@ func (h SettingHttp) UpdateSetting(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Setting godoc
-// @Description Delete Setting
-// @Tags		Setting
+// Delete Order Setting godoc
+// @Description Delete Order Setting
+// @Tags		OrderSetting
 // @Param		id  path      string  true  "Setting ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
@@ -169,8 +169,8 @@ func (h SettingHttp) DeleteSetting(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Setting godoc
-// @Description Delete Setting
+// Delete Order Setting godoc
+// @Description Delete Order Setting
 // @Tags		Setting
 // @Param		Setting  body      []string  true  "Setting GUIDs"
 // @Accept 		json
@@ -207,9 +207,9 @@ func (h SettingHttp) DeleteSettingByGUIDs(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Setting godoc
-// @Description get Setting info by guidfixed
-// @Tags		Setting
+// Get Order Setting godoc
+// @Description get Order Setting info by guidfixed
+// @Tags		OrderSetting
 // @Param		id  path      string  true  "Setting guidfixed"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
@@ -238,9 +238,9 @@ func (h SettingHttp) InfoSetting(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Setting By Code godoc
+// Get Order Setting By Code godoc
 // @Description get Setting info by Code
-// @Tags		Setting
+// @Tags		OrderSetting
 // @Param		code  path      string  true  "Setting Code"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
@@ -267,9 +267,9 @@ func (h SettingHttp) InfoSettingByCode(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Setting step godoc
+// List Order Setting step godoc
 // @Description get list step
-// @Tags		Setting
+// @Tags		OrderSetting
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -299,9 +299,9 @@ func (h SettingHttp) SearchSettingPage(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Setting godoc
+// List Order Setting godoc
 // @Description search limit offset
-// @Tags		Setting
+// @Tags		OrderSetting
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -334,9 +334,9 @@ func (h SettingHttp) SearchSettingStep(ctx microservice.IContext) error {
 	return nil
 }
 
-// Create Setting Bulk godoc
-// @Description Create Setting
-// @Tags		Setting
+// Create Order Setting Bulk godoc
+// @Description Create Order Setting
+// @Tags		OrderSetting
 // @Param		Setting  body      []models.Setting  true  "Setting"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
@@ -351,7 +351,7 @@ func (h SettingHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.Setting{}
+	dataReq := []models.OrderSetting{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {

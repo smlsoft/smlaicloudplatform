@@ -406,30 +406,14 @@ definitions:
     type: object
   models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
         type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-      languages:
-        items:
-          type: string
-        type: array
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -760,6 +744,27 @@ definitions:
       comment:
         type: string
     type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -950,6 +955,7 @@ definitions:
         type: array
         uniqueItems: true
     required:
+    - code
     - names
     type: object
   models.Detail:
@@ -1263,7 +1269,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1292,7 +1298,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1314,6 +1320,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2671,28 +2679,6 @@ definitions:
     required:
     - name1
     - names
-    type: object
-  models.OrderSettingBranch:
-    properties:
-      code:
-        type: string
-      guidfixed:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  models.OrderSettingTimeForSale:
-    properties:
-      from:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      to:
-        type: string
     type: object
   models.OrderType:
     properties:
@@ -4532,6 +4518,96 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  models.Setting:
+    properties:
+      activepin:
+        type: string
+      billfooter:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      billheader:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      branch:
+        $ref: '#/definitions/models.PosSettingBranch'
+      businesstype:
+        description: ประเภทธุรกิจ
+        type: integer
+      code:
+        type: string
+      creditcards:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+      devicenumber:
+        type: string
+      doccode:
+        type: string
+      docformatesalereturn:
+        type: string
+      docformatinv:
+        type: string
+      docformattaxinv:
+        type: string
+      employees:
+        items:
+          $ref: '#/definitions/models.POSEmployee'
+        type: array
+      isejournal:
+        type: boolean
+      isusecreadit:
+        description: ขายเชื่อได้
+        type: boolean
+      isvatregister:
+        type: boolean
+      location:
+        $ref: '#/definitions/models.PosSettingLocation'
+      logourl:
+        type: string
+      mediaguid:
+        type: string
+      paymenttype:
+        description: ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
+        type: integer
+      qrcodes:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+      receiptform:
+        type: string
+      slips:
+        items:
+          $ref: '#/definitions/models.PosSettingSlip'
+        type: array
+      timeforsales:
+        items:
+          $ref: '#/definitions/models.PosSettingTimeForSale'
+        type: array
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      transfers:
+        description: Book Bank Transfer เงินโอน
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+      vatrate:
+        type: number
+      vattype:
+        type: integer
+      wallet:
+        type: string
+      warehouse:
+        $ref: '#/definitions/models.PosSettingWarehouse'
+    required:
+    - code
     type: object
   models.Shelf:
     properties:
@@ -6603,154 +6679,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_order_setting_models.Setting:
-    properties:
-      activepin:
-        type: string
-      branch:
-        $ref: '#/definitions/models.OrderSettingBranch'
-      code:
-        type: string
-      devicenumber:
-        type: string
-      devicetype:
-        description: ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน
-        type: integer
-      doccode:
-        type: string
-      docformat:
-        type: string
-      logourl:
-        type: string
-      mediaguid:
-        description: |-
-          Slips             *[]OrderSettingSlip       `json:"slips" bson:"slips"`
-          QRCodes           *[]map[string]interface{} `json:"qrcodes" bson:"qrcodes"`
-          BillHeader *[]models.NameX `json:"billheader" bson:"billheader"`
-          BillFooter        *[]models.NameX           `json:"billfooter" bson:"billfooter"`
-        type: string
-      tablenumber:
-        description: เลขโต๊ะ
-        type: string
-      timeforsales:
-        description: timezone.Timezone `bson:"inline"`
-        items:
-          $ref: '#/definitions/models.OrderSettingTimeForSale'
-        type: array
-    required:
-    - code
-    type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
-  smlcloudplatform_pkg_pos_setting_models.Setting:
-    properties:
-      activepin:
-        type: string
-      billfooter:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      billheader:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      branch:
-        $ref: '#/definitions/models.PosSettingBranch'
-      businesstype:
-        description: ประเภทธุรกิจ
-        type: integer
-      code:
-        type: string
-      creditcards:
-        items:
-          additionalProperties: true
-          type: object
-        type: array
-      devicenumber:
-        type: string
-      doccode:
-        type: string
-      docformatesalereturn:
-        type: string
-      docformatinv:
-        type: string
-      docformattaxinv:
-        type: string
-      employees:
-        items:
-          $ref: '#/definitions/models.POSEmployee'
-        type: array
-      isejournal:
-        type: boolean
-      isusecreadit:
-        description: ขายเชื่อได้
-        type: boolean
-      isvatregister:
-        type: boolean
-      location:
-        $ref: '#/definitions/models.PosSettingLocation'
-      logourl:
-        type: string
-      mediaguid:
-        type: string
-      paymenttype:
-        description: ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
-        type: integer
-      qrcodes:
-        items:
-          additionalProperties: true
-          type: object
-        type: array
-      receiptform:
-        type: string
-      slips:
-        items:
-          $ref: '#/definitions/models.PosSettingSlip'
-        type: array
-      timeforsales:
-        items:
-          $ref: '#/definitions/models.PosSettingTimeForSale'
-        type: array
-      timezonelabel:
-        type: string
-      timezoneoffset:
-        type: string
-      transfers:
-        description: Book Bank Transfer เงินโอน
-        items:
-          additionalProperties: true
-          type: object
-        type: array
-      vatrate:
-        type: number
-      vattype:
-        type: integer
-      wallet:
-        type: string
-      warehouse:
-        $ref: '#/definitions/models.PosSettingWarehouse'
-    required:
-    - code
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -7051,27 +6979,6 @@ definitions:
     required:
     - code
     - names
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -12352,7 +12259,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Delete Setting
+      description: Delete Order Setting
       parameters:
       - description: Setting GUIDs
         in: body
@@ -12406,18 +12313,18 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
     post:
       consumes:
       - application/json
-      description: Create Setting
+      description: Order Setting
       parameters:
       - description: Setting
         in: body
         name: Setting
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_order_setting_models.Setting'
+          $ref: '#/definitions/models.Setting'
       responses:
         "201":
           description: Created
@@ -12430,12 +12337,12 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
   /order/setting/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete Setting
+      description: Delete Order Setting
       parameters:
       - description: Setting ID
         in: path
@@ -12454,11 +12361,11 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
     get:
       consumes:
       - application/json
-      description: get Setting info by guidfixed
+      description: get Order Setting info by guidfixed
       parameters:
       - description: Setting guidfixed
         in: path
@@ -12477,11 +12384,11 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
     put:
       consumes:
       - application/json
-      description: Update Setting
+      description: Update Order Setting
       parameters:
       - description: Setting ID
         in: path
@@ -12493,7 +12400,7 @@ paths:
         name: Setting
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_order_setting_models.Setting'
+          $ref: '#/definitions/models.Setting'
       responses:
         "201":
           description: Created
@@ -12506,12 +12413,12 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
   /order/setting/bulk:
     post:
       consumes:
       - application/json
-      description: Create Setting
+      description: Create Order Setting
       parameters:
       - description: Setting
         in: body
@@ -12519,7 +12426,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_order_setting_models.Setting'
+            $ref: '#/definitions/models.Setting'
           type: array
       responses:
         "201":
@@ -12533,7 +12440,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
   /order/setting/code/{code}:
     get:
       consumes:
@@ -12557,7 +12464,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
   /order/setting/list:
     get:
       consumes:
@@ -12594,7 +12501,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Setting
+      - OrderSetting
   /organization/branch:
     delete:
       consumes:
@@ -14509,7 +14416,7 @@ paths:
         name: Setting
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Setting'
+          $ref: '#/definitions/models.Setting'
       responses:
         "201":
           description: Created
@@ -14585,7 +14492,7 @@ paths:
         name: Setting
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Setting'
+          $ref: '#/definitions/models.Setting'
       responses:
         "201":
           description: Created
@@ -14611,7 +14518,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Setting'
+            $ref: '#/definitions/models.Setting'
           type: array
       responses:
         "201":

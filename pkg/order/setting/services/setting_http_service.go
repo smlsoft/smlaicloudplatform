@@ -19,15 +19,15 @@ import (
 )
 
 type ISettingHttpService interface {
-	CreateSetting(shopID string, authUsername string, doc models.Setting) (string, error)
-	UpdateSetting(shopID string, guid string, authUsername string, doc models.Setting) error
+	CreateSetting(shopID string, authUsername string, doc models.OrderSetting) (string, error)
+	UpdateSetting(shopID string, guid string, authUsername string, doc models.OrderSetting) error
 	DeleteSetting(shopID string, guid string, authUsername string) error
 	DeleteSettingByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSetting(shopID string, guid string) (models.SettingInfo, error)
 	InfoSettingByCode(shopID string, code string) (models.SettingInfo, error)
 	SearchSetting(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SettingInfo, mongopagination.PaginationData, error)
 	SearchSettingStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SettingInfo, int, error)
-	SaveInBatch(shopID string, authUsername string, dataList []models.Setting) (common.BulkImport, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.OrderSetting) (common.BulkImport, error)
 
 	GetModuleName() string
 }
@@ -58,7 +58,7 @@ func (svc SettingHttpService) getContextTimeout() (context.Context, context.Canc
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc SettingHttpService) CreateSetting(shopID string, authUsername string, doc models.Setting) (string, error) {
+func (svc SettingHttpService) CreateSetting(shopID string, authUsername string, doc models.OrderSetting) (string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -88,7 +88,7 @@ func (svc SettingHttpService) CreateSetting(shopID string, authUsername string, 
 	docData := models.SettingDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.Setting = doc
+	docData.OrderSetting = doc
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -104,7 +104,7 @@ func (svc SettingHttpService) CreateSetting(shopID string, authUsername string, 
 	return newGuidFixed, nil
 }
 
-func (svc SettingHttpService) UpdateSetting(shopID string, guid string, authUsername string, doc models.Setting) error {
+func (svc SettingHttpService) UpdateSetting(shopID string, guid string, authUsername string, doc models.OrderSetting) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -119,7 +119,7 @@ func (svc SettingHttpService) UpdateSetting(shopID string, guid string, authUser
 		return errors.New("document not found")
 	}
 
-	findDoc.Setting = doc
+	findDoc.OrderSetting = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -259,12 +259,12 @@ func (svc SettingHttpService) SearchSettingStep(shopID string, langCode string, 
 	return docList, total, nil
 }
 
-func (svc SettingHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Setting) (common.BulkImport, error) {
+func (svc SettingHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.OrderSetting) (common.BulkImport, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.Setting](dataList, svc.getDocIDKey)
+	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.OrderSetting](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
@@ -282,20 +282,20 @@ func (svc SettingHttpService) SaveInBatch(shopID string, authUsername string, da
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Setting, models.SettingDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.OrderSetting, models.SettingDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
 		payloadList,
 		svc.getDocIDKey,
-		func(shopID string, authUsername string, doc models.Setting) models.SettingDoc {
+		func(shopID string, authUsername string, doc models.OrderSetting) models.SettingDoc {
 			newGuid := utils.NewGUID()
 
 			dataDoc := models.SettingDoc{}
 
 			dataDoc.GuidFixed = newGuid
 			dataDoc.ShopID = shopID
-			dataDoc.Setting = doc
+			dataDoc.OrderSetting = doc
 
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
@@ -304,7 +304,7 @@ func (svc SettingHttpService) SaveInBatch(shopID string, authUsername string, da
 		},
 	)
 
-	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.Setting, models.SettingDoc](
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.OrderSetting, models.SettingDoc](
 		shopID,
 		authUsername,
 		duplicateDataList,
@@ -315,9 +315,9 @@ func (svc SettingHttpService) SaveInBatch(shopID string, authUsername string, da
 		func(doc models.SettingDoc) bool {
 			return doc.Code != ""
 		},
-		func(shopID string, authUsername string, data models.Setting, doc models.SettingDoc) error {
+		func(shopID string, authUsername string, data models.OrderSetting, doc models.SettingDoc) error {
 
-			doc.Setting = data
+			doc.OrderSetting = data
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
@@ -370,7 +370,7 @@ func (svc SettingHttpService) SaveInBatch(shopID string, authUsername string, da
 	}, nil
 }
 
-func (svc SettingHttpService) getDocIDKey(doc models.Setting) string {
+func (svc SettingHttpService) getDocIDKey(doc models.OrderSetting) string {
 	return doc.Code
 }
 
