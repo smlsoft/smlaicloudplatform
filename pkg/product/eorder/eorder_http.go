@@ -7,12 +7,15 @@ import (
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/product/eorder/services"
 	repositorycategory "smlcloudplatform/pkg/product/productcategory/repositories"
 	servicecategory "smlcloudplatform/pkg/product/productcategory/services"
 	"smlcloudplatform/pkg/utils/requestfilter"
 
 	repositoryproduct "smlcloudplatform/pkg/product/productbarcode/repositories"
 	serviceproduct "smlcloudplatform/pkg/product/productbarcode/services"
+	"smlcloudplatform/pkg/restaurant/table"
+	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -23,6 +26,7 @@ type EOrderHttp struct {
 	cfg         config.IConfig
 	svcCategory servicecategory.IProductCategoryHttpService
 	svcProduct  serviceproduct.IProductBarcodeHttpService
+	svcEOrder   services.EOrderService
 }
 
 func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp {
@@ -42,11 +46,17 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 
 	svcProduct := serviceproduct.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
 
+	repoShop := shop.NewShopRepository(pst)
+	repoTable := table.NewTableRepository(pst)
+
+	svcEOrder := services.NewEOrderService(repoShop, repoTable)
+
 	return EOrderHttp{
 		ms:          ms,
 		cfg:         cfg,
 		svcCategory: svcCategory,
 		svcProduct:  svcProduct,
+		svcEOrder:   svcEOrder,
 	}
 }
 
@@ -55,6 +65,7 @@ func (h EOrderHttp) RegisterHttp() {
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
 	h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
 	h.ms.GET("/e-order/product-barcode", h.SearchProductBarcodePage)
+	h.ms.GET("/e-order/shop-info", h.ShopInfo)
 
 }
 
@@ -180,6 +191,37 @@ func (h EOrderHttp) GetProductBarcodeByBarcodes(ctx microservice.IContext) error
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    docList,
+	})
+	return nil
+}
+
+// Get Shop Info
+// @Description Get Shop Info
+// @Tags		E-Order
+// @Param		shopid		query	string		false  "Shop ID"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /e-order/shop-info [get]
+func (h EOrderHttp) ShopInfo(ctx microservice.IContext) error {
+	shopID := ctx.QueryParam("shopid")
+
+	if len(shopID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
+		return nil
+	}
+
+	data, err := h.svcEOrder.GetShopInfo(shopID)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    data,
 	})
 	return nil
 }
