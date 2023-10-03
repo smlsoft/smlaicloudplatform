@@ -65,7 +65,7 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport [post]
+// @Router /stockbalanceimport/task [post]
 func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
