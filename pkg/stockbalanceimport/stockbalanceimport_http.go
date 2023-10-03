@@ -53,8 +53,8 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 	h.ms.POST("/stockbalanceimport/task", h.CreateStockBalanceImport)
 	h.ms.GET("/stockbalanceimport/task/:id", h.GetStockBalanceImportMeta)
 	h.ms.POST("/stockbalanceimport/task/:id", h.SaveTaskComplete)
-	h.ms.POST("/stockbalanceimport/task/part/:id", h.SaveStockBalanceImportPart)
-	h.ms.GET("/stockbalanceimport/task/part/:id", h.GetStockBalanceImportPart)
+	h.ms.PUT("/stockbalanceimport/task/part/:part-id", h.SaveStockBalanceImportPart)
+	h.ms.GET("/stockbalanceimport/task/part/:part-id", h.GetStockBalanceImportPart)
 }
 
 // Create StockBalanceImport godoc
@@ -106,11 +106,11 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/task/part/{id} [get]
+// @Router /stockbalanceimport/task/part/{part-id} [get]
 func (h StockBalanceImportHttp) GetStockBalanceImportPart(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
-	cacheID := ctx.Param("id")
+	cacheID := ctx.Param("part-id")
 
 	result, err := h.svc.GetTaskPart(shopID, cacheID)
 
@@ -162,11 +162,11 @@ func (h StockBalanceImportHttp) GetStockBalanceImportMeta(ctx microservice.ICont
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/task/part/{id} [post]
+// @Router /stockbalanceimport/task/part/{part-id} [put]
 func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
-	cacheID := ctx.Param("id")
+	cacheID := ctx.Param("part-id")
 
 	input := ctx.ReadInput()
 

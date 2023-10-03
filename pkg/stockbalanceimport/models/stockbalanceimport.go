@@ -4,6 +4,7 @@ import stockbalance_models "smlcloudplatform/pkg/transaction/stockbalance/models
 
 type StockBalanceImportTaskRequest struct {
 	TotalItem int `json:"totalitem"`
+	PartSize  int `json:"partsize"`
 }
 
 type StockBalanceImportHeaderRequest struct {
@@ -12,7 +13,7 @@ type StockBalanceImportHeaderRequest struct {
 
 type StockBalanceImportTask struct {
 	TaskID    string `json:"taskid"`
-	ChunkSize int    `json:"chunksize"`
+	PartSize  int    `json:"chunksize"`
 	TotalItem int    `json:"totalitem"`
 	// Header    stockbalance_models.StockBalanceHeader `json:"header"`
 	Parts []StockBalanceImportPart `json:"parts"`

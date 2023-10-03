@@ -318,8 +318,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -335,14 +335,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -1339,8 +1332,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -1463,8 +1454,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1482,8 +1473,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1499,11 +1488,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1612,8 +1596,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1631,8 +1615,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1648,11 +1630,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1811,8 +1788,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1830,8 +1807,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1847,11 +1822,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -3193,7 +3163,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3298,7 +3268,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -5434,6 +5404,8 @@ definitions:
     type: object
   models.StockBalanceImportTaskRequest:
     properties:
+      partsize:
+        type: integer
       totalitem:
         type: integer
     type: object
@@ -6704,20 +6676,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_product_inventory_models.ProductPrice:
-    properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -6739,6 +6697,13 @@ definitions:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
@@ -6813,7 +6778,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -21128,7 +21093,7 @@ paths:
       - AccessToken: []
       tags:
       - StockBalanceImport
-  /stockbalanceimport/task/part/{id}:
+  /stockbalanceimport/task/part/{part-id}:
     get:
       consumes:
       - application/json
@@ -21152,7 +21117,7 @@ paths:
       - AccessToken: []
       tags:
       - StockBalanceImport
-    post:
+    put:
       consumes:
       - application/json
       description: Create StockBalanceImport

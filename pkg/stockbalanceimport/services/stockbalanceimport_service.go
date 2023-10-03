@@ -19,7 +19,7 @@ type IStockBalanceImportService interface {
 }
 
 type StockBalanceImportService struct {
-	chunkSize           int
+	deafultPartSize     int
 	sizeID              int
 	cacheExpire         time.Duration
 	cacheRepo           repositories.IStockBalanceImportCacheRepository
@@ -33,7 +33,7 @@ func NewStockBalanceImportService(
 	GenerateID func(int) string,
 ) *StockBalanceImportService {
 	return &StockBalanceImportService{
-		chunkSize:           500,
+		deafultPartSize:     100,
 		sizeID:              12,
 		cacheExpire:         time.Minute * 60,
 		cacheRepo:           cacheRepo,
@@ -53,8 +53,14 @@ func (svc *StockBalanceImportService) CreateTask(shopID string, req models.Stock
 	// result.Header = req.Header
 	result.Parts = []models.StockBalanceImportPart{}
 
-	totalPart := math.Ceil(float64(req.TotalItem) / float64(svc.chunkSize))
-	result.ChunkSize = svc.chunkSize
+	tempPartSize := req.PartSize
+
+	if tempPartSize == 0 {
+		tempPartSize = svc.deafultPartSize
+	}
+
+	totalPart := math.Ceil(float64(req.TotalItem) / float64(tempPartSize))
+	result.PartSize = tempPartSize
 
 	for i := 0; i < int(totalPart); i++ {
 		partNumber := i + 1
