@@ -54,7 +54,7 @@ func (h SettingHttp) RegisterHttp() {
 // Create Order Setting godoc
 // @Description Order Setting
 // @Tags		OrderSetting
-// @Param		Setting  body      models.Setting  true  "Setting"
+// @Param		Setting  body      models.OrderSetting  true  "Setting"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -96,7 +96,7 @@ func (h SettingHttp) CreateSetting(ctx microservice.IContext) error {
 // @Description Update Order Setting
 // @Tags		OrderSetting
 // @Param		id  path      string  true  "Setting ID"
-// @Param		Setting  body      models.Setting  true  "Setting"
+// @Param		Setting  body      models.OrderSetting  true  "Setting"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed

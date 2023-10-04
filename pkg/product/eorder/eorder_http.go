@@ -12,6 +12,8 @@ import (
 	servicecategory "smlcloudplatform/pkg/product/productcategory/services"
 	"smlcloudplatform/pkg/utils/requestfilter"
 
+	repositoryorder "smlcloudplatform/pkg/order/setting/repositories"
+	repo_media "smlcloudplatform/pkg/pos/media/repositories"
 	repositoryproduct "smlcloudplatform/pkg/product/productbarcode/repositories"
 	serviceproduct "smlcloudplatform/pkg/product/productbarcode/services"
 	"smlcloudplatform/pkg/restaurant/table"
@@ -48,8 +50,10 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 
 	repoShop := shop.NewShopRepository(pst)
 	repoTable := table.NewTableRepository(pst)
+	repoOrder := repositoryorder.NewSettingRepository(pst)
+	repoMedia := repo_media.NewMediaRepository(pst)
 
-	svcEOrder := services.NewEOrderService(repoShop, repoTable)
+	svcEOrder := services.NewEOrderService(repoShop, repoTable, repoOrder, repoMedia)
 
 	return EOrderHttp{
 		ms:          ms,
@@ -199,6 +203,7 @@ func (h EOrderHttp) GetProductBarcodeByBarcodes(ctx microservice.IContext) error
 // @Description Get Shop Info
 // @Tags		E-Order
 // @Param		shopid		query	string		false  "Shop ID"
+// @Param		order-station		query	string		false  "Order station code"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -206,13 +211,14 @@ func (h EOrderHttp) GetProductBarcodeByBarcodes(ctx microservice.IContext) error
 // @Router /e-order/shop-info [get]
 func (h EOrderHttp) ShopInfo(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
+	orderStationCode := ctx.QueryParam("order-station")
 
 	if len(shopID) == 0 {
 		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
 		return nil
 	}
 
-	data, err := h.svcEOrder.GetShopInfo(shopID)
+	data, err := h.svcEOrder.GetShopInfo(shopID, orderStationCode)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

@@ -4115,6 +4115,12 @@ const docTemplate = `{
                         "description": "Shop ID",
                         "name": "shopid",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order station code",
+                        "name": "order-station",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8559,7 +8565,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Setting"
+                            "$ref": "#/definitions/models.OrderSetting"
                         }
                     }
                 ],
@@ -8828,7 +8834,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Setting"
+                            "$ref": "#/definitions/models.OrderSetting"
                         }
                     }
                 ],
@@ -31635,8 +31641,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "name1": {
                     "type": "string",
@@ -31658,17 +31664,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -31769,15 +31765,38 @@ const docTemplate = `{
         },
         "models.Branch": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -32267,38 +32286,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -32567,18 +32554,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "code",
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -33046,7 +33028,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -33090,7 +33072,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -33123,6 +33105,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -33304,8 +33289,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -33330,9 +33315,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -33354,13 +33336,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -33513,8 +33488,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -33539,9 +33514,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -33563,13 +33535,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -33799,8 +33764,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -33825,9 +33790,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -33849,13 +33811,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -35130,6 +35085,97 @@ const docTemplate = `{
                 }
             }
         },
+        "models.OrderSetting": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "activepin": {
+                    "type": "string"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.OrderSettingBranch"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "devicenumber": {
+                    "type": "string"
+                },
+                "devicetype": {
+                    "description": "ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน",
+                    "type": "integer"
+                },
+                "docformat": {
+                    "type": "string"
+                },
+                "isposactive": {
+                    "description": "ใช้งาน POS",
+                    "type": "boolean"
+                },
+                "logourl": {
+                    "type": "string"
+                },
+                "mediaguid": {
+                    "description": "BillHeader *[]models.NameX ` + "`" + `json:\"billheader\" bson:\"billheader\"` + "`" + `\nBillFooter        *[]models.NameX           ` + "`" + `json:\"billfooter\" bson:\"billfooter\"` + "`" + `",
+                    "type": "string"
+                },
+                "qrcodes": {
+                    "description": "Slips             *[]OrderSettingSlip       ` + "`" + `json:\"slips\" bson:\"slips\"` + "`" + `",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "tablenumber": {
+                    "description": "เลขโต๊ะ",
+                    "type": "string"
+                },
+                "timeforsales": {
+                    "description": "timezone.Timezone ` + "`" + `bson:\"inline\"` + "`" + `",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OrderSettingTimeForSale"
+                    }
+                }
+            }
+        },
+        "models.OrderSettingBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.OrderSettingTimeForSale": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
         "models.OrderType": {
             "type": "object",
             "required": [
@@ -35867,7 +35913,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -36021,7 +36067,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -36250,6 +36296,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -41090,24 +41147,35 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_product_inventory_models.ProductPrice": {
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
             "type": "object",
             "properties": {
-                "memberprice": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
                     "type": "number"
                 },
-                "normalprice": {
+                "longitude": {
                     "type": "number"
                 },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
+                "phonenumber": {
+                    "type": "string"
                 },
-                "pricerangemaxmax": {
-                    "type": "number"
+                "provincecode": {
+                    "type": "string"
                 },
-                "pricerangemin": {
-                    "type": "number"
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },
@@ -41257,7 +41325,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -41319,17 +41387,6 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -41399,7 +41456,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 }
             }
@@ -41547,6 +41604,38 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },

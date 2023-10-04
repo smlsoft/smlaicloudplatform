@@ -73,16 +73,6 @@ func (svc SettingHttpService) CreateSetting(shopID string, authUsername string, 
 		return "", errors.New("code is exists")
 	}
 
-	findDocDocCode, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "doccode", doc.DocCode)
-
-	if err != nil {
-		return "", err
-	}
-
-	if len(findDocDocCode.GuidFixed) > 0 {
-		return "", errors.New("doc code is exists")
-	}
-
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.SettingDoc{}
