@@ -14,6 +14,8 @@ import (
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
+	salechannel_models "smlcloudplatform/pkg/channel/salechannel/models"
+
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -83,6 +85,8 @@ func (svc SettingHttpService) CreateSetting(shopID string, authUsername string, 
 		return "", errors.New("doc code is exists")
 	}
 
+	svc.SetDefaultValue(&doc)
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.SettingDoc{}
@@ -119,6 +123,8 @@ func (svc SettingHttpService) UpdateSetting(shopID string, guid string, authUser
 		return errors.New("document not found")
 	}
 
+	svc.SetDefaultValue(&doc)
+
 	findDoc.Setting = doc
 
 	findDoc.UpdatedBy = authUsername
@@ -133,6 +139,34 @@ func (svc SettingHttpService) UpdateSetting(shopID string, guid string, authUser
 	svc.saveMasterSync(shopID)
 
 	return nil
+}
+
+func (svc SettingHttpService) SetDefaultValue(doc *models.Setting) {
+	if doc.Slips == nil {
+		doc.Slips = &[]models.PosSettingSlip{}
+	}
+
+	if doc.QRCodes == nil {
+		doc.QRCodes = &[]map[string]interface{}{}
+	}
+	if doc.CreditCards == nil {
+		doc.CreditCards = &[]map[string]interface{}{}
+	}
+	if doc.Transfers == nil {
+		doc.Transfers = &[]map[string]interface{}{}
+	}
+	if doc.BillHeader == nil {
+		doc.BillHeader = &[]common.NameX{}
+	}
+	if doc.BillFooter == nil {
+		doc.BillFooter = &[]common.NameX{}
+	}
+	if doc.TimeForSales == nil {
+		doc.TimeForSales = &[]models.PosSettingTimeForSale{}
+	}
+	if doc.SaleChanels == nil {
+		doc.SaleChanels = &[]salechannel_models.SaleChannel{}
+	}
 }
 
 func (svc SettingHttpService) DeleteSetting(shopID string, guid string, authUsername string) error {

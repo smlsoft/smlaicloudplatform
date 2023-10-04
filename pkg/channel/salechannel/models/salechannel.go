@@ -9,12 +9,11 @@ import (
 const salechannelCollectionName = "saleChannel"
 
 type SaleChannel struct {
-	models.PartitionIdentity `bson:"inline"`
-	Code                     string  `json:"code" bson:"code" validate:"required,min=1"`
-	Name                     string  `json:"name" bson:"name" validate:"required,min=1"`
-	GP                       float64 `json:"gp" bson:"gp"`
-	GPType                   int8    `json:"gptype" bson:"gptype"`
-	ImageUri                 string  `json:"imageuri" bson:"imageuri"`
+	Code     string  `json:"code" bson:"code" validate:"required,min=1"`
+	Name     string  `json:"name" bson:"name" validate:"required,min=1"`
+	GP       float64 `json:"gp" bson:"gp"`
+	GPType   int8    `json:"gptype" bson:"gptype"`
+	ImageUri string  `json:"imageuri" bson:"imageuri"`
 }
 
 type SaleChannelInfo struct {
@@ -27,8 +26,9 @@ func (SaleChannelInfo) CollectionName() string {
 }
 
 type SaleChannelData struct {
-	models.ShopIdentity `bson:"inline"`
-	SaleChannelInfo     `bson:"inline"`
+	models.PartitionIdentity `bson:"inline"`
+	models.ShopIdentity      `bson:"inline"`
+	SaleChannelInfo          `bson:"inline"`
 }
 
 type SaleChannelDoc struct {
