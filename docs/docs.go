@@ -25700,6 +25700,428 @@ const docTemplate = `{
                 }
             }
         },
+        "/transaction/receivableother": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ReceivableOther",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReceivableOther",
+                        "name": "ReceivableOther",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReceivableOther"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReceivableOther",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReceivableOther GUIDs",
+                        "name": "ReceivableOther",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/receivableother/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ReceivableOther",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReceivableOther",
+                        "name": "ReceivableOther",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ReceivableOther"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/receivableother/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReceivableOther info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReceivableOther Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/receivableother/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/receivableother/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReceivableOther info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReceivableOther guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ReceivableOther",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReceivableOther ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ReceivableOther",
+                        "name": "ReceivableOther",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReceivableOther"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReceivableOther",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReceivableOther"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReceivableOther ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/transaction/sale-invoice": {
             "get": {
                 "security": [
@@ -31765,15 +32187,38 @@ const docTemplate = `{
         },
         "models.Branch": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -32263,38 +32708,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -32563,17 +32976,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -33041,7 +33450,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -33085,7 +33494,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -35926,7 +36335,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -36080,7 +36489,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -36309,17 +36718,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -37087,6 +37485,125 @@ const docTemplate = `{
                 },
                 "terminalid": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ReceivableOther": {
+            "type": "object",
+            "properties": {
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ReceivableOtherDetail"
+                    }
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "paycashamount": {
+                    "type": "number"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "paymentdetailraw": {
+                    "type": "string"
+                },
+                "refdocdate": {
+                    "description": "วันที่เอกสารอ้างอิง",
+                    "type": "string"
+                },
+                "refdocno": {
+                    "description": "เลขที่เอกสารอ้างอิง",
+                    "type": "string"
+                },
+                "roundamount": {
+                    "type": "number"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "sumcheque": {
+                    "description": "ชำระเงินโดยเช็ค",
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "description": "ชำระเงินโดย Coupon",
+                    "type": "number"
+                },
+                "sumcredit": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "description": "ชำระเงินโดย Credit Card",
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "description": "ชำระเงินโดยเงินโอน",
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "description": "ชำระเงินโดย QR Code",
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbalance": {
+                    "type": "number"
+                },
+                "totalpaymentamount": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ReceivableOtherDetail": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "paymentamount": {
+                    "type": "number"
+                },
+                "selected": {
+                    "type": "boolean"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         },
@@ -41166,6 +41683,38 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -41197,6 +41746,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -41312,7 +41872,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -41374,6 +41934,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -41443,7 +42014,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
@@ -41591,6 +42162,38 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },

@@ -406,14 +406,30 @@ definitions:
     type: object
   models.Branch:
     properties:
+      businesstypes:
+        items:
+          type: string
+        type: array
       code:
         type: string
-      guidfixed:
-        type: string
+      contact:
+        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+      languages:
+        items:
+          type: string
+        type: array
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -744,27 +760,6 @@ definitions:
       comment:
         type: string
     type: object
-  models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -947,15 +942,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1268,7 +1260,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/models.Contact'
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
       email:
         type: string
       isenabled:
@@ -1297,7 +1289,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/models.Contact'
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
       email:
         type: string
       isenabled:
@@ -3234,7 +3226,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3339,7 +3331,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3500,13 +3492,6 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      price:
-        type: number
-    type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
       price:
         type: number
     type: object
@@ -4023,6 +4008,87 @@ definitions:
     required:
     - code
     - qrnames
+    type: object
+  models.ReceivableOther:
+    properties:
+      custcode:
+        type: string
+      custnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      details:
+        items:
+          $ref: '#/definitions/models.ReceivableOtherDetail'
+        type: array
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      doctype:
+        type: integer
+      paycashamount:
+        type: number
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
+      refdocdate:
+        description: วันที่เอกสารอ้างอิง
+        type: string
+      refdocno:
+        description: เลขที่เอกสารอ้างอิง
+        type: string
+      roundamount:
+        type: number
+      salecode:
+        type: string
+      salename:
+        type: string
+      sumcheque:
+        description: ชำระเงินโดยเช็ค
+        type: number
+      sumcoupon:
+        description: ชำระเงินโดย Coupon
+        type: number
+      sumcredit:
+        type: number
+      sumcreditcard:
+        description: ชำระเงินโดย Credit Card
+        type: number
+      summoneytransfer:
+        description: ชำระเงินโดยเงินโอน
+        type: number
+      sumqrcode:
+        description: ชำระเงินโดย QR Code
+        type: number
+      totalamount:
+        type: number
+      totalbalance:
+        type: number
+      totalpaymentamount:
+        type: number
+      totalvalue:
+        type: number
+      transflag:
+        type: integer
+    type: object
+  models.ReceivableOtherDetail:
+    properties:
+      balance:
+        type: number
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      paymentamount:
+        type: number
+      selected:
+        type: boolean
+      transflag:
+        type: integer
+      value:
+        type: number
     type: object
   models.RefProductBarcode:
     properties:
@@ -6758,6 +6824,27 @@ definitions:
           type: string
         type: array
     type: object
+  smlcloudplatform_pkg_organization_branch_models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -6779,6 +6866,13 @@ definitions:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
@@ -6853,7 +6947,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -6899,6 +6993,13 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
       code:
@@ -6943,7 +7044,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
         type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
@@ -7044,6 +7145,27 @@ definitions:
     required:
     - code
     - names
+    type: object
+  smlcloudplatform_pkg_shop_employee_models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -23033,6 +23155,269 @@ paths:
       - AccessToken: []
       tags:
       - Purchase
+  /transaction/receivableother:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReceivableOther
+      parameters:
+      - description: ReceivableOther GUIDs
+        in: body
+        name: ReceivableOther
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+    post:
+      consumes:
+      - application/json
+      description: Create ReceivableOther
+      parameters:
+      - description: ReceivableOther
+        in: body
+        name: ReceivableOther
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReceivableOther'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+  /transaction/receivableother/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReceivableOther
+      parameters:
+      - description: ReceivableOther ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+    get:
+      consumes:
+      - application/json
+      description: get ReceivableOther info by guidfixed
+      parameters:
+      - description: ReceivableOther guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+    put:
+      consumes:
+      - application/json
+      description: Update ReceivableOther
+      parameters:
+      - description: ReceivableOther ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ReceivableOther
+        in: body
+        name: ReceivableOther
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReceivableOther'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+  /transaction/receivableother/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create ReceivableOther
+      parameters:
+      - description: ReceivableOther
+        in: body
+        name: ReceivableOther
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.ReceivableOther'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+  /transaction/receivableother/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get ReceivableOther info by Code
+      parameters:
+      - description: ReceivableOther Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
+  /transaction/receivableother/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReceivableOther
   /transaction/sale-invoice:
     delete:
       consumes:
