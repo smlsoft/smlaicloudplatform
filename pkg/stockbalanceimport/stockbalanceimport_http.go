@@ -84,7 +84,7 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 		return err
 	}
 
-	idx, err := h.svc.CreateTask(shopID, docReq)
+	doc, err := h.svc.CreateTask(shopID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -93,7 +93,7 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
-		ID:      idx,
+		Data:    doc,
 	})
 	return nil
 }
