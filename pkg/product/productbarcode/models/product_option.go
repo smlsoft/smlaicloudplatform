@@ -9,5 +9,4 @@ type ProductOption struct {
 	MinSelect  uint16           `json:"minselect" bson:"minselect" validate:"min=0,max=60000"`
 	Names      *[]models.NameX  `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Choices    *[]ProductChoice `json:"choices" bson:"choices"`
-	CoverURI   string           `json:"coveruri" bson:"coveruri"`
 }

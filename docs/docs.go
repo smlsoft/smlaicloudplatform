@@ -32187,18 +32187,34 @@ const docTemplate = `{
         },
         "models.Branch": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "integer"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "location": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "telephone": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -32991,13 +33007,18 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -33542,9 +33563,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -35018,32 +35036,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.Location": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
-                    }
                 }
             }
         },
@@ -36625,11 +36617,13 @@ const docTemplate = `{
                 "guid": {
                     "type": "string"
                 },
+                "imageuri": {
+                    "type": "string"
+                },
                 "isdefault": {
                     "type": "boolean"
                 },
                 "isstock": {
-                    "description": "QtyMax         float64         ` + "`" + `json:\"qtymax\" bson:\"qtymax\"` + "`" + `",
                     "type": "boolean"
                 },
                 "names": {
@@ -36698,9 +36692,6 @@ const docTemplate = `{
                 },
                 "choicetype": {
                     "type": "integer"
-                },
-                "coveruri": {
-                    "type": "string"
                 },
                 "guid": {
                     "type": "string"
@@ -41550,7 +41541,7 @@ const docTemplate = `{
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.Location"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Location"
                     }
                 },
                 "names": {
@@ -42143,6 +42134,17 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_shop_branch_models.Location": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "string"
+                },
+                "lng": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_storefront_models.Device": {
             "type": "object",
             "properties": {
@@ -42151,6 +42153,32 @@ const docTemplate = `{
                 },
                 "uuid": {
                     "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_warehouse_models.Location": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 }
             }
         }

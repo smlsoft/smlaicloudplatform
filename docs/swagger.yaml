@@ -407,13 +407,25 @@ definitions:
   models.Branch:
     properties:
       code:
-        type: string
-      guidfixed:
-        type: string
+        type: integer
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+        uniqueItems: true
+      location:
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+      telephone:
+        maxLength: 100
+        type: string
+    required:
+    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -951,12 +963,16 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.Detail:
     properties:
@@ -1320,8 +1336,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2336,24 +2350,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.Location:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.LocationRequest:
     properties:
@@ -3422,10 +3418,11 @@ definitions:
     properties:
       guid:
         type: string
+      imageuri:
+        type: string
       isdefault:
         type: boolean
       isstock:
-        description: QtyMax         float64         `json:"qtymax" bson:"qtymax"`
         type: boolean
       names:
         items:
@@ -3474,8 +3471,6 @@ definitions:
         type: array
       choicetype:
         type: integer
-      coveruri:
-        type: string
       guid:
         type: string
       maxselect:
@@ -6729,7 +6724,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/models.Location'
+          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
         type: array
         uniqueItems: true
       names:
@@ -7131,12 +7126,37 @@ definitions:
     - code
     - names
     type: object
+  smlcloudplatform_pkg_shop_branch_models.Location:
+    properties:
+      lat:
+        type: string
+      lng:
+        type: string
+    type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
       os:
         type: string
       uuid:
         type: string
+    type: object
+  smlcloudplatform_pkg_warehouse_models.Location:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
 info:
   contact:

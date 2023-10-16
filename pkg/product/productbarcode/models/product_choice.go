@@ -11,7 +11,7 @@ type ProductChoice struct {
 	RefUnitNames   *[]models.NameX `json:"refunitnames" bson:"refunitnames" validate:"required,min=1,unique=Code,dive"`
 	Price          *string         `json:"price" bson:"price"`
 	Qty            float64         `json:"qty" bson:"qty"`
-	// QtyMax         float64         `json:"qtymax" bson:"qtymax"`
-	IsStock   bool `json:"isstock" bson:"isstock"`
-	IsDefault bool `json:"isdefault" bson:"isdefault"`
+	ImageURI       string          `json:"imageuri" bson:"imageuri"`
+	IsStock        bool            `json:"isstock" bson:"isstock"`
+	IsDefault      bool            `json:"isdefault" bson:"isdefault"`
 }
