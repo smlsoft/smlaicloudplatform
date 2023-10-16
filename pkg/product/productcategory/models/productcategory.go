@@ -21,6 +21,7 @@ type ProductCategory struct {
 	ColorSelect              string          `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex           string          `json:"colorselecthex" bson:"colorselecthex"`
 	IsDisabled               bool            `json:"isdisabled" bson:"isdisabled"`
+	CoverURI                 string          `json:"coveruri" bson:"coveruri"`
 }
 
 type CodeXSort struct {
