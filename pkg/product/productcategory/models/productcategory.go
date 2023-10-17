@@ -16,7 +16,7 @@ type ProductCategory struct {
 	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
-	CodeList                 *[]CodeXSort    `json:"codelist" bson:"codelist" validate:"unique=Code,dive"`
+	CodeList                 *[]CodeXSort    `json:"codelist" bson:"codelist" validate:"unique=Barcode,dive"`
 	UseImageOrColor          bool            `json:"useimageorcolor" bson:"useimageorcolor"`
 	ColorSelect              string          `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex           string          `json:"colorselecthex" bson:"colorselecthex"`
