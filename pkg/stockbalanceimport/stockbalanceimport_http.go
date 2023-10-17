@@ -101,7 +101,7 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 // Get StockBalanceImport Part godoc
 // @Description Get StockBalanceImport Part
 // @Tags		StockBalanceImport
-// @Param		id		path		string		true		"StockBalanceImport ID"
+// @Param		part-id		path		string		true		"part id"
 // @Accept 		json
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -157,6 +157,7 @@ func (h StockBalanceImportHttp) GetStockBalanceImportMeta(ctx microservice.ICont
 // Create StockBalanceImport godoc
 // @Description Create StockBalanceImport
 // @Tags		StockBalanceImport
+// @Param		part-id		path		string		true		"part id"
 // @Param		StockBalanceImport  body      []stockbalance_models.StockBalanceDetail  true  "StockBalanceImport"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
@@ -199,6 +200,7 @@ func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.ICon
 // Save StockBalanceImport godoc
 // @Description Save StockBalanceImport
 // @Tags		StockBalanceImport
+// @Param		id		path		string		true		"id"
 // @Param		StockBalanceHeader  body      models.StockBalanceHeader  true  "Stock Balance Header"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
