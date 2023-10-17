@@ -18820,6 +18820,372 @@ const docTemplate = `{
                 }
             }
         },
+        "/restaurant/notifier": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "Notifier",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Notifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "Notifier GUIDs",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Notifier info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier/ref": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Ref Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier/ref-confirm": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Ref confirm Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "NotifierConfirmAuthPayload",
+                        "name": "NotifierConfirmAuthPayload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.NotifierConfirmAuthPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Notifier info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Notifier",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Notifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/restaurant/printer": {
             "get": {
                 "security": [
@@ -22637,8 +23003,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "StockBalanceImport ID",
-                        "name": "id",
+                        "description": "part id",
+                        "name": "part-id",
                         "in": "path",
                         "required": true
                     }
@@ -22672,6 +23038,13 @@ const docTemplate = `{
                     "StockBalanceImport"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "part id",
+                        "name": "part-id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "StockBalanceImport",
                         "name": "StockBalanceImport",
@@ -22753,6 +23126,13 @@ const docTemplate = `{
                     "StockBalanceImport"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Stock Balance Header",
                         "name": "StockBalanceHeader",
@@ -32191,18 +32571,29 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
-                    "type": "integer"
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
                 },
                 "departments": {
                     "type": "array",
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.Department"
                     }
                 },
-                "location": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -32211,10 +32602,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "telephone": {
-                    "type": "string",
-                    "maxLength": 100
                 }
             }
         },
@@ -32707,38 +33094,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -33008,7 +33363,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -33486,7 +33840,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -33530,7 +33884,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -35039,6 +35393,32 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Location": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
+                }
+            }
+        },
         "models.LocationRequest": {
             "type": "object",
             "required": [
@@ -35276,6 +35656,33 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "maxLength": 255
+                }
+            }
+        },
+        "models.Notifier": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
+        "models.NotifierConfirmAuthPayload": {
+            "type": "object",
+            "properties": {
+                "fcmtoken": {
+                    "type": "string"
+                },
+                "pincode": {
+                    "type": "string"
+                },
+                "refcode": {
+                    "type": "string"
                 }
             }
         },
@@ -41541,7 +41948,7 @@ const docTemplate = `{
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Location"
+                        "$ref": "#/definitions/models.Location"
                     }
                 },
                 "names": {
@@ -41703,6 +42110,38 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },
@@ -42134,13 +42573,34 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_shop_branch_models.Location": {
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
             "type": "object",
             "properties": {
-                "lat": {
+                "address": {
                     "type": "string"
                 },
-                "lng": {
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
                     "type": "string"
                 }
             }
@@ -42153,32 +42613,6 @@ const docTemplate = `{
                 },
                 "uuid": {
                     "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_warehouse_models.Location": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
-                    }
                 }
             }
         }
