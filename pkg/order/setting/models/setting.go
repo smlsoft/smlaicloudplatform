@@ -28,6 +28,7 @@ type OrderSetting struct {
 	IsPOSActive  bool                       `json:"isposactive" bson:"isposactive"` // ใช้งาน POS
 	Label        string                     `json:"label" bson:"label"`
 	OrderDevices *[]OrderDevice             `json:"orderdevices" bson:"orderdevices" validate:"required,unique=ID,dive"`
+	SaleChanels  *[]string                  `json:"salechanels" bson:"salechanels"`
 }
 
 type OrderDevice struct {
