@@ -27,6 +27,13 @@ type OrderSetting struct {
 	DeviceType   int8                       `json:"devicetype" bson:"devicetype"`   // ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน
 	IsPOSActive  bool                       `json:"isposactive" bson:"isposactive"` // ใช้งาน POS
 	Label        string                     `json:"label" bson:"label"`
+	OrderDevices *[]OrderDevice             `json:"orderdevices" bson:"orderdevices" validate:"required,unique=ID,dive"`
+}
+
+type OrderDevice struct {
+	ID        string          `json:"id" bson:"id"`
+	Names     *[]models.NameX `json:"names" bson:"names"`
+	ActivePin string          `json:"activepin" bson:"activepin"`
 }
 
 type OrderSettingTimeForSale struct {
