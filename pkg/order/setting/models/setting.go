@@ -26,6 +26,7 @@ type OrderSetting struct {
 	TableNumber  string                     `json:"tablenumber" bson:"tablenumber"` // เลขโต๊ะ
 	DeviceType   int8                       `json:"devicetype" bson:"devicetype"`   // ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน
 	IsPOSActive  bool                       `json:"isposactive" bson:"isposactive"` // ใช้งาน POS
+	Label        string                     `json:"label" bson:"label"`
 }
 
 type OrderSettingTimeForSale struct {

@@ -3,18 +3,21 @@ package services
 import (
 	"context"
 	"smlcloudplatform/pkg/order/setting/repositories"
-	repo_media "smlcloudplatform/pkg/pos/media/repositories"
+	media_repo "smlcloudplatform/pkg/pos/media/repositories"
 	"smlcloudplatform/pkg/product/eorder/models"
+	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/table"
 	"smlcloudplatform/pkg/shop"
 	"time"
 )
 
 type EOrderService struct {
-	shopRepo       shop.IShopRepository
-	tableRepo      table.ITableRepository
-	repoOrder      repositories.ISettingRepository
-	repoMedia      repo_media.IMediaRepository
+	shopRepo    shop.IShopRepository
+	tableRepo   table.ITableRepository
+	repoOrder   repositories.ISettingRepository
+	repoMedia   media_repo.IMediaRepository
+	repoKitchen kitchen.IKitchenRepository
+
 	contextTimeout time.Duration
 }
 
@@ -22,7 +25,8 @@ func NewEOrderService(
 	shopRepo shop.IShopRepository,
 	tableRepo table.ITableRepository,
 	repoOrder repositories.ISettingRepository,
-	repoMedia repo_media.IMediaRepository,
+	repoMedia media_repo.IMediaRepository,
+	repoKitchen kitchen.IKitchenRepository,
 ) EOrderService {
 	contextTimeout := time.Duration(15) * time.Second
 	return EOrderService{
@@ -30,6 +34,7 @@ func NewEOrderService(
 		tableRepo:      tableRepo,
 		repoOrder:      repoOrder,
 		repoMedia:      repoMedia,
+		repoKitchen:    repoKitchen,
 		contextTimeout: contextTimeout,
 	}
 }
@@ -70,6 +75,16 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 		}
 
 		result.Media = media.Media
+	}
+
+	kitchens, err := svc.repoKitchen.All(ctx, shopID)
+
+	if err != nil {
+		return models.EOrderShop{}, err
+	}
+
+	for _, tempKitchen := range kitchens {
+		result.Kitchens = append(result.Kitchens, tempKitchen.Kitchen)
 	}
 
 	result.ShopID = shopInfo.ID.Hex()

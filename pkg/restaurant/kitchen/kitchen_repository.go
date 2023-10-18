@@ -9,9 +9,11 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IKitchenRepository interface {
+	All(ctx context.Context, shopID string) ([]models.KitchenInfo, error)
 	Count(ctx context.Context, shopID string) (int, error)
 	Create(ctx context.Context, category models.KitchenDoc) (string, error)
 	CreateInBatch(ctx context.Context, docList []models.KitchenDoc) error
@@ -50,4 +52,21 @@ func NewKitchenRepository(pst microservice.IPersisterMongo) KitchenRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.KitchenActivity, models.KitchenDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo KitchenRepository) All(ctx context.Context, shopID string) ([]models.KitchenInfo, error) {
+	result := []models.KitchenInfo{}
+	filter := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+	}
+	err := repo.pst.Find(ctx, models.KitchenInfo{}, filter, &result)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

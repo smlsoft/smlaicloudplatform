@@ -406,30 +406,14 @@ definitions:
     type: object
   models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
         type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-      languages:
-        items:
-          type: string
-        type: array
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -764,6 +748,27 @@ definitions:
       comment:
         type: string
     type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -946,15 +951,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1267,7 +1269,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1296,7 +1298,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1318,6 +1320,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2512,21 +2516,50 @@ definitions:
     type: object
   models.Notifier:
     properties:
+      accceptedat:
+        type: string
+      accceptedby:
+        type: string
       code:
         maxLength: 255
         minLength: 1
         type: string
+      message:
+        maxLength: 255
+        minLength: 1
+        type: string
+      notifiedat:
+        type: string
+      rejectedat:
+        type: string
+      rejectedby:
+        type: string
+      title:
+        maxLength: 100
+        minLength: 1
+        type: string
     required:
     - code
+    - message
+    - title
     type: object
-  models.NotifierConfirmAuthPayload:
+  models.NotifierDeviceConfirmAuthPayload:
     properties:
-      fcmtoken:
+      deviceid:
         type: string
-      pincode:
+      devicename:
+        type: string
+      fcmtoken:
+        maxLength: 255
+        minLength: 1
         type: string
       refcode:
+        maxLength: 255
+        minLength: 1
         type: string
+    required:
+    - fcmtoken
+    - refcode
     type: object
   models.Option:
     properties:
@@ -2712,6 +2745,8 @@ definitions:
       isposactive:
         description: ใช้งาน POS
         type: boolean
+      label:
+        type: string
       logourl:
         type: string
       mediaguid:
@@ -6857,27 +6892,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -7164,27 +7178,6 @@ definitions:
     required:
     - code
     - names
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -18983,6 +18976,184 @@ paths:
       - AccessToken: []
       tags:
       - Notifier
+  /restaurant/notifier-device:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notifier
+      parameters:
+      - description: Notifier GUIDs
+        in: body
+        name: Notifier
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier-device/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notifier
+      parameters:
+      - description: Notifier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    get:
+      consumes:
+      - application/json
+      description: get Notifier info by guidfixed
+      parameters:
+      - description: Notifier guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    put:
+      consumes:
+      - application/json
+      description: Update Notifier
+      parameters:
+      - description: Notifier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Notifier
+        in: body
+        name: Notifier
+        required: true
+        schema:
+          $ref: '#/definitions/models.Notifier'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier-device/ref:
+    post:
+      consumes:
+      - application/json
+      description: Ref Notifier
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier-device/ref-confirm:
+    post:
+      consumes:
+      - application/json
+      description: Ref confirm Notifier
+      parameters:
+      - description: NotifierDeviceConfirmAuthPayload
+        in: body
+        name: NotifierDeviceConfirmAuthPayload
+        required: true
+        schema:
+          $ref: '#/definitions/models.NotifierDeviceConfirmAuthPayload'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
   /restaurant/notifier/{id}:
     delete:
       consumes:
@@ -19075,49 +19246,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Notifier
-  /restaurant/notifier/ref:
-    post:
-      consumes:
-      - application/json
-      description: Ref Notifier
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Notifier
-  /restaurant/notifier/ref-confirm:
-    post:
-      consumes:
-      - application/json
-      description: Ref confirm Notifier
-      parameters:
-      - description: NotifierConfirmAuthPayload
-        in: body
-        name: NotifierConfirmAuthPayload
-        required: true
-        schema:
-          $ref: '#/definitions/models.NotifierConfirmAuthPayload'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:

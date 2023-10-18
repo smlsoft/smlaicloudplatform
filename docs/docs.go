@@ -18954,14 +18954,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/notifier/code/{code}": {
+        "/restaurant/notifier-device": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "get Notifier info by Code",
+                "description": "get list step",
                 "consumes": [
                     "application/json"
                 ],
@@ -18971,17 +18971,73 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Notifier Code",
-                        "name": "code",
-                        "in": "path",
-                        "required": true
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "Notifier GUIDs",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -18993,7 +19049,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/notifier/ref": {
+        "/restaurant/notifier-device/ref": {
             "post": {
                 "security": [
                     {
@@ -19023,7 +19079,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/notifier/ref-confirm": {
+        "/restaurant/notifier-device/ref-confirm": {
             "post": {
                 "security": [
                     {
@@ -19039,12 +19095,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "NotifierConfirmAuthPayload",
-                        "name": "NotifierConfirmAuthPayload",
+                        "description": "NotifierDeviceConfirmAuthPayload",
+                        "name": "NotifierDeviceConfirmAuthPayload",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.NotifierConfirmAuthPayload"
+                            "$ref": "#/definitions/models.NotifierDeviceConfirmAuthPayload"
                         }
                     }
                 ],
@@ -19053,6 +19109,167 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier-device/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Notifier info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Notifier",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Notifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Notifier info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -32567,38 +32784,15 @@ const docTemplate = `{
         },
         "models.Branch": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
-                "businesstypes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
-                "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
-                },
-                "departments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Department"
-                    }
-                },
-                "languages": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "guidfixed": {
+                    "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -33094,6 +33288,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -33362,17 +33588,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -33840,7 +34062,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                    "$ref": "#/definitions/models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -33884,7 +34106,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                    "$ref": "#/definitions/models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -33917,6 +34139,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -35662,27 +35887,65 @@ const docTemplate = `{
         "models.Notifier": {
             "type": "object",
             "required": [
-                "code"
+                "code",
+                "message",
+                "title"
             ],
             "properties": {
+                "accceptedat": {
+                    "type": "string"
+                },
+                "accceptedby": {
+                    "type": "string"
+                },
                 "code": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "message": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "notifiedat": {
+                    "type": "string"
+                },
+                "rejectedat": {
+                    "type": "string"
+                },
+                "rejectedby": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
                 }
             }
         },
-        "models.NotifierConfirmAuthPayload": {
+        "models.NotifierDeviceConfirmAuthPayload": {
             "type": "object",
+            "required": [
+                "fcmtoken",
+                "refcode"
+            ],
             "properties": {
-                "fcmtoken": {
+                "deviceid": {
                     "type": "string"
                 },
-                "pincode": {
+                "devicename": {
                     "type": "string"
+                },
+                "fcmtoken": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "refcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
@@ -35949,6 +36212,9 @@ const docTemplate = `{
                 "isposactive": {
                     "description": "ใช้งาน POS",
                     "type": "boolean"
+                },
+                "label": {
+                    "type": "string"
                 },
                 "logourl": {
                     "type": "string"
@@ -42113,38 +42379,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_organization_branch_models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -42570,38 +42804,6 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_employee_models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
                 }
             }
         },

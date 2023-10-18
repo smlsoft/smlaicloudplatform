@@ -12,10 +12,11 @@ import (
 	servicecategory "smlcloudplatform/pkg/product/productcategory/services"
 	"smlcloudplatform/pkg/utils/requestfilter"
 
-	repositoryorder "smlcloudplatform/pkg/order/setting/repositories"
+	repo_order "smlcloudplatform/pkg/order/setting/repositories"
 	repo_media "smlcloudplatform/pkg/pos/media/repositories"
-	repositoryproduct "smlcloudplatform/pkg/product/productbarcode/repositories"
+	repo_product "smlcloudplatform/pkg/product/productbarcode/repositories"
 	serviceproduct "smlcloudplatform/pkg/product/productbarcode/services"
+	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/table"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/utils"
@@ -42,18 +43,19 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	repoCategory := repositorycategory.NewProductCategoryRepository(pst)
 	svcCategory := servicecategory.NewProductCategoryHttpService(repoCategory, masterSyncCacheRepo)
 
-	repo := repositoryproduct.NewProductBarcodeRepository(pst, cache)
-	clickHouseRepo := repositoryproduct.NewProductBarcodeClickhouseRepository(pstClickHouse)
-	mqRepo := repositoryproduct.NewProductBarcodeMessageQueueRepository(prod)
+	repo := repo_product.NewProductBarcodeRepository(pst, cache)
+	clickHouseRepo := repo_product.NewProductBarcodeClickhouseRepository(pstClickHouse)
+	mqRepo := repo_product.NewProductBarcodeMessageQueueRepository(prod)
 
 	svcProduct := serviceproduct.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
 
 	repoShop := shop.NewShopRepository(pst)
 	repoTable := table.NewTableRepository(pst)
-	repoOrder := repositoryorder.NewSettingRepository(pst)
+	repoOrder := repo_order.NewSettingRepository(pst)
 	repoMedia := repo_media.NewMediaRepository(pst)
+	repoKitchen := kitchen.NewKitchenRepository(pst)
 
-	svcEOrder := services.NewEOrderService(repoShop, repoTable, repoOrder, repoMedia)
+	svcEOrder := services.NewEOrderService(repoShop, repoTable, repoOrder, repoMedia, repoKitchen)
 
 	return EOrderHttp{
 		ms:          ms,
