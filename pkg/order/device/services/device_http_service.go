@@ -68,7 +68,7 @@ func (svc DeviceHttpService) CreateDevice(shopID string, authUsername string, do
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "id", doc.ID)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
@@ -273,7 +273,7 @@ func (svc DeviceHttpService) SaveInBatch(shopID string, authUsername string, dat
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.ID)
+		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "id", itemCodeGuidList)
@@ -284,7 +284,7 @@ func (svc DeviceHttpService) SaveInBatch(shopID string, authUsername string, dat
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.ID)
+		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.OrderDevice, models.OrderDeviceDoc](
@@ -314,11 +314,11 @@ func (svc DeviceHttpService) SaveInBatch(shopID string, authUsername string, dat
 		authUsername,
 		duplicateDataList,
 		svc.getDocIDKey,
-		func(shopID string, guid string) (models.OrderDeviceDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "id", guid)
+		func(shopID string, identityValue string) (models.OrderDeviceDoc, error) {
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", identityValue)
 		},
 		func(doc models.OrderDeviceDoc) bool {
-			return doc.ID != ""
+			return doc.Code != ""
 		},
 		func(shopID string, authUsername string, data models.OrderDevice, doc models.OrderDeviceDoc) error {
 
@@ -346,18 +346,18 @@ func (svc DeviceHttpService) SaveInBatch(shopID string, authUsername string, dat
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.ID)
+		createDataKey = append(createDataKey, doc.Code)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.ID)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Code)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.ID)
+		updateDataKey = append(updateDataKey, doc.Code)
 	}
 
 	updateFailDataKey := []string{}
@@ -376,7 +376,7 @@ func (svc DeviceHttpService) SaveInBatch(shopID string, authUsername string, dat
 }
 
 func (svc DeviceHttpService) getDocIDKey(doc models.OrderDevice) string {
-	return doc.ID
+	return doc.Code
 }
 
 func (svc DeviceHttpService) saveMasterSync(shopID string) {
@@ -390,5 +390,5 @@ func (svc DeviceHttpService) saveMasterSync(shopID string) {
 }
 
 func (svc DeviceHttpService) GetModuleName() string {
-	return "device"
+	return "order_device"
 }

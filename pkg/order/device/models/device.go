@@ -7,11 +7,13 @@ import (
 const deviceCollectionName = "orderDevices"
 
 type OrderDevice struct {
-	models.PartitionIdentity `bson:"inline"`
-	ID                       string          `json:"id" bson:"id"`
-	Names                    *[]models.NameX `json:"names" bson:"names"`
-	ActivePin                string          `json:"activepin" bson:"activepin"`
-	SettingCode              string          `json:"settingcode" bson:"settingcode"`
+	Code         string `json:"code" bson:"code"`
+	DeviceNumber string `json:"devicenumber" bson:"devicenumber"`
+	DocFormat    string `json:"docformat" bson:"docformat"`
+	DeviceType   int8   `json:"devicetype" bson:"devicetype"` // ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน
+	ActivePin    string `json:"activepin" bson:"activepin"`
+	IsPOSActive  bool   `json:"isposactive" bson:"isposactive"` // ใช้งาน POS
+	SettingCode  string `json:"settingcode" bson:"settingcode"`
 }
 
 type OrderDeviceInfo struct {
@@ -38,7 +40,7 @@ func (OrderDeviceDoc) CollectionName() string {
 }
 
 type OrderDeviceItemGuid struct {
-	ID string `json:"id" bson:"id"`
+	Code string `json:"code" bson:"code"`
 }
 
 func (OrderDeviceItemGuid) CollectionName() string {
