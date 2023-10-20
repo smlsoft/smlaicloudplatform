@@ -2,7 +2,8 @@ package services
 
 import (
 	"context"
-	"smlcloudplatform/pkg/order/setting/repositories"
+	order_device_repo "smlcloudplatform/pkg/order/device/repositories"
+	order_setting_repo "smlcloudplatform/pkg/order/setting/repositories"
 	media_repo "smlcloudplatform/pkg/pos/media/repositories"
 	"smlcloudplatform/pkg/product/eorder/models"
 	"smlcloudplatform/pkg/restaurant/kitchen"
@@ -14,9 +15,10 @@ import (
 type EOrderService struct {
 	shopRepo    shop.IShopRepository
 	tableRepo   table.ITableRepository
-	repoOrder   repositories.ISettingRepository
+	repoOrder   order_setting_repo.ISettingRepository
 	repoMedia   media_repo.IMediaRepository
 	repoKitchen kitchen.IKitchenRepository
+	repoDevice  order_device_repo.IDeviceRepository
 
 	contextTimeout time.Duration
 }
@@ -24,9 +26,10 @@ type EOrderService struct {
 func NewEOrderService(
 	shopRepo shop.IShopRepository,
 	tableRepo table.ITableRepository,
-	repoOrder repositories.ISettingRepository,
+	repoOrder order_setting_repo.ISettingRepository,
 	repoMedia media_repo.IMediaRepository,
 	repoKitchen kitchen.IKitchenRepository,
+	repoDevice order_device_repo.IDeviceRepository,
 ) EOrderService {
 	contextTimeout := time.Duration(15) * time.Second
 	return EOrderService{
@@ -35,6 +38,7 @@ func NewEOrderService(
 		repoOrder:      repoOrder,
 		repoMedia:      repoMedia,
 		repoKitchen:    repoKitchen,
+		repoDevice:     repoDevice,
 		contextTimeout: contextTimeout,
 	}
 }
@@ -61,11 +65,14 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 		return models.EOrderShop{}, err
 	}
 
+	tempOrderStation := models.EOrderShopOrderSetting{}
 	order, err := svc.repoOrder.FindByDocIndentityGuid(ctx, shopID, "code", orderStationCode)
 
 	if err != nil {
 		return models.EOrderShop{}, err
 	}
+
+	tempOrderStation.OrderStation = order.OrderSetting
 
 	if order.Code != "" {
 		media, err := svc.repoMedia.FindByGuid(ctx, shopID, order.MediaGUID)
@@ -75,6 +82,14 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 		}
 
 		result.Media = media.Media
+
+		device, err := svc.repoDevice.FindByGuid(ctx, shopID, order.DeviceNumber)
+
+		if err != nil {
+			return models.EOrderShop{}, err
+		}
+
+		tempOrderStation.DeviceInfo = device.OrderDevice
 	}
 
 	kitchens, err := svc.repoKitchen.All(ctx, shopID)
@@ -90,7 +105,7 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 	result.ShopID = shopInfo.ID.Hex()
 	result.Name1 = shopInfo.Name1
 	result.TotalTable = tableCount
-	result.OrderStation = order.OrderSetting
+	result.OrderStation = tempOrderStation
 
 	return result, nil
 }
