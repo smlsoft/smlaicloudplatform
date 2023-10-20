@@ -4,9 +4,9 @@ import (
 	"smlcloudplatform/pkg/models"
 )
 
-const deviceCollectionName = "device"
+const deviceCollectionName = "orderDevices"
 
-type Device struct {
+type OrderDevice struct {
 	models.PartitionIdentity `bson:"inline"`
 	ID                       string          `json:"id" bson:"id"`
 	Names                    *[]models.NameX `json:"names" bson:"names"`
@@ -14,51 +14,51 @@ type Device struct {
 	SettingCode              string          `json:"settingcode" bson:"settingcode"`
 }
 
-type DeviceInfo struct {
+type OrderDeviceInfo struct {
 	models.DocIdentity `bson:"inline"`
-	Device             `bson:"inline"`
+	OrderDevice        `bson:"inline"`
 }
 
-func (DeviceInfo) CollectionName() string {
+func (OrderDeviceInfo) CollectionName() string {
 	return deviceCollectionName
 }
 
-type DeviceData struct {
+type OrderDeviceData struct {
 	models.ShopIdentity `bson:"inline"`
-	DeviceInfo          `bson:"inline"`
+	OrderDeviceInfo     `bson:"inline"`
 }
 
-type DeviceDoc struct {
-	DeviceData         `bson:"inline"`
+type OrderDeviceDoc struct {
+	OrderDeviceData    `bson:"inline"`
 	models.ActivityDoc `bson:"inline"`
 }
 
-func (DeviceDoc) CollectionName() string {
+func (OrderDeviceDoc) CollectionName() string {
 	return deviceCollectionName
 }
 
-type DeviceItemGuid struct {
+type OrderDeviceItemGuid struct {
 	ID string `json:"id" bson:"id"`
 }
 
-func (DeviceItemGuid) CollectionName() string {
+func (OrderDeviceItemGuid) CollectionName() string {
 	return deviceCollectionName
 }
 
-type DeviceActivity struct {
-	DeviceData          `bson:"inline"`
+type OrderDeviceActivity struct {
+	OrderDeviceData     `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (DeviceActivity) CollectionName() string {
+func (OrderDeviceActivity) CollectionName() string {
 	return deviceCollectionName
 }
 
-type DeviceDeleteActivity struct {
+type OrderDeviceDeleteActivity struct {
 	models.Identity     `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (DeviceDeleteActivity) CollectionName() string {
+func (OrderDeviceDeleteActivity) CollectionName() string {
 	return deviceCollectionName
 }

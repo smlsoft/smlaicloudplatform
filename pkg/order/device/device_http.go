@@ -55,7 +55,7 @@ func (h DeviceHttp) RegisterHttp() {
 // Create Device godoc
 // @Description Create Device
 // @Tags		Device
-// @Param		Device  body      models.Device  true  "Device"
+// @Param		Device  body      models.OrderDevice  true  "Device"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -66,7 +66,7 @@ func (h DeviceHttp) CreateDevice(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.Device{}
+	docReq := &models.OrderDevice{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -97,7 +97,7 @@ func (h DeviceHttp) CreateDevice(ctx microservice.IContext) error {
 // @Description Update Device
 // @Tags		Device
 // @Param		id  path      string  true  "Device ID"
-// @Param		Device  body      models.Device  true  "Device"
+// @Param		Device  body      models.OrderDevice  true  "Device"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -111,7 +111,7 @@ func (h DeviceHttp) UpdateDevice(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.Device{}
+	docReq := &models.OrderDevice{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -338,7 +338,7 @@ func (h DeviceHttp) SearchDeviceStep(ctx microservice.IContext) error {
 // Create Device Bulk godoc
 // @Description Create Device
 // @Tags		Device
-// @Param		Device  body      []models.Device  true  "Device"
+// @Param		Device  body      []models.OrderDevice  true  "Device"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -352,7 +352,7 @@ func (h DeviceHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.Device{}
+	dataReq := []models.OrderDevice{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
