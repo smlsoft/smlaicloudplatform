@@ -52,6 +52,8 @@ import (
 	// "smlcloudplatform/pkg/report/reportquery"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
+	"smlcloudplatform/pkg/restaurant/notifier"
+	"smlcloudplatform/pkg/restaurant/notifierdevice"
 	"smlcloudplatform/pkg/restaurant/printer"
 	"smlcloudplatform/pkg/restaurant/settings"
 	"smlcloudplatform/pkg/restaurant/staff"
@@ -60,6 +62,8 @@ import (
 	"smlcloudplatform/pkg/shop"
 
 	// "smlcloudplatform/pkg/shop/branch"
+	order_device "smlcloudplatform/pkg/order/device"
+	order_setting "smlcloudplatform/pkg/order/setting"
 	"smlcloudplatform/pkg/pos/media"
 	pos_setting "smlcloudplatform/pkg/pos/setting"
 	"smlcloudplatform/pkg/pos/shift"
@@ -83,6 +87,7 @@ import (
 	"smlcloudplatform/pkg/transaction/smltransaction"
 	"smlcloudplatform/pkg/transaction/stockadjustment"
 	"smlcloudplatform/pkg/transaction/stockbalance"
+	stockbalancedetaildetail "smlcloudplatform/pkg/transaction/stockbalancedetail"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct"
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct"
@@ -135,6 +140,8 @@ func main() {
 		"/e-order/category",
 		"/e-order/product-barcode",
 		"/e-order/shop-info",
+
+		"/restaurant/notifier-device/ref-confirm",
 	}
 
 	exceptShopPath := []string{
@@ -174,6 +181,8 @@ func main() {
 		settings.NewRestaurantSettingsHttp(ms, cfg),
 		device.NewDeviceHttp(ms, cfg),
 		staff.NewStaffHttp(ms, cfg),
+		notifier.NewNotifierHttp(ms, cfg),
+		notifierdevice.NewNotifierDeviceHttp(ms, cfg),
 
 		//Journal
 		journal.NewJournalHttp(ms, cfg),
@@ -244,6 +253,7 @@ func main() {
 		stockadjustment.NewStockAdjustmentHttp(ms, cfg),
 		stocktransfer.NewStockTransferHttp(ms, cfg),
 		stockbalance.NewStockBalanceHttp(ms, cfg),
+		stockbalancedetaildetail.NewStockBalanceDetailHttp(ms, cfg),
 
 		//product section
 		sectionbranch.NewSectionBranchHttp(ms, cfg),
@@ -266,6 +276,8 @@ func main() {
 		// POS
 		pos_setting.NewSettingHttp(ms, cfg),
 		shift.NewShiftHttp(ms, cfg),
+		order_setting.NewSettingHttp(ms, cfg),
+		order_device.NewDeviceHttp(ms, cfg),
 
 		documentformate.NewDocumentFormateHttp(ms, cfg),
 

@@ -22,6 +22,7 @@ import (
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/ocr"
+	order_device "smlcloudplatform/pkg/order/device"
 	order_setting "smlcloudplatform/pkg/order/setting"
 	"smlcloudplatform/pkg/organization/branch"
 	"smlcloudplatform/pkg/organization/businesstype"
@@ -292,6 +293,7 @@ func main() {
 			shift.NewShiftHttp(ms, cfg),
 
 			order_setting.NewSettingHttp(ms, cfg),
+			order_device.NewDeviceHttp(ms, cfg),
 
 			documentformate.NewDocumentFormateHttp(ms, cfg),
 			ocr.NewOcrHttp(ms, cfg),
