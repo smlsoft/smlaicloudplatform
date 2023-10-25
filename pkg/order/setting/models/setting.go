@@ -11,7 +11,6 @@ const settingCollectionName = "orderSettings"
 type OrderSetting struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string             `json:"code" bson:"code" validate:"required"`
-	DeviceNumber             string             `json:"devicenumber" bson:"devicenumber"`
 	DocFormat                string             `json:"docformat" bson:"docformat"`
 	Branch                   OrderSettingBranch `json:"branch" bson:"branch"`
 	ActivePin                string             `json:"activepin" bson:"activepin"`

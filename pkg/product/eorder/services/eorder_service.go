@@ -13,13 +13,12 @@ import (
 )
 
 type EOrderService struct {
-	shopRepo    shop.IShopRepository
-	tableRepo   table.ITableRepository
-	repoOrder   order_setting_repo.ISettingRepository
-	repoMedia   media_repo.IMediaRepository
-	repoKitchen kitchen.IKitchenRepository
-	repoDevice  order_device_repo.IDeviceRepository
-
+	shopRepo       shop.IShopRepository
+	tableRepo      table.ITableRepository
+	repoOrder      order_setting_repo.ISettingRepository
+	repoMedia      media_repo.IMediaRepository
+	repoKitchen    kitchen.IKitchenRepository
+	repoDevice     order_device_repo.IDeviceRepository
 	contextTimeout time.Duration
 }
 
@@ -65,31 +64,33 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 		return models.EOrderShop{}, err
 	}
 
-	tempOrderStation := models.EOrderShopOrderSetting{}
-	order, err := svc.repoOrder.FindByDocIndentityGuid(ctx, shopID, "code", orderStationCode)
+	orderDevice, err := svc.repoDevice.FindByDocIndentityGuid(ctx, shopID, "code", orderStationCode)
 
 	if err != nil {
 		return models.EOrderShop{}, err
 	}
 
-	tempOrderStation.OrderStation = order.OrderSetting
-
-	if order.Code != "" {
-		media, err := svc.repoMedia.FindByGuid(ctx, shopID, order.MediaGUID)
-
-		if err != nil {
-			return models.EOrderShop{}, err
-		}
-
-		result.Media = media.Media
-
-		device, err := svc.repoDevice.FindByGuid(ctx, shopID, order.DeviceNumber)
+	tempOrderStation := models.EOrderShopOrder{}
+	if orderDevice.Code != "" {
+		order, err := svc.repoOrder.FindByDocIndentityGuid(ctx, shopID, "guidfixed", orderDevice.SettingCode)
 
 		if err != nil {
 			return models.EOrderShop{}, err
 		}
 
-		tempOrderStation.DeviceInfo = device.OrderDevice
+		tempOrderStation.OrderSetting = order.OrderSetting
+
+		if order.Code != "" {
+			media, err := svc.repoMedia.FindByGuid(ctx, shopID, order.MediaGUID)
+
+			if err != nil {
+				return models.EOrderShop{}, err
+			}
+
+			result.Media = media.Media
+
+			tempOrderStation.DeviceInfo = orderDevice.OrderDevice
+		}
 	}
 
 	kitchens, err := svc.repoKitchen.All(ctx, shopID)
