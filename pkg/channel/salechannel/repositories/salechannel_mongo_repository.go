@@ -20,6 +20,7 @@ type ISaleChannelRepository interface {
 	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleChannelInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.SaleChannelDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.SaleChannelDoc, error)
 
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.SaleChannelItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.SaleChannelDoc, error)

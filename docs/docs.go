@@ -33556,34 +33556,18 @@ const docTemplate = `{
         },
         "models.Branch": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "string"
                 },
-                "departments": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Department"
-                    }
-                },
-                "location": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
+                "guidfixed": {
+                    "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "telephone": {
-                    "type": "string",
-                    "maxLength": 100
                 }
             }
         },
@@ -34932,9 +34916,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -36408,6 +36389,32 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.Location": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 }
             }
         },
@@ -42840,7 +42847,7 @@ const docTemplate = `{
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Location"
+                        "$ref": "#/definitions/models.Location"
                     }
                 },
                 "names": {
@@ -43455,17 +43462,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_shop_branch_models.Location": {
-            "type": "object",
-            "properties": {
-                "lat": {
-                    "type": "string"
-                },
-                "lng": {
-                    "type": "string"
-                }
-            }
-        },
         "smlcloudplatform_pkg_storefront_models.Device": {
             "type": "object",
             "properties": {
@@ -43795,32 +43791,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_warehouse_models.Location": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
                     }
                 }
             }

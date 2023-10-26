@@ -407,25 +407,13 @@ definitions:
   models.Branch:
     properties:
       code:
-        type: integer
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-        uniqueItems: true
-      location:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
+        type: string
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-      telephone:
-        maxLength: 100
-        type: string
-    required:
-    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -1336,8 +1324,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2352,6 +2338,24 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.Location:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.LocationRequest:
     properties:
@@ -6682,7 +6686,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
+          $ref: '#/definitions/models.Location'
         type: array
         uniqueItems: true
       names:
@@ -7098,13 +7102,6 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Location:
-    properties:
-      lat:
-        type: string
-      lng:
-        type: string
-    type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
       os:
@@ -7325,24 +7322,6 @@ definitions:
         type: array
     required:
     - docno
-    type: object
-  smlcloudplatform_pkg_warehouse_models.Location:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
 info:
   contact:
