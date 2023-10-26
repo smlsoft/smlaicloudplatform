@@ -16,6 +16,18 @@ type Branch struct {
 	BusinessTypes            *[]string       `json:"businesstypes" bson:"businesstypes"`
 	Languages                *[]string       `json:"languages" bson:"languages"`
 	Contact                  Contact         `json:"contact" bson:"contact"`
+	POS                      BranchPOS       `json:"pos" bson:"pos"`
+}
+
+type BranchPOS struct {
+	TaxID               string  `json:"taxid" bson:"taxid"`
+	VatRate             float64 `json:"vatrate" bson:"vatrate"`
+	VatTypeSale         int8    `json:"vattype" bson:"vattype"`
+	VatTypePurchase     int8    `json:"vattypepurchase" bson:"vattypepurchase"`
+	InquiryTypeSale     int8    `json:"inquirytypesale" bson:"inquirytypesale"`
+	InquiryTypePurchase int8    `json:"inquirytypepurchase" bson:"inquirytypepurchase"`
+	HeaderReceiptPOS    string  `json:"headerreceiptpos" bson:"headerreceiptpos"`
+	FooterReceiptPOS    string  `json:"footerreceiptpos" bson:"footerreceiptpos"`
 }
 
 type Contact struct {
