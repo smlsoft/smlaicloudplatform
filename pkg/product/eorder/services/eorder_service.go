@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	salechannel_models "smlcloudplatform/pkg/channel/salechannel/models"
 	salechannel_repo "smlcloudplatform/pkg/channel/salechannel/repositories"
 	order_device_repo "smlcloudplatform/pkg/order/device/repositories"
 	order_setting_repo "smlcloudplatform/pkg/order/setting/repositories"
@@ -98,13 +99,19 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 				// Device info
 				tempOrderStation.DeviceInfo = orderDevice.OrderDevice
 
+				saleChannelGUIDs := []string{}
+				if order.SaleChannels != nil {
+					saleChannelGUIDs = *order.SaleChannels
+				}
+
 				// Sale channel
-				saleChannels, err := svc.repoSaleChannel.FindByGuids(ctx, shopID, *order.SaleChannels)
+				saleChannels, err := svc.repoSaleChannel.FindByGuids(ctx, shopID, saleChannelGUIDs)
 
 				if err != nil {
 					return models.EOrderShop{}, err
 				}
 
+				tempOrderStation.SaleChannels = []salechannel_models.SaleChannel{}
 				for _, tempSaleChannel := range saleChannels {
 					tempOrderStation.SaleChannels = append(tempOrderStation.SaleChannels, tempSaleChannel.SaleChannel)
 				}
@@ -126,7 +133,7 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 		result.Kitchens = append(result.Kitchens, tempKitchen.Kitchen)
 	}
 
-	result.ShopID = shopInfo.ID.Hex()
+	result.ShopID = shopInfo.GuidFixed
 	result.Name1 = shopInfo.Name1
 	result.TotalTable = tableCount
 
