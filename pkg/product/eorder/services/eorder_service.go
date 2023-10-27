@@ -6,6 +6,7 @@ import (
 	salechannel_repo "smlcloudplatform/pkg/channel/salechannel/repositories"
 	order_device_repo "smlcloudplatform/pkg/order/device/repositories"
 	order_setting_repo "smlcloudplatform/pkg/order/setting/repositories"
+	branch_repo "smlcloudplatform/pkg/organization/branch/repositories"
 	media_repo "smlcloudplatform/pkg/pos/media/repositories"
 	"smlcloudplatform/pkg/product/eorder/models"
 	"smlcloudplatform/pkg/restaurant/kitchen"
@@ -22,6 +23,7 @@ type EOrderService struct {
 	repoKitchen     kitchen.IKitchenRepository
 	repoDevice      order_device_repo.IDeviceRepository
 	repoSaleChannel salechannel_repo.ISaleChannelRepository
+	repoBranch      branch_repo.IBranchRepository
 	contextTimeout  time.Duration
 }
 
@@ -33,6 +35,7 @@ func NewEOrderService(
 	repoKitchen kitchen.IKitchenRepository,
 	repoDevice order_device_repo.IDeviceRepository,
 	repoSaleChannel salechannel_repo.ISaleChannelRepository,
+	repoBranch branch_repo.IBranchRepository,
 ) EOrderService {
 	contextTimeout := time.Duration(15) * time.Second
 	return EOrderService{
@@ -43,6 +46,7 @@ func NewEOrderService(
 		repoKitchen:     repoKitchen,
 		repoDevice:      repoDevice,
 		repoSaleChannel: repoSaleChannel,
+		repoBranch:      repoBranch,
 		contextTimeout:  contextTimeout,
 	}
 }
@@ -116,6 +120,13 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 					tempOrderStation.SaleChannels = append(tempOrderStation.SaleChannels, tempSaleChannel.SaleChannel)
 				}
 
+				// Branch
+				branch, err := svc.repoBranch.FindByGuid(ctx, shopID, order.Branch.GuidFixed)
+
+				if err != nil {
+					return models.EOrderShop{}, err
+				}
+				tempOrderStation.Branch = branch.Branch
 			}
 
 			result.OrderStation = tempOrderStation

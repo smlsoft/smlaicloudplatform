@@ -15,6 +15,7 @@ import (
 	salechannel_repo "smlcloudplatform/pkg/channel/salechannel/repositories"
 	repo_order_device "smlcloudplatform/pkg/order/device/repositories"
 	repo_order_setting "smlcloudplatform/pkg/order/setting/repositories"
+	branch_repo "smlcloudplatform/pkg/organization/branch/repositories"
 	repo_media "smlcloudplatform/pkg/pos/media/repositories"
 	repo_product "smlcloudplatform/pkg/product/productbarcode/repositories"
 	serviceproduct "smlcloudplatform/pkg/product/productbarcode/services"
@@ -58,8 +59,9 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	repoMedia := repo_media.NewMediaRepository(pst)
 	repoKitchen := kitchen.NewKitchenRepository(pst)
 	repoSaleChannel := salechannel_repo.NewSaleChannelRepository(pst)
+	repoBranch := branch_repo.NewBranchRepository(pst)
 
-	svcEOrder := services.NewEOrderService(repoShop, repoTable, repoOrder, repoMedia, repoKitchen, repoDevice, repoSaleChannel)
+	svcEOrder := services.NewEOrderService(repoShop, repoTable, repoOrder, repoMedia, repoKitchen, repoDevice, repoSaleChannel, repoBranch)
 
 	return EOrderHttp{
 		ms:          ms,

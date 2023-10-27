@@ -4,6 +4,7 @@ import (
 	salechannel_models "smlcloudplatform/pkg/channel/salechannel/models"
 	device_models "smlcloudplatform/pkg/order/device/models"
 	order_models "smlcloudplatform/pkg/order/setting/models"
+	branch_models "smlcloudplatform/pkg/organization/branch/models"
 	"smlcloudplatform/pkg/pos/media/models"
 	kitchen_models "smlcloudplatform/pkg/restaurant/kitchen/models"
 )
@@ -23,6 +24,10 @@ type EOrderShopOrder struct {
 
 type EOrderSetting struct {
 	order_models.OrderSetting
+	Branch       branch_models.Branch             `json:"branch"`
 	Media        models.Media                     `json:"media"`
 	SaleChannels []salechannel_models.SaleChannel `json:"salechannels" `
+}
+
+type EOrderBranch struct {
 }
