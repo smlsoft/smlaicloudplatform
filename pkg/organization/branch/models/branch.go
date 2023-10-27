@@ -22,7 +22,7 @@ type Branch struct {
 type BranchPOS struct {
 	TaxID               string  `json:"taxid" bson:"taxid"`
 	VatRate             float64 `json:"vatrate" bson:"vatrate"`
-	VatTypeSale         int8    `json:"vattype" bson:"vattype"`
+	VatTypeSale         int8    `json:"vattypesale" bson:"vattypesale"`
 	VatTypePurchase     int8    `json:"vattypepurchase" bson:"vattypepurchase"`
 	InquiryTypeSale     int8    `json:"inquirytypesale" bson:"inquirytypesale"`
 	InquiryTypePurchase int8    `json:"inquirytypepurchase" bson:"inquirytypepurchase"`
