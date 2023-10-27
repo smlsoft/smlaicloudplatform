@@ -9,25 +9,25 @@ import (
 const employeeCollectionName = "employees"
 
 type Employee struct {
-	Code           string    `json:"code" bson:"code"`
-	Email          string    `json:"email" bson:"email"`
-	Name           string    `json:"name" bson:"name"`
-	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
-	Roles          *[]string `json:"roles" bson:"roles"`
-	IsEnabled      bool      `json:"isenabled" bson:"isenabled"`
-	IsUsePOS       bool      `json:"isusepos" bson:"isusepos"`
-	Contact        Contact   `json:"contact" bson:"contact"`
-	PinCode        string    `json:"pincode" bson:"pincode"`
-	Branches       *[]Branch `json:"branches" bson:"branches"`
+	Code           string            `json:"code" bson:"code"`
+	Email          string            `json:"email" bson:"email"`
+	Name           string            `json:"name" bson:"name"`
+	ProfilePicture string            `json:"profilepicture" bson:"profilepicture"`
+	Roles          *[]string         `json:"roles" bson:"roles"`
+	IsEnabled      bool              `json:"isenabled" bson:"isenabled"`
+	IsUsePOS       bool              `json:"isusepos" bson:"isusepos"`
+	Contact        EmployeeContact   `json:"contact" bson:"contact"`
+	PinCode        string            `json:"pincode" bson:"pincode"`
+	Branches       *[]EmployeeBranch `json:"branches" bson:"branches"`
 }
 
-type Branch struct {
+type EmployeeBranch struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
 	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
-type Contact struct {
+type EmployeeContact struct {
 	Address         string  `json:"address" bson:"address"`
 	CountryCode     string  `json:"countrycode" bson:"countrycode"`
 	ProvinceCode    string  `json:"provincecode" bson:"provincecode"`

@@ -9361,7 +9361,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
                         }
                     }
                 ],
@@ -9446,7 +9446,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Branch"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
                             }
                         }
                     }
@@ -9630,7 +9630,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
                         }
                     }
                 ],
@@ -22094,7 +22094,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
                         }
                     }
                 ],
@@ -22280,7 +22280,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Branch"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
                         }
                     }
                 ],
@@ -33554,36 +33554,32 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Branch": {
+        "models.BranchPOS": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
-                "code": {
+                "footerreceiptpos": {
+                    "type": "string"
+                },
+                "headerreceiptpos": {
+                    "type": "string"
+                },
+                "inquirytypepurchase": {
                     "type": "integer"
                 },
-                "departments": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Department"
-                    }
+                "inquirytypesale": {
+                    "type": "integer"
                 },
-                "location": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
+                "taxid": {
+                    "type": "string"
                 },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "vatrate": {
+                    "type": "number"
                 },
-                "telephone": {
-                    "type": "string",
-                    "maxLength": 100
+                "vattype": {
+                    "type": "integer"
+                },
+                "vattypepurchase": {
+                    "type": "integer"
                 }
             }
         },
@@ -34827,6 +34823,55 @@ const docTemplate = `{
                 }
             }
         },
+        "models.EmployeeBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.EmployeeContact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "models.EmployeeRequestPassword": {
             "type": "object",
             "properties": {
@@ -34847,14 +34892,14 @@ const docTemplate = `{
                 "branches": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Branch"
+                        "$ref": "#/definitions/models.EmployeeBranch"
                     }
                 },
                 "code": {
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/models.EmployeeContact"
                 },
                 "email": {
                     "type": "string"
@@ -34891,14 +34936,14 @@ const docTemplate = `{
                 "branches": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Branch"
+                        "$ref": "#/definitions/models.EmployeeBranch"
                     }
                 },
                 "code": {
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/models.EmployeeContact"
                 },
                 "email": {
                     "type": "string"
@@ -37812,7 +37857,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -37966,7 +38011,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -38200,17 +38245,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -43015,6 +43049,49 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_organization_branch_models.Branch": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/models.Contact"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "pos": {
+                    "$ref": "#/definitions/models.BranchPOS"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -43046,6 +43123,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -43161,7 +43249,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -43223,6 +43311,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -43292,7 +43391,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
@@ -43440,6 +43539,39 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_branch_models.Branch": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "location": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "telephone": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
