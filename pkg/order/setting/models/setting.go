@@ -27,6 +27,7 @@ type OrderSetting struct {
 	IsPOSActive  bool                       `json:"isposactive" bson:"isposactive"` // ใช้งาน POS
 	Label        string                     `json:"label" bson:"label"`
 	SaleChannels *[]string                  `json:"salechannels" bson:"salechannels"`
+	AdminPin     string                     `json:"adminpin" bson:"adminpin"`
 }
 
 type OrderSettingTimeForSale struct {
