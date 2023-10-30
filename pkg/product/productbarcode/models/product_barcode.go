@@ -42,18 +42,20 @@ type ProductBarcodeBase struct {
 	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
 	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
 
-	RefUnitNames     *[]models.NameX     `json:"refunitnames" bson:"refunitnames"`
-	StockBarcode     string              `json:"stockbarcode" bson:"stockbarcode"`
-	Qty              float64             `json:"qty" bson:"qty"`
-	RefDivideValue   float64             `json:"refdividevalue" bson:"refdividevalue"`
-	RefStandValue    float64             `json:"refstandvalue" bson:"refstandvalue"`
-	VatCal           int                 `json:"vatcal" bson:"vatcal"`
-	IsALaCarte       bool                `json:"isalacarte" bson:"isalacarte"`
-	OrderTypes       *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
-	ProductType      ProductType         `json:"producttype" bson:"producttype"`
-	IsSplitUnitPrint bool                `json:"issplitunitprint" bson:"issplitunitprint"`
-	IsOnlyStaff      bool                `json:"isonlystaff" bson:"isonlystaff"`
-	FoodType         int                 `json:"foodtype" bson:"foodtype"`
+	RefUnitNames         *[]models.NameX     `json:"refunitnames" bson:"refunitnames"`
+	StockBarcode         string              `json:"stockbarcode" bson:"stockbarcode"`
+	Qty                  float64             `json:"qty" bson:"qty"`
+	RefDivideValue       float64             `json:"refdividevalue" bson:"refdividevalue"`
+	RefStandValue        float64             `json:"refstandvalue" bson:"refstandvalue"`
+	VatCal               int                 `json:"vatcal" bson:"vatcal"`
+	IsALaCarte           bool                `json:"isalacarte" bson:"isalacarte"`
+	OrderTypes           *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
+	ProductType          ProductType         `json:"producttype" bson:"producttype"`
+	IsSplitUnitPrint     bool                `json:"issplitunitprint" bson:"issplitunitprint"`
+	IsOnlyStaff          bool                `json:"isonlystaff" bson:"isonlystaff"`
+	FoodType             int                 `json:"foodtype" bson:"foodtype"`
+	Discount             string              `json:"discount" bson:"discount"`
+	IsStockForRestaurant bool                `json:"isstockforrestaurant" bson:"isstockforrestaurant"`
 }
 
 type RefProductBarcode struct {
