@@ -959,15 +959,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -3379,6 +3376,8 @@ definitions:
         type: string
       condition:
         type: boolean
+      discount:
+        type: string
       dividevalue:
         type: number
       foodtype:
@@ -3402,6 +3401,8 @@ definitions:
       isonlystaff:
         type: boolean
       issplitunitprint:
+        type: boolean
+      isstockforrestaurant:
         type: boolean
       issumpoint:
         type: boolean
@@ -6844,6 +6845,8 @@ definitions:
         items:
           type: string
         type: array
+      logouri:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -6899,6 +6902,8 @@ definitions:
         type: string
       condition:
         type: boolean
+      discount:
+        type: string
       dividevalue:
         type: number
       foodtype:
@@ -6922,6 +6927,8 @@ definitions:
       isonlystaff:
         type: boolean
       issplitunitprint:
+        type: boolean
+      isstockforrestaurant:
         type: boolean
       issumpoint:
         type: boolean

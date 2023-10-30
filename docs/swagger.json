@@ -34366,17 +34366,13 @@
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         `json:\"guidfixed\"`",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -37922,6 +37918,9 @@
                 "condition": {
                     "type": "boolean"
                 },
+                "discount": {
+                    "type": "string"
+                },
                 "dividevalue": {
                     "type": "number"
                 },
@@ -37956,6 +37955,9 @@
                     "type": "boolean"
                 },
                 "issplitunitprint": {
+                    "type": "boolean"
+                },
+                "isstockforrestaurant": {
                     "type": "boolean"
                 },
                 "issumpoint": {
@@ -43076,6 +43078,9 @@
                         "type": "string"
                     }
                 },
+                "logouri": {
+                    "type": "string"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -43160,6 +43165,9 @@
                 "condition": {
                     "type": "boolean"
                 },
+                "discount": {
+                    "type": "string"
+                },
                 "dividevalue": {
                     "type": "number"
                 },
@@ -43194,6 +43202,9 @@
                     "type": "boolean"
                 },
                 "issplitunitprint": {
+                    "type": "boolean"
+                },
+                "isstockforrestaurant": {
                     "type": "boolean"
                 },
                 "issumpoint": {

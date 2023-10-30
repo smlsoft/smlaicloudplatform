@@ -34372,17 +34372,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -37928,6 +37924,9 @@ const docTemplate = `{
                 "condition": {
                     "type": "boolean"
                 },
+                "discount": {
+                    "type": "string"
+                },
                 "dividevalue": {
                     "type": "number"
                 },
@@ -37962,6 +37961,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "issplitunitprint": {
+                    "type": "boolean"
+                },
+                "isstockforrestaurant": {
                     "type": "boolean"
                 },
                 "issumpoint": {
@@ -43082,6 +43084,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "logouri": {
+                    "type": "string"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -43166,6 +43171,9 @@ const docTemplate = `{
                 "condition": {
                     "type": "boolean"
                 },
+                "discount": {
+                    "type": "string"
+                },
                 "dividevalue": {
                     "type": "number"
                 },
@@ -43200,6 +43208,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "issplitunitprint": {
+                    "type": "boolean"
+                },
+                "isstockforrestaurant": {
                     "type": "boolean"
                 },
                 "issumpoint": {
