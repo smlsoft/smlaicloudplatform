@@ -14,6 +14,7 @@ type Branch struct {
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Departments              *[]Department   `json:"departments" bson:"departments"`
 	BusinessTypes            *[]string       `json:"businesstypes" bson:"businesstypes"`
+	ImageURI                 string          `json:"imageuri" bson:"imageuri"`
 	LogoURI                  string          `json:"logouri" bson:"logouri"`
 	Languages                *[]string       `json:"languages" bson:"languages"`
 	Contact                  Contact         `json:"contact" bson:"contact"`
