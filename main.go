@@ -162,6 +162,7 @@ func main() {
 			"/e-order/category",
 			"/e-order/product-barcode",
 			"/e-order/shop-info",
+			"/e-order/shop-info/v1.1",
 		}
 
 		exceptShopPath := []string{

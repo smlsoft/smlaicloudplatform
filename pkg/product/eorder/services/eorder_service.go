@@ -55,6 +55,102 @@ func (svc EOrderService) getContextTimeout() (context.Context, context.CancelFun
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
+func (svc EOrderService) GetShopInfoOld(shopID string, orderStationCode string) (models.EOrderShopOld, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	result := models.EOrderShopOld{}
+
+	shopInfo, err := svc.shopRepo.FindByGuid(ctx, shopID)
+
+	if err != nil {
+		return models.EOrderShopOld{}, err
+	}
+
+	tableCount, err := svc.tableRepo.Count(ctx, shopID)
+
+	if err != nil {
+		return models.EOrderShopOld{}, err
+	}
+
+	if orderStationCode != "" {
+		orderDevice, err := svc.repoDevice.FindByDocIndentityGuid(ctx, shopID, "code", orderStationCode)
+
+		if err != nil {
+			return models.EOrderShopOld{}, err
+		}
+
+		tempOrderStation := models.EOrderShopOrderOld{}
+		if orderDevice.Code != "" {
+			order, err := svc.repoOrder.FindByDocIndentityGuid(ctx, shopID, "guidfixed", orderDevice.SettingCode)
+
+			if err != nil {
+				return models.EOrderShopOld{}, err
+			}
+
+			tempOrderStation.OrderSetting = order.OrderSetting
+
+			if order.Code != "" {
+				// Media
+				media, err := svc.repoMedia.FindByGuid(ctx, shopID, order.MediaGUID)
+
+				if err != nil {
+					return models.EOrderShopOld{}, err
+				}
+
+				tempOrderStation.Media = media.Media
+
+				// Device info
+				tempOrderStation.DeviceInfo = orderDevice.OrderDevice
+
+				saleChannelGUIDs := []string{}
+				if order.SaleChannels != nil {
+					saleChannelGUIDs = *order.SaleChannels
+				}
+
+				// Sale channel
+				saleChannels, err := svc.repoSaleChannel.FindByGuids(ctx, shopID, saleChannelGUIDs)
+
+				if err != nil {
+					return models.EOrderShopOld{}, err
+				}
+
+				tempOrderStation.SaleChannels = []salechannel_models.SaleChannel{}
+				for _, tempSaleChannel := range saleChannels {
+					tempOrderStation.SaleChannels = append(tempOrderStation.SaleChannels, tempSaleChannel.SaleChannel)
+				}
+
+				// Branch
+				branch, err := svc.repoBranch.FindByGuid(ctx, shopID, order.Branch.GuidFixed)
+
+				if err != nil {
+					return models.EOrderShopOld{}, err
+				}
+				tempOrderStation.Branch = branch.Branch
+			}
+
+			result.OrderStation = tempOrderStation
+		}
+
+	}
+
+	kitchens, err := svc.repoKitchen.All(ctx, shopID)
+
+	if err != nil {
+		return models.EOrderShopOld{}, err
+	}
+
+	for _, tempKitchen := range kitchens {
+		result.Kitchens = append(result.Kitchens, tempKitchen.Kitchen)
+	}
+
+	result.ShopID = shopInfo.GuidFixed
+	result.Name1 = shopInfo.Name1
+	result.TotalTable = tableCount
+
+	return result, nil
+}
+
 func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (models.EOrderShop, error) {
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -80,17 +176,20 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 			return models.EOrderShop{}, err
 		}
 
-		tempOrderStation := models.EOrderShopOrder{}
+		tempOrderStation := models.EOrderShopOrderStation{}
 		if orderDevice.Code != "" {
+			tempOrderStation.OrderDevice = orderDevice.OrderDevice
+
 			order, err := svc.repoOrder.FindByDocIndentityGuid(ctx, shopID, "guidfixed", orderDevice.SettingCode)
 
 			if err != nil {
 				return models.EOrderShop{}, err
 			}
 
-			tempOrderStation.OrderSetting = order.OrderSetting
-
 			if order.Code != "" {
+				// Order setting
+				tempOrderStation.Setting.OrderSetting = order.OrderSetting
+
 				// Media
 				media, err := svc.repoMedia.FindByGuid(ctx, shopID, order.MediaGUID)
 
@@ -98,10 +197,7 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 					return models.EOrderShop{}, err
 				}
 
-				tempOrderStation.Media = media.Media
-
-				// Device info
-				tempOrderStation.DeviceInfo = orderDevice.OrderDevice
+				tempOrderStation.Setting.Media = media.Media
 
 				saleChannelGUIDs := []string{}
 				if order.SaleChannels != nil {
@@ -115,9 +211,9 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 					return models.EOrderShop{}, err
 				}
 
-				tempOrderStation.SaleChannels = []salechannel_models.SaleChannel{}
+				tempOrderStation.Setting.SaleChannels = []salechannel_models.SaleChannel{}
 				for _, tempSaleChannel := range saleChannels {
-					tempOrderStation.SaleChannels = append(tempOrderStation.SaleChannels, tempSaleChannel.SaleChannel)
+					tempOrderStation.Setting.SaleChannels = append(tempOrderStation.Setting.SaleChannels, tempSaleChannel.SaleChannel)
 				}
 
 				// Branch
@@ -126,7 +222,7 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 				if err != nil {
 					return models.EOrderShop{}, err
 				}
-				tempOrderStation.Branch = branch.Branch
+				tempOrderStation.Setting.Branch = branch.Branch
 			}
 
 			result.OrderStation = tempOrderStation

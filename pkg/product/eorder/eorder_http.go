@@ -77,7 +77,8 @@ func (h EOrderHttp) RegisterHttp() {
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
 	h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
 	h.ms.GET("/e-order/product-barcode", h.SearchProductBarcodePage)
-	h.ms.GET("/e-order/shop-info", h.ShopInfo)
+	h.ms.GET("/e-order/shop-info/v1.1", h.ShopInfo)
+	h.ms.GET("/e-order/shop-info", h.ShopInfoOld)
 
 }
 
@@ -217,6 +218,39 @@ func (h EOrderHttp) GetProductBarcodeByBarcodes(ctx microservice.IContext) error
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /e-order/shop-info [get]
+func (h EOrderHttp) ShopInfoOld(ctx microservice.IContext) error {
+	shopID := ctx.QueryParam("shopid")
+	orderStationCode := ctx.QueryParam("order-station")
+
+	if len(shopID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
+		return nil
+	}
+
+	data, err := h.svcEOrder.GetShopInfoOld(shopID, orderStationCode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    data,
+	})
+	return nil
+}
+
+// Get Shop Info v1.1
+// @Description Get Shop Info v1.1
+// @Tags		E-Order
+// @Param		shopid		query	string		false  "Shop ID"
+// @Param		order-station		query	string		false  "Order station code"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /e-order/shop-info/v1.1 [get]
 func (h EOrderHttp) ShopInfo(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
 	orderStationCode := ctx.QueryParam("order-station")

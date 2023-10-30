@@ -13,13 +13,13 @@ type EOrderShop struct {
 	ShopID       string                   `json:"shopid"`
 	Name1        string                   `json:"name1"`
 	TotalTable   int                      `json:"totaltable"`
-	OrderStation EOrderShopOrder          `json:"orderstation,omitempty"`
+	OrderStation EOrderShopOrderStation   `json:"orderstation,omitempty"`
 	Kitchens     []kitchen_models.Kitchen `json:"kitchens" bson:"kitchens"`
 }
 
-type EOrderShopOrder struct {
-	EOrderSetting
-	DeviceInfo device_models.OrderDevice `json:"deviceinfo" bson:"deviceinfo"`
+type EOrderShopOrderStation struct {
+	device_models.OrderDevice
+	Setting EOrderSetting `json:"ordersetting"`
 }
 
 type EOrderSetting struct {
@@ -29,5 +29,23 @@ type EOrderSetting struct {
 	SaleChannels []salechannel_models.SaleChannel `json:"salechannels" `
 }
 
-type EOrderBranch struct {
+// previous version
+type EOrderShopOld struct {
+	ShopID       string                   `json:"shopid"`
+	Name1        string                   `json:"name1"`
+	TotalTable   int                      `json:"totaltable"`
+	OrderStation EOrderShopOrderOld       `json:"orderstation,omitempty"`
+	Kitchens     []kitchen_models.Kitchen `json:"kitchens" bson:"kitchens"`
+}
+
+type EOrderShopOrderOld struct {
+	EOrderSettingOld
+	DeviceInfo device_models.OrderDevice `json:"deviceinfo" bson:"deviceinfo"`
+}
+
+type EOrderSettingOld struct {
+	order_models.OrderSetting
+	Branch       branch_models.Branch             `json:"branch"`
+	Media        models.Media                     `json:"media"`
+	SaleChannels []salechannel_models.SaleChannel `json:"salechannels" `
 }
