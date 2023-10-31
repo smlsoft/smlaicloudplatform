@@ -200,24 +200,7 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 		"names.name",
 	}
 
-	selectFields := map[string]interface{}{
-		"guidfixed":       1,
-		"childcount":      1,
-		"parentguid":      1,
-		"parentguidall":   1,
-		"imageuri":        1,
-		"xsorts":          1,
-		"codelist":        1,
-		"useimageorcolor": 1,
-		"colorselect":     1,
-		"colorselecthex":  1,
-	}
-
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
+	selectFields := map[string]interface{}{}
 
 	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
