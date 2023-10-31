@@ -25,8 +25,8 @@ type IProductCategoryHttpService interface {
 	DeleteProductCategory(shopID string, guid string, authUsername string) error
 	DeleteProductCategoryByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductCategory(shopID string, guid string) (models.ProductCategoryInfo, error)
-	SearchProductCategory(shopID string, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
-	SearchProductCategoryStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error)
+	SearchProductCategory(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
+	SearchProductCategoryStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductCategory) error
 	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
 	XBarcodesSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
@@ -171,7 +171,7 @@ func (svc ProductCategoryHttpService) InfoProductCategory(shopID string, guid st
 
 }
 
-func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error) {
+func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -181,7 +181,7 @@ func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, pagea
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductCategoryInfo{}, pagination, err
@@ -190,7 +190,7 @@ func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, pagea
 	return docList, pagination, nil
 }
 
-func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error) {
+func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -219,7 +219,7 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ProductCategoryInfo{}, 0, err

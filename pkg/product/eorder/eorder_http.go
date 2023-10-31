@@ -75,7 +75,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 func (h EOrderHttp) RegisterHttp() {
 
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
-	h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
+	// h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
 	h.ms.GET("/e-order/product-barcode", h.SearchProductBarcodePage)
 	h.ms.GET("/e-order/shop-info/v1.1", h.ShopInfo)
 	h.ms.GET("/e-order/shop-info", h.ShopInfoOld)
@@ -87,6 +87,7 @@ func (h EOrderHttp) RegisterHttp() {
 // @Tags		E-Order
 // @Param		shopid		query	string		false  "Shop ID"
 // @Param		q		query	string		false  "Search Value"
+// @Param		group-number		query	int		false  "group number"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -103,7 +104,14 @@ func (h EOrderHttp) SearchProductCategoryPage(ctx microservice.IContext) error {
 	}
 
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svcCategory.SearchProductCategory(shopID, pageable)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "group-number",
+			Field: "groupnumber",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+	docList, pagination, err := h.svcCategory.SearchProductCategory(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

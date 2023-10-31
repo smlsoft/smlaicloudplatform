@@ -19,7 +19,7 @@ type IProductCategoryRepository interface {
 	Update(ctx context.Context, shopID string, guid string, doc models.ProductCategoryDoc) error
 	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
 	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.ProductCategoryDoc, error)
 
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.ProductCategoryItemGuid, error)

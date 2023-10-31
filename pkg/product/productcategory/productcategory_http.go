@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/product/productcategory/repositories"
 	"smlcloudplatform/pkg/product/productcategory/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IProductCategoryHttp interface{}
@@ -307,6 +308,7 @@ func (h ProductCategoryHttp) InfoProductCategory(ctx microservice.IContext) erro
 // @Description get struct array by ID
 // @Tags		ProductCategory
 // @Param		q		query	string		false  "Search Value"
+// @Param		group-number		query	int		false  "group number"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -319,7 +321,15 @@ func (h ProductCategoryHttp) SearchProductCategoryPage(ctx microservice.IContext
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchProductCategory(shopID, pageable)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "group-number",
+			Field: "groupnumber",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchProductCategory(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -338,6 +348,7 @@ func (h ProductCategoryHttp) SearchProductCategoryPage(ctx microservice.IContext
 // @Description search limit offset
 // @Tags		ProductCategory
 // @Param		q		query	string		false  "Search Value"
+// @Param		group-number		query	int		false  "group number"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -352,9 +363,17 @@ func (h ProductCategoryHttp) SearchProductCategoryLimit(ctx microservice.IContex
 
 	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "group-number",
+			Field: "groupnumber",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchProductCategoryStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchProductCategoryStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
