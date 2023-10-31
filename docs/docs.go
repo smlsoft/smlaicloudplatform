@@ -3947,6 +3947,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "group number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "Page",
                         "name": "page",
                         "in": "query"
@@ -15188,6 +15194,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "group number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "Page",
                         "name": "page",
                         "in": "query"
@@ -15406,6 +15418,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "group number",
+                        "name": "group-number",
                         "in": "query"
                     },
                     {
@@ -33738,6 +33756,9 @@ const docTemplate = `{
                 "coveruri": {
                     "type": "string"
                 },
+                "groupnumber": {
+                    "type": "integer"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -33803,6 +33824,9 @@ const docTemplate = `{
                 },
                 "coveruri": {
                     "type": "string"
+                },
+                "groupnumber": {
+                    "type": "integer"
                 },
                 "guidfixed": {
                     "type": "string"
@@ -37086,6 +37110,9 @@ const docTemplate = `{
                 "branch": {
                     "$ref": "#/definitions/models.OrderSettingBranch"
                 },
+                "categorygroupnumber": {
+                    "type": "integer"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -38146,6 +38173,9 @@ const docTemplate = `{
                 },
                 "coveruri": {
                     "type": "string"
+                },
+                "groupnumber": {
+                    "type": "integer"
                 },
                 "imageuri": {
                     "type": "string"

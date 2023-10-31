@@ -3941,6 +3941,12 @@
                     },
                     {
                         "type": "integer",
+                        "description": "group number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "Page",
                         "name": "page",
                         "in": "query"
@@ -15182,6 +15188,12 @@
                     },
                     {
                         "type": "integer",
+                        "description": "group number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "Page",
                         "name": "page",
                         "in": "query"
@@ -15400,6 +15412,12 @@
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "group number",
+                        "name": "group-number",
                         "in": "query"
                     },
                     {
@@ -33732,6 +33750,9 @@
                 "coveruri": {
                     "type": "string"
                 },
+                "groupnumber": {
+                    "type": "integer"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -33797,6 +33818,9 @@
                 },
                 "coveruri": {
                     "type": "string"
+                },
+                "groupnumber": {
+                    "type": "integer"
                 },
                 "guidfixed": {
                     "type": "string"
@@ -37080,6 +37104,9 @@
                 "branch": {
                     "$ref": "#/definitions/models.OrderSettingBranch"
                 },
+                "categorygroupnumber": {
+                    "type": "integer"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -38140,6 +38167,9 @@
                 },
                 "coveruri": {
                     "type": "string"
+                },
+                "groupnumber": {
+                    "type": "integer"
                 },
                 "imageuri": {
                     "type": "string"

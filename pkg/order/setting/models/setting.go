@@ -20,14 +20,15 @@ type OrderSetting struct {
 	// BillFooter        *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	MediaGUID string `json:"mediaguid" bson:"mediaguid"`
 	// timezone.Timezone `bson:"inline"`
-	TimeForSales *[]OrderSettingTimeForSale `json:"timeforsales" bson:"timeforsales"` // เวลาขายเอลกอฮอล์
-	LogoUrl      string                     `json:"logourl" bson:"logourl"`
-	TableNumber  string                     `json:"tablenumber" bson:"tablenumber"` // เลขโต๊ะ
-	DeviceType   int8                       `json:"devicetype" bson:"devicetype"`   // ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน
-	IsPOSActive  bool                       `json:"isposactive" bson:"isposactive"` // ใช้งาน POS
-	Label        string                     `json:"label" bson:"label"`
-	SaleChannels *[]string                  `json:"salechannels" bson:"salechannels"`
-	AdminPin     string                     `json:"adminpin" bson:"adminpin"`
+	TimeForSales        *[]OrderSettingTimeForSale `json:"timeforsales" bson:"timeforsales"` // เวลาขายเอลกอฮอล์
+	LogoUrl             string                     `json:"logourl" bson:"logourl"`
+	TableNumber         string                     `json:"tablenumber" bson:"tablenumber"` // เลขโต๊ะ
+	DeviceType          int8                       `json:"devicetype" bson:"devicetype"`   // ประเภทเครื่อง ex.เครื่องลูกค้า,เครื่องพนักงาน
+	IsPOSActive         bool                       `json:"isposactive" bson:"isposactive"` // ใช้งาน POS
+	Label               string                     `json:"label" bson:"label"`
+	SaleChannels        *[]string                  `json:"salechannels" bson:"salechannels"`
+	AdminPin            string                     `json:"adminpin" bson:"adminpin"`
+	CategoryGroupNumber int                        `json:"categorygroupnumber" bson:"categorygroupnumber"`
 }
 
 type OrderSettingTimeForSale struct {

@@ -493,6 +493,8 @@ definitions:
         type: string
       coveruri:
         type: string
+      groupnumber:
+        type: integer
       guidfixed:
         type: string
       id:
@@ -538,6 +540,8 @@ definitions:
         type: string
       coveruri:
         type: string
+      groupnumber:
+        type: integer
       guidfixed:
         type: string
       id:
@@ -2780,6 +2784,8 @@ definitions:
         type: string
       branch:
         $ref: '#/definitions/models.OrderSettingBranch'
+      categorygroupnumber:
+        type: integer
       code:
         type: string
       devicetype:
@@ -3496,6 +3502,8 @@ definitions:
         type: string
       coveruri:
         type: string
+      groupnumber:
+        type: integer
       imageuri:
         type: string
       isdisabled:
@@ -9895,6 +9903,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: group number
+        in: query
+        name: group-number
+        type: integer
       - description: Page
         in: query
         name: page
@@ -16993,6 +17005,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: group number
+        in: query
+        name: group-number
+        type: integer
       - description: Page
         in: query
         name: page
@@ -17180,6 +17196,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: group number
+        in: query
+        name: group-number
+        type: integer
       - description: offset
         in: query
         name: offset
