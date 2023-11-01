@@ -146,6 +146,7 @@ func (svc EOrderService) GetShopInfoOld(shopID string, orderStationCode string) 
 
 	result.ShopID = shopInfo.GuidFixed
 	result.Name1 = shopInfo.Name1
+	result.ProfilePicture = shopInfo.ProfilePicture
 	result.TotalTable = tableCount
 
 	return result, nil
@@ -242,6 +243,7 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 
 	result.ShopID = shopInfo.GuidFixed
 	result.Name1 = shopInfo.Name1
+	result.ProfilePicture = shopInfo.ProfilePicture
 	result.TotalTable = tableCount
 
 	return result, nil

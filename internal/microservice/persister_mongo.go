@@ -704,7 +704,7 @@ func (pst *PersisterMongo) Transaction(ctx context.Context, queryFunc func(conte
 	pst.getClient(ctx)
 	client := pst.client
 
-	client.UseSession(ctx, func(sessionContext mongo.SessionContext) error {
+	err := client.UseSession(ctx, func(sessionContext mongo.SessionContext) error {
 		err := sessionContext.StartTransaction()
 		if err != nil {
 			return err
@@ -713,8 +713,10 @@ func (pst *PersisterMongo) Transaction(ctx context.Context, queryFunc func(conte
 		err = queryFunc(sessionContext)
 
 		if err != nil {
+			if err := sessionContext.AbortTransaction(sessionContext); err != nil {
+				return err
+			}
 
-			err = sessionContext.AbortTransaction(sessionContext)
 			return err
 		}
 
@@ -725,6 +727,11 @@ func (pst *PersisterMongo) Transaction(ctx context.Context, queryFunc func(conte
 
 		return nil
 	})
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

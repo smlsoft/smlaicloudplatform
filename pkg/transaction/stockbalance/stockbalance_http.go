@@ -11,6 +11,8 @@ import (
 	"smlcloudplatform/pkg/transaction/stockbalance/models"
 	"smlcloudplatform/pkg/transaction/stockbalance/repositories"
 	"smlcloudplatform/pkg/transaction/stockbalance/services"
+	stockbalancedetail_repositories "smlcloudplatform/pkg/transaction/stockbalancedetail/repositories"
+	stockbalancedetail_services "smlcloudplatform/pkg/transaction/stockbalancedetail/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/requestfilter"
 )
@@ -31,9 +33,15 @@ func NewStockBalanceHttp(ms *microservice.Microservice, cfg config.IConfig) Stoc
 	repo := repositories.NewStockBalanceRepository(pst)
 	repoMq := repositories.NewStockBalanceMessageQueueRepository(producer)
 
-	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockBalanceHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	transRepo := trancache.NewCacheRepository(cache)
+
+	repoStockBalanceDetail := stockbalancedetail_repositories.NewStockBalanceDetailRepository(pst)
+	repoMqStockBalanceDetail := stockbalancedetail_repositories.NewStockBalanceDetailMessageQueueRepository(producer)
+
+	svcStockBalanceDetail := stockbalancedetail_services.NewStockBalanceDetailHttpService(repoStockBalanceDetail, transRepo, repoMqStockBalanceDetail, masterSyncCacheRepo)
+
+	svc := services.NewStockBalanceHttpService(svcStockBalanceDetail, repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockBalanceHttp{
 		ms:  ms,

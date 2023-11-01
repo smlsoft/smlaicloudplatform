@@ -1,261 +1,221 @@
 package services
 
 import (
-	"fmt"
-	"math"
+	"context"
+	"io"
+
+	micromodels "smlcloudplatform/internal/microservice/models"
+	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/stockbalanceimport/models"
 	"smlcloudplatform/pkg/stockbalanceimport/repositories"
 	stockbalance_models "smlcloudplatform/pkg/transaction/stockbalance/models"
-	"smlcloudplatform/pkg/transaction/stockbalance/services"
+	stockbalance_services "smlcloudplatform/pkg/transaction/stockbalance/services"
+	stockbalancedetail_models "smlcloudplatform/pkg/transaction/stockbalancedetail/models"
+	stockbalancedetail_services "smlcloudplatform/pkg/transaction/stockbalancedetail/services"
+	"strconv"
 	"time"
+
+	"github.com/xuri/excelize/v2"
 )
 
 type IStockBalanceImportService interface {
-	CreateTask(shopID string, req models.StockBalanceImportTaskRequest) (models.StockBalanceImportTask, error)
-	GetTaskPart(shopID string, partID string) (models.StockBalanceImportPartCache, error)
-	GetTaskMeta(shopID string, taskID string) (models.StockBalanceImportMeta, error)
-	SaveTaskPart(shopID string, partID string, details []stockbalance_models.StockBalanceDetail) error
-	SaveTaskComplete(shopID string, authUsername string, taskID string, headerBodyRequest stockbalance_models.StockBalanceHeader) (models.StockBalanceImportMeta, error)
+	List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error)
+	Create(shopID string, req *models.StockBalanceImport) error
+	Update(shopID string, guid string, doc models.StockBalanceImportRaw) error
+	Delete(shopID string, guid string) error
+	DeleteTask(shopID string, taskID string) error
+	ImportFromFile(shopID string, isSkipHeader bool, fileUpload io.Reader) (string, error)
+	SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error)
 }
 
 type StockBalanceImportService struct {
-	deafultPartSize     int
-	sizeID              int
-	cacheExpire         time.Duration
-	cacheRepo           repositories.IStockBalanceImportCacheRepository
-	stockBalanceService services.IStockBalanceHttpService
-	GenerateID          func(int) string
+	deafultPartSize           int
+	sizeID                    int
+	cacheExpire               time.Duration
+	chRepo                    repositories.IStockBalanceImportClickHouseRepository
+	productBarcodeRepo        productbarcode_repo.IProductBarcodeRepository
+	stockBalanceService       stockbalance_services.IStockBalanceHttpService
+	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailHttpService
+	GenerateID                func(int) string
+	GenerateGUID              func() string
 }
 
 func NewStockBalanceImportService(
-	cacheRepo repositories.IStockBalanceImportCacheRepository,
-	stockBalanceService services.IStockBalanceHttpService,
+	chRepo repositories.IStockBalanceImportClickHouseRepository,
+	productBarcodeRepo productbarcode_repo.IProductBarcodeRepository,
+	stockBalanceService stockbalance_services.IStockBalanceHttpService,
+	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailHttpService,
 	GenerateID func(int) string,
+	GenerateGUID func() string,
 ) *StockBalanceImportService {
 	return &StockBalanceImportService{
-		deafultPartSize:     100,
-		sizeID:              12,
-		cacheExpire:         time.Minute * 60,
-		cacheRepo:           cacheRepo,
-		stockBalanceService: stockBalanceService,
-		GenerateID:          GenerateID,
+		deafultPartSize:           100,
+		sizeID:                    12,
+		cacheExpire:               time.Minute * 60,
+		chRepo:                    chRepo,
+		productBarcodeRepo:        productBarcodeRepo,
+		stockBalanceService:       stockBalanceService,
+		stockBalanceDetailService: stockBalanceDetailService,
+		GenerateID:                GenerateID,
+		GenerateGUID:              GenerateGUID,
 	}
 }
 
-func (svc *StockBalanceImportService) CreateTask(shopID string, req models.StockBalanceImportTaskRequest) (models.StockBalanceImportTask, error) {
+func (svc *StockBalanceImportService) List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error) {
+	return svc.chRepo.List(context.Background(), shopID, taskID, pageable)
+}
 
-	result := models.StockBalanceImportTask{}
+func (svc *StockBalanceImportService) Create(shopID string, doc *models.StockBalanceImport) error {
+	docData := models.StockBalanceImportDoc{}
+	docData.ShopID = shopID
+	docData.GUIDFixed = svc.GenerateGUID()
+	docData.StockBalanceImport = *doc
+	return svc.chRepo.Create(context.Background(), docData)
+}
+
+func (svc *StockBalanceImportService) ImportFromFile(shopID string, isSkipHeader bool, fileUpload io.Reader) (string, error) {
+
+	f, err := excelize.OpenReader(fileUpload)
+	if err != nil {
+		return "", err
+	}
+
+	sheetName := f.GetSheetList()[0]
+
+	rows, err := f.GetRows(sheetName)
+	if err != nil {
+		return "", err
+	}
+
+	prepareData := []models.StockBalanceImportDoc{}
 
 	taskID := svc.GenerateID(svc.sizeID)
 
-	result.TaskID = taskID
-	result.TotalItem = req.TotalItem
-	// result.Header = req.Header
-	result.Parts = []models.StockBalanceImportPart{}
-
-	tempPartSize := req.PartSize
-
-	if tempPartSize == 0 {
-		tempPartSize = svc.deafultPartSize
-	}
-
-	totalPart := math.Ceil(float64(req.TotalItem) / float64(tempPartSize))
-	result.PartSize = tempPartSize
-
-	for i := 0; i < int(totalPart); i++ {
-		partNumber := i + 1
-		partID := fmt.Sprintf("%s-%d", taskID, partNumber)
-		result.Parts = append(result.Parts, models.StockBalanceImportPart{
-			PartID:     partID,
-			PartNumber: partNumber,
-		})
-	}
-
-	svc.createTaskInMemory(shopID, result)
-
-	return result, nil
-}
-
-func (svc *StockBalanceImportService) createTaskInMemory(shopID string, task models.StockBalanceImportTask) {
-
-	metaCache := models.StockBalanceImportMeta{
-		TaskID:    task.TaskID,
-		TotalItem: task.TotalItem,
-		Status:    models.TaskStatusPending,
-	}
-
-	for _, part := range task.Parts {
-		partCache := models.StockBalanceImportPartCache{}
-
-		partCache.TaskID = task.TaskID
-		partCache.PartID = part.PartID
-		partCache.PartNumber = part.PartNumber
-		partCache.Status = 0
-		partCache.Detail = []stockbalance_models.StockBalanceDetail{}
-
-		svc.cacheRepo.CreatePart(shopID, part.PartID, partCache, svc.cacheExpire)
-
-		metaCache.Parts = append(metaCache.Parts, models.StockBalanceImportPartMeta{
-			PartID:     part.PartID,
-			PartNumber: part.PartNumber,
-			Status:     0,
-		})
-	}
-
-	svc.cacheRepo.CreateMeta(shopID, task.TaskID, metaCache, svc.cacheExpire)
-}
-
-func (svc *StockBalanceImportService) GetTaskPart(shopID string, partID string) (models.StockBalanceImportPartCache, error) {
-
-	result, err := svc.cacheRepo.GetPart(shopID, partID)
-
-	if err != nil {
-		return models.StockBalanceImportPartCache{}, err
-	}
-
-	if result.PartID == "" {
-		result.PartID = partID
-		result.Status = models.PartStatusNotFound
-	}
-
-	return result, nil
-}
-
-func (svc *StockBalanceImportService) GetTaskMeta(shopID string, TaskID string) (models.StockBalanceImportMeta, error) {
-
-	result := models.StockBalanceImportMeta{
-		TaskID: TaskID,
-		Parts:  []models.StockBalanceImportPartMeta{},
-	}
-	taskMeta, err := svc.cacheRepo.GetMeta(shopID, TaskID)
-
-	if err != nil {
-		return models.StockBalanceImportMeta{}, err
-	}
-
-	if taskMeta.TaskID == "" {
-		result.Status = models.TaskStatusNotFound
-		return result, nil
-	}
-
-	if taskMeta.Status == models.TaskStatusSaveSucceded {
-		return taskMeta, nil
-	}
-
-	for i, part := range taskMeta.Parts {
-		partCache, err := svc.cacheRepo.GetPart(shopID, part.PartID)
-
-		if err != nil {
-			taskMeta.Parts[i].Status = models.PartStatusError
+	for i, doc := range rows {
+		if isSkipHeader && i == 0 {
 			continue
 		}
-		taskMeta.Parts[i].Status = partCache.Status
+
+		prepareData = append(prepareData, svc.prepareData(shopID, taskID, float64(i), doc))
 	}
 
-	result = taskMeta
-	result.Status = svc.taskStatus(taskMeta.Parts)
+	err = svc.chRepo.CreateInBatch(context.Background(), prepareData)
 
-	svc.cacheRepo.UpdateMeta(shopID, TaskID, result)
+	if err != nil {
+		return "", err
+	}
 
-	return result, nil
+	return taskID, nil
+}
+func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, rowNumber float64, doc []string) models.StockBalanceImportDoc {
+
+	qty, _ := strconv.ParseFloat(doc[3], 64)
+	price, _ := strconv.ParseFloat(doc[4], 64)
+	sumAmount, _ := strconv.ParseFloat(doc[5], 64)
+	newGUID := svc.GenerateGUID()
+
+	dataDoc := models.StockBalanceImportDoc{}
+
+	dataDoc.GUIDFixed = newGUID
+	dataDoc.ShopID = shopID
+	dataDoc.TaskID = taskID
+	dataDoc.RowNumber = rowNumber
+	dataDoc.Barcode = doc[0]
+	dataDoc.Name = doc[1]
+	dataDoc.UnitCode = doc[2]
+	dataDoc.Qty = qty
+	dataDoc.Price = price
+	dataDoc.SumAmount = sumAmount
+
+	return dataDoc
 }
 
-func (svc *StockBalanceImportService) SaveTaskPart(shopID string, taskID string, details []stockbalance_models.StockBalanceDetail) error {
-
-	doc, err := svc.cacheRepo.GetPart(shopID, taskID)
-
-	if err != nil {
-		return err
-	}
-
-	if doc.PartID == "" {
-		return fmt.Errorf("part not found")
-	}
-
-	doc.Detail = details
-	doc.Status = models.PartStatusDone
-	err = svc.cacheRepo.UpdatePart(shopID, taskID, doc)
-
-	if err != nil {
-		doc.Status = models.PartStatusError
-		doc.Detail = []stockbalance_models.StockBalanceDetail{}
-		svc.cacheRepo.UpdatePart(shopID, taskID, doc)
-		return err
-	}
-
-	return nil
+func (svc *StockBalanceImportService) Update(shopID string, guid string, doc models.StockBalanceImportRaw) error {
+	return svc.chRepo.Update(context.Background(), shopID, guid, doc)
 }
 
-func (svc *StockBalanceImportService) SaveTaskComplete(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (models.StockBalanceImportMeta, error) {
+func (svc *StockBalanceImportService) Delete(shopID string, guid string) error {
+	return svc.chRepo.DeleteByGUID(context.Background(), shopID, guid)
+}
 
-	result := models.StockBalanceImportMeta{
-		TaskID: taskID,
-		Parts:  []models.StockBalanceImportPartMeta{},
-	}
-	meta, err := svc.GetTaskMeta(shopID, taskID)
+func (svc *StockBalanceImportService) DeleteTask(shopID string, taskID string) error {
+	return svc.chRepo.DeleteByTaskID(context.Background(), shopID, taskID)
+}
+
+func (svc *StockBalanceImportService) SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error) {
+
+	docs, err := svc.chRepo.All(context.Background(), shopID, taskID)
 
 	if err != nil {
-		result.Status = models.TaskStatusError
-		return result, err
+		return "", err
 	}
 
-	if meta.Status == models.TaskStatusSaveSucceded {
-		return meta, nil
-	}
+	tempDetails := []stockbalancedetail_models.StockBalanceDetail{}
 
-	if meta.TaskID == "" {
-		result.Status = models.TaskStatusNotFound
-		return result, nil
-	}
+	barcodes := []string{}
+	tempBarcodes := map[string]models.StockBalanceImportDoc{}
+	for i, doc := range docs {
+		barcodes = append(barcodes, doc.Barcode)
+		tempBarcodes[docs[i].Barcode] = docs[i]
+		if (i > 1 && i%5000 == 0) || i == len(docs)-1 {
+			productList, err := svc.productBarcodeRepo.FindByBarcodes(context.Background(), shopID, barcodes)
+			if err != nil {
+				return "", err
+			}
 
-	result = meta
-	result.Status = svc.taskStatus(meta.Parts)
+			for _, product := range productList {
+				stockbalanceDetail := stockbalancedetail_models.StockBalanceDetail{}
+				temp := tempBarcodes[product.Barcode]
 
-	if result.Status != models.TaskStatusDone {
-		return result, fmt.Errorf("task is not done")
-	}
+				stockbalanceDetail.ItemCode = product.ItemCode
+				stockbalanceDetail.Barcode = product.Barcode
+				stockbalanceDetail.ItemNames = product.Names
+				stockbalanceDetail.ItemType = product.ItemType
+				stockbalanceDetail.TaxType = product.TaxType
+				stockbalanceDetail.VatType = product.VatType
+				stockbalanceDetail.DivideValue = product.DivideValue
+				stockbalanceDetail.StandValue = product.StandValue
+				stockbalanceDetail.VatCal = product.VatCal
+				stockbalanceDetail.UnitCode = product.ItemUnitCode
+				stockbalanceDetail.UnitNames = product.ItemUnitNames
 
-	tempDetails := []stockbalance_models.StockBalanceDetail{}
+				stockbalanceDetail.Qty = temp.Qty
+				stockbalanceDetail.Price = temp.Price
+				stockbalanceDetail.SumAmount = temp.SumAmount
 
-	for _, part := range meta.Parts {
-		partCache, err := svc.cacheRepo.GetPart(shopID, part.PartID)
+				tempDetails = append(tempDetails, stockbalanceDetail)
+			}
 
-		if err != nil {
-			result.Status = models.TaskStatusError
+			barcodes = []string{}
+			tempBarcodes = map[string]models.StockBalanceImportDoc{}
 		}
-
-		tempDetails = append(tempDetails, partCache.Detail...)
 	}
+
+	svc.chRepo.All(context.Background(), shopID, taskID)
 
 	tempTransaction := stockbalance_models.StockBalance{}
 
 	tempTransaction.StockBalanceHeader = headerDoc
-	tempTransaction.Details = &tempDetails
 
-	svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
-
-	result.Status = models.TaskStatusSaveSucceded
-	svc.cacheRepo.UpdateMeta(shopID, taskID, result)
-
-	return result, nil
-}
-
-func (svc *StockBalanceImportService) taskStatus(taskParts []models.StockBalanceImportPartMeta) models.TaskStatus {
-	var taskStatus models.TaskStatus = models.TaskStatusPending
-
-	for _, part := range taskParts {
-		if part.Status == models.PartStatusError {
-			taskStatus = models.TaskStatusError
-			break
-		}
-
-		if part.Status != models.PartStatusDone {
-			taskStatus = models.TaskStatusProcessing
-			break
-		}
-
-		taskStatus = models.TaskStatusDone
+	_, docNo, err := svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
+	if err != nil {
+		return "", err
 	}
 
-	return taskStatus
+	for i := range tempDetails {
+		tempDetails[i].DocNo = docNo
+	}
+
+	err = svc.stockBalanceDetailService.CreateStockBalanceDetail(shopID, authUsername, tempDetails)
+	if err != nil {
+		return "", err
+	}
+
+	err = svc.DeleteTask(shopID, taskID)
+
+	if err != nil {
+		return "", err
+	}
+
+	return docNo, nil
 }

@@ -10,11 +10,12 @@ import (
 )
 
 type EOrderShop struct {
-	ShopID       string                   `json:"shopid"`
-	Name1        string                   `json:"name1"`
-	TotalTable   int                      `json:"totaltable"`
-	OrderStation EOrderShopOrderStation   `json:"orderstation,omitempty"`
-	Kitchens     []kitchen_models.Kitchen `json:"kitchens" bson:"kitchens"`
+	ShopID         string                   `json:"shopid"`
+	Name1          string                   `json:"name1"`
+	ProfilePicture string                   `json:"profilepicture"`
+	TotalTable     int                      `json:"totaltable"`
+	OrderStation   EOrderShopOrderStation   `json:"orderstation,omitempty"`
+	Kitchens       []kitchen_models.Kitchen `json:"kitchens" bson:"kitchens"`
 }
 
 type EOrderShopOrderStation struct {
@@ -31,11 +32,12 @@ type EOrderSetting struct {
 
 // previous version
 type EOrderShopOld struct {
-	ShopID       string                   `json:"shopid"`
-	Name1        string                   `json:"name1"`
-	TotalTable   int                      `json:"totaltable"`
-	OrderStation EOrderShopOrderOld       `json:"orderstation,omitempty"`
-	Kitchens     []kitchen_models.Kitchen `json:"kitchens" bson:"kitchens"`
+	ShopID         string                   `json:"shopid"`
+	Name1          string                   `json:"name1"`
+	ProfilePicture string                   `json:"profilepicture"`
+	TotalTable     int                      `json:"totaltable"`
+	OrderStation   EOrderShopOrderOld       `json:"orderstation,omitempty"`
+	Kitchens       []kitchen_models.Kitchen `json:"kitchens" bson:"kitchens"`
 }
 
 type EOrderShopOrderOld struct {

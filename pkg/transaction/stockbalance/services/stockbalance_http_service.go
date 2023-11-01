@@ -11,6 +11,7 @@ import (
 	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockbalance/models"
 	"smlcloudplatform/pkg/transaction/stockbalance/repositories"
+	stockbalancedetail_services "smlcloudplatform/pkg/transaction/stockbalancedetail/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"strconv"
@@ -40,16 +41,18 @@ const (
 )
 
 type StockBalanceHttpService struct {
-	repoMq           repositories.IStockBalanceMessageQueueRepository
-	repo             repositories.IStockBalanceRepository
-	repoCache        trancache.ICacheRepository
-	cacheExpireDocNo time.Duration
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+	svcStockBalanceDetail stockbalancedetail_services.IStockBalanceDetailHttpService
+	repoMq                repositories.IStockBalanceMessageQueueRepository
+	repo                  repositories.IStockBalanceRepository
+	repoCache             trancache.ICacheRepository
+	cacheExpireDocNo      time.Duration
+	syncCacheRepo         mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockBalanceActivity, models.StockBalanceDeleteActivity]
 	contextTimeout time.Duration
 }
 
 func NewStockBalanceHttpService(
+	svcStockBalanceDetail stockbalancedetail_services.IStockBalanceDetailHttpService,
 	repo repositories.IStockBalanceRepository,
 	repoCache trancache.ICacheRepository,
 	repoMq repositories.IStockBalanceMessageQueueRepository,
@@ -59,12 +62,13 @@ func NewStockBalanceHttpService(
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &StockBalanceHttpService{
-		repoMq:           repoMq,
-		repo:             repo,
-		repoCache:        repoCache,
-		syncCacheRepo:    syncCacheRepo,
-		cacheExpireDocNo: time.Hour * 24,
-		contextTimeout:   contextTimeout,
+		svcStockBalanceDetail: svcStockBalanceDetail,
+		repoMq:                repoMq,
+		repo:                  repo,
+		repoCache:             repoCache,
+		syncCacheRepo:         syncCacheRepo,
+		cacheExpireDocNo:      time.Hour * 24,
+		contextTimeout:        contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockBalanceActivity, models.StockBalanceDeleteActivity](repo)
@@ -207,7 +211,21 @@ func (svc StockBalanceHttpService) DeleteStockBalance(shopID string, guid string
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
+	err = svc.repo.Transaction(ctx, func(ctx context.Context) error {
+		err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
+		if err != nil {
+			return err
+		}
+
+		err = svc.svcStockBalanceDetail.DeleteStockBalanceDetailByDocNo(shopID, authUsername, findDoc.DocNo)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	if err != nil {
 		return err
 	}
@@ -225,17 +243,31 @@ func (svc StockBalanceHttpService) DeleteStockBalanceByGUIDs(shopID string, auth
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	deleteFilterQuery := map[string]interface{}{
-		"guidfixed": bson.M{"$in": GUIDs},
-	}
+	// prepare items for message queue
+	docs, err := svc.repo.FindByGuids(ctx, shopID, GUIDs)
 
-	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
 
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err = svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
+
+	for _, doc := range docs {
+		err = svc.svcStockBalanceDetail.DeleteStockBalanceDetailByDocNo(shopID, authUsername, doc.DocNo)
+
+		if err != nil {
+			return err
+		}
+	}
+
 	func() {
-		docs, _ := svc.repo.FindByGuids(ctx, shopID, GUIDs)
 		svc.repoMq.DeleteInBatch(docs)
 		svc.saveMasterSync(shopID)
 	}()
@@ -443,5 +475,5 @@ func (svc StockBalanceHttpService) saveMasterSync(shopID string) {
 }
 
 func (svc StockBalanceHttpService) GetModuleName() string {
-	return "stockReceiveProduct"
+	return "stockBalance"
 }

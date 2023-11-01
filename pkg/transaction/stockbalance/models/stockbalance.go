@@ -2,7 +2,7 @@ package models
 
 import (
 	"smlcloudplatform/pkg/models"
-	transmodels "smlcloudplatform/pkg/transaction/models"
+	trans_models "smlcloudplatform/pkg/transaction/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -10,17 +10,13 @@ import (
 const stockbalanceCollectionName = "transactionStockBalance"
 
 type StockBalanceHeader struct {
-	transmodels.TransactionHeader `bson:"inline"`
+	trans_models.TransactionHeader `bson:"inline"`
 }
 
 type StockBalance struct {
 	models.PartitionIdentity `bson:"inline"`
 	StockBalanceHeader       `bson:"inline"`
-	Details                  *[]StockBalanceDetail `json:"details" bson:"details"`
-}
-
-type StockBalanceDetail struct {
-	transmodels.Detail
+	// Details                  *[]StockBalanceDetail `json:"details" bson:"details"`
 }
 
 type StockBalanceInfo struct {

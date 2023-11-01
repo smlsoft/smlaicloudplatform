@@ -220,18 +220,19 @@ func (repo CrudRepository[T]) FindByDocIndentityGuid(ctx context.Context, shopID
 
 func (repo CrudRepository[T]) FindByDocIndentityGuids(ctx context.Context, shopID string, indentityField string, indentityValues interface{}) ([]T, error) {
 
+	var values interface{}
 	switch v := indentityValues.(type) {
-	case []int:
-
-	case []string:
-
+	case []int, []string:
+		values = indentityValues
+	case int, string:
+		values = []interface{}{indentityValues}
 	default:
 		return nil, fmt.Errorf("unsupported input type: %T", v)
 	}
 
 	doc := new([]T)
 
-	err := repo.pst.Find(ctx, new(T), bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false}, indentityField: bson.M{"$in": indentityValues}}, doc)
+	err := repo.pst.Find(ctx, new(T), bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false}, indentityField: bson.M{"$in": values}}, doc)
 
 	if err != nil {
 		return *new([]T), err

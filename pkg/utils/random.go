@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 	"unsafe"
@@ -44,4 +45,12 @@ func NewGUID() string {
 func NewID() string {
 	newid := xid.New()
 	return newid.String()
+}
+
+func RandNumberX(n int) string {
+	var result string
+	for i := 0; i < n; i++ {
+		result += fmt.Sprint(rand.Intn(9))
+	}
+	return result
 }

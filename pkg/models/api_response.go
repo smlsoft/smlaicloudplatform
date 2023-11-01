@@ -3,6 +3,7 @@ package models
 type ApiResponse struct {
 	Success    bool        `json:"success"`
 	Message    string      `json:"message,omitempty"`
+	DocNo      string      `json:"docno,omitempty"`
 	ID         interface{} `json:"id,omitempty"`
 	Data       interface{} `json:"data,omitempty"`
 	Pagination interface{} `json:"pagination,omitempty"`

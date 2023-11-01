@@ -2,11 +2,14 @@ package stockbalanceimport
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"path/filepath"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/stockbalanceimport/models"
 	"smlcloudplatform/pkg/stockbalanceimport/repositories"
 	"smlcloudplatform/pkg/stockbalanceimport/services"
@@ -14,6 +17,9 @@ import (
 	stockbalance_models "smlcloudplatform/pkg/transaction/stockbalance/models"
 	stockbalance_repositories "smlcloudplatform/pkg/transaction/stockbalance/repositories"
 	stockbalance_serrvices "smlcloudplatform/pkg/transaction/stockbalance/services"
+	stockbalancedetail_serrvices "smlcloudplatform/pkg/transaction/stockbalancedetail/services"
+
+	stockbalancedetail_repositories "smlcloudplatform/pkg/transaction/stockbalancedetail/repositories"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -29,17 +35,24 @@ func NewStockBalanceImportHttp(ms *microservice.Microservice, cfg config.IConfig
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	producer := ms.Producer(cfg.MQConfig())
+	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
 
 	repo := stockbalance_repositories.NewStockBalanceRepository(pst)
 	repoMq := stockbalance_repositories.NewStockBalanceMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	stockbalanceDetailRepo := stockbalancedetail_repositories.NewStockBalanceDetailRepository(pst)
+	stockbalanceDetailMqRepo := stockbalancedetail_repositories.NewStockBalanceDetailMessageQueueRepository(producer)
 
-	stockBalanceSvc := stockbalance_serrvices.NewStockBalanceHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
-	cacheRepo := repositories.NewStockBalanceImportCacheRepository(cache)
+	stockBalanceDetailSvc := stockbalancedetail_serrvices.NewStockBalanceDetailHttpService(stockbalanceDetailRepo, transRepo, stockbalanceDetailMqRepo, masterSyncCacheRepo)
+	stockBalanceSvc := stockbalance_serrvices.NewStockBalanceHttpService(stockBalanceDetailSvc, repo, transRepo, repoMq, masterSyncCacheRepo)
 
-	svc := services.NewStockBalanceImportService(cacheRepo, stockBalanceSvc, utils.RandStringBytesMaskImprSrcUnsafe)
+	chRepo := repositories.NewStockBalanceImportClickHouseRepository(pstClickHouse)
+
+	productBarcodeRepo := productbarcode_repo.NewProductBarcodeRepository(pst, cache)
+
+	svc := services.NewStockBalanceImportService(chRepo, productBarcodeRepo, stockBalanceSvc, stockBalanceDetailSvc, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID)
 
 	return StockBalanceImportHttp{
 		ms:  ms,
@@ -49,29 +62,72 @@ func NewStockBalanceImportHttp(ms *microservice.Microservice, cfg config.IConfig
 }
 
 func (h StockBalanceImportHttp) RegisterHttp() {
+	h.ms.POST("/stockbalanceimport/upload", h.UploadExcel)
+	h.ms.GET("/stockbalanceimport", h.List)
+	h.ms.POST("/stockbalanceimport", h.Create)
+	h.ms.PUT("/stockbalanceimport/:guid", h.Update)
+	h.ms.DELETE("/stockbalanceimport/:guid", h.Delete)
+	h.ms.DELETE("/stockbalanceimport/task/:task-id", h.DeleteByTask)
+	h.ms.POST("/stockbalanceimport/task/:task-id", h.SaveTask)
+}
 
-	h.ms.POST("/stockbalanceimport/task", h.CreateStockBalanceImport)
-	h.ms.GET("/stockbalanceimport/task/:id", h.GetStockBalanceImportMeta)
-	h.ms.POST("/stockbalanceimport/task/:id", h.SaveTaskComplete)
-	h.ms.PUT("/stockbalanceimport/task/part/:part-id", h.SaveStockBalanceImportPart)
-	h.ms.GET("/stockbalanceimport/task/part/:part-id", h.GetStockBalanceImportPart)
+// List StockBalanceImport godoc
+// @Description List StockBalanceImport
+// @Tags		StockBalanceImport
+// @Param		task-id		query		string		true		"task id"
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /stockbalanceimport [get]
+func (h StockBalanceImportHttp) List(ctx microservice.IContext) error {
+	shopID := ctx.UserInfo().ShopID
+
+	taskID := ctx.QueryParam("task-id")
+
+	if taskID == "" {
+		ctx.Response(http.StatusCreated, common.ApiResponse{
+			Success: true,
+			Data:    []string{},
+		})
+		return nil
+	}
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	results, page, err := h.svc.List(shopID, taskID, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success:    true,
+		Pagination: page,
+		Data:       results,
+	})
+	return nil
 }
 
 // Create StockBalanceImport godoc
 // @Description Create StockBalanceImport
 // @Tags		StockBalanceImport
-// @Param		StockBalanceImport  body      models.StockBalanceImportTaskRequest  true  "StockBalanceImport"
+// @Param		StockBalanceImport  body      models.StockBalanceImport  true  "StockBalanceImport"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/task [post]
-func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IContext) error {
+// @Router /stockbalanceimport [post]
+func (h StockBalanceImportHttp) Create(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
 	input := ctx.ReadInput()
 
-	docReq := models.StockBalanceImportTaskRequest{}
+	docReq := models.StockBalanceImport{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -84,7 +140,7 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 		return err
 	}
 
-	doc, err := h.svc.CreateTask(shopID, docReq)
+	err = h.svc.Create(shopID, &docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -93,7 +149,6 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
-		Data:    doc,
 	})
 	return nil
 }
@@ -101,77 +156,20 @@ func (h StockBalanceImportHttp) CreateStockBalanceImport(ctx microservice.IConte
 // Get StockBalanceImport Part godoc
 // @Description Get StockBalanceImport Part
 // @Tags		StockBalanceImport
-// @Param		part-id		path		string		true		"part id"
+// @Param		guid		path		string		true		"guid"
 // @Accept 		json
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/task/part/{part-id} [get]
-func (h StockBalanceImportHttp) GetStockBalanceImportPart(ctx microservice.IContext) error {
+// @Router /stockbalanceimport/{guid} [put]
+func (h StockBalanceImportHttp) Update(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
-
-	cacheID := ctx.Param("part-id")
-
-	result, err := h.svc.GetTaskPart(shopID, cacheID)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		Data:    result,
-	})
-	return nil
-}
-
-// Get StockBalanceImport Meta godoc
-// @Description Get StockBalanceImport Meta
-// @Tags		StockBalanceImport
-// @Param		id		path		string		true		"StockBalanceImport ID"
-// @Accept 		json
-// @Success		201	{object}	common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /stockbalanceimport/task/{id} [get]
-func (h StockBalanceImportHttp) GetStockBalanceImportMeta(ctx microservice.IContext) error {
-	shopID := ctx.UserInfo().ShopID
-
-	cacheID := ctx.Param("id")
-
-	result, err := h.svc.GetTaskMeta(shopID, cacheID)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		Data:    result,
-	})
-	return nil
-}
-
-// Create StockBalanceImport godoc
-// @Description Create StockBalanceImport
-// @Tags		StockBalanceImport
-// @Param		part-id		path		string		true		"part id"
-// @Param		StockBalanceImport  body      []stockbalance_models.StockBalanceDetail  true  "StockBalanceImport"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /stockbalanceimport/task/part/{part-id} [put]
-func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.IContext) error {
-	shopID := ctx.UserInfo().ShopID
-
-	cacheID := ctx.Param("part-id")
 
 	input := ctx.ReadInput()
 
-	docReq := []stockbalance_models.StockBalanceDetail{}
+	guid := ctx.Param("guid")
+
+	docReq := models.StockBalanceImportRaw{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -184,7 +182,7 @@ func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.ICon
 		return err
 	}
 
-	err = h.svc.SaveTaskPart(shopID, cacheID, docReq)
+	err = h.svc.Update(shopID, guid, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -197,24 +195,78 @@ func (h StockBalanceImportHttp) SaveStockBalanceImportPart(ctx microservice.ICon
 	return nil
 }
 
-// Save StockBalanceImport godoc
-// @Description Save StockBalanceImport
+// Delete StockBalanceImport By GUID godoc
+// @Description Delete StockBalanceImport By GUID
 // @Tags		StockBalanceImport
-// @Param		id		path		string		true		"id"
-// @Param		StockBalanceHeader  body      models.StockBalanceHeader  true  "Stock Balance Header"
+// @Param		guid		path		string		true		"guid"
 // @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
+// @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/task/{id} [post]
-func (h StockBalanceImportHttp) SaveTaskComplete(ctx microservice.IContext) error {
+// @Router /stockbalanceimport/{guid} [delete]
+func (h StockBalanceImportHttp) Delete(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
-	authUsername := ctx.UserInfo().Username
 
-	taskID := ctx.Param("id")
+	guid := ctx.Param("guid")
+
+	err := h.svc.Delete(shopID, guid)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+	return nil
+}
+
+// Delete StockBalanceImport By Task ID godoc
+// @Description Delete StockBalanceImport By Task ID
+// @Tags		StockBalanceImport
+// @Param		task-id		path		string		true		"task id"
+// @Accept 		json
+// @Success		201	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /stockbalanceimport/task/{task-id} [delete]
+func (h StockBalanceImportHttp) DeleteByTask(ctx microservice.IContext) error {
+	shopID := ctx.UserInfo().ShopID
+
+	taskID := ctx.Param("task-id")
+
+	err := h.svc.DeleteTask(shopID, taskID)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+	return nil
+}
+
+// Delete StockBalanceImport By Task ID godoc
+// @Description Delete StockBalanceImport By Task ID
+// @Tags		StockBalanceImport
+// @Param		task-id		path		string		true		"task id"
+// @Param		StockBalanceHeader  body      models.StockBalanceHeader  true  "Stock Balance Header"
+// @Accept 		json
+// @Success		201	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /stockbalanceimport/task/{task-id} [post]
+func (h StockBalanceImportHttp) SaveTask(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	taskID := ctx.Param("task-id")
 
 	input := ctx.ReadInput()
-
 	docReq := stockbalance_models.StockBalanceHeader{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
@@ -223,7 +275,7 @@ func (h StockBalanceImportHttp) SaveTaskComplete(ctx microservice.IContext) erro
 		return err
 	}
 
-	result, err := h.svc.SaveTaskComplete(shopID, authUsername, taskID, docReq)
+	docNo, err := h.svc.SaveTask(shopID, authUsername, taskID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -232,7 +284,61 @@ func (h StockBalanceImportHttp) SaveTaskComplete(ctx microservice.IContext) erro
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
-		Data:    result,
+		DocNo:   docNo,
 	})
+	return nil
+}
+
+// Create StockBalanceImport godoc
+// @Description Create StockBalanceImport
+// @Tags		StockBalanceImport
+// @Param		StockBalanceImport  body      models.StockBalanceImport  true  "StockBalanceImport"
+// @Param		file  formData      file  true  "excel file"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /stockbalanceimport/upload [post]
+func (h StockBalanceImportHttp) UploadExcel(ctx microservice.IContext) error {
+	shopID := ctx.UserInfo().ShopID
+	tempFile, err := ctx.FormFile("file")
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// Check if the file is an Excel file
+	if filepath.Ext(tempFile.Filename) != ".xlsx" {
+		ctx.ResponseError(400, "Invalid file type.")
+		return errors.New("invalid file type")
+	}
+
+	file, err := tempFile.Open()
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+	defer file.Close()
+
+	isSkipHeader := false
+	isSkipHeaderRaw := ctx.QueryParam("skip-header")
+	if isSkipHeaderRaw == "1" {
+		isSkipHeader = true
+	}
+
+	taskID, err := h.svc.ImportFromFile(shopID, isSkipHeader, file)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      taskID,
+	})
+
 	return nil
 }

@@ -35,6 +35,7 @@ type IStockBalanceRepository interface {
 	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockBalanceActivity, error)
 
 	FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.StockBalanceDoc, error)
+	Transaction(ctx context.Context, execFunc func(context.Context) error) error
 }
 
 type StockBalanceRepository struct {
@@ -57,6 +58,10 @@ func NewStockBalanceRepository(pst microservice.IPersisterMongo) *StockBalanceRe
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.StockBalanceActivity, models.StockBalanceDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo StockBalanceRepository) Transaction(ctx context.Context, execFunc func(context.Context) error) error {
+	return repo.pst.Transaction(ctx, execFunc)
 }
 
 func (repo StockBalanceRepository) FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.StockBalanceDoc, error) {

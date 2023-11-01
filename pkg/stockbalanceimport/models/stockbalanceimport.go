@@ -1,59 +1,32 @@
 package models
 
-import stockbalance_models "smlcloudplatform/pkg/transaction/stockbalance/models"
+import (
+	"math"
+)
 
-type StockBalanceImportTaskRequest struct {
-	TotalItem int `json:"totalitem"`
-	PartSize  int `json:"partsize"`
+type StockBalanceImportRaw struct {
+	Barcode   string  `json:"barcode" ch:"barcode"`
+	Name      string  `json:"name" ch:"name"`
+	UnitCode  string  `json:"unitcode" ch:"unitcode"`
+	Qty       float64 `json:"qty" ch:"qty"`
+	Price     float64 `json:"price" ch:"price"`
+	SumAmount float64 `json:"sumamount" ch:"sumamount"`
 }
 
-type StockBalanceImportHeaderRequest struct {
-	Header stockbalance_models.StockBalanceHeader `json:"header"`
+type StockBalanceImport struct {
+	TaskID    string  `json:"taskid" ch:"taskid"`
+	RowNumber float64 `json:"rownumber" ch:"rownumber"`
+	StockBalanceImportRaw
 }
 
-type StockBalanceImportTask struct {
-	TaskID    string `json:"taskid"`
-	PartSize  int    `json:"chunksize"`
-	TotalItem int    `json:"totalitem"`
-	// Header    stockbalance_models.StockBalanceHeader `json:"header"`
-	Parts []StockBalanceImportPart `json:"parts"`
+type StockBalanceImportDoc struct {
+	GUIDFixed string `json:"guidfixed" ch:"guidfixed"`
+	ShopID    string `json:"shopid" ch:"shopid"`
+	StockBalanceImport
 }
 
-type StockBalanceImportPart struct {
-	PartID     string `json:"partid"`
-	PartNumber int    `json:"partnumber"`
-}
-
-type StockBalanceImportPartRequest struct {
-	TaskID string `json:"taskid"`
-	StockBalanceImportPart
-}
-
-type StockBalanceImportPartMeta struct {
-	PartID     string     `json:"partid"`
-	PartNumber int        `json:"partnumber"`
-	Status     PartStatus `json:"status"`
-}
-
-type StockBalanceImportMeta struct {
-	TaskID    string     `json:"taskid"`
-	TotalItem int        `json:"totalitem"`
-	Status    TaskStatus `json:"status"`
-	// Header    stockbalance_models.StockBalanceHeader `json:"header"`
-	Parts []StockBalanceImportPartMeta `json:"parts"`
-}
-
-type StockBalanceImportPartCache struct {
-	TaskID string `json:"taskid"`
-	StockBalanceImportPartMeta
-	Detail []stockbalance_models.StockBalanceDetail `json:"body"`
-}
-
-type StockBalanceImportPartResponse struct {
-	PartID     string                                   `json:"partid"`
-	PartNumber int                                      `json:"partnumber"`
-	Status     string                                   `json:"status"`
-	Detail     []stockbalance_models.StockBalanceDetail `json:"body"`
+func (StockBalanceImportDoc) TableName() string {
+	return "stockbalanceimport"
 }
 
 type TaskStatus int8
@@ -67,3 +40,29 @@ const (
 	TaskStatusSaveFailed
 	TaskStatusNotFound
 )
+
+type PaginationData struct {
+	Total     int64 `json:"total"`
+	Page      int64 `json:"page"`
+	PerPage   int64 `json:"perPage"`
+	Prev      int64 `json:"prev"`
+	Next      int64 `json:"next"`
+	TotalPage int64 `json:"totalPage"`
+}
+
+func (p *PaginationData) Build() {
+	totalPage := math.Ceil(float64(p.Total) / float64(p.PerPage))
+	p.TotalPage = int64(totalPage)
+
+	if p.Page == 0 {
+		p.Page = 1
+	}
+
+	if p.Page > 1 {
+		p.Prev = p.Page - 1
+	}
+
+	if p.Page < p.TotalPage {
+		p.Next = p.Page + 1
+	}
+}
