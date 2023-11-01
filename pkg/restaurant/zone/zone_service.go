@@ -25,7 +25,7 @@ type IZoneService interface {
 	DeleteZone(shopID string, guid string, authUsername string) error
 	InfoZone(shopID string, guid string) (models.ZoneInfo, error)
 	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
-	SearchZone(shopID string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
+	SearchZone(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Zone) (common.BulkImport, error)
 	DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error
 
@@ -200,7 +200,7 @@ func (svc ZoneService) InfoWTFArray(shopID string, codes []string) ([]interface{
 	return docList, nil
 }
 
-func (svc ZoneService) SearchZone(shopID string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error) {
+func (svc ZoneService) SearchZone(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error) {
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
@@ -209,7 +209,7 @@ func (svc ZoneService) SearchZone(shopID string, pageable micromodels.Pageable) 
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ZoneInfo{}, pagination, err

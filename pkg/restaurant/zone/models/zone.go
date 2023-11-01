@@ -10,9 +10,10 @@ import (
 const shopZoneCollectionName = "restaurantZones"
 
 type Zone struct {
-	Code    string                `json:"code" bson:"code"`
-	Names   *[]models.NameX       `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Printer *printerModel.Printer `json:"printer" bson:"printer"`
+	GroupNumber int                   `json:"groupnumber" bson:"groupnumber"`
+	Code        string                `json:"code" bson:"code"`
+	Names       *[]models.NameX       `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Printer     *printerModel.Printer `json:"printer" bson:"printer"`
 }
 
 type ZoneInfo struct {

@@ -9,6 +9,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/table/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type ITableHttp interface{}
@@ -267,6 +268,7 @@ func (h TableHttp) InfoTable(ctx microservice.IContext) error {
 // List Restaurant  Table godoc
 // @Description List Restaurant  Table Category
 // @Tags		Restaurant
+// @Param		group-number	query	integer		false  "Group Number"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
@@ -281,7 +283,15 @@ func (h TableHttp) SearchTable(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchTable(shopID, pageable)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "group-number",
+			Field: "groupnumber",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchTable(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

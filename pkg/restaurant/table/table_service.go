@@ -25,7 +25,7 @@ type ITableService interface {
 	DeleteTableByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoTable(shopID string, guid string) (models.TableInfo, error)
-	SearchTable(shopID string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
+	SearchTable(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Table) (common.BulkImport, error)
 	SaveXOrder(shopID string, authUsername string, xOrders []models.XOrderRequest) error
 
@@ -193,7 +193,7 @@ func (svc TableService) InfoTable(shopID string, guid string) (models.TableInfo,
 
 }
 
-func (svc TableService) SearchTable(shopID string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error) {
+func (svc TableService) SearchTable(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -207,7 +207,7 @@ func (svc TableService) SearchTable(shopID string, pageable micromodels.Pageable
 		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.TableInfo{}, pagination, err

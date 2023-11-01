@@ -23,8 +23,8 @@ type IKitchenService interface {
 	UpdateKitchen(shopID string, guid string, authUsername string, doc models.Kitchen) error
 	DeleteKitchen(shopID string, guid string, authUsername string) error
 	InfoKitchen(shopID string, guid string) (models.KitchenInfo, error)
-	SearchKitchen(shopID string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
-	SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error)
+	SearchKitchen(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
+	SearchKitchenStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
 	GetProductBarcodeKitchen(shopID string) ([]models.KitchenProductBarcode, error)
 
@@ -161,7 +161,7 @@ func (svc KitchenService) InfoKitchen(shopID string, guid string) (models.Kitche
 
 }
 
-func (svc KitchenService) SearchKitchen(shopID string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error) {
+func (svc KitchenService) SearchKitchen(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -175,7 +175,7 @@ func (svc KitchenService) SearchKitchen(shopID string, pageable micromodels.Page
 		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.KitchenInfo{}, pagination, err
@@ -184,7 +184,7 @@ func (svc KitchenService) SearchKitchen(shopID string, pageable micromodels.Page
 	return docList, pagination, nil
 }
 
-func (svc KitchenService) SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error) {
+func (svc KitchenService) SearchKitchenStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -196,7 +196,7 @@ func (svc KitchenService) SearchKitchenStep(shopID string, langCode string, page
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.KitchenInfo{}, 0, err

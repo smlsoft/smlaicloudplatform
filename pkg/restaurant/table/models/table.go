@@ -9,11 +9,12 @@ import (
 const tableCollectionName = "restaurantTables"
 
 type Table struct {
-	Number string          `json:"number" bson:"number"`
-	Names  *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Seat   int8            `json:"seat" bson:"seat"`
-	Zone   string          `json:"zone" bson:"zone"`
-	XOrder uint            `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
+	GroupNumber int             `json:"groupnumber" bson:"groupnumber"`
+	Number      string          `json:"number" bson:"number"`
+	Names       *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Seat        int8            `json:"seat" bson:"seat"`
+	Zone        string          `json:"zone" bson:"zone"`
+	XOrder      uint            `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
 }
 
 type TableInfo struct {

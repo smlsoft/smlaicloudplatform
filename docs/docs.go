@@ -18961,6 +18961,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "Group Number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
@@ -19093,6 +19099,12 @@ const docTemplate = `{
                     "Restaurant"
                 ],
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Group Number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -20885,6 +20897,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "Group Number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
@@ -21225,6 +21243,12 @@ const docTemplate = `{
                     "Restaurant"
                 ],
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Group Number",
+                        "name": "group-number",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -23625,7 +23649,62 @@ const docTemplate = `{
                 }
             }
         },
-        "/stockbalanceimport/task": {
+        "/stockbalanceimport": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List StockBalanceImport",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockBalanceImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task-id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -23646,7 +23725,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.StockBalanceImportTaskRequest"
+                            "$ref": "#/definitions/models.StockBalanceImport"
                         }
                     }
                 ],
@@ -23666,139 +23745,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/stockbalanceimport/task/part/{part-id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Get StockBalanceImport Part",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "StockBalanceImport"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "part id",
-                        "name": "part-id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create StockBalanceImport",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "StockBalanceImport"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "part id",
-                        "name": "part-id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "StockBalanceImport",
-                        "name": "StockBalanceImport",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockbalance_models.StockBalanceDetail"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/stockbalanceimport/task/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Get StockBalanceImport Meta",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "StockBalanceImport"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "StockBalanceImport ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
+        "/stockbalanceimport/task/{task-id}": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Save StockBalanceImport",
+                "description": "Delete StockBalanceImport By Task ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -23808,8 +23762,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id",
-                        "name": "id",
+                        "description": "task id",
+                        "name": "task-id",
                         "in": "path",
                         "required": true
                     },
@@ -23827,7 +23781,168 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockBalanceImport By Task ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockBalanceImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task-id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/stockbalanceimport/upload": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockBalanceImport",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockBalanceImport"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockBalanceImport",
+                        "name": "StockBalanceImport",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockBalanceImport"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "excel file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/stockbalanceimport/{guid}": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get StockBalanceImport Part",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockBalanceImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockBalanceImport By GUID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockBalanceImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -28751,7 +28866,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail"
+                            "$ref": "#/definitions/models.StockBalanceDetail"
                         }
                     }
                 ],
@@ -29047,7 +29162,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail"
+                            "$ref": "#/definitions/models.StockBalanceDetail"
                         }
                     }
                 ],
@@ -33216,6 +33331,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {},
+                "docno": {
+                    "type": "string"
+                },
                 "id": {},
                 "message": {
                     "type": "string"
@@ -33497,8 +33615,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -33520,7 +33638,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -34443,18 +34571,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "code",
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -35232,8 +35355,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -35258,6 +35381,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -35279,6 +35405,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -35431,8 +35564,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -35457,6 +35590,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -35478,6 +35614,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -35707,8 +35850,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -35733,6 +35876,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -35754,6 +35900,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -36431,6 +36584,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "groupnumber": {
+                    "type": "integer"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -36467,6 +36623,9 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "string"
+                },
+                "groupnumber": {
+                    "type": "integer"
                 },
                 "guidfixed": {
                     "type": "string"
@@ -37127,6 +37286,9 @@ const docTemplate = `{
                     "description": "ใช้งาน POS",
                     "type": "boolean"
                 },
+                "kitchengroupnumber": {
+                    "type": "integer"
+                },
                 "label": {
                     "type": "string"
                 },
@@ -37151,6 +37313,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "tablegroupnumber": {
+                    "type": "integer"
+                },
                 "tablenumber": {
                     "description": "เลขโต๊ะ",
                     "type": "string"
@@ -37161,6 +37326,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.OrderSettingTimeForSale"
                     }
+                },
+                "zonegroupnumber": {
+                    "type": "integer"
                 }
             }
         },
@@ -37935,7 +38103,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -38095,7 +38263,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -41009,6 +41177,167 @@ const docTemplate = `{
                 }
             }
         },
+        "models.StockBalanceDetail": {
+            "type": "object",
+            "required": [
+                "docno"
+            ],
+            "properties": {
+                "averagecost": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "calcflag": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docref": {
+                    "type": "string"
+                },
+                "docrefdatetime": {
+                    "type": "string"
+                },
+                "extrajson": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "ispos": {
+                    "type": "integer"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "laststatus": {
+                    "type": "integer"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "priceexcludevat": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "sumamountexcludevat": {
+                    "type": "number"
+                },
+                "sumofcost": {
+                    "type": "number"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "tolocationcode": {
+                    "type": "string"
+                },
+                "tolocationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "totalqty": {
+                    "type": "number"
+                },
+                "totalvaluevat": {
+                    "type": "number"
+                },
+                "towhcode": {
+                    "type": "string"
+                },
+                "towhnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "whcode": {
+                    "type": "string"
+                },
+                "whnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.StockBalanceHeader": {
             "type": "object",
             "properties": {
@@ -41248,14 +41577,32 @@ const docTemplate = `{
                 }
             }
         },
-        "models.StockBalanceImportTaskRequest": {
+        "models.StockBalanceImport": {
             "type": "object",
             "properties": {
-                "partsize": {
-                    "type": "integer"
+                "barcode": {
+                    "type": "string"
                 },
-                "totalitem": {
-                    "type": "integer"
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "rownumber": {
+                    "type": "number"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "taskid": {
+                    "type": "string"
+                },
+                "unitcode": {
+                    "type": "string"
                 }
             }
         },
@@ -42296,6 +42643,9 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "groupnumber": {
+                    "type": "integer"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -42326,6 +42676,9 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "groupnumber": {
+                    "type": "integer"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -43056,6 +43409,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "groupnumber": {
+                    "type": "integer"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -43077,6 +43433,9 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "string"
+                },
+                "groupnumber": {
+                    "type": "integer"
                 },
                 "guidfixed": {
                     "type": "string"
@@ -43191,6 +43550,27 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_product_inventory_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -43222,17 +43602,6 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -43354,7 +43723,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -43699,328 +44068,6 @@ const docTemplate = `{
                 },
                 "uuid": {
                     "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_stockbalance_models.StockBalanceDetail": {
-            "type": "object",
-            "required": [
-                "docno"
-            ],
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "docno": {
-                    "type": "string"
-                },
-                "docref": {
-                    "type": "string"
-                },
-                "docrefdatetime": {
-                    "type": "string"
-                },
-                "extrajson": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "sku": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail": {
-            "type": "object",
-            "required": [
-                "docno"
-            ],
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "docno": {
-                    "type": "string"
-                },
-                "docref": {
-                    "type": "string"
-                },
-                "docrefdatetime": {
-                    "type": "string"
-                },
-                "extrajson": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "sku": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
                 }
             }
         },

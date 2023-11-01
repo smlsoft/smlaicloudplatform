@@ -9,6 +9,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/zone/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 )
@@ -273,6 +274,7 @@ func (h ZoneHttp) InfoArray(ctx microservice.IContext) error {
 // List Restaurant Zone godoc
 // @Description List Restaurant Zone Category
 // @Tags		Restaurant
+// @Param		group-number	query	integer		false  "Group Number"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
@@ -286,8 +288,15 @@ func (h ZoneHttp) SearchZone(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "group-number",
+			Field: "groupnumber",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
 
-	docList, pagination, err := h.svc.SearchZone(shopID, pageable)
+	docList, pagination, err := h.svc.SearchZone(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

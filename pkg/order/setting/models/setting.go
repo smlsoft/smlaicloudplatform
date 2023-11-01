@@ -29,6 +29,9 @@ type OrderSetting struct {
 	SaleChannels        *[]string                  `json:"salechannels" bson:"salechannels"`
 	AdminPin            string                     `json:"adminpin" bson:"adminpin"`
 	CategoryGroupNumber int                        `json:"categorygroupnumber" bson:"categorygroupnumber"`
+	KitchenGroupNumber  int                        `json:"kitchengroupnumber" bson:"kitchengroupnumber"`
+	TableGroupNumber    int                        `json:"tablegroupnumber" bson:"tablegroupnumber"`
+	ZoneGroupNumber     int                        `json:"zonegroupnumber" bson:"zonegroupnumber"`
 }
 
 type OrderSettingTimeForSale struct {

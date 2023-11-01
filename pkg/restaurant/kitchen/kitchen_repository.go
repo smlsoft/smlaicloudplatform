@@ -21,6 +21,7 @@ type IKitchenRepository interface {
 	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
 	Delete(ctx context.Context, shopID string, authUsername string, filters map[string]interface{}) error
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.KitchenDoc, error)
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.KitchenItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, columnName string, filters interface{}) (models.KitchenDoc, error)

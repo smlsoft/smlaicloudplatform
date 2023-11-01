@@ -9,11 +9,12 @@ import (
 const kitchenCollectionName = "restaurantKitchens"
 
 type Kitchen struct {
-	Code     string          `json:"code" bson:"code"`
-	Names    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Printers *[]string       `json:"printers" bson:"printers"`
-	Products *[]string       `json:"products" bson:"products"`
-	Zones    *[]string       `json:"zones" bson:"zones"`
+	GroupNumber int             `json:"groupnumber" bson:"groupnumber"`
+	Code        string          `json:"code" bson:"code"`
+	Names       *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Printers    *[]string       `json:"printers" bson:"printers"`
+	Products    *[]string       `json:"products" bson:"products"`
+	Zones       *[]string       `json:"zones" bson:"zones"`
 }
 
 type KitchenInfo struct {

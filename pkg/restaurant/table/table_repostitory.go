@@ -19,7 +19,7 @@ type ITableRepository interface {
 	Update(ctx context.Context, shopID string, guid string, category models.TableDoc) error
 	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
 	Delete(ctx context.Context, shopID string, authUsername string, filters map[string]interface{}) error
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.TableDoc, error)
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.TableItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, columnName string, filters interface{}) (models.TableDoc, error)

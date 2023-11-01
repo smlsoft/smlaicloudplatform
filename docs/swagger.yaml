@@ -126,6 +126,8 @@ definitions:
   models.ApiResponse:
     properties:
       data: {}
+      docno:
+        type: string
       id: {}
       message:
         type: string
@@ -318,8 +320,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -335,7 +337,14 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -963,16 +972,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - code
-    - names
     type: object
   models.Detail:
     properties:
@@ -1492,8 +1497,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1511,6 +1516,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1526,6 +1533,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1634,8 +1646,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1653,6 +1665,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1668,6 +1682,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1826,8 +1845,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1845,6 +1864,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1860,6 +1881,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2319,6 +2345,8 @@ definitions:
     properties:
       code:
         type: string
+      groupnumber:
+        type: integer
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -2344,6 +2372,8 @@ definitions:
     properties:
       code:
         type: string
+      groupnumber:
+        type: integer
       guidfixed:
         type: string
       names:
@@ -2796,6 +2826,8 @@ definitions:
       isposactive:
         description: ใช้งาน POS
         type: boolean
+      kitchengroupnumber:
+        type: integer
       label:
         type: string
       logourl:
@@ -2815,6 +2847,8 @@ definitions:
         items:
           type: string
         type: array
+      tablegroupnumber:
+        type: integer
       tablenumber:
         description: เลขโต๊ะ
         type: string
@@ -2823,6 +2857,8 @@ definitions:
         items:
           $ref: '#/definitions/models.OrderSettingTimeForSale'
         type: array
+      zonegroupnumber:
+        type: integer
     required:
     - code
     type: object
@@ -3339,7 +3375,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3448,7 +3484,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -5406,6 +5442,113 @@ definitions:
       womancount:
         type: integer
     type: object
+  models.StockBalanceDetail:
+    properties:
+      averagecost:
+        type: number
+      barcode:
+        type: string
+      calcflag:
+        type: integer
+      discount:
+        type: string
+      discountamount:
+        type: number
+      dividevalue:
+        type: number
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      docref:
+        type: string
+      docrefdatetime:
+        type: string
+      extrajson:
+        type: string
+      inquirytype:
+        type: integer
+      ispos:
+        type: integer
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      itemtype:
+        type: integer
+      laststatus:
+        type: integer
+      linenumber:
+        type: integer
+      locationcode:
+        type: string
+      locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      multiunit:
+        type: boolean
+      price:
+        type: number
+      priceexcludevat:
+        type: number
+      qty:
+        type: number
+      remark:
+        type: string
+      shelfcode:
+        type: string
+      sku:
+        type: string
+      standvalue:
+        type: number
+      sumamount:
+        type: number
+      sumamountexcludevat:
+        type: number
+      sumofcost:
+        type: number
+      taxtype:
+        type: integer
+      tolocationcode:
+        type: string
+      tolocationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      totalqty:
+        type: number
+      totalvaluevat:
+        type: number
+      towhcode:
+        type: string
+      towhnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      unitcode:
+        type: string
+      unitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      vatcal:
+        type: integer
+      vattype:
+        type: integer
+      whcode:
+        type: string
+      whnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    required:
+    - docno
+    type: object
   models.StockBalanceHeader:
     properties:
       billtaxtype:
@@ -5565,12 +5708,24 @@ definitions:
       womancount:
         type: integer
     type: object
-  models.StockBalanceImportTaskRequest:
+  models.StockBalanceImport:
     properties:
-      partsize:
-        type: integer
-      totalitem:
-        type: integer
+      barcode:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      qty:
+        type: number
+      rownumber:
+        type: number
+      sumamount:
+        type: number
+      taskid:
+        type: string
+      unitcode:
+        type: string
     type: object
   models.StockPickupProduct:
     properties:
@@ -6261,6 +6416,8 @@ definitions:
     type: object
   models.Table:
     properties:
+      groupnumber:
+        type: integer
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -6282,6 +6439,8 @@ definitions:
     type: object
   models.TableInfo:
     properties:
+      groupnumber:
+        type: integer
       guidfixed:
         type: string
       names:
@@ -6784,6 +6943,8 @@ definitions:
     properties:
       code:
         type: string
+      groupnumber:
+        type: integer
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -6799,6 +6960,8 @@ definitions:
     properties:
       code:
         type: string
+      groupnumber:
+        type: integer
       guidfixed:
         type: string
       names:
@@ -6876,6 +7039,20 @@ definitions:
     required:
     - names
     type: object
+  smlcloudplatform_pkg_product_inventory_models.ProductPrice:
+    properties:
+      memberprice:
+        type: number
+      normalprice:
+        type: number
+      price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -6897,13 +7074,6 @@ definitions:
         type: string
       xorder:
         type: integer
-    type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
@@ -6982,7 +7152,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -7217,220 +7387,6 @@ definitions:
         type: string
       uuid:
         type: string
-    type: object
-  smlcloudplatform_pkg_transaction_stockbalance_models.StockBalanceDetail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      docno:
-        type: string
-      docref:
-        type: string
-      docrefdatetime:
-        type: string
-      extrajson:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      sku:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    required:
-    - docno
-    type: object
-  smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      docno:
-        type: string
-      docref:
-        type: string
-      docrefdatetime:
-        type: string
-      extrajson:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      sku:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    required:
-    - docno
     type: object
   smlcloudplatform_pkg_warehouse_models.Location:
     properties:
@@ -19242,6 +19198,10 @@ paths:
       - application/json
       description: List Restaurant Kitchen Category
       parameters:
+      - description: Group Number
+        in: query
+        name: group-number
+        type: integer
       - description: Search Value
         in: query
         name: q
@@ -19400,6 +19360,10 @@ paths:
       - application/json
       description: search limit offset
       parameters:
+      - description: Group Number
+        in: query
+        name: group-number
+        type: integer
       - description: Search Value
         in: query
         name: q
@@ -20460,6 +20424,10 @@ paths:
       - application/json
       description: List Restaurant  Table Category
       parameters:
+      - description: Group Number
+        in: query
+        name: group-number
+        type: integer
       - description: Search Value
         in: query
         name: q
@@ -20671,6 +20639,10 @@ paths:
       - application/json
       description: List Restaurant Zone Category
       parameters:
+      - description: Group Number
+        in: query
+        name: group-number
+        type: integer
       - description: Search Value
         in: query
         name: q
@@ -22139,7 +22111,42 @@ paths:
       summary: รับข้อมูล sms
       tags:
       - SMS
-  /stockbalanceimport/task:
+  /stockbalanceimport:
+    get:
+      consumes:
+      - application/json
+      description: List StockBalanceImport
+      parameters:
+      - description: task id
+        in: query
+        name: task-id
+        required: true
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
     post:
       consumes:
       - application/json
@@ -22150,7 +22157,7 @@ paths:
         name: StockBalanceImport
         required: true
         schema:
-          $ref: '#/definitions/models.StockBalanceImportTaskRequest'
+          $ref: '#/definitions/models.StockBalanceImport'
       responses:
         "201":
           description: Created
@@ -22164,68 +22171,15 @@ paths:
       - AccessToken: []
       tags:
       - StockBalanceImport
-  /stockbalanceimport/task/{id}:
-    get:
+  /stockbalanceimport/{guid}:
+    delete:
       consumes:
       - application/json
-      description: Get StockBalanceImport Meta
+      description: Delete StockBalanceImport By GUID
       parameters:
-      - description: StockBalanceImport ID
+      - description: guid
         in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - StockBalanceImport
-    post:
-      consumes:
-      - application/json
-      description: Save StockBalanceImport
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Stock Balance Header
-        in: body
-        name: StockBalanceHeader
-        required: true
-        schema:
-          $ref: '#/definitions/models.StockBalanceHeader'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - StockBalanceImport
-  /stockbalanceimport/task/part/{part-id}:
-    get:
-      consumes:
-      - application/json
-      description: Get StockBalanceImport Part
-      parameters:
-      - description: part id
-        in: path
-        name: part-id
+        name: guid
         required: true
         type: string
       responses:
@@ -22244,21 +22198,96 @@ paths:
     put:
       consumes:
       - application/json
-      description: Create StockBalanceImport
+      description: Get StockBalanceImport Part
       parameters:
-      - description: part id
+      - description: guid
         in: path
-        name: part-id
+        name: guid
         required: true
         type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+  /stockbalanceimport/task/{task-id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockBalanceImport By Task ID
+      parameters:
+      - description: task id
+        in: path
+        name: task-id
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+    post:
+      consumes:
+      - application/json
+      description: Delete StockBalanceImport By Task ID
+      parameters:
+      - description: task id
+        in: path
+        name: task-id
+        required: true
+        type: string
+      - description: Stock Balance Header
+        in: body
+        name: StockBalanceHeader
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockBalanceHeader'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+  /stockbalanceimport/upload:
+    post:
+      consumes:
+      - application/json
+      description: Create StockBalanceImport
+      parameters:
       - description: StockBalanceImport
         in: body
         name: StockBalanceImport
         required: true
         schema:
-          items:
-            $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockbalance_models.StockBalanceDetail'
-          type: array
+          $ref: '#/definitions/models.StockBalanceImport'
+      - description: excel file
+        in: formData
+        name: file
+        required: true
+        type: file
       responses:
         "201":
           description: Created
@@ -25356,7 +25385,7 @@ paths:
         name: StockBalanceDetail
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail'
+          $ref: '#/definitions/models.StockBalanceDetail'
       responses:
         "201":
           description: Created
@@ -25432,7 +25461,7 @@ paths:
         name: StockBalanceDetail
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail'
+          $ref: '#/definitions/models.StockBalanceDetail'
       responses:
         "201":
           description: Created

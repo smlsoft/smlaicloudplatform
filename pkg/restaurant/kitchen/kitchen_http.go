@@ -9,6 +9,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IKitchenHttp interface{}
@@ -189,6 +190,7 @@ func (h KitchenHttp) InfoKitchen(ctx microservice.IContext) error {
 // List Restaurant Kitchen godoc
 // @Description List Restaurant Kitchen Category
 // @Tags		Restaurant
+// @Param		group-number	query	integer		false  "Group Number"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
@@ -202,7 +204,16 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchKitchen(shopID, pageable)
+
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "group-number",
+			Field: "groupnumber",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchKitchen(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -246,6 +257,7 @@ func (h KitchenHttp) GetKitchenProductBarcode(ctx microservice.IContext) error {
 // List Restaurant Kitchen Search Step godoc
 // @Description search limit offset
 // @Tags		Restaurant
+// @Param		group-number	query	integer		false  "Group Number"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -260,7 +272,15 @@ func (h KitchenHttp) SearchKitchenStep(ctx microservice.IContext) error {
 
 	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
-	docList, total, err := h.svc.SearchKitchenStep(shopID, "", pageableStep)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "group-number",
+			Field: "groupnumber",
+			Type:  requestfilter.FieldTypeInt,
+		},
+	})
+
+	docList, total, err := h.svc.SearchKitchenStep(shopID, "", filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
