@@ -142,6 +142,10 @@ func main() {
 		"/e-order/shop-info",
 		"/e-order/shop-info/v1.1",
 
+		"/e-order/restaurant/zone",
+		"/e-order/restaurant/kitchen",
+		"/e-order/restaurant/table",
+
 		"/restaurant/notifier-device/ref-confirm",
 	}
 

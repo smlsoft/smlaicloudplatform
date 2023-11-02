@@ -13,7 +13,6 @@ import (
 )
 
 type IKitchenRepository interface {
-	All(ctx context.Context, shopID string) ([]models.KitchenInfo, error)
 	Count(ctx context.Context, shopID string) (int, error)
 	Create(ctx context.Context, category models.KitchenDoc) (string, error)
 	CreateInBatch(ctx context.Context, docList []models.KitchenDoc) error
@@ -26,6 +25,7 @@ type IKitchenRepository interface {
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.KitchenItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, columnName string, filters interface{}) (models.KitchenDoc, error)
 	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.KitchenInfo, int, error)
+	Find(ctx context.Context, shopID string, filters map[string]interface{}) ([]models.KitchenInfo, error)
 
 	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.KitchenDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.KitchenActivity, mongopagination.PaginationData, error)
@@ -55,15 +55,25 @@ func NewKitchenRepository(pst microservice.IPersisterMongo) KitchenRepository {
 	return insRepo
 }
 
-func (repo KitchenRepository) All(ctx context.Context, shopID string) ([]models.KitchenInfo, error) {
+func (repo KitchenRepository) Find(ctx context.Context, shopID string, filters map[string]interface{}) ([]models.KitchenInfo, error) {
 	result := []models.KitchenInfo{}
-	filter := bson.M{
-		"shopid": shopID,
-		"deletedat": bson.M{
-			"$exists": false,
-		},
+
+	matchFilterList := []interface{}{}
+
+	for key, value := range filters {
+		matchFilterList = append(matchFilterList, bson.M{key: value})
 	}
-	err := repo.pst.Find(ctx, models.KitchenInfo{}, filter, &result)
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	if len(matchFilterList) > 0 {
+		queryFilters["$and"] = matchFilterList
+	}
+
+	err := repo.pst.Find(ctx, models.KitchenInfo{}, queryFilters, &result)
 
 	if err != nil {
 		return nil, err

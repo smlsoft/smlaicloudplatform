@@ -127,21 +127,25 @@ func (svc EOrderService) GetShopInfoOld(shopID string, orderStationCode string) 
 					return models.EOrderShopOld{}, err
 				}
 				tempOrderStation.Branch = branch.Branch
+
+				// Kitchen
+				kitchens, err := svc.repoKitchen.Find(ctx, shopID, map[string]interface{}{
+					"groupnumber": order.KitchenGroupNumber,
+				})
+
+				if err != nil {
+					return models.EOrderShopOld{}, err
+				}
+
+				for _, tempKitchen := range kitchens {
+					result.Kitchens = append(result.Kitchens, tempKitchen.Kitchen)
+				}
+
 			}
 
 			result.OrderStation = tempOrderStation
 		}
 
-	}
-
-	kitchens, err := svc.repoKitchen.All(ctx, shopID)
-
-	if err != nil {
-		return models.EOrderShopOld{}, err
-	}
-
-	for _, tempKitchen := range kitchens {
-		result.Kitchens = append(result.Kitchens, tempKitchen.Kitchen)
 	}
 
 	result.ShopID = shopInfo.GuidFixed
@@ -229,16 +233,6 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 			result.OrderStation = tempOrderStation
 		}
 
-	}
-
-	kitchens, err := svc.repoKitchen.All(ctx, shopID)
-
-	if err != nil {
-		return models.EOrderShop{}, err
-	}
-
-	for _, tempKitchen := range kitchens {
-		result.Kitchens = append(result.Kitchens, tempKitchen.Kitchen)
 	}
 
 	result.ShopID = shopInfo.GuidFixed
