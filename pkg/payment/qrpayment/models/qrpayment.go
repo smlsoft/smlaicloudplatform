@@ -32,7 +32,9 @@ type QrPayment struct {
 	CustomerCharge string `json:"customercharge" bson:"customercharge"`
 
 	// 0 = เงินเข้าทันที , 1 = สิ้นวัน , 2 = วันถัดไป
-	CloseQr int8 `json:"closeqr" bson:"closeqr"`
+	CloseQr int8   `json:"closeqr" bson:"closeqr"`
+	Secret  string `json:"secret" bson:"secret"`
+	Token   string `json:"token" bson:"token"`
 
 	// PaymentCode   string          `json:"paymentcode" bson:"paymentcode"`
 	// CountryCode   string          `json:"countrycode" bson:"countrycode"`

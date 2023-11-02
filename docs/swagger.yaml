@@ -973,7 +973,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -4135,9 +4134,13 @@ definitions:
         uniqueItems: true
       qrtype:
         type: integer
+      secret:
+        type: string
       storeid:
         type: string
       terminalid:
+        type: string
+      token:
         type: string
     required:
     - code

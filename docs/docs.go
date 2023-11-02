@@ -34730,7 +34730,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -39395,10 +39394,16 @@ const docTemplate = `{
                 "qrtype": {
                     "type": "integer"
                 },
+                "secret": {
+                    "type": "string"
+                },
                 "storeid": {
                     "type": "string"
                 },
                 "terminalid": {
+                    "type": "string"
+                },
+                "token": {
                     "type": "string"
                 }
             }
