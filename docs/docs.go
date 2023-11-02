@@ -34729,17 +34729,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -35333,9 +35329,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -38235,7 +38228,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -38395,7 +38388,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -38632,6 +38625,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -43722,17 +43726,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode": {
             "type": "object",
             "required": [
@@ -43851,7 +43844,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -43913,17 +43906,6 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -43993,7 +43975,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 }
             }

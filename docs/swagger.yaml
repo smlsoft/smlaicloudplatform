@@ -965,15 +965,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1369,8 +1366,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -3350,7 +3345,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -3459,7 +3454,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3625,6 +3620,13 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      price:
+        type: number
+    type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
       price:
         type: number
     type: object
@@ -7040,13 +7042,6 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
       barcode:
@@ -7124,7 +7119,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -7170,13 +7165,6 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
       code:
@@ -7221,7 +7209,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:

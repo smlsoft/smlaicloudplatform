@@ -12,7 +12,7 @@ type QrPayment struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string          `json:"code" bson:"code" validate:"required"`
 	QrNames                  *[]models.NameX `json:"qrnames" bson:"qrnames" validate:"required,min=1,unique=Code,dive"`
-	QrType                   int8            `json:"qrtype" bson:"qrtype"`
+	QrType                   int             `json:"qrtype" bson:"qrtype"`
 	IsActive                 bool            `json:"isactive" bson:"isactive"`
 	Logo                     string          `json:"logo" bson:"logo"`
 	BankCode                 string          `json:"bankcode" bson:"bankcode"`
