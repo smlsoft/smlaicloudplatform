@@ -39959,9 +39959,6 @@
                 },
                 "gptype": {
                     "type": "integer"
-                },
-                "name": {
-                    "type": "string"
                 }
             }
         },
@@ -39976,9 +39973,6 @@
                 },
                 "gptype": {
                     "type": "integer"
-                },
-                "name": {
-                    "type": "string"
                 }
             }
         },

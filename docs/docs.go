@@ -39964,9 +39964,6 @@ const docTemplate = `{
                 },
                 "gptype": {
                     "type": "integer"
-                },
-                "name": {
-                    "type": "string"
                 }
             }
         },
@@ -39981,9 +39978,6 @@ const docTemplate = `{
                 },
                 "gptype": {
                     "type": "integer"
-                },
-                "name": {
-                    "type": "string"
                 }
             }
         },

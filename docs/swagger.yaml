@@ -4523,8 +4523,6 @@ definitions:
         type: number
       gptype:
         type: integer
-      name:
-        type: string
     type: object
   models.SaleInvoiceSaleChannel:
     properties:
@@ -4534,8 +4532,6 @@ definitions:
         type: number
       gptype:
         type: integer
-      name:
-        type: string
     type: object
   models.SectionBranch:
     properties:

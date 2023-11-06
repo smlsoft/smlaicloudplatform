@@ -31,7 +31,6 @@ type SaleInvoiceReturn struct {
 
 type SaleInvoiceReturnSaleChannel struct {
 	Code   string  `json:"code" bson:"code"`
-	Name   string  `json:"name" bson:"name"`
 	GP     float64 `json:"gp" bson:"gp"`
 	GPType int8    `json:"gptype" bson:"gptype"`
 }
