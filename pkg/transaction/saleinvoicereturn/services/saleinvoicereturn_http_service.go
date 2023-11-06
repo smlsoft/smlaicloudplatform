@@ -207,6 +207,7 @@ func (svc SaleInvoiceReturnHttpService) UpdateSaleInvoiceReturn(shopID string, g
 	docData := findDoc
 	docData.SaleInvoiceReturn = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 
