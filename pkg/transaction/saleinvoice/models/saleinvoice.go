@@ -26,6 +26,8 @@ type SaleInvoice struct {
 	ChequeBookCode   string  `json:"chequebookcode" bson:"chequebookcode"`
 	ChequeDueDate    string  `json:"chequeduedate" bson:"chequeduedate"`
 	ChequeAmount     float64 `json:"chequeamount" bson:"chequeamount"`
+
+	ManufacturerGUID string `json:"manufacturerguid" bson:"manufacturerguid"`
 }
 
 type SaleInvoiceInfo struct {

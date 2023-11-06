@@ -23817,61 +23817,6 @@ const docTemplate = `{
             }
         },
         "/stockbalanceimport": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List StockBalanceImport",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "StockBalanceImport"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "task id",
-                        "name": "task-id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -24013,13 +23958,16 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "StockBalanceImport",
-                        "name": "StockBalanceImport",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.StockBalanceImport"
-                        }
+                        "type": "integer",
+                        "description": "skip header,  1: skip, 0: not skip",
+                        "name": "skip-header",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "skip offset, default 0",
+                        "name": "skip-offset",
+                        "in": "query"
                     },
                     {
                         "type": "file",
@@ -24110,6 +24058,63 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/stockbalanceimport/{task-id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List StockBalanceImport",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockBalanceImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task-id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -38024,6 +38029,9 @@ const docTemplate = `{
                 "itemunitsize": {
                     "type": "number"
                 },
+                "manufacturerguid": {
+                    "type": "string"
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -39532,6 +39540,9 @@ const docTemplate = `{
                 },
                 "mancount": {
                     "type": "integer"
+                },
+                "manufacturerguid": {
+                    "type": "string"
                 },
                 "membercode": {
                     "type": "string"
@@ -43371,6 +43382,9 @@ const docTemplate = `{
                 },
                 "itemunitsize": {
                     "type": "number"
+                },
+                "manufacturerguid": {
+                    "type": "string"
                 },
                 "maxdiscount": {
                     "type": "string"
