@@ -24,7 +24,7 @@ type IStockBalanceImportService interface {
 	Update(shopID string, guid string, doc models.StockBalanceImportRaw) error
 	Delete(shopID string, guid string) error
 	DeleteTask(shopID string, taskID string) error
-	ImportFromFile(shopID string, isSkipHeader bool, fileUpload io.Reader) (string, error)
+	ImportFromFile(shopID string, isSkipHeader bool, skipOffset int, fileUpload io.Reader) (string, error)
 	SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error)
 }
 
@@ -73,7 +73,7 @@ func (svc *StockBalanceImportService) Create(shopID string, doc *models.StockBal
 	return svc.chRepo.Create(context.Background(), docData)
 }
 
-func (svc *StockBalanceImportService) ImportFromFile(shopID string, isSkipHeader bool, fileUpload io.Reader) (string, error) {
+func (svc *StockBalanceImportService) ImportFromFile(shopID string, isSkipHeader bool, skipOffset int, fileUpload io.Reader) (string, error) {
 
 	f, err := excelize.OpenReader(fileUpload)
 	if err != nil {
@@ -92,7 +92,7 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, isSkipHeader
 	taskID := svc.GenerateID(svc.sizeID)
 
 	for i, doc := range rows {
-		if isSkipHeader && i == 0 {
+		if isSkipHeader && i <= skipOffset {
 			continue
 		}
 
