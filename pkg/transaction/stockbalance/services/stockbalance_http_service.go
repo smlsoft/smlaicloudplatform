@@ -179,6 +179,7 @@ func (svc StockBalanceHttpService) UpdateStockBalance(shopID string, guid string
 	docData := findDoc
 	docData.StockBalance = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 

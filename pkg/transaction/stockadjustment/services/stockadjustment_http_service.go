@@ -178,6 +178,7 @@ func (svc StockAdjustmentHttpService) UpdateStockAdjustment(shopID string, guid 
 	docData := findDoc
 	docData.StockAdjustment = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 

@@ -175,6 +175,7 @@ func (svc StockReceiveProductHttpService) UpdateStockReceiveProduct(shopID strin
 	docData := findDoc
 	docData.StockReceiveProduct = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 

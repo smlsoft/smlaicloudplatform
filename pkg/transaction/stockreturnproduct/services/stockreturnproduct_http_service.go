@@ -178,6 +178,7 @@ func (svc StockReturnProductHttpService) UpdateStockReturnProduct(shopID string,
 	docData := findDoc
 	docData.StockReturnProduct = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 

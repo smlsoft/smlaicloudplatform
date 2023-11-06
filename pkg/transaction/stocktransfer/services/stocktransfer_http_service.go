@@ -186,6 +186,7 @@ func (svc StockTransferHttpService) UpdateStockTransfer(shopID string, guid stri
 	docData := findDoc
 	docData.StockTransfer = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 

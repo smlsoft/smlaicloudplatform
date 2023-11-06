@@ -170,12 +170,14 @@ func (svc ReceivableOtherHttpService) UpdateReceivableOther(shopID string, guid 
 		return errors.New("document not found")
 	}
 
-	findDoc.ReceivableOther = doc
+	dataDoc := findDoc
+	dataDoc.ReceivableOther = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	dataDoc.DocNo = findDoc.DocNo
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(ctx, shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err

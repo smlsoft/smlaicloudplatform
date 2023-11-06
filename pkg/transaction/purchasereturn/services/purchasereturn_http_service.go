@@ -171,6 +171,7 @@ func (svc PurchaseReturnHttpService) UpdatePurchaseReturn(shopID string, guid st
 	docData := findDoc
 	docData.PurchaseReturn = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 

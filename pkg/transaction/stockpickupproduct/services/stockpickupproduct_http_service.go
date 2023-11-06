@@ -175,6 +175,7 @@ func (svc StockPickupProductHttpService) UpdateStockPickupProduct(shopID string,
 	docData := findDoc
 	docData.StockPickupProduct = doc
 
+	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 

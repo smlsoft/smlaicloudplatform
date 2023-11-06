@@ -170,12 +170,14 @@ func (svc PayHttpService) UpdatePay(shopID string, guid string, authUsername str
 		return errors.New("document not found")
 	}
 
-	findDoc.Pay = doc
+	docData := findDoc
+	docData.Pay = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.DocNo = findDoc.DocNo
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(ctx, shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
 		return err
