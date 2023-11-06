@@ -35,7 +35,7 @@ func (h OcrHttp) RegisterHttp() {
 // @Summary		Upload Ocr
 // @Description Upload Ocr
 // @Tags		OCR
-// @Param		Ocr Request body      OcrRequest  true  "Ocr Request"
+// @Param		OcrRequest body      OcrRequest  true  "Ocr Request"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -70,7 +70,7 @@ func (h OcrHttp) OcrUpload(ctx microservice.IContext) error {
 // @Summary		Result Ocr
 // @Description Result Ocr
 // @Tags		OCR
-// @Param		Ocr Request body      OcrRequest  true  "Ocr Request"
+// @Param		OcrRequest body      OcrRequest  true  "Ocr Request"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed

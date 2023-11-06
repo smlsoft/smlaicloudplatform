@@ -160,7 +160,7 @@ func (h RestaurantSettingsHttp) DeleteRestaurantSettings(ctx microservice.IConte
 // Delete Restaurant Settings godoc
 // @Description Delete Restaurant Settings
 // @Tags		Restaurant
-// @Param		Restaurant Settings  body      []string  true  "Restaurant Settings GUIDs"
+// @Param		RestaurantSettings  body      []string  true  "Restaurant Settings GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed

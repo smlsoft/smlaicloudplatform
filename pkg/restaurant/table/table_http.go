@@ -161,7 +161,7 @@ func (h TableHttp) DeleteTable(ctx microservice.IContext) error {
 // Delete Restaurant Table godoc
 // @Description Delete Restaurant Table
 // @Tags		Restaurant
-// @Param		Restaurant Table  body      []string  true  "Restaurant Table GUIDs"
+// @Param		RestaurantTable  body      []string  true  "Restaurant Table GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed

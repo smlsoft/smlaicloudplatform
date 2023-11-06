@@ -51,7 +51,7 @@ func (h SmsTransactionHttp) RegisterHttp() {
 // @Summary		รับข้อมูล sms
 // @Description รับข้อมูล sms
 // @Tags		SMS
-// @Param		SMS Transaction  body      models.SmsTransaction  true  "sms data"
+// @Param		SMSTransaction  body      models.SmsTransaction  true  "sms data"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed

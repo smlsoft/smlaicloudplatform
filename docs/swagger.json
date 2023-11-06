@@ -4386,7 +4386,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestPassword"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.EmployeeRequestPassword"
                         }
                     }
                 ],
@@ -7477,7 +7477,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.ShopUserInfo"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.ShopUserInfo"
                             }
                         }
                     },
@@ -7506,7 +7506,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserLoginRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserLoginRequest"
                         }
                     }
                 ],
@@ -7546,7 +7546,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserProfileReponse"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse"
                             }
                         }
                     },
@@ -7924,7 +7924,7 @@
                 "parameters": [
                     {
                         "description": "Ocr Request",
-                        "name": "Request",
+                        "name": "OcrRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -7966,7 +7966,7 @@
                 "parameters": [
                     {
                         "description": "Ocr Request",
-                        "name": "Request",
+                        "name": "OcrRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -9974,7 +9974,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BusinessType"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_businesstype_models.BusinessType"
                         }
                     }
                 ],
@@ -10059,7 +10059,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.BusinessType"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_businesstype_models.BusinessType"
                             }
                         }
                     }
@@ -10243,7 +10243,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BusinessType"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_businesstype_models.BusinessType"
                         }
                     }
                 ],
@@ -10372,7 +10372,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Department"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
                         }
                     }
                 ],
@@ -10457,7 +10457,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Department"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
                             }
                         }
                     }
@@ -10648,7 +10648,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Department"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
                         }
                     }
                 ],
@@ -15864,7 +15864,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductGroup"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup"
                         }
                     }
                 ],
@@ -15949,7 +15949,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.ProductGroup"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup"
                             }
                         }
                     }
@@ -16088,7 +16088,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductGroup"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup"
                         }
                     }
                 ],
@@ -16173,7 +16173,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductGroup"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup"
                         }
                     }
                 ],
@@ -17722,7 +17722,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserProfileReponse"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse"
                             }
                         }
                     },
@@ -17750,7 +17750,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserProfileRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileRequest"
                         }
                     }
                 ],
@@ -17790,7 +17790,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserProfileReponse"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse"
                             }
                         }
                     },
@@ -17856,7 +17856,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRequest"
                         }
                     }
                 ],
@@ -20452,7 +20452,7 @@
                 "parameters": [
                     {
                         "description": "Restaurant Settings GUIDs",
-                        "name": "Settings",
+                        "name": "RestaurantSettings",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -22150,7 +22150,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ShopSelectRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.ShopSelectRequest"
                         }
                     }
                 ],
@@ -22660,7 +22660,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestRegister"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.EmployeeRequestRegister"
                         }
                     }
                 ],
@@ -22885,7 +22885,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestUpdate"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.EmployeeRequestUpdate"
                         }
                     }
                 ],
@@ -22963,7 +22963,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserRoleRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRoleRequest"
                         }
                     }
                 ],
@@ -23611,7 +23611,7 @@
                 "parameters": [
                     {
                         "description": "sms data",
-                        "name": "Transaction",
+                        "name": "SMSTransaction",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -24841,7 +24841,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.TaskStatus"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_task_models.TaskStatus"
                         }
                     }
                 ],
@@ -29028,7 +29028,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.StockBalanceDetail"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail"
                         }
                     }
                 ],
@@ -29324,7 +29324,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.StockBalanceDetail"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail"
                         }
                     }
                 ],
@@ -32245,7 +32245,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Image"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
                             }
                         }
                     },
@@ -32299,7 +32299,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Image"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
                             }
                         }
                     },
@@ -33442,53 +33442,6 @@
                 }
             }
         },
-        "models.Address": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "contactnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "guid": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phoneprimary": {
-                    "type": "string"
-                },
-                "phonesecondary": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.ApiResponse": {
             "type": "object",
             "properties": {
@@ -33777,8 +33730,8 @@
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -33800,7 +33753,17 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -33883,7 +33846,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_payment_bookbank_models.Image"
                     }
                 },
                 "names": {
@@ -33988,25 +33951,6 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
-                }
-            }
-        },
-        "models.BusinessType": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
                     }
                 }
             }
@@ -34481,12 +34425,12 @@
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.Address"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Address"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address"
                     }
                 },
                 "branchnumber": {
@@ -34516,7 +34460,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Image"
                     }
                 },
                 "ismember": {
@@ -34564,12 +34508,12 @@
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.Address"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Address"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address"
                     }
                 },
                 "branchnumber": {
@@ -34599,7 +34543,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Image"
                     }
                 },
                 "iscreditor": {
@@ -34650,12 +34594,12 @@
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.Address"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Address"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address"
                     }
                 },
                 "branchnumber": {
@@ -34685,7 +34629,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Image"
                     }
                 },
                 "ismember": {
@@ -34704,190 +34648,6 @@
                 },
                 "taxid": {
                     "type": "string"
-                }
-            }
-        },
-        "models.DedeZoom": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "phonenumber": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Department": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "GuidFixed string         `json:\"guidfixed\"`",
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "docref": {
-                    "type": "string"
-                },
-                "docrefdatetime": {
-                    "type": "string"
-                },
-                "extrajson": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "sku": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
                 }
             }
         },
@@ -35219,113 +34979,6 @@
                 }
             }
         },
-        "models.EmployeeRequestPassword": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "currentpassword": {
-                    "type": "string"
-                },
-                "newpassword": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.EmployeeRequestRegister": {
-            "type": "object",
-            "properties": {
-                "branches": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.EmployeeBranch"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "contact": {
-                    "$ref": "#/definitions/models.EmployeeContact"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "isenabled": {
-                    "type": "boolean"
-                },
-                "isusepos": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "pincode": {
-                    "type": "string"
-                },
-                "profilepicture": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "models.EmployeeRequestUpdate": {
-            "type": "object",
-            "properties": {
-                "branches": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.EmployeeBranch"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "contact": {
-                    "$ref": "#/definitions/models.EmployeeContact"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "isenabled": {
-                    "type": "boolean"
-                },
-                "isusepos": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "pincode": {
-                    "type": "string"
-                },
-                "profilepicture": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "models.Image": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
-                }
-            }
-        },
         "models.ImageEdit": {
             "type": "object",
             "properties": {
@@ -35504,8 +35157,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -35530,6 +35183,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -35551,6 +35207,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -35703,8 +35366,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -35729,6 +35392,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -35750,6 +35416,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -35979,8 +35652,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -36005,6 +35678,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -36026,6 +35702,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -37533,26 +37216,6 @@
                 }
             }
         },
-        "models.POSEmployee": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "models.PaginationDataResponse": {
             "type": "object",
             "properties": {
@@ -38222,7 +37885,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -38230,7 +37893,7 @@
                     "type": "integer"
                 },
                 "unit": {
-                    "$ref": "#/definitions/models.ProductUnit"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductUnit"
                 },
                 "unitcost": {
                     "type": "string"
@@ -38244,7 +37907,7 @@
                 "units": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductUnit"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductUnit"
                     }
                 },
                 "unitstandard": {
@@ -38382,7 +38045,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -38548,25 +38211,6 @@
                 }
             }
         },
-        "models.ProductGroup": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "models.ProductOption": {
             "type": "object",
             "required": [
@@ -38622,43 +38266,6 @@
                 },
                 "price": {
                     "type": "number"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductUnit": {
-            "type": "object",
-            "properties": {
-                "divider": {
-                    "type": "number"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "stand": {
-                    "type": "number"
-                },
-                "stockcount": {
-                    "type": "boolean"
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -38883,7 +38490,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -39128,7 +38735,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -39846,7 +39453,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -40124,7 +39731,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -40425,7 +40032,7 @@
                 "employees": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.POSEmployee"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.POSEmployee"
                     }
                 },
                 "isejournal": {
@@ -40625,43 +40232,6 @@
                     "type": "string"
                 },
                 "telephone": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopSelectRequest": {
-            "type": "object",
-            "required": [
-                "shopid"
-            ],
-            "properties": {
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopUserInfo": {
-            "type": "object",
-            "properties": {
-                "branchcode": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "isfavorite": {
-                    "type": "boolean"
-                },
-                "lastaccessedat": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "integer"
-                },
-                "shopid": {
                     "type": "string"
                 }
             }
@@ -40883,7 +40453,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -41313,167 +40883,6 @@
                 }
             }
         },
-        "models.StockBalanceDetail": {
-            "type": "object",
-            "required": [
-                "docno"
-            ],
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "docno": {
-                    "type": "string"
-                },
-                "docref": {
-                    "type": "string"
-                },
-                "docrefdatetime": {
-                    "type": "string"
-                },
-                "extrajson": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "sku": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "models.StockBalanceHeader": {
             "type": "object",
             "properties": {
@@ -41796,7 +41205,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -42041,7 +41450,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -42286,7 +41695,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -42531,7 +41940,7 @@
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Detail"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -42929,14 +42338,6 @@
                 }
             }
         },
-        "models.TaskStatus": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.Tax": {
             "type": "object",
             "properties": {
@@ -43239,155 +42640,6 @@
                 }
             }
         },
-        "models.UserLoginRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                }
-            }
-        },
-        "models.UserProfile": {
-            "type": "object",
-            "required": [
-                "name",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "models.UserProfileReponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.UserProfile"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.UserProfileRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "models.UserRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "models.UserRoleRequest": {
-            "type": "object",
-            "properties": {
-                "editusername": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "integer"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Vat": {
             "type": "object",
             "properties": {
@@ -43631,6 +42883,188 @@
                 }
             }
         },
+        "smlcloudplatform_pkg_debtaccount_creditor_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_creditor_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_customer_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_customer_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_debtor_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_debtor_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_images_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_organization_branch_models.Branch": {
             "type": "object",
             "required": [
@@ -43658,7 +43092,7 @@
                 "departments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Department"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Department"
                     }
                 },
                 "imageuri": {
@@ -43683,6 +43117,90 @@
                 },
                 "pos": {
                     "$ref": "#/definitions/models.BranchPOS"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_branch_models.Department": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "GuidFixed string         `json:\"guidfixed\"`",
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_businesstype_models.BusinessType": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_department_models.Department": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_payment_bookbank_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_pos_setting_models.POSEmployee": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -43713,6 +43231,43 @@
             "type": "object",
             "properties": {
                 "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductUnit": {
+            "type": "object",
+            "properties": {
+                "divider": {
+                    "type": "number"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "stand": {
+                    "type": "number"
+                },
+                "stockcount": {
+                    "type": "boolean"
+                },
+                "unitcode": {
                     "type": "string"
                 },
                 "xorder": {
@@ -43838,7 +43393,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -43903,6 +43458,17 @@
                 }
             }
         },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductType": {
             "type": "object",
             "properties": {
@@ -43914,6 +43480,25 @@
                 },
                 "names": {
                     "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productgroup_models.ProductGroup": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -43969,7 +43554,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
@@ -44133,7 +43718,7 @@
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.Department"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Department"
                     }
                 },
                 "location": {
@@ -44153,6 +43738,26 @@
                 }
             }
         },
+        "smlcloudplatform_pkg_shop_branch_models.Department": {
+            "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "smlcloudplatform_pkg_shop_branch_models.Location": {
             "type": "object",
             "properties": {
@@ -44160,6 +43765,323 @@
                     "type": "string"
                 },
                 "lng": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.EmployeeRequestPassword": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "currentpassword": {
+                    "type": "string"
+                },
+                "newpassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.EmployeeRequestRegister": {
+            "type": "object",
+            "properties": {
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.EmployeeBranch"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/models.EmployeeContact"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isenabled": {
+                    "type": "boolean"
+                },
+                "isusepos": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "pincode": {
+                    "type": "string"
+                },
+                "profilepicture": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.EmployeeRequestUpdate": {
+            "type": "object",
+            "properties": {
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.EmployeeBranch"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/models.EmployeeContact"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isenabled": {
+                    "type": "boolean"
+                },
+                "isusepos": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pincode": {
+                    "type": "string"
+                },
+                "profilepicture": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.DedeZoom": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "phonenumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.ShopSelectRequest": {
+            "type": "object",
+            "required": [
+                "shopid"
+            ],
+            "properties": {
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.ShopUserInfo": {
+            "type": "object",
+            "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "createdby": {
+                    "type": "string"
+                },
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "lastaccessedat": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRole"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.UserLoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.UserProfile": {
+            "type": "object",
+            "required": [
+                "name",
+                "username"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.UserProfileReponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfile"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.UserProfileRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.UserRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_models.UserRole": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-comments": {
+                "ROLE_ADMIN": "\"ADMIN\"",
+                "ROLE_OWNER": "\"OWNER\"",
+                "ROLE_USER": "\"USER\""
+            },
+            "x-enum-varnames": [
+                "ROLE_USER",
+                "ROLE_ADMIN",
+                "ROLE_OWNER"
+            ]
+        },
+        "smlcloudplatform_pkg_shop_models.UserRoleRequest": {
+            "type": "object",
+            "properties": {
+                "editusername": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRole"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -44172,6 +44094,330 @@
                 },
                 "uuid": {
                     "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_task_models.TaskStatus": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_transaction_models.Detail": {
+            "type": "object",
+            "properties": {
+                "averagecost": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "calcflag": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docref": {
+                    "type": "string"
+                },
+                "docrefdatetime": {
+                    "type": "string"
+                },
+                "extrajson": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "ispos": {
+                    "type": "integer"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "laststatus": {
+                    "type": "integer"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "priceexcludevat": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "sumamountexcludevat": {
+                    "type": "number"
+                },
+                "sumofcost": {
+                    "type": "number"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "tolocationcode": {
+                    "type": "string"
+                },
+                "tolocationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "totalqty": {
+                    "type": "number"
+                },
+                "totalvaluevat": {
+                    "type": "number"
+                },
+                "towhcode": {
+                    "type": "string"
+                },
+                "towhnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "whcode": {
+                    "type": "string"
+                },
+                "whnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail": {
+            "type": "object",
+            "required": [
+                "docno"
+            ],
+            "properties": {
+                "averagecost": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "calcflag": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docref": {
+                    "type": "string"
+                },
+                "docrefdatetime": {
+                    "type": "string"
+                },
+                "extrajson": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "ispos": {
+                    "type": "integer"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "laststatus": {
+                    "type": "integer"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "priceexcludevat": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "sumamountexcludevat": {
+                    "type": "number"
+                },
+                "sumofcost": {
+                    "type": "number"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "tolocationcode": {
+                    "type": "string"
+                },
+                "tolocationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "totalqty": {
+                    "type": "number"
+                },
+                "totalvaluevat": {
+                    "type": "number"
+                },
+                "towhcode": {
+                    "type": "string"
+                },
+                "towhnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "whcode": {
+                    "type": "string"
+                },
+                "whnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
