@@ -21,11 +21,19 @@ type SaleInvoiceReturn struct {
 	QRCode       string  `json:"qrcode" bson:"qrcode"`
 	QRCodeAmount float64 `json:"qrcodeamount" bson:"qrcodeamount"`
 
-	ChequeNo         string  `json:"chequeno" bson:"chequeno"`
-	ChequeBookNumber string  `json:"chequebooknumber" bson:"chequebooknumber"`
-	ChequeBookCode   string  `json:"chequebookcode" bson:"chequebookcode"`
-	ChequeDueDate    string  `json:"chequeduedate" bson:"chequeduedate"`
-	ChequeAmount     float64 `json:"chequeamount" bson:"chequeamount"`
+	ChequeNo         string                       `json:"chequeno" bson:"chequeno"`
+	ChequeBookNumber string                       `json:"chequebooknumber" bson:"chequebooknumber"`
+	ChequeBookCode   string                       `json:"chequebookcode" bson:"chequebookcode"`
+	ChequeDueDate    string                       `json:"chequeduedate" bson:"chequeduedate"`
+	ChequeAmount     float64                      `json:"chequeamount" bson:"chequeamount"`
+	SaleInvoice      SaleInvoiceReturnSaleChannel `json:"saleinvoice,omitempty" bson:"saleinvoice,omitempty"`
+}
+
+type SaleInvoiceReturnSaleChannel struct {
+	Code   string  `json:"code" bson:"code"`
+	Name   string  `json:"name" bson:"name"`
+	GP     float64 `json:"gp" bson:"gp"`
+	GPType int8    `json:"gptype" bson:"gptype"`
 }
 
 type SaleInvoiceReturnInfo struct {

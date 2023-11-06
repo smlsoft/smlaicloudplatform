@@ -39572,6 +39572,9 @@
                 "roundamount": {
                     "type": "number"
                 },
+                "salechannel": {
+                    "$ref": "#/definitions/models.SaleInvoiceSaleChannel"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -39853,6 +39856,9 @@
                 "salecode": {
                     "type": "string"
                 },
+                "saleinvoice": {
+                    "$ref": "#/definitions/models.SaleInvoiceReturnSaleChannel"
+                },
                 "salename": {
                     "type": "string"
                 },
@@ -39939,6 +39945,40 @@
                 },
                 "womancount": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.SaleInvoiceReturnSaleChannel": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "gp": {
+                    "type": "number"
+                },
+                "gptype": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SaleInvoiceSaleChannel": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "gp": {
+                    "type": "number"
+                },
+                "gptype": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

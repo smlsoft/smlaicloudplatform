@@ -4265,6 +4265,8 @@ definitions:
         type: number
       roundamount:
         type: number
+      salechannel:
+        $ref: '#/definitions/models.SaleInvoiceSaleChannel'
       salecode:
         type: string
       salename:
@@ -4452,6 +4454,8 @@ definitions:
         type: number
       salecode:
         type: string
+      saleinvoice:
+        $ref: '#/definitions/models.SaleInvoiceReturnSaleChannel'
       salename:
         type: string
       status:
@@ -4510,6 +4514,28 @@ definitions:
         type: integer
       womancount:
         type: integer
+    type: object
+  models.SaleInvoiceReturnSaleChannel:
+    properties:
+      code:
+        type: string
+      gp:
+        type: number
+      gptype:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.SaleInvoiceSaleChannel:
+    properties:
+      code:
+        type: string
+      gp:
+        type: number
+      gptype:
+        type: integer
+      name:
+        type: string
     type: object
   models.SectionBranch:
     properties:

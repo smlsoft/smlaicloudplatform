@@ -39577,6 +39577,9 @@ const docTemplate = `{
                 "roundamount": {
                     "type": "number"
                 },
+                "salechannel": {
+                    "$ref": "#/definitions/models.SaleInvoiceSaleChannel"
+                },
                 "salecode": {
                     "type": "string"
                 },
@@ -39858,6 +39861,9 @@ const docTemplate = `{
                 "salecode": {
                     "type": "string"
                 },
+                "saleinvoice": {
+                    "$ref": "#/definitions/models.SaleInvoiceReturnSaleChannel"
+                },
                 "salename": {
                     "type": "string"
                 },
@@ -39944,6 +39950,40 @@ const docTemplate = `{
                 },
                 "womancount": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.SaleInvoiceReturnSaleChannel": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "gp": {
+                    "type": "number"
+                },
+                "gptype": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SaleInvoiceSaleChannel": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "gp": {
+                    "type": "number"
+                },
+                "gptype": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
