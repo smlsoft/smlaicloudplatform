@@ -56,6 +56,7 @@ type ProductBarcodeBase struct {
 	FoodType             int                 `json:"foodtype" bson:"foodtype"`
 	Discount             string              `json:"discount" bson:"discount"`
 	IsStockForRestaurant bool                `json:"isstockforrestaurant" bson:"isstockforrestaurant"`
+	ManufacturerGUID     string              `json:"manufacturerguid" bson:"manufacturerguid"`
 }
 
 type RefProductBarcode struct {
