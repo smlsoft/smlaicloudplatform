@@ -142,6 +142,7 @@ func main() {
 		"/e-order/product-barcode",
 		"/e-order/shop-info",
 		"/e-order/shop-info/v1.1",
+		"/e-order/sale-invoice/last-pos-docno",
 
 		"/e-order/restaurant/zone",
 		"/e-order/restaurant/kitchen",

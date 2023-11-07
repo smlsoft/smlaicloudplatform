@@ -3919,11 +3919,6 @@ const docTemplate = `{
         },
         "/e-order/category": {
             "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
                 "description": "List Product Category",
                 "consumes": [
                     "application/json"
@@ -3984,11 +3979,6 @@ const docTemplate = `{
         },
         "/e-order/product": {
             "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
                 "description": "List Product",
                 "consumes": [
                     "application/json"
@@ -4055,11 +4045,6 @@ const docTemplate = `{
         },
         "/e-order/product-barcode": {
             "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
                 "description": "List Product By Barcodes",
                 "consumes": [
                     "application/json"
@@ -4102,17 +4087,12 @@ const docTemplate = `{
         },
         "/e-order/restaurant/kitchen": {
             "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
                 "description": "List Restaurant Kitchen Category",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Restaurant"
+                    "E-Order"
                 ],
                 "parameters": [
                     {
@@ -4158,17 +4138,12 @@ const docTemplate = `{
         },
         "/e-order/restaurant/table": {
             "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
                 "description": "List Restaurant  Table Category",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Restaurant"
+                    "E-Order"
                 ],
                 "parameters": [
                     {
@@ -4214,11 +4189,6 @@ const docTemplate = `{
         },
         "/e-order/restaurant/zone": {
             "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
                 "description": "List Restaurant Zone Category",
                 "consumes": [
                     "application/json"
@@ -4268,13 +4238,47 @@ const docTemplate = `{
                 }
             }
         },
-        "/e-order/shop-info": {
+        "/e-order/sale-invoice/last-pos-docno": {
             "get": {
-                "security": [
+                "description": "get SaleInvoice Last DocNo",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "E-Order"
+                ],
+                "parameters": [
                     {
-                        "AccessToken": []
+                        "type": "string",
+                        "description": "POS ID",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Max DocNo",
+                        "name": "maxdocno",
+                        "in": "query"
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/e-order/shop-info": {
+            "get": {
                 "description": "Get Shop Info",
                 "consumes": [
                     "application/json"
@@ -4317,11 +4321,6 @@ const docTemplate = `{
         },
         "/e-order/shop-info/v1.1": {
             "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
                 "description": "Get Shop Info v1.1",
                 "consumes": [
                     "application/json"
@@ -18259,6 +18258,442 @@ const docTemplate = `{
                 }
             }
         },
+        "/report/execute": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Execute ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/playground": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Playground ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery GUIDs",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/reportm/execute": {
             "post": {
                 "security": [
@@ -23903,6 +24338,12 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "skip header,  1: skip, 0: not skip",
                         "name": "skip-header",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "skip name,  1: skip, 0: not skip",
+                        "name": "skip-name",
                         "in": "query"
                     },
                     {
@@ -43634,6 +44075,45 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportParam"
+                    }
+                },
+                "sql": {
                     "type": "string"
                 }
             }

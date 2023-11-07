@@ -23,20 +23,23 @@ import (
 	"smlcloudplatform/pkg/restaurant/table"
 	"smlcloudplatform/pkg/restaurant/zone"
 	"smlcloudplatform/pkg/shop"
+	saleinvoice_repositories "smlcloudplatform/pkg/transaction/saleinvoice/repositories"
+	saleinvoice_services "smlcloudplatform/pkg/transaction/saleinvoice/services"
 	"smlcloudplatform/pkg/utils"
 )
 
 type IEOrderHttp interface{}
 
 type EOrderHttp struct {
-	ms          *microservice.Microservice
-	cfg         config.IConfig
-	svcCategory category_services.IProductCategoryHttpService
-	svcProduct  serviceproduct.IProductBarcodeHttpService
-	svcEOrder   services.EOrderService
-	svcZone     zone.IZoneService
-	svcTable    table.TableService
-	svcKitchen  kitchen.IKitchenService
+	ms             *microservice.Microservice
+	cfg            config.IConfig
+	svcCategory    category_services.IProductCategoryHttpService
+	svcProduct     serviceproduct.IProductBarcodeHttpService
+	svcEOrder      services.EOrderService
+	svcZone        zone.IZoneService
+	svcTable       table.TableService
+	svcKitchen     kitchen.IKitchenService
+	svcSaleInvoice saleinvoice_services.ISaleInvoiceHttpService
 }
 
 func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp {
@@ -70,18 +73,22 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	svcZone := zone.NewZoneService(repoZone, masterSyncCacheRepo)
 	svcEOrder := services.NewEOrderService(repoShop, repoTable, repoOrder, repoMedia, repoKitchen, repoDevice, repoSaleChannel, repoBranch)
 
+	repoSaleInvoice := saleinvoice_repositories.NewSaleInvoiceRepository(pst)
+	svcSaleInvoice := saleinvoice_services.NewSaleInvoiceHttpService(repoSaleInvoice, nil, nil, nil)
+
 	svcTable := table.NewTableService(repoTable, masterSyncCacheRepo)
 	svcKitchen := kitchen.NewKitchenService(repoKitchen, masterSyncCacheRepo)
 
 	return EOrderHttp{
-		ms:          ms,
-		cfg:         cfg,
-		svcCategory: svcCategory,
-		svcProduct:  svcProduct,
-		svcEOrder:   svcEOrder,
-		svcZone:     svcZone,
-		svcTable:    *svcTable,
-		svcKitchen:  svcKitchen,
+		ms:             ms,
+		cfg:            cfg,
+		svcCategory:    svcCategory,
+		svcProduct:     svcProduct,
+		svcEOrder:      svcEOrder,
+		svcZone:        svcZone,
+		svcTable:       *svcTable,
+		svcKitchen:     svcKitchen,
+		svcSaleInvoice: svcSaleInvoice,
 	}
 }
 
@@ -95,6 +102,7 @@ func (h EOrderHttp) RegisterHttp() {
 	h.ms.GET("/e-order/restaurant/zone", h.SearchZone)
 	h.ms.GET("/e-order/restaurant/kitchen", h.SearchKitchen)
 	h.ms.GET("/e-order/restaurant/table", h.SearchTable)
+	h.ms.GET("/e-order/sale-invoice/last-pos-docno", h.GetLastPOSDocNo)
 
 }
 
@@ -109,7 +117,6 @@ func (h EOrderHttp) RegisterHttp() {
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/category [get]
 func (h EOrderHttp) SearchProductCategoryPage(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -154,7 +161,6 @@ func (h EOrderHttp) SearchProductCategoryPage(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/product [get]
 func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -201,7 +207,6 @@ func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/product-barcode [get]
 func (h EOrderHttp) GetProductBarcodeByBarcodes(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -240,7 +245,6 @@ func (h EOrderHttp) GetProductBarcodeByBarcodes(ctx microservice.IContext) error
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/shop-info [get]
 func (h EOrderHttp) ShopInfoOld(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -273,7 +277,6 @@ func (h EOrderHttp) ShopInfoOld(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/shop-info/v1.1 [get]
 func (h EOrderHttp) ShopInfo(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -308,7 +311,6 @@ func (h EOrderHttp) ShopInfo(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{object}	models.ZonePageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/restaurant/zone [get]
 func (h EOrderHttp) SearchZone(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -344,7 +346,7 @@ func (h EOrderHttp) SearchZone(ctx microservice.IContext) error {
 
 // List E Order Restaurant Kitchen godoc
 // @Description List Restaurant Kitchen Category
-// @Tags		Restaurant
+// @Tags		E-Order
 // @Param		group-number	query	integer		false  "Group Number"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
@@ -352,7 +354,6 @@ func (h EOrderHttp) SearchZone(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{object}	models.KitchenPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/restaurant/kitchen [get]
 func (h EOrderHttp) SearchKitchen(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -387,9 +388,9 @@ func (h EOrderHttp) SearchKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
-// ListE Order Restaurant  Table godoc
+// List E Order Restaurant  Table godoc
 // @Description List Restaurant  Table Category
-// @Tags		Restaurant
+// @Tags		E-Order
 // @Param		group-number	query	integer		false  "Group Number"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
@@ -397,7 +398,6 @@ func (h EOrderHttp) SearchKitchen(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{object}	models.TablePageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
 // @Router /e-order/restaurant/table [get]
 func (h EOrderHttp) SearchTable(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
@@ -428,6 +428,44 @@ func (h EOrderHttp) SearchTable(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// Get E Order SaleInvoice Last DocNo godoc
+// @Description get SaleInvoice Last DocNo
+// @Tags		E-Order
+// @Param		posid	query	string		false  "POS ID"
+// @Param		maxdocno	query	string		false  "Max DocNo"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Router /e-order/sale-invoice/last-pos-docno [get]
+func (h EOrderHttp) GetLastPOSDocNo(ctx microservice.IContext) error {
+	shopID := ctx.QueryParam("shopid")
+	if len(shopID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
+		return nil
+	}
+
+	posID := ctx.QueryParam("posid")
+	maxDocNo := ctx.QueryParam("maxdocno")
+
+	if posID == "" || maxDocNo == "" {
+		ctx.ResponseError(http.StatusBadRequest, "posid and maxdocno is required")
+		return nil
+	}
+
+	doc, err := h.svcSaleInvoice.GetLastPOSDocNo(shopID, posID, maxDocNo)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
 	})
 	return nil
 }
