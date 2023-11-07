@@ -27,14 +27,10 @@ type SaleInvoice struct {
 	ChequeDueDate    string  `json:"chequeduedate" bson:"chequeduedate"`
 	ChequeAmount     float64 `json:"chequeamount" bson:"chequeamount"`
 
-	ManufacturerGUID string                 `json:"manufacturerguid" bson:"manufacturerguid"`
-	SaleChannel      SaleInvoiceSaleChannel `json:"salechannel,omitempty" bson:"salechannel,omitempty"`
-}
-
-type SaleInvoiceSaleChannel struct {
-	Code   string  `json:"code" bson:"code"`
-	GP     float64 `json:"gp" bson:"gp"`
-	GPType int8    `json:"gptype" bson:"gptype"`
+	ManufacturerGUID  string  `json:"manufacturerguid" bson:"manufacturerguid"`
+	SaleChannelCode   string  `json:"salechannelcode" bson:"csalechannelode"`
+	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`
+	SaleChannelGPType int8    `json:"salechannelgptype" bson:"salechannelgptype"`
 }
 
 type SaleInvoiceInfo struct {

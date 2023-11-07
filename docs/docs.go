@@ -39577,8 +39577,14 @@ const docTemplate = `{
                 "roundamount": {
                     "type": "number"
                 },
-                "salechannel": {
-                    "$ref": "#/definitions/models.SaleInvoiceSaleChannel"
+                "salechannelcode": {
+                    "type": "string"
+                },
+                "salechannelgp": {
+                    "type": "number"
+                },
+                "salechannelgptype": {
+                    "type": "integer"
                 },
                 "salecode": {
                     "type": "string"
@@ -39858,11 +39864,17 @@ const docTemplate = `{
                 "roundamount": {
                     "type": "number"
                 },
-                "salecode": {
+                "salechannelcode": {
                     "type": "string"
                 },
-                "saleinvoice": {
-                    "$ref": "#/definitions/models.SaleInvoiceReturnSaleChannel"
+                "salechannelgp": {
+                    "type": "number"
+                },
+                "salechannelgptype": {
+                    "type": "integer"
+                },
+                "salecode": {
+                    "type": "string"
                 },
                 "salename": {
                     "type": "string"
@@ -39949,34 +39961,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "womancount": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.SaleInvoiceReturnSaleChannel": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "gp": {
-                    "type": "number"
-                },
-                "gptype": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.SaleInvoiceSaleChannel": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "gp": {
-                    "type": "number"
-                },
-                "gptype": {
                     "type": "integer"
                 }
             }

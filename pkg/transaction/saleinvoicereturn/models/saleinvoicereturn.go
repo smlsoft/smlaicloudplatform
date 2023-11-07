@@ -21,18 +21,14 @@ type SaleInvoiceReturn struct {
 	QRCode       string  `json:"qrcode" bson:"qrcode"`
 	QRCodeAmount float64 `json:"qrcodeamount" bson:"qrcodeamount"`
 
-	ChequeNo         string                       `json:"chequeno" bson:"chequeno"`
-	ChequeBookNumber string                       `json:"chequebooknumber" bson:"chequebooknumber"`
-	ChequeBookCode   string                       `json:"chequebookcode" bson:"chequebookcode"`
-	ChequeDueDate    string                       `json:"chequeduedate" bson:"chequeduedate"`
-	ChequeAmount     float64                      `json:"chequeamount" bson:"chequeamount"`
-	SaleInvoice      SaleInvoiceReturnSaleChannel `json:"saleinvoice,omitempty" bson:"saleinvoice,omitempty"`
-}
-
-type SaleInvoiceReturnSaleChannel struct {
-	Code   string  `json:"code" bson:"code"`
-	GP     float64 `json:"gp" bson:"gp"`
-	GPType int8    `json:"gptype" bson:"gptype"`
+	ChequeNo          string  `json:"chequeno" bson:"chequeno"`
+	ChequeBookNumber  string  `json:"chequebooknumber" bson:"chequebooknumber"`
+	ChequeBookCode    string  `json:"chequebookcode" bson:"chequebookcode"`
+	ChequeDueDate     string  `json:"chequeduedate" bson:"chequeduedate"`
+	ChequeAmount      float64 `json:"chequeamount" bson:"chequeamount"`
+	SaleChannelCode   string  `json:"salechannelcode" bson:"csalechannelode"`
+	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`
+	SaleChannelGPType int8    `json:"salechannelgptype" bson:"salechannelgptype"`
 }
 
 type SaleInvoiceReturnInfo struct {
