@@ -2383,6 +2383,46 @@ definitions:
     - fcmtoken
     - refcode
     type: object
+  models.Notify:
+    properties:
+      branchevents:
+        items:
+          $ref: '#/definitions/models.NotifyBranchEvent'
+        type: array
+      name:
+        type: string
+      options:
+        additionalProperties: true
+        type: object
+      token:
+        type: string
+      type:
+        type: string
+    type: object
+  models.NotifyBranch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.NotifyBranchEvent:
+    properties:
+      branch:
+        $ref: '#/definitions/models.NotifyBranch'
+      isenable:
+        type: boolean
+      isnearoutofstock:
+        type: boolean
+      isoutofstock:
+        type: boolean
+      issavebill:
+        type: boolean
+    type: object
   models.Option:
     properties:
       choices:
@@ -12488,6 +12528,242 @@ paths:
       - AccessToken: []
       tags:
       - Member
+  /notify:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notify
+      parameters:
+      - description: Notify GUIDs
+        in: body
+        name: Notify
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: type
+        in: query
+        name: type
+        type: string
+      - description: branch guid
+        in: query
+        name: branch
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
+    post:
+      consumes:
+      - application/json
+      description: Create Notify
+      parameters:
+      - description: Notify
+        in: body
+        name: Notify
+        required: true
+        schema:
+          $ref: '#/definitions/models.Notify'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
+  /notify/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notify
+      parameters:
+      - description: Notify ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
+    get:
+      consumes:
+      - application/json
+      description: get Notify info by guidfixed
+      parameters:
+      - description: Notify guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
+    put:
+      consumes:
+      - application/json
+      description: Update Notify
+      parameters:
+      - description: Notify ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Notify
+        in: body
+        name: Notify
+        required: true
+        schema:
+          $ref: '#/definitions/models.Notify'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
+  /notify/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Notify info by Code
+      parameters:
+      - description: Notify Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
+  /notify/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: type
+        in: query
+        name: type
+        type: string
+      - description: branch guid
+        in: query
+        name: branch
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notify
   /ocr/result:
     post:
       consumes:
