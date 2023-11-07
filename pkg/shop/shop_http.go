@@ -131,6 +131,15 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 
 	branchDefault := branchModel.Branch{}
 
+	langDefault := "th"
+
+	branchDefault.CompanyNames = &[]common.NameX{
+		{
+			Code: &langDefault,
+			Name: &shopReq.Name1,
+		},
+	}
+
 	branchDefault.Code = "00000"
 
 	branchMainCodeTH := "th"
