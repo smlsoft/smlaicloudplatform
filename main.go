@@ -21,6 +21,7 @@ import (
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/notify"
 	"smlcloudplatform/pkg/ocr"
 	order_device "smlcloudplatform/pkg/order/device"
 	order_setting "smlcloudplatform/pkg/order/setting"
@@ -302,6 +303,7 @@ func main() {
 			documentformate.NewDocumentFormateHttp(ms, cfg),
 			ocr.NewOcrHttp(ms, cfg),
 			stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
+			notify.NewNotifyHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)

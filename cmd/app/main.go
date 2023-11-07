@@ -21,6 +21,7 @@ import (
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/notify"
 	"smlcloudplatform/pkg/ocr"
 	"smlcloudplatform/pkg/organization/branch"
 	"smlcloudplatform/pkg/organization/businesstype"
@@ -294,6 +295,7 @@ func main() {
 
 		ocr.NewOcrHttp(ms, cfg),
 		stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
+		notify.NewNotifyHttp(ms, cfg),
 	}
 
 	serviceStartHttp(ms, httpServices...)
