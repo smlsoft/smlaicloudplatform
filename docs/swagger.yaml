@@ -2177,6 +2177,13 @@ definitions:
       success:
         type: boolean
     type: object
+  models.LinePayload:
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+    type: object
   models.LocationRequest:
     properties:
       locationcode:
@@ -2394,8 +2401,6 @@ definitions:
       options:
         additionalProperties: true
         type: object
-      token:
-        type: string
       type:
         type: string
     type: object
@@ -10070,6 +10075,39 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - E-Order
+  /e-order/notify:
+    get:
+      consumes:
+      - application/json
+      description: List Notify
+      parameters:
+      - description: notify type
+        in: query
+        name: type
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TablePageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      tags:
+      - E-Order
   /e-order/product:
     get:
       consumes:
@@ -10177,7 +10215,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: List Restaurant  Table Category
+      description: List Restaurant Table
       parameters:
       - description: Group Number
         in: query
@@ -12261,6 +12299,29 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /line-notify:
+    get:
+      consumes:
+      - application/json
+      description: List Notify
+      parameters:
+      - description: Line Payload
+        in: body
+        name: LinePayload
+        required: true
+        schema:
+          $ref: '#/definitions/models.LinePayload'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      tags:
+      - E-Order
   /list-shop:
     get:
       consumes:

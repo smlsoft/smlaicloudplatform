@@ -536,7 +536,7 @@ func (h EOrderHttp) Notify(ctx microservice.IContext) error {
 // List E Order Notify godoc
 // @Description List Notify
 // @Tags		E-Order
-// @Param		LinePayload  body      LinePayload  true  "Line Payload"
+// @Param		LinePayload  body     models.LinePayload  true  "Line Payload"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed

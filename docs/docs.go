@@ -3977,6 +3977,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/e-order/notify": {
+            "get": {
+                "description": "List Notify",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "E-Order"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "notify type",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TablePageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/e-order/product": {
             "get": {
                 "description": "List Product",
@@ -4138,7 +4189,7 @@ const docTemplate = `{
         },
         "/e-order/restaurant/table": {
             "get": {
-                "description": "List Restaurant  Table Category",
+                "description": "List Restaurant Table",
                 "consumes": [
                     "application/json"
                 ],
@@ -7450,6 +7501,42 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/line-notify": {
+            "get": {
+                "description": "List Notify",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "E-Order"
+                ],
+                "parameters": [
+                    {
+                        "description": "Line Payload",
+                        "name": "LinePayload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LinePayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -36881,6 +36968,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.LinePayload": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "models.LocationRequest": {
             "type": "object",
             "required": [
@@ -37201,9 +37299,6 @@ const docTemplate = `{
                 "options": {
                     "type": "object",
                     "additionalProperties": true
-                },
-                "token": {
-                    "type": "string"
                 },
                 "type": {
                     "type": "string"
