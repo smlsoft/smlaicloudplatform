@@ -76,6 +76,7 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 // @Description Create StockBalanceImport
 // @Tags		StockBalanceImport
 // @Param		skip-header		query	int		false  "skip header,  1: skip, 0: not skip"
+// @Param		skip-name		query	int		false  "skip name,  1: skip, 0: not skip"
 // @Param		skip-offset		query	int		false  "skip offset, default 0"
 // @Param		file  formData      file  true  "excel file"
 // @Accept 		json
@@ -94,7 +95,7 @@ func (h StockBalanceImportHttp) UploadExcel(ctx microservice.IContext) error {
 
 	// Check if the file is an Excel file
 	if filepath.Ext(tempFile.Filename) != ".xlsx" {
-		ctx.ResponseError(400, "Invalid file type.")
+		ctx.ResponseError(400, "Invalid file xlsx type.")
 		return errors.New("invalid file type")
 	}
 
@@ -112,13 +113,25 @@ func (h StockBalanceImportHttp) UploadExcel(ctx microservice.IContext) error {
 		isSkipHeader = true
 	}
 
+	isSkipName := false
+	isSkipNameRaw := ctx.QueryParam("skip-name")
+	if isSkipNameRaw == "1" {
+		isSkipHeader = true
+	}
+
 	skipOffset := 0
 	skipOffsetRaw := ctx.QueryParam("skip-offset")
 	if skipOffsetRaw != "" {
 		skipOffset, _ = strconv.Atoi(skipOffsetRaw)
 	}
 
-	taskID, err := h.svc.ImportFromFile(shopID, isSkipHeader, skipOffset, file)
+	option := models.StockBalanceImportOption{
+		IsSkipHeader: isSkipHeader,
+		IsSkipName:   isSkipName,
+		SkipOffset:   skipOffset,
+	}
+
+	taskID, err := h.svc.ImportFromFile(shopID, option, file)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
