@@ -126,6 +126,10 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, fileUpload i
 
 	for i, doc := range rows {
 
+		if i == 0 {
+			continue
+		}
+
 		tempData, err := svc.prepareData(shopID, taskID, float64(i), colIdxs, doc)
 		if err != nil {
 			return "", err
