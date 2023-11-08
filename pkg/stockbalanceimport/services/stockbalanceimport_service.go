@@ -2,6 +2,8 @@ package services
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -24,7 +26,7 @@ type IStockBalanceImportService interface {
 	Update(shopID string, guid string, doc models.StockBalanceImportRaw) error
 	Delete(shopID string, guid string) error
 	DeleteTask(shopID string, taskID string) error
-	ImportFromFile(shopID string, isSkipHeader bool, skipOffset int, fileUpload io.Reader) (string, error)
+	ImportFromFile(shopID string, option models.StockBalanceImportOption, fileUpload io.Reader) (string, error)
 	SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error)
 }
 
@@ -73,11 +75,15 @@ func (svc *StockBalanceImportService) Create(shopID string, doc *models.StockBal
 	return svc.chRepo.Create(context.Background(), docData)
 }
 
-func (svc *StockBalanceImportService) ImportFromFile(shopID string, isSkipHeader bool, skipOffset int, fileUpload io.Reader) (string, error) {
+func (svc *StockBalanceImportService) ImportFromFile(shopID string, option models.StockBalanceImportOption, fileUpload io.Reader) (string, error) {
 
 	f, err := excelize.OpenReader(fileUpload)
 	if err != nil {
 		return "", err
+	}
+
+	if len(f.GetSheetList()) == 0 {
+		return "", errors.New("sheet not found")
 	}
 
 	sheetName := f.GetSheetList()[0]
@@ -87,19 +93,38 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, isSkipHeader
 		return "", err
 	}
 
-	prepareData := []models.StockBalanceImportDoc{}
+	if len(rows) == 0 {
+		return "", errors.New("sheet is empty")
+	}
+
+	expectColumnNum := 5
+
+	if option.IsSkipName {
+		expectColumnNum = 4
+	}
+
+	if len(rows[0]) != expectColumnNum {
+		return "", errors.New("column format is invalid")
+	}
+
+	prepareDataDoc := []models.StockBalanceImportDoc{}
 
 	taskID := svc.GenerateID(svc.sizeID)
 
 	for i, doc := range rows {
-		if isSkipHeader && i <= skipOffset {
+		if option.IsSkipHeader && i <= option.SkipOffset {
 			continue
 		}
 
-		prepareData = append(prepareData, svc.prepareData(shopID, taskID, float64(i), doc))
+		tempData, err := svc.prepareData(shopID, taskID, float64(i), option.IsSkipName, doc)
+		if err != nil {
+			return "", err
+		}
+
+		prepareDataDoc = append(prepareDataDoc, tempData)
 	}
 
-	err = svc.chRepo.CreateInBatch(context.Background(), prepareData)
+	err = svc.chRepo.CreateInBatch(context.Background(), prepareDataDoc)
 
 	if err != nil {
 		return "", err
@@ -107,11 +132,26 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, isSkipHeader
 
 	return taskID, nil
 }
-func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, rowNumber float64, doc []string) models.StockBalanceImportDoc {
+func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, rowNumber float64, isSkipName bool, doc []string) (models.StockBalanceImportDoc, error) {
 
-	qty, _ := strconv.ParseFloat(doc[3], 64)
-	price, _ := strconv.ParseFloat(doc[4], 64)
-	sumAmount, _ := strconv.ParseFloat(doc[5], 64)
+	colStart := 1
+	if isSkipName {
+		colStart = 0
+	}
+
+	qty, err := strconv.ParseFloat(doc[2+colStart], 64)
+
+	if err != nil {
+		return models.StockBalanceImportDoc{}, fmt.Errorf("qty row %d invalid", int(rowNumber))
+	}
+
+	price, err := strconv.ParseFloat(doc[3+colStart], 64)
+
+	if err != nil {
+		return models.StockBalanceImportDoc{}, fmt.Errorf("price row %d invalid", int(rowNumber))
+	}
+
+	sumAmount := qty * price
 	newGUID := svc.GenerateGUID()
 
 	dataDoc := models.StockBalanceImportDoc{}
@@ -121,13 +161,19 @@ func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, 
 	dataDoc.TaskID = taskID
 	dataDoc.RowNumber = rowNumber
 	dataDoc.Barcode = doc[0]
-	dataDoc.Name = doc[1]
-	dataDoc.UnitCode = doc[2]
+	dataDoc.UnitCode = doc[1+colStart]
 	dataDoc.Qty = qty
 	dataDoc.Price = price
 	dataDoc.SumAmount = sumAmount
 
-	return dataDoc
+	name := ""
+	if !isSkipName {
+		name = doc[1]
+	}
+
+	dataDoc.Name = name
+
+	return dataDoc, nil
 }
 
 func (svc *StockBalanceImportService) Update(shopID string, guid string, doc models.StockBalanceImportRaw) error {
