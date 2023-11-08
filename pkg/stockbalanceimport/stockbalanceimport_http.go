@@ -18,7 +18,6 @@ import (
 	stockbalance_repositories "smlcloudplatform/pkg/transaction/stockbalance/repositories"
 	stockbalance_serrvices "smlcloudplatform/pkg/transaction/stockbalance/services"
 	stockbalancedetail_serrvices "smlcloudplatform/pkg/transaction/stockbalancedetail/services"
-	"strconv"
 
 	stockbalancedetail_repositories "smlcloudplatform/pkg/transaction/stockbalancedetail/repositories"
 	"smlcloudplatform/pkg/utils"
@@ -75,9 +74,6 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 // Create StockBalanceImport godoc
 // @Description Create StockBalanceImport
 // @Tags		StockBalanceImport
-// @Param		skip-header		query	int		false  "skip header,  1: skip, 0: not skip"
-// @Param		skip-name		query	int		false  "skip name,  1: skip, 0: not skip"
-// @Param		skip-offset		query	int		false  "skip offset, default 0"
 // @Param		file  formData      file  true  "excel file"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
@@ -107,31 +103,7 @@ func (h StockBalanceImportHttp) UploadExcel(ctx microservice.IContext) error {
 	}
 	defer file.Close()
 
-	isSkipHeader := false
-	isSkipHeaderRaw := ctx.QueryParam("skip-header")
-	if isSkipHeaderRaw == "1" {
-		isSkipHeader = true
-	}
-
-	isSkipName := false
-	isSkipNameRaw := ctx.QueryParam("skip-name")
-	if isSkipNameRaw == "1" {
-		isSkipHeader = true
-	}
-
-	skipOffset := 0
-	skipOffsetRaw := ctx.QueryParam("skip-offset")
-	if skipOffsetRaw != "" {
-		skipOffset, _ = strconv.Atoi(skipOffsetRaw)
-	}
-
-	option := models.StockBalanceImportOption{
-		IsSkipHeader: isSkipHeader,
-		IsSkipName:   isSkipName,
-		SkipOffset:   skipOffset,
-	}
-
-	taskID, err := h.svc.ImportFromFile(shopID, option, file)
+	taskID, err := h.svc.ImportFromFile(shopID, file)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

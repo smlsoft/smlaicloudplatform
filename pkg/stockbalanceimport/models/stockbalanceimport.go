@@ -5,12 +5,14 @@ import (
 )
 
 type StockBalanceImportRaw struct {
-	Barcode   string  `json:"barcode" ch:"barcode"`
-	Name      string  `json:"name" ch:"name"`
-	UnitCode  string  `json:"unitcode" ch:"unitcode"`
-	Qty       float64 `json:"qty" ch:"qty"`
-	Price     float64 `json:"price" ch:"price"`
-	SumAmount float64 `json:"sumamount" ch:"sumamount"`
+	Barcode       string  `json:"barcode" ch:"barcode"`
+	Name          string  `json:"name" ch:"name"`
+	UnitCode      string  `json:"unitcode" ch:"unitcode"`
+	WarehouseCode string  `json:"warehousecode" ch:"warehousecode"`
+	ShelfCode     string  `json:"shelfcode" ch:"shelfcode"`
+	Qty           float64 `json:"qty" ch:"qty"`
+	Price         float64 `json:"price" ch:"price"`
+	SumAmount     float64 `json:"sumamount" ch:"sumamount"`
 }
 
 type StockBalanceImport struct {

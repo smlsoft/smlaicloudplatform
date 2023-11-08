@@ -26,7 +26,7 @@ type IStockBalanceImportService interface {
 	Update(shopID string, guid string, doc models.StockBalanceImportRaw) error
 	Delete(shopID string, guid string) error
 	DeleteTask(shopID string, taskID string) error
-	ImportFromFile(shopID string, option models.StockBalanceImportOption, fileUpload io.Reader) (string, error)
+	ImportFromFile(shopID string, fileUpload io.Reader) (string, error)
 	SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error)
 }
 
@@ -75,7 +75,7 @@ func (svc *StockBalanceImportService) Create(shopID string, doc *models.StockBal
 	return svc.chRepo.Create(context.Background(), docData)
 }
 
-func (svc *StockBalanceImportService) ImportFromFile(shopID string, option models.StockBalanceImportOption, fileUpload io.Reader) (string, error) {
+func (svc *StockBalanceImportService) ImportFromFile(shopID string, fileUpload io.Reader) (string, error) {
 
 	f, err := excelize.OpenReader(fileUpload)
 	if err != nil {
@@ -93,18 +93,31 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, option model
 		return "", err
 	}
 
-	if len(rows) == 0 {
+	if len(rows) <= 1 {
 		return "", errors.New("sheet is empty")
 	}
 
-	expectColumnNum := 5
+	colIdxs := map[string]int{}
 
-	if option.IsSkipName {
-		expectColumnNum = 4
+	cols := rows[0]
+	for i, col := range cols {
+		colIdxs[col] = i
 	}
 
-	if len(rows[0]) != expectColumnNum {
-		return "", errors.New("column format is invalid")
+	expectColName := []string{
+		"Barcode",
+		"Name",
+		"Unit Code",
+		"Warehouse Code",
+		"Shelf Code",
+		"Qty",
+		"Amount",
+	}
+
+	for _, colName := range expectColName {
+		if _, ok := colIdxs[colName]; !ok {
+			return "", fmt.Errorf("column %s not found", colName)
+		}
 	}
 
 	prepareDataDoc := []models.StockBalanceImportDoc{}
@@ -112,11 +125,8 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, option model
 	taskID := svc.GenerateID(svc.sizeID)
 
 	for i, doc := range rows {
-		if option.IsSkipHeader && i <= option.SkipOffset {
-			continue
-		}
 
-		tempData, err := svc.prepareData(shopID, taskID, float64(i), option.IsSkipName, doc)
+		tempData, err := svc.prepareData(shopID, taskID, float64(i), colIdxs, doc)
 		if err != nil {
 			return "", err
 		}
@@ -132,26 +142,26 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, option model
 
 	return taskID, nil
 }
-func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, rowNumber float64, isSkipName bool, doc []string) (models.StockBalanceImportDoc, error) {
+func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, rowNumber float64, colIdx map[string]int, doc []string) (models.StockBalanceImportDoc, error) {
 
-	colStart := 1
-	if isSkipName {
-		colStart = 0
-	}
-
-	qty, err := strconv.ParseFloat(doc[2+colStart], 64)
+	qty, err := strconv.ParseFloat(doc[colIdx["Qty"]], 64)
 
 	if err != nil {
-		return models.StockBalanceImportDoc{}, fmt.Errorf("qty row %d invalid", int(rowNumber))
+		return models.StockBalanceImportDoc{}, fmt.Errorf("qty in row %d invalid", int(rowNumber))
 	}
 
-	price, err := strconv.ParseFloat(doc[3+colStart], 64)
+	amount, err := strconv.ParseFloat(doc[colIdx["Amount"]], 64)
 
 	if err != nil {
-		return models.StockBalanceImportDoc{}, fmt.Errorf("price row %d invalid", int(rowNumber))
+		return models.StockBalanceImportDoc{}, fmt.Errorf("amount in row %d invalid", int(rowNumber))
 	}
 
-	sumAmount := qty * price
+	price := float64(0)
+
+	if qty > 0 && amount > 0 {
+		price = amount / qty
+	}
+
 	newGUID := svc.GenerateGUID()
 
 	dataDoc := models.StockBalanceImportDoc{}
@@ -160,18 +170,14 @@ func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, 
 	dataDoc.ShopID = shopID
 	dataDoc.TaskID = taskID
 	dataDoc.RowNumber = rowNumber
-	dataDoc.Barcode = doc[0]
-	dataDoc.UnitCode = doc[1+colStart]
+	dataDoc.Barcode = doc[colIdx["Barcode"]]
+	dataDoc.Name = doc[colIdx["Name"]]
+	dataDoc.UnitCode = doc[colIdx["Unit Code"]]
+	dataDoc.WarehouseCode = doc[colIdx["Warehouse Code"]]
+	dataDoc.ShelfCode = doc[colIdx["Shelf Code"]]
 	dataDoc.Qty = qty
 	dataDoc.Price = price
-	dataDoc.SumAmount = sumAmount
-
-	name := ""
-	if !isSkipName {
-		name = doc[1]
-	}
-
-	dataDoc.Name = name
+	dataDoc.SumAmount = amount
 
 	return dataDoc, nil
 }
