@@ -147,6 +147,8 @@ func main() {
 		"/e-order/restaurant/zone",
 		"/e-order/restaurant/kitchen",
 		"/e-order/restaurant/table",
+		"/e-order/notify",
+		"/line-notify",
 
 		"/restaurant/notifier-device/ref-confirm",
 	}

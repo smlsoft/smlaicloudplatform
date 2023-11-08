@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -13,9 +14,9 @@ type IMicroserviceHTTP interface {
 
 // GET register service endpoint for HTTP GET
 func (ms *Microservice) GET(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-
+	fullPath := ms.pathPrefix + strings.TrimSpace(path)
 	ms.Logger.Debugf("Register HTTP Handler GET \"%s\".", path)
-	ms.echo.GET(path, func(c echo.Context) error {
+	ms.echo.GET(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
 	}, m...)
 }
@@ -23,7 +24,7 @@ func (ms *Microservice) GET(path string, h ServiceHandleFunc, m ...echo.Middlewa
 // POST register service endpoint for HTTP POST
 func (ms *Microservice) POST(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
 
-	fullPath := ms.pathPrefix + path
+	fullPath := ms.pathPrefix + strings.TrimSpace(path)
 	ms.Logger.Debugf("Register HTTP Handler POST \"%s\".", fullPath)
 	ms.echo.POST(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
@@ -32,7 +33,7 @@ func (ms *Microservice) POST(path string, h ServiceHandleFunc, m ...echo.Middlew
 
 // PUT register service endpoint for HTTP PUT
 func (ms *Microservice) PUT(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-	fullPath := ms.pathPrefix + path
+	fullPath := ms.pathPrefix + strings.TrimSpace(path)
 	ms.Logger.Debugf("Register HTTP Handler PUT \"%s\".", fullPath)
 	ms.echo.PUT(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
@@ -41,7 +42,7 @@ func (ms *Microservice) PUT(path string, h ServiceHandleFunc, m ...echo.Middlewa
 
 // PATCH register service endpoint for HTTP PATCH
 func (ms *Microservice) PATCH(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-	fullPath := ms.pathPrefix + path
+	fullPath := ms.pathPrefix + strings.TrimSpace(path)
 	ms.Logger.Debugf("Register HTTP Handler PATCH \"%s\".", fullPath)
 	ms.echo.PATCH(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
@@ -50,7 +51,7 @@ func (ms *Microservice) PATCH(path string, h ServiceHandleFunc, m ...echo.Middle
 
 // DELETE register service endpoint for HTTP DELETE
 func (ms *Microservice) DELETE(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-	fullPath := ms.pathPrefix + path
+	fullPath := ms.pathPrefix + strings.TrimSpace(path)
 	ms.Logger.Debugf("Register HTTP Handler DELETE \"%s\".", fullPath)
 	ms.echo.DELETE(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))

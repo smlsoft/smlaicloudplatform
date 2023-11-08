@@ -1,24 +1,30 @@
 package eorder
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/product/eorder/models"
 	"smlcloudplatform/pkg/product/eorder/services"
 	category_repositories "smlcloudplatform/pkg/product/productcategory/repositories"
 	category_services "smlcloudplatform/pkg/product/productcategory/services"
 	"smlcloudplatform/pkg/utils/requestfilter"
+	"time"
 
-	salechannel_repo "smlcloudplatform/pkg/channel/salechannel/repositories"
+	salechannel_repositories "smlcloudplatform/pkg/channel/salechannel/repositories"
+	notify_repositories "smlcloudplatform/pkg/notify/repositories"
+	notify_services "smlcloudplatform/pkg/notify/services"
 	repo_order_device "smlcloudplatform/pkg/order/device/repositories"
 	repo_order_setting "smlcloudplatform/pkg/order/setting/repositories"
-	branch_repo "smlcloudplatform/pkg/organization/branch/repositories"
+	branch_repositories "smlcloudplatform/pkg/organization/branch/repositories"
 	repo_media "smlcloudplatform/pkg/pos/media/repositories"
 	repo_product "smlcloudplatform/pkg/product/productbarcode/repositories"
-	serviceproduct "smlcloudplatform/pkg/product/productbarcode/services"
+	product_services "smlcloudplatform/pkg/product/productbarcode/services"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/table"
 	"smlcloudplatform/pkg/restaurant/zone"
@@ -34,12 +40,13 @@ type EOrderHttp struct {
 	ms             *microservice.Microservice
 	cfg            config.IConfig
 	svcCategory    category_services.IProductCategoryHttpService
-	svcProduct     serviceproduct.IProductBarcodeHttpService
+	svcProduct     product_services.IProductBarcodeHttpService
 	svcEOrder      services.EOrderService
 	svcZone        zone.IZoneService
 	svcTable       table.TableService
 	svcKitchen     kitchen.IKitchenService
 	svcSaleInvoice saleinvoice_services.ISaleInvoiceHttpService
+	svcNotify      notify_services.INotifyHttpService
 }
 
 func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp {
@@ -57,7 +64,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	clickHouseRepo := repo_product.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repo_product.NewProductBarcodeMessageQueueRepository(prod)
 
-	svcProduct := serviceproduct.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
+	svcProduct := product_services.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
 
 	repoShop := shop.NewShopRepository(pst)
 	repoTable := table.NewTableRepository(pst)
@@ -65,8 +72,8 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	repoDevice := repo_order_device.NewDeviceRepository(pst)
 	repoMedia := repo_media.NewMediaRepository(pst)
 	repoKitchen := kitchen.NewKitchenRepository(pst)
-	repoSaleChannel := salechannel_repo.NewSaleChannelRepository(pst)
-	repoBranch := branch_repo.NewBranchRepository(pst)
+	repoSaleChannel := salechannel_repositories.NewSaleChannelRepository(pst)
+	repoBranch := branch_repositories.NewBranchRepository(pst)
 
 	repoZone := zone.NewZoneRepository(pst)
 
@@ -79,6 +86,9 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	svcTable := table.NewTableService(repoTable, masterSyncCacheRepo)
 	svcKitchen := kitchen.NewKitchenService(repoKitchen, masterSyncCacheRepo)
 
+	repoNotify := notify_repositories.NewNotifyRepository(pst)
+	svcNotify := notify_services.NewNotifyHttpService(repoNotify, masterSyncCacheRepo, 15*time.Second)
+
 	return EOrderHttp{
 		ms:             ms,
 		cfg:            cfg,
@@ -89,6 +99,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 		svcTable:       *svcTable,
 		svcKitchen:     svcKitchen,
 		svcSaleInvoice: svcSaleInvoice,
+		svcNotify:      svcNotify,
 	}
 }
 
@@ -103,7 +114,8 @@ func (h EOrderHttp) RegisterHttp() {
 	h.ms.GET("/e-order/restaurant/kitchen", h.SearchKitchen)
 	h.ms.GET("/e-order/restaurant/table", h.SearchTable)
 	h.ms.GET("/e-order/sale-invoice/last-pos-docno", h.GetLastPOSDocNo)
-
+	h.ms.GET("/e-order/notify", h.Notify)
+	h.ms.POST("/line-notify", h.LineNotify)
 }
 
 // List Product Category
@@ -388,8 +400,8 @@ func (h EOrderHttp) SearchKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
-// List E Order Restaurant  Table godoc
-// @Description List Restaurant  Table Category
+// List E Order Restaurant Table godoc
+// @Description List Restaurant Table
 // @Tags		E-Order
 // @Param		group-number	query	integer		false  "Group Number"
 // @Param		q		query	string		false  "Search Value"
@@ -466,6 +478,106 @@ func (h EOrderHttp) GetLastPOSDocNo(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    doc,
+	})
+	return nil
+}
+
+func (h EOrderHttp) Test(ctx microservice.IContext) error {
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+	return nil
+}
+
+// List E Order Notify godoc
+// @Description List Notify
+// @Tags		E-Order
+// @Param		type	query	string		false  "notify type"
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	models.TablePageResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Router /e-order/notify [get]
+func (h EOrderHttp) Notify(ctx microservice.IContext) error {
+	shopID := ctx.QueryParam("shopid")
+
+	if len(shopID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
+		return nil
+	}
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "type",
+			Field: "type",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	docList, pagination, err := h.svcNotify.SearchNotifyInfo(shopID, filters, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List E Order Notify godoc
+// @Description List Notify
+// @Tags		E-Order
+// @Param		LinePayload  body      LinePayload  true  "Line Payload"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Router /line-notify [get]
+func (h EOrderHttp) LineNotify(ctx microservice.IContext) error {
+
+	payload := models.LinePayload{}
+
+	input := ctx.ReadInput()
+
+	err := json.Unmarshal([]byte(input), &payload)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	url := "https://notify-api.line.me/api/notify"
+	linePayload := bytes.NewBufferString("message=" + payload.Message)
+
+	req, err := http.NewRequest("POST", url, linePayload)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+payload.Token)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("received non-200 response status: %d", resp.StatusCode)
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{
+		"success": true,
 	})
 	return nil
 }

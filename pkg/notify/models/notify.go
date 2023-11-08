@@ -9,7 +9,6 @@ import (
 const notifyCollectionName = "notify"
 
 type Notify struct {
-	Token        string                 `json:"token" bson:"token"`
 	Type         string                 `json:"type" bson:"type"`
 	Name         string                 `json:"name" bson:"name"`
 	Options      map[string]interface{} `json:"options" bson:"options"`
@@ -32,6 +31,7 @@ type NotifyBranch struct {
 
 type NotifyInfo struct {
 	models.DocIdentity `bson:"inline"`
+	Token              string `json:"token" bson:"token"`
 	Notify             `bson:"inline"`
 }
 
@@ -78,4 +78,9 @@ type NotifyDeleteActivity struct {
 
 func (NotifyDeleteActivity) CollectionName() string {
 	return notifyCollectionName
+}
+
+type NotifyRequest struct {
+	Token  string `json:"token" bson:"token"`
+	Notify `bson:"inline"`
 }

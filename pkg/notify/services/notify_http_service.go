@@ -17,13 +17,14 @@ import (
 )
 
 type INotifyHttpService interface {
-	CreateNotify(shopID string, authUsername string, doc models.Notify) (string, error)
-	UpdateNotify(shopID string, guid string, authUsername string, doc models.Notify) error
+	CreateNotify(shopID string, authUsername string, doc models.NotifyRequest) (string, error)
+	UpdateNotify(shopID string, guid string, authUsername string, doc models.NotifyRequest) error
 	DeleteNotify(shopID string, guid string, authUsername string) error
 	DeleteNotifyByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoNotify(shopID string, guid string) (models.NotifyInfo, error)
 	InfoNotifyByCode(shopID string, code string) (models.NotifyInfo, error)
-	SearchNotify(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.NotifyInfo, mongopagination.PaginationData, error)
+	SearchNotify(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.Notify, mongopagination.PaginationData, error)
+	SearchNotifyInfo(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.NotifyInfo, mongopagination.PaginationData, error)
 	SearchNotifyStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.NotifyInfo, int, error)
 
 	GetModuleName() string
@@ -60,7 +61,7 @@ func (svc NotifyHttpService) getContextTimeout() (context.Context, context.Cance
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc NotifyHttpService) CreateNotify(shopID string, authUsername string, doc models.Notify) (string, error) {
+func (svc NotifyHttpService) CreateNotify(shopID string, authUsername string, doc models.NotifyRequest) (string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -77,15 +78,16 @@ func (svc NotifyHttpService) CreateNotify(shopID string, authUsername string, do
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.NotifyDoc{}
-	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
-	docData.Notify = doc
+	dataDoc := models.NotifyDoc{}
+	dataDoc.ShopID = shopID
+	dataDoc.GuidFixed = newGuidFixed
+	dataDoc.Token = doc.Token
+	dataDoc.Notify = doc.Notify
 
-	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+	dataDoc.CreatedBy = authUsername
+	dataDoc.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(ctx, docData)
+	_, err = svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", err
@@ -98,7 +100,7 @@ func (svc NotifyHttpService) CreateNotify(shopID string, authUsername string, do
 	return newGuidFixed, nil
 }
 
-func (svc NotifyHttpService) UpdateNotify(shopID string, guid string, authUsername string, doc models.Notify) error {
+func (svc NotifyHttpService) UpdateNotify(shopID string, guid string, authUsername string, doc models.NotifyRequest) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -114,7 +116,8 @@ func (svc NotifyHttpService) UpdateNotify(shopID string, guid string, authUserna
 	}
 
 	dataDoc := findDoc
-	dataDoc.Notify = doc
+	dataDoc.Token = doc.Token
+	dataDoc.Notify = doc.Notify
 
 	dataDoc.UpdatedBy = authUsername
 	dataDoc.UpdatedAt = time.Now()
@@ -216,7 +219,30 @@ func (svc NotifyHttpService) InfoNotifyByCode(shopID string, code string) (model
 	return findDoc.NotifyInfo, nil
 }
 
-func (svc NotifyHttpService) SearchNotify(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.NotifyInfo, mongopagination.PaginationData, error) {
+func (svc NotifyHttpService) SearchNotify(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.Notify, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	searchInFields := []string{
+		"name",
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
+
+	if err != nil {
+		return []models.Notify{}, pagination, err
+	}
+
+	tempResults := make([]models.Notify, len(docList))
+	for _, doc := range docList {
+		tempResults = append(tempResults, doc.Notify)
+	}
+
+	return tempResults, pagination, nil
+}
+
+func (svc NotifyHttpService) SearchNotifyInfo(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.NotifyInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()

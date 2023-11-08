@@ -168,6 +168,8 @@ func main() {
 			"/e-order/restaurant/kitchen",
 			"/e-order/restaurant/table",
 			"/e-order/sale-invoice/last-pos-docno",
+			"/e-order/notify",
+			"/line-notify",
 		}
 
 		exceptShopPath := []string{

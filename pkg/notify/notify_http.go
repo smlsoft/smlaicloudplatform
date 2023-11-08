@@ -65,7 +65,7 @@ func (h NotifyHttp) CreateNotify(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.Notify{}
+	docReq := &models.NotifyRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -110,7 +110,7 @@ func (h NotifyHttp) UpdateNotify(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.Notify{}
+	docReq := &models.NotifyRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -298,7 +298,7 @@ func (h NotifyHttp) SearchNotifyPage(ctx microservice.IContext) error {
 		},
 	})
 
-	docList, pagination, err := h.svc.SearchNotify(shopID, filters, pageable)
+	docList, pagination, err := h.svc.SearchNotifyInfo(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
