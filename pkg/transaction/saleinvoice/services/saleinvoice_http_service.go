@@ -165,7 +165,6 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 		docData.TaxDocNo = docNo
 	}
 
-	docData.DocNo = findDoc.DocNo
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
