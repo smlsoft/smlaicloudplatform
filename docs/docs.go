@@ -40670,19 +40670,51 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "branchcode": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopImage"
+                    }
+                },
+                "logo": {
                     "type": "string"
                 },
                 "name1": {
                     "type": "string"
                 },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "profilepicture": {
                     "type": "string"
                 },
+                "settings": {
+                    "$ref": "#/definitions/models.ShopSettings"
+                },
                 "telephone": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ShopImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -40690,7 +40722,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "branchcode": {
                     "type": "string"
@@ -40698,13 +40733,63 @@ const docTemplate = `{
                 "guidfixed": {
                     "type": "string"
                 },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopImage"
+                    }
+                },
+                "logo": {
+                    "type": "string"
+                },
                 "name1": {
                     "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "profilepicture": {
                     "type": "string"
                 },
+                "settings": {
+                    "$ref": "#/definitions/models.ShopSettings"
+                },
                 "telephone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopSettings": {
+            "type": "object",
+            "properties": {
+                "emailowners": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "emailstaffs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "isusebranch": {
+                    "type": "boolean"
+                },
+                "isusedepartment": {
+                    "type": "boolean"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "taxid": {
                     "type": "string"
                 }
             }
