@@ -4754,6 +4754,12 @@ definitions:
         type: array
       branchcode:
         type: string
+      images:
+        items:
+          $ref: '#/definitions/models.ShopImage'
+        type: array
+      logo:
+        type: string
       name1:
         type: string
       names:
@@ -4762,8 +4768,17 @@ definitions:
         type: array
       profilepicture:
         type: string
+      settings:
+        $ref: '#/definitions/models.ShopSettings'
       telephone:
         type: string
+    type: object
+  models.ShopImage:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
     type: object
   models.ShopInfo:
     properties:
@@ -4775,6 +4790,12 @@ definitions:
         type: string
       guidfixed:
         type: string
+      images:
+        items:
+          $ref: '#/definitions/models.ShopImage'
+        type: array
+      logo:
+        type: string
       name1:
         type: string
       names:
@@ -4783,7 +4804,30 @@ definitions:
         type: array
       profilepicture:
         type: string
+      settings:
+        $ref: '#/definitions/models.ShopSettings'
       telephone:
+        type: string
+    type: object
+  models.ShopSettings:
+    properties:
+      emailowners:
+        items:
+          type: string
+        type: array
+      emailstaffs:
+        items:
+          type: string
+        type: array
+      isusebranch:
+        type: boolean
+      isusedepartment:
+        type: boolean
+      latitude:
+        type: number
+      longitude:
+        type: number
+      taxid:
         type: string
     type: object
   models.SmsPaymentSettings:
