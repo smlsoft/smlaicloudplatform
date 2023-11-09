@@ -178,7 +178,12 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 		return models.EOrderShop{}, err
 	}
 
-	svc.repoNotify.Find(ctx, shopID, map[string]interface{}{})
+	notify, err := svc.repoNotify.Find(ctx, shopID, map[string]interface{}{})
+	if err != nil {
+		return models.EOrderShop{}, err
+	}
+
+	result.Notify = notify
 
 	if orderStationCode != "" {
 		orderDevice, err := svc.repoDevice.FindByDocIndentityGuid(ctx, shopID, "code", orderStationCode)
