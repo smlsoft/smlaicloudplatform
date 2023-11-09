@@ -24422,24 +24422,6 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "skip header,  1: skip, 0: not skip",
-                        "name": "skip-header",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "skip name,  1: skip, 0: not skip",
-                        "name": "skip-name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "skip offset, default 0",
-                        "name": "skip-offset",
-                        "in": "query"
-                    },
-                    {
                         "type": "file",
                         "description": "excel file",
                         "name": "file",
@@ -40773,13 +40755,22 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "branchcode": {
                     "type": "string"
                 },
                 "name1": {
                     "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "profilepicture": {
                     "type": "string"
@@ -40793,7 +40784,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "branchcode": {
                     "type": "string"
@@ -40803,6 +40797,12 @@ const docTemplate = `{
                 },
                 "name1": {
                     "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "profilepicture": {
                     "type": "string"
@@ -41716,6 +41716,9 @@ const docTemplate = `{
                 "rownumber": {
                     "type": "number"
                 },
+                "shelfcode": {
+                    "type": "string"
+                },
                 "sumamount": {
                     "type": "number"
                 },
@@ -41723,6 +41726,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitcode": {
+                    "type": "string"
+                },
+                "warehousecode": {
                     "type": "string"
                 }
             }

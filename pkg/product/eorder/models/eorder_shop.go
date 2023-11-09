@@ -2,6 +2,7 @@ package models
 
 import (
 	salechannel_models "smlcloudplatform/pkg/channel/salechannel/models"
+	notify_models "smlcloudplatform/pkg/notify/models"
 	device_models "smlcloudplatform/pkg/order/device/models"
 	order_models "smlcloudplatform/pkg/order/setting/models"
 	branch_models "smlcloudplatform/pkg/organization/branch/models"
@@ -10,12 +11,13 @@ import (
 )
 
 type EOrderShop struct {
-	ShopID         string                   `json:"shopid"`
-	Name1          string                   `json:"name1"`
-	ProfilePicture string                   `json:"profilepicture"`
-	TotalTable     int                      `json:"totaltable"`
-	OrderStation   EOrderShopOrderStation   `json:"orderstation,omitempty"`
-	Kitchens       []kitchen_models.Kitchen `json:"kitchens" bson:"kitchens"`
+	ShopID         string                     `json:"shopid"`
+	Name1          string                     `json:"name1"`
+	ProfilePicture string                     `json:"profilepicture"`
+	TotalTable     int                        `json:"totaltable"`
+	OrderStation   EOrderShopOrderStation     `json:"orderstation,omitempty"`
+	Kitchens       []kitchen_models.Kitchen   `json:"kitchens" bson:"kitchens"`
+	Notify         []notify_models.NotifyInfo `json:"notify"`
 }
 
 type EOrderShopOrderStation struct {

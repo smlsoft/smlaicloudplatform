@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type INotifyRepository interface {
@@ -21,6 +22,7 @@ type INotifyRepository interface {
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.NotifyInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.NotifyDoc, error)
 	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.NotifyDoc, error)
+	Find(ctx context.Context, shopID string, filters map[string]interface{}) ([]models.NotifyInfo, error)
 
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.NotifyDoc, error)
 	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.NotifyInfo, mongopagination.PaginationData, error)
@@ -51,4 +53,31 @@ func NewNotifyRepository(pst microservice.IPersisterMongo) *NotifyRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.NotifyActivity, models.NotifyDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo NotifyRepository) Find(ctx context.Context, shopID string, filters map[string]interface{}) ([]models.NotifyInfo, error) {
+	result := []models.NotifyInfo{}
+
+	matchFilterList := []interface{}{}
+
+	for key, value := range filters {
+		matchFilterList = append(matchFilterList, bson.M{key: value})
+	}
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	if len(matchFilterList) > 0 {
+		queryFilters["$and"] = matchFilterList
+	}
+
+	err := repo.pst.Find(ctx, models.NotifyInfo{}, queryFilters, &result)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

@@ -78,7 +78,6 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	repoZone := zone.NewZoneRepository(pst)
 
 	svcZone := zone.NewZoneService(repoZone, masterSyncCacheRepo)
-	svcEOrder := services.NewEOrderService(repoShop, repoTable, repoOrder, repoMedia, repoKitchen, repoDevice, repoSaleChannel, repoBranch)
 
 	repoSaleInvoice := saleinvoice_repositories.NewSaleInvoiceRepository(pst)
 	svcSaleInvoice := saleinvoice_services.NewSaleInvoiceHttpService(repoSaleInvoice, nil, nil, nil)
@@ -89,6 +88,17 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	repoNotify := notify_repositories.NewNotifyRepository(pst)
 	svcNotify := notify_services.NewNotifyHttpService(repoNotify, masterSyncCacheRepo, 15*time.Second)
 
+	svcEOrder := services.NewEOrderService(
+		repoShop,
+		repoTable,
+		repoOrder,
+		repoMedia,
+		repoKitchen,
+		repoDevice,
+		repoSaleChannel,
+		repoBranch,
+		repoNotify,
+	)
 	return EOrderHttp{
 		ms:             ms,
 		cfg:            cfg,

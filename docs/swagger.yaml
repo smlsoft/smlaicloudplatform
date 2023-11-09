@@ -4749,11 +4749,17 @@ definitions:
   models.Shop:
     properties:
       address:
-        type: string
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       branchcode:
         type: string
       name1:
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       profilepicture:
         type: string
       telephone:
@@ -4762,13 +4768,19 @@ definitions:
   models.ShopInfo:
     properties:
       address:
-        type: string
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       branchcode:
         type: string
       guidfixed:
         type: string
       name1:
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       profilepicture:
         type: string
       telephone:
@@ -5375,11 +5387,15 @@ definitions:
         type: number
       rownumber:
         type: number
+      shelfcode:
+        type: string
       sumamount:
         type: number
       taskid:
         type: string
       unitcode:
+        type: string
+      warehousecode:
         type: string
     type: object
   models.StockPickupProduct:
@@ -22875,18 +22891,6 @@ paths:
       - application/json
       description: Create StockBalanceImport
       parameters:
-      - description: 'skip header,  1: skip, 0: not skip'
-        in: query
-        name: skip-header
-        type: integer
-      - description: 'skip name,  1: skip, 0: not skip'
-        in: query
-        name: skip-name
-        type: integer
-      - description: skip offset, default 0
-        in: query
-        name: skip-offset
-        type: integer
       - description: excel file
         in: formData
         name: file

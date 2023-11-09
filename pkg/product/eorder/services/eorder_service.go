@@ -4,6 +4,7 @@ import (
 	"context"
 	salechannel_models "smlcloudplatform/pkg/channel/salechannel/models"
 	salechannel_repo "smlcloudplatform/pkg/channel/salechannel/repositories"
+	notify_repositories "smlcloudplatform/pkg/notify/repositories"
 	order_device_repo "smlcloudplatform/pkg/order/device/repositories"
 	order_setting_repo "smlcloudplatform/pkg/order/setting/repositories"
 	branch_repo "smlcloudplatform/pkg/organization/branch/repositories"
@@ -24,6 +25,7 @@ type EOrderService struct {
 	repoDevice      order_device_repo.IDeviceRepository
 	repoSaleChannel salechannel_repo.ISaleChannelRepository
 	repoBranch      branch_repo.IBranchRepository
+	repoNotify      notify_repositories.INotifyRepository
 	contextTimeout  time.Duration
 }
 
@@ -36,6 +38,7 @@ func NewEOrderService(
 	repoDevice order_device_repo.IDeviceRepository,
 	repoSaleChannel salechannel_repo.ISaleChannelRepository,
 	repoBranch branch_repo.IBranchRepository,
+	repoNotify notify_repositories.INotifyRepository,
 ) EOrderService {
 	contextTimeout := time.Duration(15) * time.Second
 	return EOrderService{
@@ -47,6 +50,7 @@ func NewEOrderService(
 		repoDevice:      repoDevice,
 		repoSaleChannel: repoSaleChannel,
 		repoBranch:      repoBranch,
+		repoNotify:      repoNotify,
 		contextTimeout:  contextTimeout,
 	}
 }
@@ -173,6 +177,8 @@ func (svc EOrderService) GetShopInfo(shopID string, orderStationCode string) (mo
 	if err != nil {
 		return models.EOrderShop{}, err
 	}
+
+	svc.repoNotify.Find(ctx, shopID, map[string]interface{}{})
 
 	if orderStationCode != "" {
 		orderDevice, err := svc.repoDevice.FindByDocIndentityGuid(ctx, shopID, "code", orderStationCode)
