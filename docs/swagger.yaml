@@ -2177,6 +2177,19 @@ definitions:
       success:
         type: boolean
     type: object
+  models.LanguageConfig:
+    properties:
+      code:
+        type: string
+      codetranslator:
+        type: string
+      isdefault:
+        type: boolean
+      isuse:
+        type: boolean
+      name:
+        type: string
+    type: object
   models.LinePayload:
     properties:
       message:
@@ -4823,6 +4836,10 @@ definitions:
         type: boolean
       isusedepartment:
         type: boolean
+      languageconfigs:
+        items:
+          $ref: '#/definitions/models.LanguageConfig'
+        type: array
       latitude:
         type: number
       longitude:
@@ -12360,7 +12377,7 @@ paths:
       tags:
       - Inventory
   /line-notify:
-    get:
+    post:
       consumes:
       - application/json
       description: List Notify

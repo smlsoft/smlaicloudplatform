@@ -7513,7 +7513,7 @@ const docTemplate = `{
             }
         },
         "/line-notify": {
-            "get": {
+            "post": {
                 "description": "List Notify",
                 "consumes": [
                     "application/json"
@@ -36950,6 +36950,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.LanguageConfig": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "codetranslator": {
+                    "type": "string"
+                },
+                "isdefault": {
+                    "type": "boolean"
+                },
+                "isuse": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.LinePayload": {
             "type": "object",
             "properties": {
@@ -40867,6 +40887,12 @@ const docTemplate = `{
                 },
                 "isusedepartment": {
                     "type": "boolean"
+                },
+                "languageconfigs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.LanguageConfig"
+                    }
                 },
                 "latitude": {
                     "type": "number"

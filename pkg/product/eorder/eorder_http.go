@@ -550,7 +550,7 @@ func (h EOrderHttp) Notify(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Router /line-notify [get]
+// @Router /line-notify [post]
 func (h EOrderHttp) LineNotify(ctx microservice.IContext) error {
 
 	payload := models.LinePayload{}
