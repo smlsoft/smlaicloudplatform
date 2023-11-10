@@ -178,7 +178,7 @@ func (repo ShopUserRepository) FindByUsernamePage(ctx context.Context, username 
 
 	searchInFields := []string{
 		"shopid",
-		"name",
+		"names",
 	}
 
 	for _, colName := range searchInFields {
@@ -208,7 +208,7 @@ func (repo ShopUserRepository) FindByUsernamePage(ctx context.Context, username 
 				"shopid":         1,
 				"isfavorite":     1,
 				"lastaccessedat": 1,
-				"name":           bson.M{"$first": "$shopInfo.name1"},
+				"names":          bson.M{"$first": "$shopInfo.names"},
 				"branchcode":     bson.M{"$first": "$shopInfo.branchcode"},
 				"createdby":      bson.M{"$first": "$shopInfo.createdby"},
 			},
