@@ -66,16 +66,6 @@ func (svc NotifyHttpService) CreateNotify(shopID string, authUsername string, do
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "token", doc.Token)
-
-	if err != nil {
-		return "", err
-	}
-
-	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("token is exists")
-	}
-
 	newGuidFixed := utils.NewGUID()
 
 	dataDoc := models.NotifyDoc{}
@@ -87,7 +77,7 @@ func (svc NotifyHttpService) CreateNotify(shopID string, authUsername string, do
 	dataDoc.CreatedBy = authUsername
 	dataDoc.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(ctx, dataDoc)
+	_, err := svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", err
@@ -270,14 +260,6 @@ func (svc NotifyHttpService) SearchNotifyStep(shopID string, langCode string, fi
 	}
 
 	selectFields := map[string]interface{}{}
-
-	/*
-		if langCode != "" {
-			selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-		} else {
-			selectFields["names"] = 1
-		}
-	*/
 
 	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
