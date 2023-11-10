@@ -7312,6 +7312,10 @@ definitions:
         type: string
       name:
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       role:
         $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserRole'
       shopid:

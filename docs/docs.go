@@ -44589,6 +44589,12 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "role": {
                     "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRole"
                 },

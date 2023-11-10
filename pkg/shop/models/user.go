@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"smlcloudplatform/pkg/models"
 	timezone "smlcloudplatform/pkg/models/timezone"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -117,13 +118,14 @@ func (*ShopUser) CollectionName() string {
 }
 
 type ShopUserInfo struct {
-	ShopID         string    `json:"shopid" bson:"shopid"`
-	Name           string    `json:"name" bson:"name"`
-	BranchCode     string    `json:"branchcode" bson:"branchcode"`
-	Role           UserRole  `json:"role" bson:"role"`
-	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`
-	LastAccessedAt time.Time `json:"lastaccessedat" bson:"lastaccessedat"`
-	CreatedBy      string    `json:"createdby" bson:"createdby"`
+	ShopID         string         `json:"shopid" bson:"shopid"`
+	Name           string         `json:"name" bson:"name"`
+	Names          []models.NameX `json:"names" bson:"names"`
+	BranchCode     string         `json:"branchcode" bson:"branchcode"`
+	Role           UserRole       `json:"role" bson:"role"`
+	IsFavorite     bool           `json:"isfavorite" bson:"isfavorite"`
+	LastAccessedAt time.Time      `json:"lastaccessedat" bson:"lastaccessedat"`
+	CreatedBy      string         `json:"createdby" bson:"createdby"`
 }
 
 func (*ShopUserInfo) CollectionName() string {
