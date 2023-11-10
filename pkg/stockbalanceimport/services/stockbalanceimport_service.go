@@ -247,8 +247,6 @@ func (svc *StockBalanceImportService) SaveTask(shopID string, authUsername strin
 		}
 	}
 
-	svc.chRepo.All(context.Background(), shopID, taskID)
-
 	tempTransaction := stockbalance_models.StockBalance{}
 
 	tempTransaction.StockBalanceHeader = headerDoc
