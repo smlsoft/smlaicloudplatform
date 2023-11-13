@@ -71,16 +71,15 @@ func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop
 		return errors.New("shop not found")
 	}
 
-	guidx := findShop.GuidFixed
+	dataDoc := findShop
 
-	findShop.UpdatedBy = username
-	findShop.UpdatedAt = time.Now()
+	dataDoc.Shop = shop
 
-	findShop.Name1 = shop.Name1
+	dataDoc.UpdatedBy = username
+	dataDoc.UpdatedAt = time.Now()
+	dataDoc.GuidFixed = findShop.GuidFixed
 
-	findShop.GuidFixed = guidx
-
-	err = svc.shopRepo.Update(context.Background(), guid, findShop)
+	err = svc.shopRepo.Update(context.Background(), guid, dataDoc)
 
 	if err != nil {
 		return err
