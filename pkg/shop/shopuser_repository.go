@@ -191,6 +191,9 @@ func (repo ShopUserRepository) FindByUsernamePage(ctx context.Context, username 
 	aggPaginatedData, err := repo.pst.AggregatePage(ctx, &models.ShopUser{}, pageable,
 		bson.M{"$match": bson.M{
 			"username": username,
+			"deletedat": bson.M{
+				"$exists": false,
+			},
 		}},
 		bson.M{"$lookup": bson.M{
 			"from":         "shops",
