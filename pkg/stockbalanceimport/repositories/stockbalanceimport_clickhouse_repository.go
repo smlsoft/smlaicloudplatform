@@ -97,7 +97,7 @@ func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, sho
 	args = append(args, searchArgs...)
 	args = append(args, pageable.Limit, offset)
 
-	sqlExpr := fmt.Sprintf("SELECT * FROM clouddev.stockbalanceimport WHERE shopid = ? AND taskid = ? %s %s LIMIT ? OFFSET ?", exprSeach, orderExpr)
+	sqlExpr := fmt.Sprintf("SELECT * FROM stockbalanceimport WHERE shopid = ? AND taskid = ? %s %s LIMIT ? OFFSET ?", exprSeach, orderExpr)
 	err := repo.pst.Select(ctx, &results, sqlExpr, args...)
 
 	if err != nil {
