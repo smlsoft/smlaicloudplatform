@@ -62,6 +62,7 @@ import (
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
+	"smlcloudplatform/pkg/slipimage"
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/stockbalanceimport"
 	"smlcloudplatform/pkg/sysinfo"
@@ -307,6 +308,7 @@ func main() {
 			ocr.NewOcrHttp(ms, cfg),
 			stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
 			notify.NewNotifyHttp(ms, cfg),
+			slipimage.NewSlipImageHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)

@@ -47,6 +47,7 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
 	"smlcloudplatform/pkg/report/reportquerym"
+	"smlcloudplatform/pkg/slipimage"
 	"smlcloudplatform/pkg/stockbalanceimport"
 	"time"
 
@@ -298,7 +299,9 @@ func main() {
 
 		ocr.NewOcrHttp(ms, cfg),
 		stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
+		productbarcode.NewProductBarcodeHttp(ms, cfg),
 		notify.NewNotifyHttp(ms, cfg),
+		slipimage.NewSlipImageHttp(ms, cfg),
 	}
 
 	serviceStartHttp(ms, httpServices...)

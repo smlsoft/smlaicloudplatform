@@ -21,6 +21,7 @@ type IContext interface {
 	ResponseError(responseCode int, errorMessage string)
 	Validate(model interface{}) error
 	FormFile(field string) (*multipart.FileHeader, error)
+	FormValue(field string) string
 	ResponseWriter() http.ResponseWriter
 	Request() *http.Request
 

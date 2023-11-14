@@ -63,6 +63,10 @@ func (ctx *HTTPContext) FormFile(attribute string) (*multipart.FileHeader, error
 	return ctx.c.FormFile(attribute)
 }
 
+func (ctx *HTTPContext) FormValue(attribute string) string {
+	return ctx.c.FormValue(attribute)
+}
+
 func (ctx *HTTPContext) UserInfo() models.UserInfo {
 	userInfo := ctx.c.Get("UserInfo")
 	if userInfo == nil {

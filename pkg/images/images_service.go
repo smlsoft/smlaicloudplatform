@@ -58,6 +58,7 @@ func (svc ImagesService) UploadImage(shopId string, fh *multipart.FileHeader) (*
 	if err != nil {
 		return nil, err
 	}
+
 	// create thumbnail bla bla
 	image := &models.Image{
 		Uri: fileName,

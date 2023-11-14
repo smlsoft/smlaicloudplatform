@@ -19,6 +19,7 @@ const (
 	FieldTypeInt       = "int"
 	FieldTypeFloat64   = "float64"
 	FieldTypeBoolean   = "boolean"
+	FieldTypeDate      = "date"
 	FieldTypeRangeDate = "rangeDate"
 )
 
@@ -102,6 +103,22 @@ func getRangeDateHandler(field FilterRequest, filterValue string, getParamFunc f
 	return nil
 }
 
+func getDateHandler(field FilterRequest, filterValue string, getParamFunc func(string) string) interface{} {
+
+	if len(filterValue) > 0 {
+		fromDate, err1 := time.Parse(DateFormate, filterValue)
+		toDate, err2 := time.Parse(DateFormate, filterValue)
+
+		if err1 == nil && err2 == nil {
+			return bson.M{
+				"$gte": fromDate,
+				"$lt":  toDate.AddDate(0, 0, 1),
+			}
+		}
+	}
+	return nil
+}
+
 // parseToInts converts an array of strings into an array of integers.
 func parseToInts(values []string) []int {
 	ints := make([]int, 0, len(values))
@@ -144,6 +161,7 @@ func GenerateFilters(getParamFunc func(string) string, filterFields []FilterRequ
 		FieldTypeInt:       getIntHandler,
 		FieldTypeFloat64:   getFloatHandler,
 		FieldTypeBoolean:   getBooleanHandler,
+		FieldTypeDate:      getDateHandler,
 		FieldTypeRangeDate: getRangeDateHandler,
 	}
 

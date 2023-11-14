@@ -84,6 +84,10 @@ func (ctx *ConsumerContext) FormFile(attribute string) (*multipart.FileHeader, e
 	return nil, nil
 }
 
+func (ctx *ConsumerContext) FormValue(attribute string) string {
+	return ""
+}
+
 func (ctx *ConsumerContext) UserInfo() models.UserInfo {
 	return models.UserInfo{}
 

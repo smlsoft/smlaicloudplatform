@@ -103,6 +103,10 @@ func (ctx *AsyncTaskContext) FormFile(attribute string) (*multipart.FileHeader, 
 	return nil, nil
 }
 
+func (ctx *AsyncTaskContext) FormValue(attribute string) string {
+	return ""
+}
+
 func (ctx *AsyncTaskContext) UserInfo() models.UserInfo {
 	return ctx.userInfo
 
