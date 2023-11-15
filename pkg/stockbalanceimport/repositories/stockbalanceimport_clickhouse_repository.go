@@ -18,6 +18,7 @@ type IStockBalanceImportClickHouseRepository interface {
 	Update(ctx context.Context, shopID string, guid string, doc models.StockBalanceImportRaw) error
 	DeleteByGUID(ctx context.Context, shopID string, guid string) error
 	DeleteByTaskID(ctx context.Context, shopID string, taskID string) error
+	Meta(ctx context.Context, shopID string, taskID string) (models.StockBalanceImportMeta, error)
 }
 
 type StockBalanceImportClickHouseRepository struct {
@@ -44,7 +45,7 @@ func (repo StockBalanceImportClickHouseRepository) All(ctx context.Context, shop
 
 	results := []models.StockBalanceImportDoc{}
 
-	sqlExpr := "SELECT * FROM clouddev.stockbalanceimport WHERE shopid = ? AND taskid = ?"
+	sqlExpr := "SELECT * FROM stockbalanceimport WHERE shopid = ? AND taskid = ?"
 	err := repo.pst.Select(ctx, &results, sqlExpr, shopID, taskID)
 
 	if err != nil {
@@ -52,6 +53,20 @@ func (repo StockBalanceImportClickHouseRepository) All(ctx context.Context, shop
 	}
 
 	return results, nil
+}
+
+func (repo StockBalanceImportClickHouseRepository) Meta(ctx context.Context, shopID string, taskID string) (models.StockBalanceImportMeta, error) {
+
+	results := []models.StockBalanceImportMeta{}
+
+	sqlExpr := "SELECT COUNT(*) totalitem, SUM(sumamount) totalamount FROM stockbalanceimport WHERE shopid = ? AND taskid = ?"
+	err := repo.pst.Select(ctx, &results, sqlExpr, shopID, taskID)
+
+	if err != nil {
+		return models.StockBalanceImportMeta{}, err
+	}
+
+	return results[0], nil
 }
 
 func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error) {
@@ -138,18 +153,18 @@ func (repo StockBalanceImportClickHouseRepository) CreateInBatch(ctx context.Con
 
 func (repo StockBalanceImportClickHouseRepository) Update(ctx context.Context, shopID string, guid string, doc models.StockBalanceImportRaw) error {
 	return repo.pst.Exec(ctx,
-		"ALTER TABLE clouddev.stockbalanceimport UPDATE barcode = ?, name = ?, unitcode = ?, qty = ?, price = ? , sumamount = ? WHERE shopid = ? AND guidfixed = ?",
+		"ALTER TABLE stockbalanceimport UPDATE barcode = ?, name = ?, unitcode = ?, qty = ?, price = ? , sumamount = ? WHERE shopid = ? AND guidfixed = ?",
 		doc.Barcode, doc.Name, doc.UnitCode, doc.Qty, doc.Price, doc.SumAmount, shopID, guid)
 }
 
 func (repo StockBalanceImportClickHouseRepository) DeleteByGUID(ctx context.Context, shopID string, guid string) error {
 	return repo.pst.Exec(ctx,
-		"DELETE FROM clouddev.stockbalanceimport WHERE shopid = ? AND guidfixed = ?",
+		"ALTER TABLE stockbalanceimport DELETE WHERE shopid = ? AND guidfixed = ?",
 		shopID, guid)
 }
 
 func (repo StockBalanceImportClickHouseRepository) DeleteByTaskID(ctx context.Context, shopID string, taskID string) error {
 	return repo.pst.Exec(ctx,
-		"ALTER TABLE clouddev.stockbalanceimport DELETE WHERE shopid = ? AND taskid = ?",
+		"ALTER TABLE stockbalanceimport DELETE WHERE shopid = ? AND taskid = ?",
 		shopID, taskID)
 }

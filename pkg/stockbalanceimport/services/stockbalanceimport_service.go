@@ -28,6 +28,7 @@ type IStockBalanceImportService interface {
 	DeleteTask(shopID string, taskID string) error
 	ImportFromFile(shopID string, fileUpload io.Reader) (string, error)
 	SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error)
+	Meta(shopID string, taskID string) (models.StockBalanceImportMeta, error)
 }
 
 type StockBalanceImportService struct {
@@ -184,6 +185,10 @@ func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, 
 	dataDoc.SumAmount = amount
 
 	return dataDoc, nil
+}
+
+func (svc *StockBalanceImportService) Meta(shopID string, taskID string) (models.StockBalanceImportMeta, error) {
+	return svc.chRepo.Meta(context.Background(), shopID, taskID)
 }
 
 func (svc *StockBalanceImportService) Update(shopID string, guid string, doc models.StockBalanceImportRaw) error {

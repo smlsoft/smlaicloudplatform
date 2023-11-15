@@ -65,10 +65,11 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 	h.ms.POST("/stockbalanceimport/upload", h.UploadExcel)
 	h.ms.POST("/stockbalanceimport", h.Create)
 	h.ms.GET("/stockbalanceimport/:task-id", h.List)
-	h.ms.DELETE("/stockbalanceimport/task/:task-id", h.DeleteByTask)
-	h.ms.POST("/stockbalanceimport/task/:task-id", h.SaveTask)
-	h.ms.PUT("/stockbalanceimport/:guid", h.Update)
-	h.ms.DELETE("/stockbalanceimport/:guid", h.Delete)
+	h.ms.DELETE("/stockbalanceimport/:task-id", h.DeleteByTask)
+	h.ms.POST("/stockbalanceimport/:task-id", h.SaveTask)
+	h.ms.GET("/stockbalanceimport/:task-id/meta", h.Meta)
+	h.ms.PUT("/stockbalanceimport/item/:guid", h.Update)
+	h.ms.DELETE("/stockbalanceimport/item/:guid", h.Delete)
 }
 
 // Create StockBalanceImport godoc
@@ -208,7 +209,7 @@ func (h StockBalanceImportHttp) List(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/{guid} [put]
+// @Router /stockbalanceimport/item/{guid} [put]
 func (h StockBalanceImportHttp) Update(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
@@ -250,7 +251,7 @@ func (h StockBalanceImportHttp) Update(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/{guid} [delete]
+// @Router /stockbalanceimport/item/{guid} [delete]
 func (h StockBalanceImportHttp) Delete(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
@@ -277,7 +278,7 @@ func (h StockBalanceImportHttp) Delete(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/task/{task-id} [delete]
+// @Router /stockbalanceimport/{task-id} [delete]
 func (h StockBalanceImportHttp) DeleteByTask(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
@@ -305,7 +306,7 @@ func (h StockBalanceImportHttp) DeleteByTask(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /stockbalanceimport/task/{task-id} [post]
+// @Router /stockbalanceimport/{task-id} [post]
 func (h StockBalanceImportHttp) SaveTask(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -332,6 +333,34 @@ func (h StockBalanceImportHttp) SaveTask(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		DocNo:   docNo,
+	})
+	return nil
+}
+
+// Get StockBalanceImport Meta godoc
+// @Description Get StockBalanceImport Meta
+// @Tags		StockBalanceImport
+// @Param		task-id		path		string		true		"task id"
+// @Accept 		json
+// @Success		201	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /stockbalanceimport/{task-id}/meta [get]
+func (h StockBalanceImportHttp) Meta(ctx microservice.IContext) error {
+	shopID := ctx.UserInfo().ShopID
+
+	taskID := ctx.Param("task-id")
+
+	result, err := h.svc.Meta(shopID, taskID)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		Data:    result,
 	})
 	return nil
 }

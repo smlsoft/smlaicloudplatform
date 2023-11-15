@@ -23195,15 +23195,15 @@ paths:
       - AccessToken: []
       tags:
       - StockBalanceImport
-  /stockbalanceimport/{guid}:
+  /stockbalanceimport/{task-id}:
     delete:
       consumes:
       - application/json
-      description: Delete StockBalanceImport By GUID
+      description: Delete StockBalanceImport By Task ID
       parameters:
-      - description: guid
+      - description: task id
         in: path
-        name: guid
+        name: task-id
         required: true
         type: string
       responses:
@@ -23219,30 +23219,6 @@ paths:
       - AccessToken: []
       tags:
       - StockBalanceImport
-    put:
-      consumes:
-      - application/json
-      description: Get StockBalanceImport Part
-      parameters:
-      - description: guid
-        in: path
-        name: guid
-        required: true
-        type: string
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - StockBalanceImport
-  /stockbalanceimport/{task-id}:
     get:
       consumes:
       - application/json
@@ -23278,11 +23254,40 @@ paths:
       - AccessToken: []
       tags:
       - StockBalanceImport
-  /stockbalanceimport/task/{task-id}:
-    delete:
+    post:
       consumes:
       - application/json
       description: Delete StockBalanceImport By Task ID
+      parameters:
+      - description: task id
+        in: path
+        name: task-id
+        required: true
+        type: string
+      - description: Stock Balance Header
+        in: body
+        name: StockBalanceHeader
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockBalanceHeader'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+  /stockbalanceimport/{task-id}/meta:
+    get:
+      consumes:
+      - application/json
+      description: Get StockBalanceImport Meta
       parameters:
       - description: task id
         in: path
@@ -23302,22 +23307,40 @@ paths:
       - AccessToken: []
       tags:
       - StockBalanceImport
-    post:
+  /stockbalanceimport/item/{guid}:
+    delete:
       consumes:
       - application/json
-      description: Delete StockBalanceImport By Task ID
+      description: Delete StockBalanceImport By GUID
       parameters:
-      - description: task id
+      - description: guid
         in: path
-        name: task-id
+        name: guid
         required: true
         type: string
-      - description: Stock Balance Header
-        in: body
-        name: StockBalanceHeader
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+    put:
+      consumes:
+      - application/json
+      description: Get StockBalanceImport Part
+      parameters:
+      - description: guid
+        in: path
+        name: guid
         required: true
-        schema:
-          $ref: '#/definitions/models.StockBalanceHeader'
+        type: string
       responses:
         "201":
           description: Created

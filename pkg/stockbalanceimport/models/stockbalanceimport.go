@@ -4,6 +4,11 @@ import (
 	"math"
 )
 
+type StockBalanceImportMeta struct {
+	TotalItem   uint64  `json:"totalitem" ch:"totalitem"`
+	TotalAmount float64 `json:"totalamount" ch:"totalamount"`
+}
+
 type StockBalanceImportRaw struct {
 	Barcode       string  `json:"barcode" ch:"barcode"`
 	Name          string  `json:"name" ch:"name"`

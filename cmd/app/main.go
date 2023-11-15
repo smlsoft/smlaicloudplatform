@@ -43,6 +43,7 @@ import (
 	"smlcloudplatform/pkg/product/producttype"
 	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
+	"smlcloudplatform/pkg/productimport"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
@@ -302,6 +303,7 @@ func main() {
 		productbarcode.NewProductBarcodeHttp(ms, cfg),
 		notify.NewNotifyHttp(ms, cfg),
 		slipimage.NewSlipImageHttp(ms, cfg),
+		productimport.NewProductImportHttp(ms, cfg),
 	}
 
 	serviceStartHttp(ms, httpServices...)
