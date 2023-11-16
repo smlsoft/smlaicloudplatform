@@ -209,7 +209,7 @@ func (h ProductImportHttp) List(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /productimport/{guid} [put]
+// @Router /productimport/item/{guid} [put]
 func (h ProductImportHttp) Update(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
@@ -251,7 +251,7 @@ func (h ProductImportHttp) Update(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /productimport/{guid} [delete]
+// @Router /productimport/item/{guid} [delete]
 func (h ProductImportHttp) Delete(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
@@ -278,7 +278,7 @@ func (h ProductImportHttp) Delete(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /productimport/task/{task-id} [delete]
+// @Router /productimport/{task-id} [delete]
 func (h ProductImportHttp) DeleteByTask(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 
@@ -305,7 +305,7 @@ func (h ProductImportHttp) DeleteByTask(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /productimport/task/{task-id} [post]
+// @Router /productimport/{task-id} [post]
 func (h ProductImportHttp) SaveTask(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -326,6 +326,15 @@ func (h ProductImportHttp) SaveTask(ctx microservice.IContext) error {
 	return nil
 }
 
+// Verify ProductImport By Task ID godoc
+// @Description Verify ProductImport By Task ID
+// @Tags		ProductImport
+// @Param		task-id		path		string		true		"task id"
+// @Accept 		json
+// @Success		201	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /productimport/{task-id}/verify [post]
 func (h ProductImportHttp) Verify(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 

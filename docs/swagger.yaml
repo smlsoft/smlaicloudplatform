@@ -19043,15 +19043,15 @@ paths:
       - AccessToken: []
       tags:
       - ProductImport
-  /productimport/{guid}:
+  /productimport/{task-id}:
     delete:
       consumes:
       - application/json
-      description: Delete ProductImport By GUID
+      description: Delete ProductImport By Task ID
       parameters:
-      - description: guid
+      - description: task id
         in: path
-        name: guid
+        name: task-id
         required: true
         type: string
       responses:
@@ -19067,30 +19067,6 @@ paths:
       - AccessToken: []
       tags:
       - ProductImport
-    put:
-      consumes:
-      - application/json
-      description: Get ProductImport Part
-      parameters:
-      - description: guid
-        in: path
-        name: guid
-        required: true
-        type: string
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductImport
-  /productimport/{task-id}:
     get:
       consumes:
       - application/json
@@ -19126,8 +19102,7 @@ paths:
       - AccessToken: []
       tags:
       - ProductImport
-  /productimport/task/{task-id}:
-    delete:
+    post:
       consumes:
       - application/json
       description: Delete ProductImport By Task ID
@@ -19150,14 +19125,62 @@ paths:
       - AccessToken: []
       tags:
       - ProductImport
+  /productimport/{task-id}/verify:
     post:
       consumes:
       - application/json
-      description: Delete ProductImport By Task ID
+      description: Verify ProductImport By Task ID
       parameters:
       - description: task id
         in: path
         name: task-id
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductImport
+  /productimport/item/{guid}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductImport By GUID
+      parameters:
+      - description: guid
+        in: path
+        name: guid
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductImport
+    put:
+      consumes:
+      - application/json
+      description: Get ProductImport Part
+      parameters:
+      - description: guid
+        in: path
+        name: guid
         required: true
         type: string
       responses:

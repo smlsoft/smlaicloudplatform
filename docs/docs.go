@@ -18212,122 +18212,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/productimport/task/{task-id}": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete ProductImport By Task ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductImport"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "task id",
-                        "name": "task-id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete ProductImport By Task ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductImport"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "task id",
-                        "name": "task-id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/productimport/upload": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create ProductImport",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductImport"
-                ],
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "excel file",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/productimport/{guid}": {
+        "/productimport/item/{guid}": {
             "put": {
                 "security": [
                     {
@@ -18403,6 +18288,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/productimport/upload": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductImport",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "excel file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/productimport/{task-id}": {
             "get": {
                 "security": [
@@ -18449,6 +18373,119 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductImport By Task ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task-id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductImport By Task ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task-id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/productimport/{task-id}/verify": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Verify ProductImport By Task ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task-id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
