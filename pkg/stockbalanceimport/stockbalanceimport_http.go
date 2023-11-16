@@ -18,6 +18,7 @@ import (
 	stockbalance_repositories "smlcloudplatform/pkg/transaction/stockbalance/repositories"
 	stockbalance_serrvices "smlcloudplatform/pkg/transaction/stockbalance/services"
 	stockbalancedetail_serrvices "smlcloudplatform/pkg/transaction/stockbalancedetail/services"
+	"time"
 
 	stockbalancedetail_repositories "smlcloudplatform/pkg/transaction/stockbalancedetail/repositories"
 	"smlcloudplatform/pkg/utils"
@@ -52,7 +53,7 @@ func NewStockBalanceImportHttp(ms *microservice.Microservice, cfg config.IConfig
 
 	productBarcodeRepo := productbarcode_repo.NewProductBarcodeRepository(pst, cache)
 
-	svc := services.NewStockBalanceImportService(chRepo, productBarcodeRepo, stockBalanceSvc, stockBalanceDetailSvc, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID)
+	svc := services.NewStockBalanceImportService(chRepo, productBarcodeRepo, stockBalanceSvc, stockBalanceDetailSvc, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
 
 	return StockBalanceImportHttp{
 		ms:  ms,
@@ -83,6 +84,7 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 // @Router /stockbalanceimport/upload [post]
 func (h StockBalanceImportHttp) UploadExcel(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
+	authUsername := ctx.UserInfo().Username
 	tempFile, err := ctx.FormFile("file")
 
 	if err != nil {
@@ -104,7 +106,7 @@ func (h StockBalanceImportHttp) UploadExcel(ctx microservice.IContext) error {
 	}
 	defer file.Close()
 
-	taskID, err := h.svc.ImportFromFile(shopID, file)
+	taskID, err := h.svc.ImportFromFile(shopID, authUsername, file)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -130,6 +132,7 @@ func (h StockBalanceImportHttp) UploadExcel(ctx microservice.IContext) error {
 // @Router /stockbalanceimport [post]
 func (h StockBalanceImportHttp) Create(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
+	authUsername := ctx.UserInfo().Username
 
 	input := ctx.ReadInput()
 
@@ -146,7 +149,7 @@ func (h StockBalanceImportHttp) Create(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.Create(shopID, &docReq)
+	err = h.svc.Create(shopID, authUsername, &docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

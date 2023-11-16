@@ -2,6 +2,7 @@ package models
 
 import (
 	"math"
+	"time"
 )
 
 type StockBalanceImportMeta struct {
@@ -26,10 +27,16 @@ type StockBalanceImport struct {
 	StockBalanceImportRaw
 }
 
-type StockBalanceImportDoc struct {
+type StockBalanceImportInfo struct {
 	GUIDFixed string `json:"guidfixed" ch:"guidfixed"`
 	ShopID    string `json:"shopid" ch:"shopid"`
 	StockBalanceImport
+}
+
+type StockBalanceImportDoc struct {
+	StockBalanceImportInfo
+	CreatedAt time.Time `json:"createdat" ch:"createdat"`
+	CreatedBy string    `json:"createdby" ch:"createdby"`
 }
 
 func (StockBalanceImportDoc) TableName() string {

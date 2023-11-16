@@ -19,6 +19,7 @@ type IStockBalanceImportClickHouseRepository interface {
 	DeleteByGUID(ctx context.Context, shopID string, guid string) error
 	DeleteByTaskID(ctx context.Context, shopID string, taskID string) error
 	Meta(ctx context.Context, shopID string, taskID string) (models.StockBalanceImportMeta, error)
+	FindOne(ctx context.Context, shopID string, taskID string, sorts []micromodels.KeyInt) (models.StockBalanceImportDoc, error)
 }
 
 type StockBalanceImportClickHouseRepository struct {
@@ -64,6 +65,47 @@ func (repo StockBalanceImportClickHouseRepository) Meta(ctx context.Context, sho
 
 	if err != nil {
 		return models.StockBalanceImportMeta{}, err
+	}
+
+	return results[0], nil
+}
+
+func (repo StockBalanceImportClickHouseRepository) FindOne(ctx context.Context, shopID string, taskID string, sorts []micromodels.KeyInt) (models.StockBalanceImportDoc, error) {
+
+	orderExpr := ""
+	if len(sorts) > 0 {
+		for _, sort := range sorts {
+			if orderExpr != "" {
+				orderExpr += ", "
+			}
+
+			orderTxt := "ASC"
+			if sort.Value == -1 {
+				orderTxt = "DESC"
+			}
+
+			if _, ok := repo.structFileds[sort.Key]; !ok {
+				orderExpr += fmt.Sprintf("%s %s", sort.Key, orderTxt)
+			}
+
+		}
+	}
+
+	if orderExpr != "" {
+		orderExpr = fmt.Sprintf("ORDER BY %s", orderExpr)
+	}
+
+	results := []models.StockBalanceImportDoc{}
+
+	sqlExpr := fmt.Sprintf("SELECT * FROM stockbalanceimport WHERE shopid = ? AND taskid = ? %s LIMIT 1 OFFSET 0", orderExpr)
+	err := repo.pst.Select(ctx, &results, sqlExpr, shopID, taskID)
+
+	if err != nil {
+		return models.StockBalanceImportDoc{}, err
+	}
+
+	if len(results) == 0 {
+		return models.StockBalanceImportDoc{}, nil
 	}
 
 	return results[0], nil

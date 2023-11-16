@@ -21,12 +21,12 @@ import (
 )
 
 type IStockBalanceImportService interface {
-	List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error)
-	Create(shopID string, req *models.StockBalanceImport) error
+	List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportInfo, models.PaginationData, error)
+	Create(shopID string, authUsername string, req *models.StockBalanceImport) error
 	Update(shopID string, guid string, doc models.StockBalanceImportRaw) error
 	Delete(shopID string, guid string) error
 	DeleteTask(shopID string, taskID string) error
-	ImportFromFile(shopID string, fileUpload io.Reader) (string, error)
+	ImportFromFile(shopID string, authUsername string, fileUpload io.Reader) (string, error)
 	SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error)
 	Meta(shopID string, taskID string) (models.StockBalanceImportMeta, error)
 }
@@ -39,8 +39,9 @@ type StockBalanceImportService struct {
 	productBarcodeRepo        productbarcode_repo.IProductBarcodeRepository
 	stockBalanceService       stockbalance_services.IStockBalanceHttpService
 	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailHttpService
-	GenerateID                func(int) string
-	GenerateGUID              func() string
+	generateID                func(int) string
+	generateGUID              func() string
+	timeNow                   func() time.Time
 }
 
 func NewStockBalanceImportService(
@@ -48,8 +49,9 @@ func NewStockBalanceImportService(
 	productBarcodeRepo productbarcode_repo.IProductBarcodeRepository,
 	stockBalanceService stockbalance_services.IStockBalanceHttpService,
 	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailHttpService,
-	GenerateID func(int) string,
-	GenerateGUID func() string,
+	generateID func(int) string,
+	generateGUID func() string,
+	timeNow func() time.Time,
 ) *StockBalanceImportService {
 	return &StockBalanceImportService{
 		deafultPartSize:           100,
@@ -59,24 +61,56 @@ func NewStockBalanceImportService(
 		productBarcodeRepo:        productBarcodeRepo,
 		stockBalanceService:       stockBalanceService,
 		stockBalanceDetailService: stockBalanceDetailService,
-		GenerateID:                GenerateID,
-		GenerateGUID:              GenerateGUID,
+		generateID:                generateID,
+		generateGUID:              generateGUID,
+		timeNow:                   timeNow,
 	}
 }
 
-func (svc *StockBalanceImportService) List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error) {
-	return svc.chRepo.List(context.Background(), shopID, taskID, pageable)
+func (svc *StockBalanceImportService) List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportInfo, models.PaginationData, error) {
+	findDocs, patination, err := svc.chRepo.List(context.Background(), shopID, taskID, pageable)
+
+	if err != nil {
+		return []models.StockBalanceImportInfo{}, models.PaginationData{}, err
+	}
+
+	results := []models.StockBalanceImportInfo{}
+
+	for _, doc := range findDocs {
+		results = append(results, doc.StockBalanceImportInfo)
+	}
+
+	return results, patination, nil
 }
 
-func (svc *StockBalanceImportService) Create(shopID string, doc *models.StockBalanceImport) error {
+func (svc *StockBalanceImportService) Create(shopID string, authUsername string, doc *models.StockBalanceImport) error {
 	docData := models.StockBalanceImportDoc{}
 	docData.ShopID = shopID
-	docData.GUIDFixed = svc.GenerateGUID()
+	docData.GUIDFixed = svc.generateGUID()
 	docData.StockBalanceImport = *doc
+
+	result, err := svc.chRepo.FindOne(context.Background(), shopID, doc.TaskID, []micromodels.KeyInt{
+		{
+			Key:   "rownumber",
+			Value: -1,
+		},
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if doc.RowNumber == 0 {
+		docData.RowNumber = result.RowNumber + 1
+	}
+
+	docData.CreatedAt = svc.timeNow()
+	docData.CreatedBy = authUsername
+
 	return svc.chRepo.Create(context.Background(), docData)
 }
 
-func (svc *StockBalanceImportService) ImportFromFile(shopID string, fileUpload io.Reader) (string, error) {
+func (svc *StockBalanceImportService) ImportFromFile(shopID string, authUsername string, fileUpload io.Reader) (string, error) {
 
 	f, err := excelize.OpenReader(fileUpload)
 	if err != nil {
@@ -123,7 +157,7 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, fileUpload i
 
 	prepareDataDoc := []models.StockBalanceImportDoc{}
 
-	taskID := svc.GenerateID(svc.sizeID)
+	taskID := svc.generateID(svc.sizeID)
 
 	for i, doc := range rows {
 
@@ -137,6 +171,14 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, fileUpload i
 		}
 
 		prepareDataDoc = append(prepareDataDoc, tempData)
+	}
+
+	createdAt := svc.timeNow()
+	createdBy := authUsername
+
+	for i := range prepareDataDoc {
+		prepareDataDoc[i].CreatedAt = createdAt
+		prepareDataDoc[i].CreatedBy = createdBy
 	}
 
 	err = svc.chRepo.CreateInBatch(context.Background(), prepareDataDoc)
@@ -167,7 +209,7 @@ func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, 
 		price = amount / qty
 	}
 
-	newGUID := svc.GenerateGUID()
+	newGUID := svc.generateGUID()
 
 	dataDoc := models.StockBalanceImportDoc{}
 
