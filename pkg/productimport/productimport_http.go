@@ -10,7 +10,6 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	product_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
-	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	product_serrvices "smlcloudplatform/pkg/product/productbarcode/services"
 	productcategory_repositories "smlcloudplatform/pkg/product/productcategory/repositories"
 	productcategory_services "smlcloudplatform/pkg/product/productcategory/services"
@@ -47,9 +46,7 @@ func NewProductImportHttp(ms *microservice.Microservice, cfg config.IConfig) Pro
 	chRepo := repositories.NewProductImportClickHouseRepository(pstClickHouse)
 	stockBalanceSvc := product_serrvices.NewProductBarcodeHttpService(repo, repoMq, repoCh, productcategorySvc, masterSyncCacheRepo)
 
-	productBarcodeRepo := productbarcode_repo.NewProductBarcodeRepository(pst, cache)
-
-	svc := services.NewProductImportService(chRepo, productBarcodeRepo, stockBalanceSvc, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
+	svc := services.NewProductImportService(chRepo, repo, stockBalanceSvc, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
 
 	return ProductImportHttp{
 		ms:  ms,
