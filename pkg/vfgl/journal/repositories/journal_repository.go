@@ -24,7 +24,8 @@ type IJournalRepository interface {
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.JournalDoc, error)
 	FindOne(ctx context.Context, shopID string, filters interface{}) (models.JournalDoc, error)
 	IsAccountCodeUsed(ctx context.Context, shopID string, accountCode string) (bool, error)
-
+	FindGUIDEmptyAll() []models.JournalDoc
+	UpdateGuidEmpty(ctx context.Context, id string, guidfixed string) error
 	// FindLastDocno(shopID string, docFormat string) (string, error)
 }
 
@@ -103,4 +104,31 @@ func (repo *JournalRepository) FindLastDocno(ctx context.Context, shopID string,
 
 	return findDocList[0].DocNo, nil
 
+}
+
+func (repo *JournalRepository) FindGUIDEmptyAll() ([]models.JournalDoc, error) {
+	findDocList := []models.JournalDoc{}
+
+	filters := bson.M{
+		"guidfixed": "",
+	}
+
+	err := repo.pst.Find(context.Background(), models.JournalDoc{}, filters, &findDocList)
+
+	if err != nil {
+		return []models.JournalDoc{}, nil
+	}
+
+	return findDocList, nil
+}
+
+func (repo *JournalRepository) UpdateGuidEmpty(ctx context.Context, id primitive.ObjectID, guidfixed string) error {
+
+	err := repo.pst.UpdateOne(ctx, models.JournalDoc{}, bson.M{"_id": id}, bson.M{"guidfixed": guidfixed})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

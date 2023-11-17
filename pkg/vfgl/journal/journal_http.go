@@ -59,6 +59,7 @@ func NewJournalHttp(ms *microservice.Microservice, cfg msConfig.IConfig) Journal
 
 func (h JournalHttp) RegisterHttp() {
 
+	h.ms.GET("/gl/journal/re-gen-guid-empty", h.ReUpdateGuidJournalEmpty)
 	h.ms.POST("/gl/journal/bulk", h.SaveBulk)
 
 	h.ms.GET("/gl/journal", h.SearchJournal)
@@ -72,6 +73,34 @@ func (h JournalHttp) RegisterHttp() {
 	h.ms.DELETE("/gl/journal", h.DeleteJournalByGUIDs)
 	h.ms.DELETE("/gl/journal/batchid/:batchid", h.DeleteJournalByBatchID)
 
+}
+
+func (h JournalHttp) ReUpdateGuidJournalEmpty(ctx microservice.IContext) error {
+
+	passCode := ctx.QueryParam("passcode")
+
+	if len(passCode) < 1 {
+		ctx.ResponseError(http.StatusNotFound, "not found")
+		return nil
+	}
+
+	if passCode != "smldev" {
+		ctx.ResponseError(http.StatusBadRequest, "passcode invalid")
+		return nil
+	}
+
+	err := h.svc.ReGenerateGuidEmpty()
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
 }
 
 // Create Journal godoc

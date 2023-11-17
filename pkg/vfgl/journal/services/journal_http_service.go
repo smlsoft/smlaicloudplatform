@@ -29,6 +29,7 @@ type IJournalHttpService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
 
 	FindLastDocnoFromFormat(shopID string, docFormat string) (string, error)
+	ReGenerateGuidEmpty() error
 }
 
 type JournalHttpService struct {
@@ -320,6 +321,28 @@ func (svc JournalHttpService) SearchJournal(shopID string, pageable micromodels.
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc JournalHttpService) ReGenerateGuidEmpty() error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docs, err := svc.repo.FindGUIDEmptyAll()
+
+	if err != nil {
+		return err
+	}
+
+	for _, doc := range docs {
+		newGuid := utils.NewGUID()
+		err = svc.repo.UpdateGuidEmpty(ctx, doc.ID, newGuid)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error) {
