@@ -10,9 +10,10 @@ import (
 const saleinvoiceCollectionName = "transactionSaleInvoice"
 
 type SaleInvoice struct {
-	models.PartitionIdentity `bson:"inline"`
-	transmodels.Transaction  `bson:"inline"`
-	IsPOS                    bool `json:"ispos" bson:"ispos"`
+	models.PartitionIdentity      `bson:"inline"`
+	transmodels.TransactionHeader `bson:"inline"`
+	Details                       *[]SaleInvoiceDetail `json:"details" bson:"details"`
+	IsPOS                         bool                 `json:"ispos" bson:"ispos"`
 
 	CouponNo          string  `json:"couponno" bson:"couponno"`
 	CouponAmount      float64 `json:"couponamount" bson:"couponamount"`
@@ -27,11 +28,15 @@ type SaleInvoice struct {
 	ChequeDueDate    string  `json:"chequeduedate" bson:"chequeduedate"`
 	ChequeAmount     float64 `json:"chequeamount" bson:"chequeamount"`
 
-	ManufacturerGUID  string  `json:"manufacturerguid" bson:"manufacturerguid"`
 	SaleChannelCode   string  `json:"salechannelcode" bson:"csalechannelode"`
 	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`
 	SaleChannelGPType int8    `json:"salechannelgptype" bson:"salechannelgptype"`
 	TakeAway          int8    `json:"takeaway" bson:"takeaway"`
+}
+
+type SaleInvoiceDetail struct {
+	ManufacturerGUID   string `json:"manufacturerguid" bson:"manufacturerguid"`
+	transmodels.Detail `bson:"inline"`
 }
 
 type SaleInvoiceInfo struct {
