@@ -28,7 +28,7 @@ type SaleInvoice struct {
 	ChequeDueDate    string  `json:"chequeduedate" bson:"chequeduedate"`
 	ChequeAmount     float64 `json:"chequeamount" bson:"chequeamount"`
 
-	SaleChannelCode   string  `json:"salechannelcode" bson:"csalechannelode"`
+	SaleChannelCode   string  `json:"salechannelcode" bson:"salechannelcode"`
 	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`
 	SaleChannelGPType int8    `json:"salechannelgptype" bson:"salechannelgptype"`
 	TakeAway          int8    `json:"takeaway" bson:"takeaway"`
