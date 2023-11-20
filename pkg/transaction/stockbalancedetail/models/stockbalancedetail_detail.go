@@ -10,8 +10,8 @@ import (
 const stockbalanceDetailCollectionName = "transactionStockBalanceDetails"
 
 type StockBalanceDetail struct {
-	DocNo string `json:"docno" bson:"docno" validate:"required"`
-	trans_models.Detail
+	DocNo               string `json:"docno" bson:"docno" validate:"required"`
+	trans_models.Detail `bson:"inline"`
 }
 
 func (StockBalanceDetail) CollectionName() string {

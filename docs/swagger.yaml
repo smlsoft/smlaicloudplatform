@@ -20776,6 +20776,18 @@ paths:
       - application/json
       description: get list step
       parameters:
+      - description: POS ID
+        in: query
+        name: posid
+        type: string
+      - description: DocNo
+        in: query
+        name: docno
+        type: string
+      - description: Doc Date
+        in: query
+        name: docdate
+        type: string
       - description: Search Value
         in: query
         name: q
@@ -20894,6 +20906,18 @@ paths:
       - application/json
       description: search limit offset
       parameters:
+      - description: POS ID
+        in: query
+        name: posid
+        type: string
+      - description: DocNo
+        in: query
+        name: docno
+        type: string
+      - description: Doc Date
+        in: query
+        name: docdate
+        type: string
       - description: Search Value
         in: query
         name: q
@@ -21396,6 +21420,30 @@ paths:
       consumes:
       - application/json
       description: Get StockBalanceImport Meta
+      parameters:
+      - description: task id
+        in: path
+        name: task-id
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockBalanceImport
+  /stockbalanceimport/{task-id}/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify StockBalanceImport By Task ID
       parameters:
       - description: task id
         in: path

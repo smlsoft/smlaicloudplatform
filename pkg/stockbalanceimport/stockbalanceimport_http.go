@@ -69,6 +69,7 @@ func (h StockBalanceImportHttp) RegisterHttp() {
 	h.ms.DELETE("/stockbalanceimport/:task-id", h.DeleteByTask)
 	h.ms.POST("/stockbalanceimport/:task-id", h.SaveTask)
 	h.ms.GET("/stockbalanceimport/:task-id/meta", h.Meta)
+	h.ms.POST("/stockbalanceimport/:task-id/verify", h.Verify)
 	h.ms.PUT("/stockbalanceimport/item/:guid", h.Update)
 	h.ms.DELETE("/stockbalanceimport/item/:guid", h.Delete)
 }
@@ -189,7 +190,19 @@ func (h StockBalanceImportHttp) List(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	results, page, err := h.svc.List(shopID, taskID, pageable)
+	filters := map[string]interface{}{}
+
+	isExistRaw := ctx.QueryParam("exist")
+	isExist := false
+	if isExistRaw == "true" {
+		isExist = true
+	}
+
+	if isExistRaw != "" {
+		filters["exist"] = isExist
+	}
+
+	results, page, err := h.svc.List(shopID, taskID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -364,6 +377,33 @@ func (h StockBalanceImportHttp) Meta(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		Data:    result,
+	})
+	return nil
+}
+
+// Verify StockBalanceImport By Task ID godoc
+// @Description Verify StockBalanceImport By Task ID
+// @Tags		StockBalanceImport
+// @Param		task-id		path		string		true		"task id"
+// @Accept 		json
+// @Success		201	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /stockbalanceimport/{task-id}/verify [post]
+func (h StockBalanceImportHttp) Verify(ctx microservice.IContext) error {
+	shopID := ctx.UserInfo().ShopID
+
+	guid := ctx.Param("task-id")
+
+	err := h.svc.Verify(shopID, guid)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
 	})
 	return nil
 }

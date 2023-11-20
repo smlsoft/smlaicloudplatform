@@ -19,6 +19,7 @@ type StockBalanceImportRaw struct {
 	Qty           float64 `json:"qty" ch:"qty"`
 	Price         float64 `json:"price" ch:"price"`
 	SumAmount     float64 `json:"sumamount" ch:"sumamount"`
+	IsNotExist    bool    `json:"isnotexist" ch:"isnotexist"`
 }
 
 type StockBalanceImport struct {
