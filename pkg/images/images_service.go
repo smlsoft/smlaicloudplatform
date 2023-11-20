@@ -6,8 +6,8 @@ import (
 	"mime/multipart"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/images/models"
-	inventoryModel "smlcloudplatform/pkg/product/inventory/models"
-	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
+	productbarcode_models "smlcloudplatform/pkg/product/productbarcode/models"
+	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
@@ -23,13 +23,13 @@ type IImagesService interface {
 
 type ImagesService struct {
 	persisterImage *microservice.PersisterImage
-	invRepo        inventoryRepo.IInventoryRepository
+	invRepo        productbarcode_repo.IProductBarcodeRepository
 	NewGUIDFn      func() string
 	contextTimeout time.Duration
 }
 
 func NewImageService(persisterImage *microservice.PersisterImage,
-	inventoryRepo inventoryRepo.IInventoryRepository,
+	inventoryRepo productbarcode_repo.IProductBarcodeRepository,
 ) *ImagesService {
 
 	contextTimeout := time.Duration(15) * time.Second
@@ -74,36 +74,48 @@ func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileH
 
 	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")
 
+	if len(fileUploadMetadataSlice) != 2 {
+		return errors.New("invalid file name")
+	}
+
 	// find product by code
-	fileName := fileUploadMetadataSlice[0]
-	fileExtension := fileUploadMetadataSlice[1]
+	barcodeFileName := fileUploadMetadataSlice[0]
+	fileExtension := fileUploadMetadataSlice[len(fileUploadMetadataSlice)-1]
 
-	findDoc, err := svc.invRepo.FindByItemBarcode(ctx, shopID, fileName)
+	findDoc, err := svc.invRepo.FindByBarcode(ctx, shopID, barcodeFileName)
 	if err != nil {
 		return err
 	}
 
-	uploadFileName, err := svc.persisterImage.Upload(fh, shopID+"/"+fileName, fileExtension)
+	if len(findDoc.Barcode) == 0 {
+		return errors.New("not found product barcode")
+	}
+
+	uploadFileName, err := svc.persisterImage.Upload(fh, shopID+"/"+barcodeFileName, fileExtension)
 	if err != nil {
 		return err
 	}
 
-	var imageSlice []inventoryModel.InventoryImage
-	if findDoc.Images != nil {
-		//imageSlice = make([]models.InventoryImage, 1)
-		//} else {
-		imageSlice = *findDoc.Images
-	}
-	productImage := inventoryModel.InventoryImage{
-		Uri: uploadFileName,
-	}
-	// push image
-	imageSlice = append(imageSlice, productImage)
+	dataDoc := findDoc
 
-	findDoc.Images = &imageSlice
+	if len(dataDoc.ImageURI) == 0 {
+		dataDoc.ImageURI = uploadFileName
+	}
+
+	if dataDoc.Images == nil {
+		dataDoc.Images = &[]productbarcode_models.ProductImage{}
+	}
+
+	imageXOrder := len(*dataDoc.Images) + 1
+
+	// append image
+	*dataDoc.Images = append(*dataDoc.Images, productbarcode_models.ProductImage{
+		XOrder: imageXOrder,
+		URI:    uploadFileName,
+	})
 
 	// save and return
-	err = svc.invRepo.Update(context.Background(), shopID, findDoc.GuidFixed, findDoc)
+	err = svc.invRepo.Update(context.Background(), shopID, dataDoc.GuidFixed, dataDoc)
 	return err
 }
 
@@ -112,7 +124,7 @@ func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, i
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.invRepo.FindByItemGuid(ctx, shopid, itemguid)
+	findDoc, err := svc.invRepo.FindByGuid(ctx, shopid, itemguid)
 
 	if err != nil {
 		return "", nil, err
@@ -128,7 +140,7 @@ func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, i
 		return "", nil, errors.New("Not Found Image")
 	}
 
-	imgFileUrl := productImage[index-1].Uri
+	imgFileUrl := productImage[index-1].URI
 
 	imageUri, buffer, err := svc.persisterImage.FilePersister.LoadFile(imgFileUrl)
 	if err != nil {

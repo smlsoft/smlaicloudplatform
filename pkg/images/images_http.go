@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/images/models"
 	common "smlcloudplatform/pkg/models"
-	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
+	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"strconv"
 )
 
@@ -28,7 +28,8 @@ func NewImagesHttp(
 ) ImagesHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	inventoryRepo := inventoryRepo.NewInventoryRepository(pst)
+	cache := ms.Cacher(cfg.CacherConfig())
+	inventoryRepo := productbarcode_repo.NewProductBarcodeRepository(pst, cache)
 	imgSrv := NewImageService(persisterImage, inventoryRepo)
 	return ImagesHttp{
 		ms:      ms,

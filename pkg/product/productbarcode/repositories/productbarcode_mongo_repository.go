@@ -51,6 +51,7 @@ type IProductBarcodeRepository interface {
 	FindByRefBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 	FindByBOMBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 
+	FindByBarcode(ctx context.Context, shopID string, barcode string) (models.ProductBarcodeDoc, error)
 	FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 	FindPageByUnits(ctx context.Context, shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	FindPageByGroups(ctx context.Context, shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
@@ -208,6 +209,24 @@ func (repo ProductBarcodeRepository) FindPage(ctx context.Context, shopID string
 	}
 
 	return results, pagination, nil
+}
+
+func (repo ProductBarcodeRepository) FindByBarcode(ctx context.Context, shopID string, barcode string) (models.ProductBarcodeDoc, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"barcode":   barcode,
+	}
+
+	var result models.ProductBarcodeDoc
+	err := repo.pst.Find(ctx, models.ProductBarcodeDoc{}, filters, &result)
+
+	if err != nil {
+		return models.ProductBarcodeDoc{}, err
+	}
+
+	return result, nil
 }
 
 func (repo ProductBarcodeRepository) FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {

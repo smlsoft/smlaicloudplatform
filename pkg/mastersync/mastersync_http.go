@@ -21,9 +21,6 @@ import (
 	employeeRepo "smlcloudplatform/pkg/shop/employee/repositories"
 	employeeService "smlcloudplatform/pkg/shop/employee/services"
 
-	productRepo "smlcloudplatform/pkg/product/product/repositories"
-	productService "smlcloudplatform/pkg/product/product/services"
-
 	productcategoryRepo "smlcloudplatform/pkg/product/productcategory/repositories"
 	productcategoryService "smlcloudplatform/pkg/product/productcategory/services"
 
@@ -80,10 +77,6 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 
 	// pdt2 := productService.ProductHttpService{}
 	// pdt2.InitialActivityService(pst, &productRepo.ProductRepository{})
-
-	// Product
-	svcProduct := productService.NewProductHttpService(productRepo.NewProductRepository(pst), nil, masterSyncCacheRepo)
-	activityModuleManager.Add(svcProduct)
 
 	// Product Category
 	svcProductCategory := productcategoryService.NewProductCategoryHttpService(productcategoryRepo.NewProductCategoryRepository(pst), masterSyncCacheRepo)
