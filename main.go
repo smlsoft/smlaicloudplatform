@@ -37,9 +37,6 @@ import (
 	"smlcloudplatform/pkg/pos/shift"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/eorder"
-	"smlcloudplatform/pkg/product/inventory"
-	"smlcloudplatform/pkg/product/inventoryimport"
-	"smlcloudplatform/pkg/product/inventorysearchconsumer"
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
 	"smlcloudplatform/pkg/product/ordertype"
@@ -65,7 +62,6 @@ import (
 	"smlcloudplatform/pkg/slipimage"
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/stockbalanceimport"
-	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/transaction/documentformate"
 	"smlcloudplatform/pkg/transaction/paid"
@@ -201,7 +197,6 @@ func main() {
 			shop.NewShopMemberHttp(ms, cfg),
 			employee.NewEmployeeHttp(ms, cfg), member.NewMemberHttp(ms, cfg),
 
-			inventory.NewInventoryHttp(ms, cfg),
 			option.NewOptionHttp(ms, cfg),
 			unit.NewUnitHttp(ms, cfg),
 			optionpattern.NewOptionPatternHttp(ms, cfg),
@@ -213,10 +208,6 @@ func main() {
 			// product.NewProductHttp(ms, cfg),
 			productgroup.NewProductGroupHttp(ms, cfg),
 			producttype.NewProductTypeHttp(ms, cfg),
-
-			inventoryimport.NewInventoryImportHttp(ms, cfg),
-			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
-			inventoryimport.NewCategoryImportHttp(ms, cfg),
 
 			images.NewImagesHttp(ms, cfg, imagePersister),
 
@@ -251,7 +242,6 @@ func main() {
 
 			task.NewTaskHttp(ms, cfg),
 			smltransaction.NewSMLTransactionHttp(ms, cfg),
-			sysinfo.NewSysInfoHttp(ms, cfg),
 
 			// debt account
 			creditor.NewCreditorHttp(ms, cfg),
@@ -323,9 +313,6 @@ func main() {
 		if consumerGroupName == "" {
 			consumerGroupName = "03"
 		}
-
-		inventoryConsumer := inventorysearchconsumer.NewInventorySearchConsumer(ms, cfg)
-		inventoryConsumer.Start()
 
 		journal.MigrationJournalTable(ms, cfg)
 		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)

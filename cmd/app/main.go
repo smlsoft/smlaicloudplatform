@@ -32,11 +32,8 @@ import (
 	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/eorder"
-	"smlcloudplatform/pkg/product/inventory"
-	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
 	"smlcloudplatform/pkg/product/ordertype"
-	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
@@ -76,8 +73,6 @@ import (
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings"
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/storefront"
-	"smlcloudplatform/pkg/syncdata"
-	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/documentformate"
@@ -175,14 +170,8 @@ func main() {
 		authentication.NewAuthenticationHttp(ms, cfg),
 		shop.NewShopHttp(ms, cfg),
 		shop.NewShopMemberHttp(ms, cfg),
-		inventory.NewInventoryHttp(ms, cfg),
-
-		syncdata.NewSyncDataHttp(ms, cfg),
 		member.NewMemberHttp(ms, cfg),
 		employee.NewEmployeeHttp(ms, cfg),
-		inventoryimport.NewInventoryImportHttp(ms, cfg),
-		inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
-		inventoryimport.NewCategoryImportHttp(ms, cfg),
 
 		//restaurants
 		zone.NewZoneHttp(ms, cfg),
@@ -225,7 +214,6 @@ func main() {
 		color.NewColorHttp(ms, cfg),
 		productcategory.NewProductCategoryHttp(ms, cfg),
 		productbarcode.NewProductBarcodeHttp(ms, cfg),
-		product.NewProductHttp(ms, cfg),
 		productgroup.NewProductGroupHttp(ms, cfg),
 
 		accountperiodmaster.NewAccountPeriodMasterHttp(ms, cfg),
@@ -236,9 +224,6 @@ func main() {
 
 		task.NewTaskHttp(ms, cfg),
 		smltransaction.NewSMLTransactionHttp(ms, cfg),
-
-		sysinfo.NewSysInfoHttp(ms, cfg),
-		// branch.NewBranchHttp(ms, cfg),
 
 		// debt account
 		creditor.NewCreditorHttp(ms, cfg),

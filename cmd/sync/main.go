@@ -4,7 +4,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/migration"
-	"smlcloudplatform/pkg/syncdata"
 	"time"
 )
 
@@ -22,9 +21,6 @@ func main() {
 	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
-
-	syncapi := syncdata.NewSyncDataHttp(ms, cfg)
-	syncapi.RegisterHttp()
 
 	ms.Start()
 }
