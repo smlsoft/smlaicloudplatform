@@ -6597,921 +6597,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/import/category": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.CategoryImportPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Catagory Import",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Catagory",
-                        "name": "Catagory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.CategoryImport"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Category Import ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/import/inventory": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.InventoryPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory Import",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Inventory"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Inventory Import ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/import/option": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Inventory Option",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryOptionPageResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory Option",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Option",
-                        "name": "Option",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.InventoryOptionMainImport"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Option",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Option ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.InventoryPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Inventory"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/barcode/{barcode}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by barcode",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Barcode",
-                        "name": "barcode",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Inventory"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryBulkInsertResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/categoryupdate/{catid}": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Inventory Category List",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category GUID",
-                        "name": "catid",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Update Inventory By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryFetchUpdateResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/itemcode/{itemcode}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by Item Code",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Inventory Item Code",
-                        "name": "itemcode",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Inventory Item Code",
-                        "name": "itemcode",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Inventory"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/save": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Save Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Inventory"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventory/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Inventory ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Inventory ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Inventory"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Inventory ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/line-notify": {
             "post": {
                 "description": "List Notify",
@@ -8441,217 +7526,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/ocr.OcrRequest"
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/optgroup": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Inventory Option Group",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory Option Group",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Option Group",
-                        "name": "Option",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryOptionGroup"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/optgroup/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Get Option Group Information",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "OptionGroup Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Option Group",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Option ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Option Group",
-                        "name": "OptionGroup",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryOptionGroup"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete OptionGroup",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "OptionGroup ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -13749,146 +12623,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/product": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "category guid",
-                        "name": "category",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "description": "Product",
-                        "name": "Product",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Product"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "description": "Product GUIDs",
-                        "name": "Product",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/product-section/branch": {
             "get": {
                 "security": [
@@ -15681,127 +14415,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/product/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "description": "Product",
-                        "name": "Product",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Product"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/product/by-barcode": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get product by barcode",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "barcode number",
-                        "name": "code",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/product/by-code": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get Product by code array",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Code filter, json array encode ",
-                        "name": "codes",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/product/category": {
             "get": {
                 "security": [
@@ -16699,109 +15312,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/product/list": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "search limit offset",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "lang",
-                        "name": "lang",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "category guid",
-                        "name": "category",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/product/master/{code}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get master Product by code",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Code",
-                        "name": "codes",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/product/order-type": {
             "get": {
                 "security": [
@@ -17610,47 +16120,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/product/save": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Save Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "description": "Product",
-                        "name": "Product",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Product"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/product/type": {
             "get": {
                 "security": [
@@ -18028,128 +16497,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "ProductType ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/product/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Product",
-                        "name": "Product",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Product"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Product"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -25436,47 +23783,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/syncproduct": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Synchronize"
-                ],
-                "parameters": [
-                    {
-                        "description": "Data Payload",
-                        "name": "Data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SyncInventoryData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -32914,7 +31220,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                            "$ref": "#/definitions/models.Unit"
                         }
                     }
                 ],
@@ -32999,7 +31305,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                                "$ref": "#/definitions/models.Unit"
                             }
                         }
                     }
@@ -33226,7 +31532,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                            "$ref": "#/definitions/models.Unit"
                         }
                     }
                 ],
@@ -33309,7 +31615,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                            "$ref": "#/definitions/models.Unit"
                         }
                     }
                 ],
@@ -34595,26 +32901,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AvailablePatternOption": {
-            "type": "object",
-            "properties": {
-                "optionpatterntags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "patternkey": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                }
-            }
-        },
         "models.BOMProductBarcode": {
             "type": "object",
             "required": [
@@ -34808,97 +33094,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Barcode": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string"
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "image": {
-                    "type": "string"
-                },
-                "isprimary": {
-                    "type": "boolean"
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
-                }
-            }
-        },
         "models.BarcodeRequest": {
             "type": "object",
             "required": [
@@ -35065,161 +33260,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "models.CategoryImport": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "childcount": {
-                    "type": "integer"
-                },
-                "codelist": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.CodeXSort"
-                    }
-                },
-                "colorselect": {
-                    "type": "string"
-                },
-                "colorselecthex": {
-                    "type": "string"
-                },
-                "coveruri": {
-                    "type": "string"
-                },
-                "groupnumber": {
-                    "type": "integer"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "imageuri": {
-                    "type": "string"
-                },
-                "isdisabled": {
-                    "type": "boolean"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "parentguid": {
-                    "type": "string"
-                },
-                "parentguidall": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "useimageorcolor": {
-                    "type": "boolean"
-                },
-                "xsorts": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.XSort"
-                    }
-                }
-            }
-        },
-        "models.CategoryImportInfo": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "childcount": {
-                    "type": "integer"
-                },
-                "codelist": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.CodeXSort"
-                    }
-                },
-                "colorselect": {
-                    "type": "string"
-                },
-                "colorselecthex": {
-                    "type": "string"
-                },
-                "coveruri": {
-                    "type": "string"
-                },
-                "groupnumber": {
-                    "type": "integer"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "imageuri": {
-                    "type": "string"
-                },
-                "isdisabled": {
-                    "type": "boolean"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "parentguid": {
-                    "type": "string"
-                },
-                "parentguidall": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "useimageorcolor": {
-                    "type": "boolean"
-                },
-                "xsorts": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.XSort"
-                    }
-                }
-            }
-        },
-        "models.CategoryImportPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryImportInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
@@ -35767,6 +33807,161 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Detail": {
+            "type": "object",
+            "properties": {
+                "averagecost": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "calcflag": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docref": {
+                    "type": "string"
+                },
+                "docrefdatetime": {
+                    "type": "string"
+                },
+                "extrajson": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "ispos": {
+                    "type": "integer"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "laststatus": {
+                    "type": "integer"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "priceexcludevat": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "sumamountexcludevat": {
+                    "type": "number"
+                },
+                "sumofcost": {
+                    "type": "number"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "tolocationcode": {
+                    "type": "string"
+                },
+                "tolocationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "totalqty": {
+                    "type": "number"
+                },
+                "totalvaluevat": {
+                    "type": "number"
+                },
+                "towhcode": {
+                    "type": "string"
+                },
+                "towhnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "whcode": {
+                    "type": "string"
+                },
+                "whnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.DocumentFormate": {
             "type": "object",
             "required": [
@@ -36179,846 +34374,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Inventory": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "availablepatternoptions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AvailablePatternOption"
-                    }
-                },
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "barcodedescriptionfromproduct": {
-                    "type": "boolean"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.ProductCategory"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "isstockproduct": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemguid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemsku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemtype": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "itemvat": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "optionpatternmaster": {
-                    "type": "string"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
-                },
-                "ordercount": {
-                    "type": "integer",
-                    "maximum": 100
-                },
-                "orderminimum": {
-                    "type": "number"
-                },
-                "parid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shoprecommended": {
-                    "type": "boolean"
-                },
-                "starpercent": {
-                    "type": "number"
-                },
-                "stockproductguidref": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitcost": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitstandard": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.InventoryActivity": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "availablepatternoptions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AvailablePatternOption"
-                    }
-                },
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "barcodedescriptionfromproduct": {
-                    "type": "boolean"
-                },
-                "barcodedetail": {
-                    "$ref": "#/definitions/models.Barcode"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.ProductCategory"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "isstockproduct": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemguid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemsku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemtype": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "itemvat": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "optionpatternmaster": {
-                    "type": "string"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
-                },
-                "ordercount": {
-                    "type": "integer",
-                    "maximum": 100
-                },
-                "orderminimum": {
-                    "type": "number"
-                },
-                "parid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "shoprecommended": {
-                    "type": "boolean"
-                },
-                "starpercent": {
-                    "type": "number"
-                },
-                "stockproductguidref": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unit": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
-                },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitcost": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitstandard": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.InventoryBulkInsertResponse": {
-            "type": "object",
-            "properties": {
-                "created": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "payloadDuplicate": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "success": {
-                    "type": "boolean"
-                },
-                "updateFailed": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "updated": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "models.InventoryDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.InventoryFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.InventoryLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.InventoryImage": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.InventoryInfo": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "availablepatternoptions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AvailablePatternOption"
-                    }
-                },
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "barcodedescriptionfromproduct": {
-                    "type": "boolean"
-                },
-                "barcodedetail": {
-                    "$ref": "#/definitions/models.Barcode"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.ProductCategory"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "isstockproduct": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemguid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemsku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemtype": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "itemvat": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "optionpatternmaster": {
-                    "type": "string"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
-                },
-                "ordercount": {
-                    "type": "integer",
-                    "maximum": 100
-                },
-                "orderminimum": {
-                    "type": "number"
-                },
-                "parid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shoprecommended": {
-                    "type": "boolean"
-                },
-                "starpercent": {
-                    "type": "number"
-                },
-                "stockproductguidref": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unit": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
-                },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitcost": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitstandard": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.InventoryInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.InventoryInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.InventoryLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryDeleteActivity"
-                    }
-                }
-            }
-        },
-        "models.InventoryOptionGroup": {
-            "type": "object",
-            "properties": {
-                "details": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryOptionGroupDetail"
-                    }
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "optionname1": {
-                    "type": "string"
-                },
-                "productselectoption1": {
-                    "type": "boolean"
-                },
-                "productselectoption2": {
-                    "type": "boolean"
-                },
-                "productselectoptionmax": {
-                    "type": "integer"
-                },
-                "productselectoptionmin": {
-                    "type": "integer"
-                },
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.InventoryOptionGroupDetail": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "detailname1": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                }
-            }
-        },
         "models.InventoryOptionMain": {
-            "type": "object",
-            "required": [
-                "name1",
-                "names"
-            ],
-            "properties": {
-                "choices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Choice"
-                    }
-                },
-                "choicetype": {
-                    "type": "integer"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "isstockcontrol": {
-                    "type": "boolean"
-                },
-                "maxselect": {
-                    "type": "integer"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "optiondetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.OptionDetail"
-                    }
-                },
-                "required": {
-                    "type": "boolean"
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.InventoryOptionMainImport": {
             "type": "object",
             "required": [
                 "name1",
@@ -37169,31 +34525,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.InventoryPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.InventoryTag": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
                 }
             }
         },
@@ -37995,73 +35326,6 @@ const docTemplate = `{
                 },
                 "issavebill": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.Option": {
-            "type": "object",
-            "required": [
-                "name1",
-                "names"
-            ],
-            "properties": {
-                "choices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Choice"
-                    }
-                },
-                "choicetype": {
-                    "type": "integer"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "isstockcontrol": {
-                    "type": "boolean"
-                },
-                "maxselect": {
-                    "type": "integer"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "optiondetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.OptionDetail"
-                    }
-                },
-                "required": {
-                    "type": "boolean"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -39033,105 +36297,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Product": {
-            "type": "object",
-            "required": [
-                "itemcode",
-                "names",
-                "unit"
-            ],
-            "properties": {
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage"
-                    }
-                },
-                "issumpoint": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                },
-                "itemstocktype": {
-                    "type": "integer"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "prices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
-                    }
-                },
-                "taxtype": {
-                    "description": "0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี",
-                    "type": "integer"
-                },
-                "unit": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductUnit"
-                },
-                "unitcost": {
-                    "type": "string"
-                },
-                "unitcostnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "units": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductUnit"
-                    }
-                },
-                "unitstandard": {
-                    "type": "string"
-                },
-                "unitstandardnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "useserialnumber": {
-                    "type": "boolean"
-                },
-                "vattype": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.ProductBarcodeRequest": {
             "type": "object",
             "required": [
@@ -39179,7 +36344,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                        "$ref": "#/definitions/models.ProductImage"
                     }
                 },
                 "imageuri": {
@@ -39253,7 +36418,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -39419,6 +36584,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ProductImport": {
             "type": "object",
             "properties": {
@@ -39503,6 +36679,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -39730,7 +36917,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -39975,7 +37162,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -41141,7 +38328,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -41963,7 +39150,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -42724,7 +39911,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -42969,7 +40156,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -43214,7 +40401,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -43459,7 +40646,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "detailtotalamount": {
@@ -43681,23 +40868,6 @@ const docTemplate = `{
                 "name5": {
                     "type": "string",
                     "maxLength": 255
-                }
-            }
-        },
-        "models.SyncInventoryData": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.Inventory"
-                },
-                "mode": {
-                    "type": "integer"
-                },
-                "myguid": {
-                    "type": "string"
-                },
-                "tablecode": {
-                    "type": "string"
                 }
             }
         },
@@ -44101,46 +41271,24 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UnitUse": {
+        "models.Unit": {
             "type": "object",
+            "required": [
+                "names",
+                "unitcode"
+            ],
             "properties": {
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "isprimary": {
-                    "type": "boolean"
-                },
-                "isunitcost": {
-                    "type": "boolean"
-                },
-                "isunitstandard": {
-                    "type": "boolean"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "unitcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitname1": {
                     "type": "string"
@@ -44723,77 +41871,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_product_inventory_models.Unit": {
-            "type": "object",
-            "properties": {
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_product_models.ProductImage": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_product_models.ProductUnit": {
-            "type": "object",
-            "properties": {
-                "divider": {
-                    "type": "number"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "stand": {
-                    "type": "number"
-                },
-                "stockcount": {
-                    "type": "boolean"
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode": {
             "type": "object",
             "required": [
@@ -44841,7 +41918,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                        "$ref": "#/definitions/models.ProductImage"
                     }
                 },
                 "imageuri": {
@@ -44915,7 +41992,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -44966,28 +42043,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.XSort"
                     }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -45076,44 +42131,8 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_unit_models.Unit": {
-            "type": "object",
-            "required": [
-                "names",
-                "unitcode"
-            ],
-            "properties": {
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
                 }
             }
         },
@@ -45630,161 +42649,6 @@ const docTemplate = `{
             "properties": {
                 "status": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "docref": {
-                    "type": "string"
-                },
-                "docrefdatetime": {
-                    "type": "string"
-                },
-                "extrajson": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "sku": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
                 }
             }
         },

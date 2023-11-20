@@ -119,19 +119,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.AvailablePatternOption:
-    properties:
-      optionpatterntags:
-        items:
-          type: string
-        type: array
-      patternkey:
-        type: string
-      price:
-        type: number
-      qty:
-        type: number
-    type: object
   models.BOMProductBarcode:
     properties:
       barcode:
@@ -266,70 +253,6 @@ definitions:
     required:
     - names
     type: object
-  models.Barcode:
-    properties:
-      barcode:
-        type: string
-      description1:
-        maxLength: 255
-        type: string
-      description2:
-        maxLength: 255
-        type: string
-      description3:
-        maxLength: 255
-        type: string
-      description4:
-        maxLength: 255
-        type: string
-      description5:
-        maxLength: 255
-        type: string
-      image:
-        type: string
-      isprimary:
-        type: boolean
-      memberprice:
-        type: number
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      normalprice:
-        type: number
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-      unitcode:
-        type: string
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
-    required:
-    - name1
-    type: object
   models.BarcodeRequest:
     properties:
       barcode:
@@ -442,111 +365,6 @@ definitions:
         items:
           type: string
         type: array
-    type: object
-  models.CategoryImport:
-    properties:
-      childcount:
-        type: integer
-      codelist:
-        items:
-          $ref: '#/definitions/models.CodeXSort'
-        type: array
-        uniqueItems: true
-      colorselect:
-        type: string
-      colorselecthex:
-        type: string
-      coveruri:
-        type: string
-      groupnumber:
-        type: integer
-      guidfixed:
-        type: string
-      id:
-        type: string
-      imageuri:
-        type: string
-      isdisabled:
-        type: boolean
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      parentguid:
-        type: string
-      parentguidall:
-        type: string
-      shopid:
-        type: string
-      useimageorcolor:
-        type: boolean
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
-  models.CategoryImportInfo:
-    properties:
-      childcount:
-        type: integer
-      codelist:
-        items:
-          $ref: '#/definitions/models.CodeXSort'
-        type: array
-        uniqueItems: true
-      colorselect:
-        type: string
-      colorselecthex:
-        type: string
-      coveruri:
-        type: string
-      groupnumber:
-        type: integer
-      guidfixed:
-        type: string
-      id:
-        type: string
-      imageuri:
-        type: string
-      isdisabled:
-        type: boolean
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      parentguid:
-        type: string
-      parentguidall:
-        type: string
-      shopid:
-        type: string
-      useimageorcolor:
-        type: boolean
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
-  models.CategoryImportPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.CategoryImportInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
     type: object
   models.ChartOfAccount:
     properties:
@@ -918,6 +736,109 @@ definitions:
     required:
     - names
     type: object
+  models.Detail:
+    properties:
+      averagecost:
+        type: number
+      barcode:
+        type: string
+      calcflag:
+        type: integer
+      discount:
+        type: string
+      discountamount:
+        type: number
+      dividevalue:
+        type: number
+      docdatetime:
+        type: string
+      docref:
+        type: string
+      docrefdatetime:
+        type: string
+      extrajson:
+        type: string
+      inquirytype:
+        type: integer
+      ispos:
+        type: integer
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      itemtype:
+        type: integer
+      laststatus:
+        type: integer
+      linenumber:
+        type: integer
+      locationcode:
+        type: string
+      locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      multiunit:
+        type: boolean
+      price:
+        type: number
+      priceexcludevat:
+        type: number
+      qty:
+        type: number
+      remark:
+        type: string
+      shelfcode:
+        type: string
+      sku:
+        type: string
+      standvalue:
+        type: number
+      sumamount:
+        type: number
+      sumamountexcludevat:
+        type: number
+      sumofcost:
+        type: number
+      taxtype:
+        type: integer
+      tolocationcode:
+        type: string
+      tolocationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      totalqty:
+        type: number
+      totalvaluevat:
+        type: number
+      towhcode:
+        type: string
+      towhnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      unitcode:
+        type: string
+      unitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      vatcal:
+        type: integer
+      vattype:
+        type: integer
+      whcode:
+        type: string
+      whnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   models.DocumentFormate:
     properties:
       accountgroup:
@@ -1195,595 +1116,7 @@ definitions:
           $ref: '#/definitions/models.IncudeChoice'
         type: array
     type: object
-  models.Inventory:
-    properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      availablepatternoptions:
-        items:
-          $ref: '#/definitions/models.AvailablePatternOption'
-        type: array
-      barcode:
-        maxLength: 100
-        type: string
-      barcodedescriptionfromproduct:
-        type: boolean
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcode'
-        type: array
-      category:
-        $ref: '#/definitions/models.ProductCategory'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
-        maxLength: 100
-        type: string
-      description1:
-        maxLength: 255
-        type: string
-      description2:
-        maxLength: 255
-        type: string
-      description3:
-        maxLength: 255
-        type: string
-      description4:
-        maxLength: 255
-        type: string
-      description5:
-        maxLength: 255
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      isstockproduct:
-        type: boolean
-      itemcode:
-        maxLength: 50
-        type: string
-      itemguid:
-        maxLength: 50
-        type: string
-      itemsku:
-        maxLength: 50
-        type: string
-      itemtype:
-        maximum: 125
-        minimum: -125
-        type: integer
-      itemvat:
-        maximum: 125
-        minimum: -125
-        type: integer
-      memberprice:
-        type: number
-      multiunit:
-        type: boolean
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      normalprice:
-        type: number
-      optionpatternmaster:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      ordercount:
-        maximum: 100
-        type: integer
-      orderminimum:
-        type: number
-      parid:
-        maxLength: 50
-        type: string
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      shoprecommended:
-        type: boolean
-      starpercent:
-        type: number
-      stockproductguidref:
-        type: string
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unitcode:
-        maxLength: 100
-        type: string
-      unitcost:
-        maxLength: 100
-        type: string
-      unitstandard:
-        maxLength: 100
-        type: string
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - name1
-    type: object
-  models.InventoryActivity:
-    properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      availablepatternoptions:
-        items:
-          $ref: '#/definitions/models.AvailablePatternOption'
-        type: array
-      barcode:
-        maxLength: 100
-        type: string
-      barcodedescriptionfromproduct:
-        type: boolean
-      barcodedetail:
-        $ref: '#/definitions/models.Barcode'
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcode'
-        type: array
-      category:
-        $ref: '#/definitions/models.ProductCategory'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
-        maxLength: 100
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      description1:
-        maxLength: 255
-        type: string
-      description2:
-        maxLength: 255
-        type: string
-      description3:
-        maxLength: 255
-        type: string
-      description4:
-        maxLength: 255
-        type: string
-      description5:
-        maxLength: 255
-        type: string
-      guidfixed:
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      isstockproduct:
-        type: boolean
-      itemcode:
-        maxLength: 50
-        type: string
-      itemguid:
-        maxLength: 50
-        type: string
-      itemsku:
-        maxLength: 50
-        type: string
-      itemtype:
-        maximum: 125
-        minimum: -125
-        type: integer
-      itemvat:
-        maximum: 125
-        minimum: -125
-        type: integer
-      memberprice:
-        type: number
-      multiunit:
-        type: boolean
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      normalprice:
-        type: number
-      optionpatternmaster:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      ordercount:
-        maximum: 100
-        type: integer
-      orderminimum:
-        type: number
-      parid:
-        maxLength: 50
-        type: string
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      shopid:
-        type: string
-      shoprecommended:
-        type: boolean
-      starpercent:
-        type: number
-      stockproductguidref:
-        type: string
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unit:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
-      unitcode:
-        maxLength: 100
-        type: string
-      unitcost:
-        maxLength: 100
-        type: string
-      unitstandard:
-        maxLength: 100
-        type: string
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      updatedat:
-        type: string
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - name1
-    type: object
-  models.InventoryBulkInsertResponse:
-    properties:
-      created:
-        items:
-          type: string
-        type: array
-      payloadDuplicate:
-        items:
-          type: string
-        type: array
-      success:
-        type: boolean
-      updateFailed:
-        items:
-          type: string
-        type: array
-      updated:
-        items:
-          type: string
-        type: array
-    type: object
-  models.InventoryDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.InventoryFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.InventoryLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  models.InventoryImage:
-    properties:
-      uri:
-        type: string
-    type: object
-  models.InventoryInfo:
-    properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      availablepatternoptions:
-        items:
-          $ref: '#/definitions/models.AvailablePatternOption'
-        type: array
-      barcode:
-        maxLength: 100
-        type: string
-      barcodedescriptionfromproduct:
-        type: boolean
-      barcodedetail:
-        $ref: '#/definitions/models.Barcode'
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcode'
-        type: array
-      category:
-        $ref: '#/definitions/models.ProductCategory'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
-        maxLength: 100
-        type: string
-      description1:
-        maxLength: 255
-        type: string
-      description2:
-        maxLength: 255
-        type: string
-      description3:
-        maxLength: 255
-        type: string
-      description4:
-        maxLength: 255
-        type: string
-      description5:
-        maxLength: 255
-        type: string
-      guidfixed:
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      isstockproduct:
-        type: boolean
-      itemcode:
-        maxLength: 50
-        type: string
-      itemguid:
-        maxLength: 50
-        type: string
-      itemsku:
-        maxLength: 50
-        type: string
-      itemtype:
-        maximum: 125
-        minimum: -125
-        type: integer
-      itemvat:
-        maximum: 125
-        minimum: -125
-        type: integer
-      memberprice:
-        type: number
-      multiunit:
-        type: boolean
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      normalprice:
-        type: number
-      optionpatternmaster:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      ordercount:
-        maximum: 100
-        type: integer
-      orderminimum:
-        type: number
-      parid:
-        maxLength: 50
-        type: string
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      shoprecommended:
-        type: boolean
-      starpercent:
-        type: number
-      stockproductguidref:
-        type: string
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unit:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
-      unitcode:
-        maxLength: 100
-        type: string
-      unitcost:
-        maxLength: 100
-        type: string
-      unitstandard:
-        maxLength: 100
-        type: string
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - name1
-    type: object
-  models.InventoryInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.InventoryInfo'
-      success:
-        type: boolean
-    type: object
-  models.InventoryLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.InventoryActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.InventoryDeleteActivity'
-        type: array
-    type: object
-  models.InventoryOptionGroup:
-    properties:
-      details:
-        items:
-          $ref: '#/definitions/models.InventoryOptionGroupDetail'
-        type: array
-      guidfixed:
-        type: string
-      id:
-        type: string
-      optionname1:
-        type: string
-      productselectoption1:
-        type: boolean
-      productselectoption2:
-        type: boolean
-      productselectoptionmax:
-        type: integer
-      productselectoptionmin:
-        type: integer
-      shopid:
-        type: string
-    type: object
-  models.InventoryOptionGroupDetail:
-    properties:
-      amount:
-        type: number
-      detailname1:
-        type: string
-      guidfixed:
-        type: string
-    type: object
   models.InventoryOptionMain:
-    properties:
-      choices:
-        items:
-          $ref: '#/definitions/models.Choice'
-        type: array
-      choicetype:
-        type: integer
-      code:
-        type: string
-      isstockcontrol:
-        type: boolean
-      maxselect:
-        type: integer
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      optiondetails:
-        items:
-          $ref: '#/definitions/models.OptionDetail'
-        type: array
-      required:
-        type: boolean
-      xorder:
-        type: integer
-    required:
-    - name1
-    - names
-    type: object
-  models.InventoryOptionMainImport:
     properties:
       choices:
         items:
@@ -1889,22 +1222,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.InventoryPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.InventoryInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  models.InventoryTag:
-    properties:
-      name:
-        type: string
     type: object
   models.Journal:
     properties:
@@ -2442,53 +1759,6 @@ definitions:
         type: boolean
       issavebill:
         type: boolean
-    type: object
-  models.Option:
-    properties:
-      choices:
-        items:
-          $ref: '#/definitions/models.Choice'
-        type: array
-      choicetype:
-        type: integer
-      code:
-        type: string
-      isstockcontrol:
-        type: boolean
-      maxselect:
-        type: integer
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      optiondetails:
-        items:
-          $ref: '#/definitions/models.OptionDetail'
-        type: array
-      required:
-        type: boolean
-      xorder:
-        type: integer
-    required:
-    - name1
-    - names
     type: object
   models.OptionDetail:
     properties:
@@ -3148,74 +2418,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.Product:
-    properties:
-      barcodes:
-        items:
-          type: string
-        type: array
-      groupcode:
-        type: string
-      groupname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
-        type: array
-      issumpoint:
-        type: boolean
-      itemcode:
-        maxLength: 100
-        minLength: 1
-        type: string
-      itemstocktype:
-        type: integer
-      itemtype:
-        type: integer
-      multiunit:
-        type: boolean
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      prices:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
-        type: array
-      taxtype:
-        description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
-        type: integer
-      unit:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductUnit'
-      unitcost:
-        type: string
-      unitcostnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      units:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductUnit'
-        type: array
-      unitstandard:
-        type: string
-      unitstandardnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      useserialnumber:
-        type: boolean
-      vattype:
-        type: integer
-    required:
-    - itemcode
-    - names
-    - unit
-    type: object
   models.ProductBarcodeRequest:
     properties:
       barcode:
@@ -3245,7 +2447,7 @@ definitions:
         type: array
       images:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+          $ref: '#/definitions/models.ProductImage'
         type: array
       imageuri:
         type: string
@@ -3295,7 +2497,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -3411,6 +2613,13 @@ definitions:
     - names
     - refunitnames
     type: object
+  models.ProductImage:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
   models.ProductImport:
     properties:
       barcode:
@@ -3469,6 +2678,13 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      price:
+        type: number
+    type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
       price:
         type: number
     type: object
@@ -3624,7 +2840,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -3787,7 +3003,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -4570,7 +3786,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -5117,7 +4333,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -5623,7 +4839,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -5786,7 +5002,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -5949,7 +5165,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -6112,7 +5328,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -6262,17 +5478,6 @@ definitions:
         type: string
     required:
     - name1
-    type: object
-  models.SyncInventoryData:
-    properties:
-      data:
-        $ref: '#/definitions/models.Inventory'
-      mode:
-        type: integer
-      myguid:
-        type: string
-      tablecode:
-        type: string
     type: object
   models.Table:
     properties:
@@ -6550,34 +5755,16 @@ definitions:
       success:
         type: boolean
     type: object
-  models.UnitUse:
+  models.Unit:
     properties:
-      description1:
-        maxLength: 255
-        type: string
-      description2:
-        maxLength: 255
-        type: string
-      description3:
-        maxLength: 255
-        type: string
-      description4:
-        maxLength: 255
-        type: string
-      description5:
-        maxLength: 255
-        type: string
-      isprimary:
-        type: boolean
-      isunitcost:
-        type: boolean
-      isunitstandard:
-        type: boolean
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       unitcode:
+        maxLength: 100
         type: string
       unitname1:
         type: string
@@ -6589,6 +5776,9 @@ definitions:
         type: string
       unitname5:
         type: string
+    required:
+    - names
+    - unitcode
     type: object
   models.Vat:
     properties:
@@ -6966,52 +6156,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_product_inventory_models.Unit:
-    properties:
-      unitcode:
-        type: string
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
-    type: object
-  smlcloudplatform_pkg_product_product_models.ProductImage:
-    properties:
-      uri:
-        type: string
-      xorder:
-        type: integer
-    type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
-  smlcloudplatform_pkg_product_product_models.ProductUnit:
-    properties:
-      divider:
-        type: number
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      stand:
-        type: number
-      stockcount:
-        type: boolean
-      unitcode:
-        type: string
-      xorder:
-        type: integer
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
       barcode:
@@ -7041,7 +6185,7 @@ definitions:
         type: array
       images:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+          $ref: '#/definitions/models.ProductImage'
         type: array
       imageuri:
         type: string
@@ -7091,7 +6235,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
@@ -7129,20 +6273,6 @@ definitions:
     required:
     - barcode
     - names
-    type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
-    properties:
-      uri:
-        type: string
-      xorder:
-        type: integer
-    type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductType:
     properties:
@@ -7201,33 +6331,8 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
-    type: object
-  smlcloudplatform_pkg_product_unit_models.Unit:
-    properties:
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      unitcode:
-        maxLength: 100
-        type: string
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
-    required:
-    - names
-    - unitcode
     type: object
   smlcloudplatform_pkg_report_reportqueryc_models.ReportParam:
     properties:
@@ -7577,109 +6682,6 @@ definitions:
     properties:
       status:
         type: integer
-    type: object
-  smlcloudplatform_pkg_transaction_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      docref:
-        type: string
-      docrefdatetime:
-        type: string
-      extrajson:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      sku:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
     type: object
   smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail:
     properties:
@@ -11941,573 +10943,6 @@ paths:
       summary: ดึงข้อมูลงบทดลอง
       tags:
       - GLReport
-  /import/category:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Category
-      parameters:
-      - description: Category Import ID
-        in: body
-        name: id
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.CategoryImportPageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    post:
-      consumes:
-      - application/json
-      description: Create Catagory Import
-      parameters:
-      - description: Catagory
-        in: body
-        name: Catagory
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.CategoryImport'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-  /import/inventory:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Inventory
-      parameters:
-      - description: Inventory Import ID
-        in: body
-        name: id
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.InventoryPageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory Import
-      parameters:
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Inventory'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-  /import/option:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Option
-      parameters:
-      - description: Option ID
-        in: body
-        name: id
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    get:
-      consumes:
-      - application/json
-      description: List Inventory Option
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InventoryOptionPageResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory Option
-      parameters:
-      - description: Option
-        in: body
-        name: Option
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.InventoryOptionMainImport'
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-  /inventory:
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.InventoryPageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory
-      parameters:
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          $ref: '#/definitions/models.Inventory'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /inventory/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Inventory
-      parameters:
-      - description: Inventory ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Inventory ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InventoryInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    put:
-      consumes:
-      - application/json
-      description: Update Inventory
-      parameters:
-      - description: Inventory ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          $ref: '#/definitions/models.Inventory'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /inventory/barcode/{barcode}:
-    get:
-      consumes:
-      - application/json
-      description: get struct array by barcode
-      parameters:
-      - description: Barcode
-        in: path
-        name: barcode
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InventoryInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /inventory/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory
-      parameters:
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Inventory'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.InventoryBulkInsertResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /inventory/categoryupdate/{catid}:
-    post:
-      consumes:
-      - application/json
-      description: Update Inventory Category List
-      parameters:
-      - description: Category GUID
-        in: path
-        name: catid
-        required: true
-        type: string
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /inventory/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Update Inventory By Date
-      parameters:
-      - description: DateTime YYYY-MM-DDTHH:mm
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InventoryFetchUpdateResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /inventory/itemcode/{itemcode}:
-    get:
-      consumes:
-      - application/json
-      description: get struct array by Item Code
-      parameters:
-      - description: Inventory Item Code
-        in: path
-        name: itemcode
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InventoryInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    put:
-      consumes:
-      - application/json
-      description: Update Inventory
-      parameters:
-      - description: Inventory Item Code
-        in: path
-        name: itemcode
-        required: true
-        type: string
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          $ref: '#/definitions/models.Inventory'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /inventory/save:
-    post:
-      consumes:
-      - application/json
-      description: Save Inventory
-      parameters:
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          $ref: '#/definitions/models.Inventory'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
   /line-notify:
     post:
       consumes:
@@ -13097,137 +11532,6 @@ paths:
       summary: Upload Ocr
       tags:
       - OCR
-  /optgroup:
-    get:
-      consumes:
-      - application/json
-      description: List Inventory Option Group
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory Option Group
-      parameters:
-      - description: Option Group
-        in: body
-        name: Option
-        required: true
-        schema:
-          $ref: '#/definitions/models.InventoryOptionGroup'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /optgroup/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete OptionGroup
-      parameters:
-      - description: OptionGroup ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    get:
-      consumes:
-      - application/json
-      description: Get Option Group Information
-      parameters:
-      - description: OptionGroup Id
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    put:
-      consumes:
-      - application/json
-      description: Update Option Group
-      parameters:
-      - description: Option ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Option Group
-        in: body
-        name: OptionGroup
-        required: true
-        schema:
-          $ref: '#/definitions/models.InventoryOptionGroup'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
   /option:
     get:
       consumes:
@@ -16383,93 +14687,6 @@ paths:
       - AccessToken: []
       tags:
       - Shift
-  /product:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Product
-      parameters:
-      - description: Product GUIDs
-        in: body
-        name: Product
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - description: category guid
-        in: query
-        name: category
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
-    post:
-      consumes:
-      - application/json
-      description: Create Product
-      parameters:
-      - description: Product
-        in: body
-        name: Product
-        required: true
-        schema:
-          $ref: '#/definitions/models.Product'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
   /product-section/branch:
     delete:
       consumes:
@@ -17134,82 +15351,6 @@ paths:
       - AccessToken: []
       tags:
       - SectionDepartment
-  /product/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Product
-      parameters:
-      - description: Product ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Product ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
-    put:
-      consumes:
-      - application/json
-      description: Update Product
-      parameters:
-      - description: Product ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Product
-        in: body
-        name: Product
-        required: true
-        schema:
-          $ref: '#/definitions/models.Product'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
   /product/barcode:
     delete:
       consumes:
@@ -17657,80 +15798,6 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode2
-  /product/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create Product
-      parameters:
-      - description: Product
-        in: body
-        name: Product
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Product'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BulkReponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
-  /product/by-barcode:
-    get:
-      consumes:
-      - application/json
-      description: get product by barcode
-      parameters:
-      - description: barcode number
-        in: query
-        name: code
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
-  /product/by-code:
-    get:
-      consumes:
-      - application/json
-      description: get Product by code array
-      parameters:
-      - description: 'Code filter, json array encode '
-        in: query
-        name: codes
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
   /product/category:
     delete:
       consumes:
@@ -18287,70 +16354,6 @@ paths:
       - AccessToken: []
       tags:
       - ProductGroup
-  /product/list:
-    get:
-      consumes:
-      - application/json
-      description: search limit offset
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: lang
-        in: query
-        name: lang
-        type: string
-      - description: category guid
-        in: query
-        name: category
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
-  /product/master/{code}:
-    get:
-      consumes:
-      - application/json
-      description: get master Product by code
-      parameters:
-      - description: Code
-        in: query
-        name: codes
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
   /product/order-type:
     delete:
       consumes:
@@ -18853,31 +16856,6 @@ paths:
       - AccessToken: []
       tags:
       - Promotion
-  /product/save:
-    post:
-      consumes:
-      - application/json
-      description: Save Product
-      parameters:
-      - description: Product
-        in: body
-        name: Product
-        required: true
-        schema:
-          $ref: '#/definitions/models.Product'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Product
   /product/type:
     delete:
       consumes:
@@ -23641,31 +21619,6 @@ paths:
       - AccessToken: []
       tags:
       - Storefront
-  /syncproduct:
-    post:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Data Payload
-        in: body
-        name: Data
-        required: true
-        schema:
-          $ref: '#/definitions/models.SyncInventoryData'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.AuthResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Synchronize
   /task:
     delete:
       consumes:
@@ -28322,7 +26275,7 @@ paths:
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
+          $ref: '#/definitions/models.Unit'
       responses:
         "201":
           description: Created
@@ -28398,7 +26351,7 @@ paths:
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
+          $ref: '#/definitions/models.Unit'
       responses:
         "201":
           description: Created
@@ -28427,7 +26380,7 @@ paths:
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
+          $ref: '#/definitions/models.Unit'
       responses:
         "201":
           description: Created
@@ -28453,7 +26406,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
+            $ref: '#/definitions/models.Unit'
           type: array
       responses:
         "201":
