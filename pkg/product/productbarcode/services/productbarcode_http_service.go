@@ -214,11 +214,12 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	}
 
 	categoryBarcode := productcategory_models.CodeXSort{
-		Barcode:   docData.Barcode,
-		Code:      docData.ItemCode,
-		Names:     docData.Names,
-		UnitCode:  docData.ItemUnitCode,
-		UnitNames: docData.ItemUnitNames,
+		Barcode:          docData.Barcode,
+		Code:             docData.ItemCode,
+		Names:            docData.Names,
+		UnitCode:         docData.ItemUnitCode,
+		UnitNames:        docData.ItemUnitNames,
+		ManufacturerGUID: docData.ManufacturerGUID,
 	}
 
 	svc.categorySvc.UpdateBarcode(shopID, categoryBarcode)

@@ -35399,6 +35399,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "manufacturerguid": {
+                    "type": "string"
+                },
                 "names": {
                     "type": "array",
                     "items": {

@@ -671,6 +671,8 @@ definitions:
         type: string
       code:
         type: string
+      manufacturerguid:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
