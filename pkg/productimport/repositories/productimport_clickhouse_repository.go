@@ -22,6 +22,9 @@ type IProductImportClickHouseRepository interface {
 
 	UpdateDuplicate(ctx context.Context, shopID string, taskID string, isDuplicate bool, barcodes []string) error
 	UpdateExist(ctx context.Context, shopID string, taskID string, isExist bool, barcodes []string) error
+
+	CountExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error)
+	CountDuplicate(ctx context.Context, shopID string, taskID string, isDuplicate bool) (int, error)
 }
 
 type ProductImportClickHouseRepository struct {
@@ -207,4 +210,34 @@ func (repo ProductImportClickHouseRepository) UpdateDuplicate(ctx context.Contex
 func (repo ProductImportClickHouseRepository) UpdateExist(ctx context.Context, shopID string, taskID string, isExist bool, barcodes []string) error {
 	return repo.pst.Exec(ctx,
 		"ALTER TABLE productbarcodeimport UPDATE isexist = ? WHERE shopid = ? AND taskid = ? AND barcode IN (?)", isExist, shopID, taskID, barcodes)
+}
+
+func (repo ProductImportClickHouseRepository) CountExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error) {
+
+	countArgs := []interface{}{}
+	countArgs = append(countArgs, shopID, taskID, isExist)
+
+	exprCount := "shopid = ? AND taskid = ? AND isexist = ?"
+	count, err := repo.pst.Count(ctx, &models.ProductImportDoc{}, exprCount, countArgs...)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (repo ProductImportClickHouseRepository) CountDuplicate(ctx context.Context, shopID string, taskID string, isDuplicate bool) (int, error) {
+
+	countArgs := []interface{}{}
+	countArgs = append(countArgs, shopID, taskID, isDuplicate)
+
+	exprCount := "shopid = ? AND taskid = ? AND isduplicate = ?"
+	count, err := repo.pst.Count(ctx, &models.ProductImportDoc{}, exprCount, countArgs...)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

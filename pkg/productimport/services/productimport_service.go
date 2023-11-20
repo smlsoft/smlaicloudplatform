@@ -340,6 +340,32 @@ func (svc ProductImportService) updateExist(shopID string, taskID string, isExis
 
 func (svc ProductImportService) SaveTask(shopID string, authUsername string, taskID string) error {
 
+	err := svc.Verify(shopID, taskID)
+
+	if err != nil {
+		return err
+	}
+
+	countDuplicate, err := svc.chRepo.CountDuplicate(context.Background(), shopID, taskID, true)
+
+	if err != nil {
+		return errors.New("counting duplicate failed")
+	}
+
+	if countDuplicate > 0 {
+		return errors.New("items barcode duplicate ")
+	}
+
+	countExist, err := svc.chRepo.CountExist(context.Background(), shopID, taskID, true)
+
+	if err != nil {
+		return errors.New("counting exist failed")
+	}
+
+	if countExist > 0 {
+		return errors.New("items barcode exist")
+	}
+
 	docs, err := svc.chRepo.All(context.Background(), shopID, taskID)
 
 	if err != nil {

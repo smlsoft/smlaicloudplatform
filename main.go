@@ -49,6 +49,7 @@ import (
 	"smlcloudplatform/pkg/product/producttype"
 	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
+	"smlcloudplatform/pkg/productimport"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
@@ -306,9 +307,14 @@ func main() {
 
 			documentformate.NewDocumentFormateHttp(ms, cfg),
 			ocr.NewOcrHttp(ms, cfg),
-			stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
+
 			notify.NewNotifyHttp(ms, cfg),
 			slipimage.NewSlipImageHttp(ms, cfg),
+
+			// import
+
+			stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
+			productimport.NewProductImportHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)
