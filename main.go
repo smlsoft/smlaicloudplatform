@@ -74,6 +74,7 @@ import (
 	"smlcloudplatform/pkg/transaction/smltransaction"
 	"smlcloudplatform/pkg/transaction/stockadjustment"
 	"smlcloudplatform/pkg/transaction/stockbalance"
+	stockbalancedetaildetail "smlcloudplatform/pkg/transaction/stockbalancedetail"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct"
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct"
@@ -270,6 +271,7 @@ func main() {
 			paid.NewPaidHttp(ms, cfg),
 			pay.NewPayHttp(ms, cfg),
 			stockbalance.NewStockBalanceHttp(ms, cfg),
+			stockbalancedetaildetail.NewStockBalanceDetailHttp(ms, cfg),
 
 			//product section
 			sectionbranch.NewSectionBranchHttp(ms, cfg),
