@@ -21,6 +21,7 @@ type ISlipImageMongoRepository interface {
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SlipImageInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.SlipImageDoc, error)
 	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.SlipImageDoc, error)
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.SlipImageDoc, error)
 
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.SlipImageItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.SlipImageDoc, error)

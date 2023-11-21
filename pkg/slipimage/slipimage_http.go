@@ -227,6 +227,9 @@ func (h SlipImageHttp) InfoSlipImage(ctx microservice.IContext) error {
 // List SlipImage step godoc
 // @Description get list step
 // @Tags		SlipImage
+// @Param		posid		query	string		false  "POS ID"
+// @Param		docno		query	string		false  "DocNo"
+// @Param		docdate		query	string		false  "Doc Date"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -281,6 +284,9 @@ func (h SlipImageHttp) SearchSlipImagePage(ctx microservice.IContext) error {
 // List SlipImage godoc
 // @Description search limit offset
 // @Tags		SlipImage
+// @Param		posid		query	string		false  "POS ID"
+// @Param		docno		query	string		false  "DocNo"
+// @Param		docdate		query	string		false  "Doc Date"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"

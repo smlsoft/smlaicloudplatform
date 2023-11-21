@@ -7,7 +7,9 @@ import (
 	"smlcloudplatform/pkg/images/models"
 	common "smlcloudplatform/pkg/models"
 	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
+	slipimage_repo "smlcloudplatform/pkg/slipimage/repositories"
 	"strconv"
+	"time"
 )
 
 type IImageHttp interface {
@@ -30,7 +32,9 @@ func NewImagesHttp(
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	inventoryRepo := productbarcode_repo.NewProductBarcodeRepository(pst, cache)
-	imgSrv := NewImageService(persisterImage, inventoryRepo)
+	slipImageRepo := slipimage_repo.NewSlipImageMongoRepository(pst)
+	imgSrv := NewImageService(persisterImage, inventoryRepo, slipImageRepo)
+
 	return ImagesHttp{
 		ms:      ms,
 		cfg:     cfg,
@@ -47,6 +51,7 @@ func (svc ImagesHttp) RegisterHttp() {
 
 	svc.ms.GET("/productimage/:shopid/:itemguid", svc.GetProductImage)
 	svc.ms.GET("/productimage/:shopid/:itemguid/:index", svc.GetProductImage)
+	svc.ms.GET("/slip/:shopid/:posid/:docdate/:docno", svc.GetSlipImage)
 
 	svc.ms.Echo().Static("/images", storageConfig.StorageDataPath())
 	// check config storage
@@ -186,4 +191,51 @@ func (svc ImagesHttp) UploadImageToProduct(ctx microservice.IContext) error {
 		Success: true,
 	})
 	return nil
+}
+
+// GET Slip Image
+// @Description GET Slip Image
+// @Tags		Common
+// @Accept 		json
+// @Param		shopid  path      string  true  "Shop ID"
+// @Param		posid  path      string  true  "POS ID"
+// @Param		docdate  path      string  true  "Doc Date"
+// @Param		docno  path      string  true  "Doc No"
+// @Success		200	{array}	models.Image
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Failure		400	{object}	common.AuthResponseFailed
+// @Failure		500	{object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /slip/{shopid}/{posid}/{docdate}/docno [post]
+func (svc ImagesHttp) GetSlipImage(ctx microservice.IContext) error {
+
+	shopId := ctx.Param("shopid")
+	posID := ctx.Param("posid")
+	docDate := ctx.Param("docdate")
+	docNo := ctx.Param("docno")
+
+	layout := "2006-01-02"
+	docDateFilter, err := time.Parse(layout, docDate)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
+			Success: false,
+			Message: "invalid docdate. require format (yyyy-mm-dd)",
+		})
+		return nil
+	}
+
+	fileName, buffer, err := svc.service.GetSlipImage(shopId, posID, docDateFilter, docNo)
+
+	if err != nil {
+		ctx.Response(http.StatusNotFound, "")
+
+		return nil
+	}
+
+	if buffer != nil {
+		return ctx.EchoContext().Blob(http.StatusOK, "", buffer.Bytes())
+	}
+
+	return ctx.EchoContext().File(fileName)
 }

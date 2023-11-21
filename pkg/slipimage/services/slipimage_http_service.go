@@ -64,16 +64,6 @@ func (svc SlipImageHttpService) CreateSlipImage(shopID string, authUsername stri
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	// findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "uid", doc.UID)
-
-	// if err != nil {
-	// 	return "", err
-	// }
-
-	// if len(findDoc.GuidFixed) > 0 {
-	// 	return "", errors.New("UID is exists")
-	// }
-
 	fileSize := payload.File.Size
 
 	newGuidFixed := utils.NewGUID()
@@ -84,7 +74,7 @@ func (svc SlipImageHttpService) CreateSlipImage(shopID string, authUsername stri
 	tempSplitFileName := strings.Split(payload.File.Filename, ".")
 	fileExt := tempSplitFileName[len(tempSplitFileName)-1]
 
-	fileName := fmt.Sprintf("%s/slip/%s/%s", shopID, docDateStr, newGuidFixed)
+	fileName := fmt.Sprintf("%s/slip/%s/%s/%s", shopID, payload.PosID, docDateStr, payload.DocNo)
 
 	uploadUri, err := svc.repoStorageImage.Upload(payload.File, fileName, fileExt)
 

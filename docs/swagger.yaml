@@ -20744,6 +20744,55 @@ paths:
       - AccessToken: []
       tags:
       - ShopUser
+  /slip/{shopid}/{posid}/{docdate}/docno:
+    post:
+      consumes:
+      - application/json
+      description: GET Slip Image
+      parameters:
+      - description: Shop ID
+        in: path
+        name: shopid
+        required: true
+        type: string
+      - description: POS ID
+        in: path
+        name: posid
+        required: true
+        type: string
+      - description: Doc Date
+        in: path
+        name: docdate
+        required: true
+        type: string
+      - description: Doc No
+        in: path
+        name: docno
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Common
   /slipimage:
     delete:
       consumes:

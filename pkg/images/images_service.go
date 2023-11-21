@@ -8,28 +8,34 @@ import (
 	"smlcloudplatform/pkg/images/models"
 	productbarcode_models "smlcloudplatform/pkg/product/productbarcode/models"
 	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
+	slipimage_repo "smlcloudplatform/pkg/slipimage/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 
 	"errors"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IImagesService interface {
 	UploadImage(shopId string, fh *multipart.FileHeader) (*models.Image, error)
 	UploadImageToProduct(shopID string, fh *multipart.FileHeader) error
 	GetImageByProductCode(shopid string, itemguid string, index int) (string, *bytes.Buffer, error)
+	GetSlipImage(shopid string, posID string, docDate time.Time, docNo string) (string, *bytes.Buffer, error)
 }
 
 type ImagesService struct {
 	persisterImage *microservice.PersisterImage
 	invRepo        productbarcode_repo.IProductBarcodeRepository
+	slipimageRepo  slipimage_repo.ISlipImageMongoRepository
 	NewGUIDFn      func() string
 	contextTimeout time.Duration
 }
 
 func NewImageService(persisterImage *microservice.PersisterImage,
 	inventoryRepo productbarcode_repo.IProductBarcodeRepository,
+	slipimageRepo slipimage_repo.ISlipImageMongoRepository,
 ) *ImagesService {
 
 	contextTimeout := time.Duration(15) * time.Second
@@ -38,6 +44,7 @@ func NewImageService(persisterImage *microservice.PersisterImage,
 	return &ImagesService{
 		persisterImage: persisterImage,
 		invRepo:        inventoryRepo,
+		slipimageRepo:  slipimageRepo,
 		NewGUIDFn:      func() string { return utils.NewGUID() },
 		contextTimeout: contextTimeout,
 	}
@@ -141,6 +148,31 @@ func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, i
 	}
 
 	imgFileUrl := productImage[index-1].URI
+
+	imageUri, buffer, err := svc.persisterImage.FilePersister.LoadFile(imgFileUrl)
+	if err != nil {
+		return "", buffer, err
+	}
+
+	return imageUri, buffer, nil
+}
+
+func (svc ImagesService) GetSlipImage(shopid string, posID string, docDate time.Time, docNo string) (string, *bytes.Buffer, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.slipimageRepo.FindOne(ctx, shopid, bson.M{"posid": posID, "docdate": docDate, "docno": docNo})
+
+	if err != nil {
+		return "", nil, err
+	}
+
+	if findDoc.URI == "" {
+		return "", nil, errors.New("no image")
+	}
+
+	imgFileUrl := findDoc.URI
 
 	imageUri, buffer, err := svc.persisterImage.FilePersister.LoadFile(imgFileUrl)
 	if err != nil {
