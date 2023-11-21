@@ -175,6 +175,14 @@ func (svc *ProductImportService) ImportFromFile(shopID string, authUsername stri
 		prepareDataDoc = append(prepareDataDoc, tempData)
 	}
 
+	createdAt := svc.timeNow()
+	createdBy := authUsername
+
+	for i := range prepareDataDoc {
+		prepareDataDoc[i].CreatedAt = createdAt
+		prepareDataDoc[i].CreatedBy = createdBy
+	}
+
 	err = svc.chRepo.CreateInBatch(context.Background(), prepareDataDoc)
 
 	if err != nil {
