@@ -22405,6 +22405,24 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "POS ID",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "DocNo",
+                        "name": "docno",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Doc Date",
+                        "name": "docdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -22556,6 +22574,24 @@ const docTemplate = `{
                     "SlipImage"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "POS ID",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "DocNo",
+                        "name": "docno",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Doc Date",
+                        "name": "docdate",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -23545,6 +23581,45 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Get StockBalanceImport Meta",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockBalanceImport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task-id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/stockbalanceimport/{task-id}/verify": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Verify StockBalanceImport By Task ID",
                 "consumes": [
                     "application/json"
                 ],

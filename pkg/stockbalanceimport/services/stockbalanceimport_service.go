@@ -7,6 +7,7 @@ import (
 	"io"
 
 	micromodels "smlcloudplatform/internal/microservice/models"
+	productbarocde_models "smlcloudplatform/pkg/product/productbarcode/models"
 	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/stockbalanceimport/models"
 	"smlcloudplatform/pkg/stockbalanceimport/repositories"
@@ -21,7 +22,7 @@ import (
 )
 
 type IStockBalanceImportService interface {
-	List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportInfo, models.PaginationData, error)
+	List(shopID string, taskID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockBalanceImportInfo, models.PaginationData, error)
 	Create(shopID string, authUsername string, req *models.StockBalanceImport) error
 	Update(shopID string, guid string, doc models.StockBalanceImportRaw) error
 	Delete(shopID string, guid string) error
@@ -29,6 +30,7 @@ type IStockBalanceImportService interface {
 	ImportFromFile(shopID string, authUsername string, fileUpload io.Reader) (string, error)
 	SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error)
 	Meta(shopID string, taskID string) (models.StockBalanceImportMeta, error)
+	Verify(shopID string, taskID string) error
 }
 
 type StockBalanceImportService struct {
@@ -67,8 +69,8 @@ func NewStockBalanceImportService(
 	}
 }
 
-func (svc *StockBalanceImportService) List(shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportInfo, models.PaginationData, error) {
-	findDocs, patination, err := svc.chRepo.List(context.Background(), shopID, taskID, pageable)
+func (svc StockBalanceImportService) List(shopID string, taskID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockBalanceImportInfo, models.PaginationData, error) {
+	findDocs, patination, err := svc.chRepo.List(context.Background(), shopID, taskID, filters, pageable)
 
 	if err != nil {
 		return []models.StockBalanceImportInfo{}, models.PaginationData{}, err
@@ -83,7 +85,7 @@ func (svc *StockBalanceImportService) List(shopID string, taskID string, pageabl
 	return results, patination, nil
 }
 
-func (svc *StockBalanceImportService) Create(shopID string, authUsername string, doc *models.StockBalanceImport) error {
+func (svc StockBalanceImportService) Create(shopID string, authUsername string, doc *models.StockBalanceImport) error {
 	docData := models.StockBalanceImportDoc{}
 	docData.ShopID = shopID
 	docData.GUIDFixed = svc.generateGUID()
@@ -110,7 +112,7 @@ func (svc *StockBalanceImportService) Create(shopID string, authUsername string,
 	return svc.chRepo.Create(context.Background(), docData)
 }
 
-func (svc *StockBalanceImportService) ImportFromFile(shopID string, authUsername string, fileUpload io.Reader) (string, error) {
+func (svc StockBalanceImportService) ImportFromFile(shopID string, authUsername string, fileUpload io.Reader) (string, error) {
 
 	f, err := excelize.OpenReader(fileUpload)
 	if err != nil {
@@ -189,7 +191,7 @@ func (svc *StockBalanceImportService) ImportFromFile(shopID string, authUsername
 
 	return taskID, nil
 }
-func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, rowNumber float64, colIdx map[string]int, doc []string) (models.StockBalanceImportDoc, error) {
+func (svc StockBalanceImportService) prepareData(shopID string, taskID string, rowNumber float64, colIdx map[string]int, doc []string) (models.StockBalanceImportDoc, error) {
 
 	qty, err := strconv.ParseFloat(doc[colIdx["Qty"]], 64)
 
@@ -229,23 +231,38 @@ func (svc *StockBalanceImportService) prepareData(shopID string, taskID string, 
 	return dataDoc, nil
 }
 
-func (svc *StockBalanceImportService) Meta(shopID string, taskID string) (models.StockBalanceImportMeta, error) {
+func (svc StockBalanceImportService) Meta(shopID string, taskID string) (models.StockBalanceImportMeta, error) {
 	return svc.chRepo.Meta(context.Background(), shopID, taskID)
 }
 
-func (svc *StockBalanceImportService) Update(shopID string, guid string, doc models.StockBalanceImportRaw) error {
+func (svc StockBalanceImportService) Update(shopID string, guid string, doc models.StockBalanceImportRaw) error {
 	return svc.chRepo.Update(context.Background(), shopID, guid, doc)
 }
 
-func (svc *StockBalanceImportService) Delete(shopID string, guid string) error {
+func (svc StockBalanceImportService) Delete(shopID string, guid string) error {
 	return svc.chRepo.DeleteByGUID(context.Background(), shopID, guid)
 }
 
-func (svc *StockBalanceImportService) DeleteTask(shopID string, taskID string) error {
+func (svc StockBalanceImportService) DeleteTask(shopID string, taskID string) error {
 	return svc.chRepo.DeleteByTaskID(context.Background(), shopID, taskID)
 }
 
-func (svc *StockBalanceImportService) SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error) {
+func (svc StockBalanceImportService) SaveTask(shopID string, authUsername string, taskID string, headerDoc stockbalance_models.StockBalanceHeader) (string, error) {
+
+	err := svc.Verify(shopID, taskID)
+	if err != nil {
+		return "", err
+	}
+
+	countNotExist, err := svc.chRepo.CountExist(context.Background(), shopID, taskID, false)
+
+	if err != nil {
+		return "", err
+	}
+
+	if countNotExist > 0 {
+		return "", errors.New("have barcode not found in product")
+	}
 
 	docs, err := svc.chRepo.All(context.Background(), shopID, taskID)
 
@@ -264,6 +281,17 @@ func (svc *StockBalanceImportService) SaveTask(shopID string, authUsername strin
 			productList, err := svc.productBarcodeRepo.FindByBarcodes(context.Background(), shopID, barcodes)
 			if err != nil {
 				return "", err
+			}
+
+			productBarcodeDict := map[string]productbarocde_models.ProductBarcodeInfo{}
+			for _, product := range productList {
+				productBarcodeDict[product.Barcode] = product
+			}
+
+			for _, barcode := range barcodes {
+				if _, ok := productBarcodeDict[barcode]; !ok {
+					return "", fmt.Errorf("barcode %s not found", barcode)
+				}
 			}
 
 			for _, product := range productList {
@@ -319,4 +347,82 @@ func (svc *StockBalanceImportService) SaveTask(shopID string, authUsername strin
 	}
 
 	return docNo, nil
+}
+
+func (svc StockBalanceImportService) Verify(shopID string, taskID string) error {
+	docs, err := svc.chRepo.All(context.Background(), shopID, taskID)
+
+	if err != nil {
+		return err
+	}
+
+	previousNotExist := map[string]struct{}{}
+
+	itemNotExist := map[string]struct{}{}
+
+	tempBarcodes := []string{}
+
+	tempItemDict := map[string]models.StockBalanceImportDoc{}
+	for i, doc := range docs {
+
+		if doc.IsNotExist {
+			previousNotExist[doc.Barcode] = struct{}{}
+		}
+
+		tempItemDict[doc.Barcode] = doc
+		tempBarcodes = append(tempBarcodes, doc.Barcode)
+
+		if (i > 1 && i%5000 == 0) || i == len(docs)-1 {
+			productList, err := svc.productBarcodeRepo.FindByBarcodes(context.Background(), shopID, tempBarcodes)
+			if err != nil {
+				return err
+			}
+
+			for _, barcode := range tempBarcodes {
+				itemNotExist[barcode] = struct{}{}
+			}
+
+			for _, product := range productList {
+				if _, ok := tempItemDict[product.Barcode]; ok {
+					delete(itemNotExist, product.Barcode)
+				}
+			}
+
+			//Clear previous exist
+			if err := svc.updateExist(shopID, taskID, true, previousNotExist); err != nil {
+				return err
+			}
+
+			// Update exist
+			if err := svc.updateExist(shopID, taskID, false, itemNotExist); err != nil {
+				return err
+			}
+
+			previousNotExist = map[string]struct{}{}
+			itemNotExist = map[string]struct{}{}
+			tempBarcodes = []string{}
+			tempItemDict = map[string]models.StockBalanceImportDoc{}
+		}
+	}
+
+	return nil
+
+}
+
+func (svc StockBalanceImportService) updateExist(shopID string, taskID string, isExist bool, barcodes map[string]struct{}) error {
+	if len(barcodes) == 0 {
+		return nil
+	}
+
+	tempBarcodes := []string{}
+	for barcode := range barcodes {
+		tempBarcodes = append(tempBarcodes, barcode)
+	}
+	err := svc.chRepo.UpdateExist(context.Background(), shopID, taskID, isExist, tempBarcodes)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -12,7 +12,7 @@ import (
 
 type IStockBalanceImportClickHouseRepository interface {
 	All(ctx context.Context, shopID string, taskID string) ([]models.StockBalanceImportDoc, error)
-	List(ctx context.Context, shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error)
+	List(ctx context.Context, shopID string, taskID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error)
 	Create(ctx context.Context, doc models.StockBalanceImportDoc) error
 	CreateInBatch(ctx context.Context, docs []models.StockBalanceImportDoc) error
 	Update(ctx context.Context, shopID string, guid string, doc models.StockBalanceImportRaw) error
@@ -20,6 +20,8 @@ type IStockBalanceImportClickHouseRepository interface {
 	DeleteByTaskID(ctx context.Context, shopID string, taskID string) error
 	Meta(ctx context.Context, shopID string, taskID string) (models.StockBalanceImportMeta, error)
 	FindOne(ctx context.Context, shopID string, taskID string, sorts []micromodels.KeyInt) (models.StockBalanceImportDoc, error)
+	UpdateExist(ctx context.Context, shopID string, taskID string, isExist bool, barcodes []string) error
+	CountExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error)
 }
 
 type StockBalanceImportClickHouseRepository struct {
@@ -111,9 +113,26 @@ func (repo StockBalanceImportClickHouseRepository) FindOne(ctx context.Context, 
 	return results[0], nil
 }
 
-func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, shopID string, taskID string, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error) {
+func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, shopID string, taskID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockBalanceImportDoc, models.PaginationData, error) {
 
 	offset := (pageable.Page - 1) * pageable.Limit
+
+	filterExpr := ""
+	filterArgs := []interface{}{}
+	if len(filters) > 0 {
+		for key, value := range filters {
+			if filterExpr != "" {
+				filterExpr += " AND "
+			}
+
+			filterExpr += fmt.Sprintf("%s = ?", key)
+			filterArgs = append(filterArgs, value)
+		}
+	}
+
+	if filterExpr != "" {
+		filterExpr = fmt.Sprintf("AND (%s)", filterExpr)
+	}
 
 	orderExpr := ""
 	if len(pageable.Sorts) > 0 {
@@ -127,8 +146,8 @@ func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, sho
 				orderTxt = "DESC"
 			}
 
-			if _, ok := repo.structFileds[sort.Key]; !ok {
-				orderExpr += fmt.Sprintf("%s %s", sort.Key, orderTxt)
+			if colName, ok := repo.structFileds[sort.Key]; !ok {
+				orderExpr += fmt.Sprintf("%s %s", colName, orderTxt)
 			}
 
 		}
@@ -138,10 +157,10 @@ func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, sho
 		orderExpr = fmt.Sprintf("ORDER BY %s", orderExpr)
 	}
 
-	exprSeach := ""
+	searchExpr := ""
 	searchArgs := []interface{}{}
 	if pageable.Query != "" {
-		exprSeach = "AND (barcode LIKE ? OR name LIKE ? OR unitcode LIKE ?)"
+		searchExpr = "AND (barcode LIKE ? OR name LIKE ? OR unitcode LIKE ?)"
 		searchTxt := fmt.Sprintf("%s%%", pageable.Query)
 		searchArgs = append(searchArgs, searchTxt, searchTxt, searchTxt)
 	}
@@ -151,10 +170,11 @@ func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, sho
 
 	args := []interface{}{}
 	args = append(args, shopID, taskID)
+	args = append(args, filterArgs...)
 	args = append(args, searchArgs...)
 	args = append(args, pageable.Limit, offset)
 
-	sqlExpr := fmt.Sprintf("SELECT * FROM stockbalanceimport WHERE shopid = ? AND taskid = ? %s %s LIMIT ? OFFSET ?", exprSeach, orderExpr)
+	sqlExpr := fmt.Sprintf("SELECT * FROM stockbalanceimport WHERE shopid = ? AND taskid = ? %s %s %s LIMIT ? OFFSET ?", filterExpr, searchExpr, orderExpr)
 	err := repo.pst.Select(ctx, &results, sqlExpr, args...)
 
 	if err != nil {
@@ -165,7 +185,7 @@ func (repo StockBalanceImportClickHouseRepository) List(ctx context.Context, sho
 	countArgs = append(countArgs, shopID, taskID)
 	countArgs = append(countArgs, searchArgs...)
 
-	exprCount := fmt.Sprintf("shopid = ? AND taskid = ? %s", exprSeach)
+	exprCount := fmt.Sprintf("shopid = ? AND taskid = ? %s", searchExpr)
 	count, err := repo.pst.Count(ctx, &models.StockBalanceImportDoc{}, exprCount, countArgs...)
 
 	if err != nil {
@@ -209,4 +229,28 @@ func (repo StockBalanceImportClickHouseRepository) DeleteByTaskID(ctx context.Co
 	return repo.pst.Exec(ctx,
 		"ALTER TABLE stockbalanceimport DELETE WHERE shopid = ? AND taskid = ?",
 		shopID, taskID)
+}
+
+func (repo StockBalanceImportClickHouseRepository) UpdateExist(ctx context.Context, shopID string, taskID string, isExist bool, barcodes []string) error {
+
+	isNotExist := !isExist
+	return repo.pst.Exec(ctx,
+		"ALTER TABLE stockbalanceimport UPDATE isnotexist = ? WHERE shopid = ? AND taskid = ? AND barcode IN (?)", isNotExist, shopID, taskID, barcodes)
+}
+
+func (repo StockBalanceImportClickHouseRepository) CountExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error) {
+
+	isNotExist := !isExist
+
+	countArgs := []interface{}{}
+	countArgs = append(countArgs, shopID, taskID, isNotExist)
+
+	exprCount := "shopid = ? AND taskid = ? AND isnotexist = ?"
+	count, err := repo.pst.Count(ctx, &models.StockBalanceImportDoc{}, exprCount, countArgs...)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
