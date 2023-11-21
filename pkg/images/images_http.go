@@ -206,7 +206,7 @@ func (svc ImagesHttp) UploadImageToProduct(ctx microservice.IContext) error {
 // @Failure		400	{object}	common.AuthResponseFailed
 // @Failure		500	{object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /slip/{shopid}/{posid}/{docdate}/{docno} [post]
+// @Router /slip/{shopid}/{posid}/{docdate}/{docno} [get]
 func (svc ImagesHttp) GetSlipImage(ctx microservice.IContext) error {
 
 	shopId := ctx.Param("shopid")

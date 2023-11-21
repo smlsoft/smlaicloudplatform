@@ -20745,7 +20745,7 @@ paths:
       tags:
       - ShopUser
   /slip/{shopid}/{posid}/{docdate}/{docno}:
-    post:
+    get:
       consumes:
       - application/json
       description: GET Slip Image

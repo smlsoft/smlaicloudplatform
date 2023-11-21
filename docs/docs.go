@@ -22389,7 +22389,7 @@ const docTemplate = `{
             }
         },
         "/slip/{shopid}/{posid}/{docdate}/{docno}": {
-            "post": {
+            "get": {
                 "security": [
                     {
                         "AccessToken": []
