@@ -22388,7 +22388,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/slip/{shopid}/{posid}/{docdate}/docno": {
+        "/slip/{shopid}/{posid}/{docdate}/{docno}": {
             "post": {
                 "security": [
                     {

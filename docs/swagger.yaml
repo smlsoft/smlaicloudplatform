@@ -20744,7 +20744,7 @@ paths:
       - AccessToken: []
       tags:
       - ShopUser
-  /slip/{shopid}/{posid}/{docdate}/docno:
+  /slip/{shopid}/{posid}/{docdate}/{docno}:
     post:
       consumes:
       - application/json
