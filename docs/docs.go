@@ -39060,6 +39060,12 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "inquirytypepurchase": {
+                    "type": "integer"
+                },
+                "inquirytypesale": {
+                    "type": "integer"
+                },
                 "isusebranch": {
                     "type": "boolean"
                 },
@@ -39080,6 +39086,12 @@ const docTemplate = `{
                 },
                 "taxid": {
                     "type": "string"
+                },
+                "vattypepurchase": {
+                    "type": "integer"
+                },
+                "vattypesale": {
+                    "type": "number"
                 }
             }
         },

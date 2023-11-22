@@ -39055,6 +39055,12 @@
                         "type": "string"
                     }
                 },
+                "inquirytypepurchase": {
+                    "type": "integer"
+                },
+                "inquirytypesale": {
+                    "type": "integer"
+                },
                 "isusebranch": {
                     "type": "boolean"
                 },
@@ -39075,6 +39081,12 @@
                 },
                 "taxid": {
                     "type": "string"
+                },
+                "vattypepurchase": {
+                    "type": "integer"
+                },
+                "vattypesale": {
+                    "type": "number"
                 }
             }
         },

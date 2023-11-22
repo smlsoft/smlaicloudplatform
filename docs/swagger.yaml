@@ -4174,6 +4174,10 @@ definitions:
         items:
           type: string
         type: array
+      inquirytypepurchase:
+        type: integer
+      inquirytypesale:
+        type: integer
       isusebranch:
         type: boolean
       isusedepartment:
@@ -4188,6 +4192,10 @@ definitions:
         type: number
       taxid:
         type: string
+      vattypepurchase:
+        type: integer
+      vattypesale:
+        type: number
     type: object
   models.SmsPaymentSettings:
     properties:

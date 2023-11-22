@@ -26,14 +26,18 @@ type ShopImage struct {
 }
 
 type ShopSettings struct {
-	TaxID           string           `json:"taxid" bson:"taxid"`
-	EmailOwners     []string         `json:"emailowners" bson:"emailowners"`
-	EmailStaffs     []string         `json:"emailstaffs" bson:"emailstaffs"`
-	Latitude        float64          `json:"latitude" bson:"latitude"`
-	Longitude       float64          `json:"longitude" bson:"longitude"`
-	IsUseBranch     bool             `json:"isusebranch" bson:"isusebranch"`
-	IsUseDepartment bool             `json:"isusedepartment" bson:"isusedepartment"`
-	LanguageConfigs []LanguageConfig `json:"languageconfigs" bson:"languageconfigs"`
+	TaxID               string           `json:"taxid" bson:"taxid"`
+	EmailOwners         []string         `json:"emailowners" bson:"emailowners"`
+	EmailStaffs         []string         `json:"emailstaffs" bson:"emailstaffs"`
+	Latitude            float64          `json:"latitude" bson:"latitude"`
+	Longitude           float64          `json:"longitude" bson:"longitude"`
+	IsUseBranch         bool             `json:"isusebranch" bson:"isusebranch"`
+	IsUseDepartment     bool             `json:"isusedepartment" bson:"isusedepartment"`
+	VatTypeSale         float64          `json:"vattypesale" bson:"vattypesale"`
+	VateTypePurchase    int              `json:"vattypepurchase" bson:"vattypepurchase"`
+	InquiryTypeSale     int              `json:"inquirytypesale" bson:"inquirytypesale"`
+	InquiryTypePurchase int              `json:"inquirytypepurchase" bson:"inquirytypepurchase"`
+	LanguageConfigs     []LanguageConfig `json:"languageconfigs" bson:"languageconfigs"`
 }
 
 type LanguageConfig struct {
