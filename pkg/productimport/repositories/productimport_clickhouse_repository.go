@@ -192,7 +192,7 @@ func (repo ProductImportClickHouseRepository) Update(ctx context.Context, shopID
 
 func (repo ProductImportClickHouseRepository) DeleteByGUID(ctx context.Context, shopID string, guid string) error {
 	return repo.pst.Exec(ctx,
-		"DELETE FROM productbarcodeimport WHERE shopid = ? AND guidfixed = ?",
+		"ALTER TABLE productbarcodeimport DELETE WHERE shopid = ? AND guidfixed = ?",
 		shopID, guid)
 }
 
