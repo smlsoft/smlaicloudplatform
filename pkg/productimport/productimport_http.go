@@ -298,6 +298,7 @@ func (h ProductImportHttp) DeleteByTask(ctx microservice.IContext) error {
 // @Description Delete ProductImport By Task ID
 // @Tags		ProductImport
 // @Param		task-id		path		string		true		"task id"
+// @Param		ProductImportHeader  body      models.ProductImportHeader  true  "ProductImportHeader"
 // @Accept 		json
 // @Success		201	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -310,7 +311,17 @@ func (h ProductImportHttp) SaveTask(ctx microservice.IContext) error {
 
 	taskID := ctx.Param("task-id")
 
-	err := h.svc.SaveTask(shopID, authUsername, taskID)
+	payload := ctx.ReadInput()
+
+	var docReq models.ProductImportHeader
+	err := json.Unmarshal([]byte(payload), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.SaveTask(shopID, authUsername, taskID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

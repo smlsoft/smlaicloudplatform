@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	micromodels "smlcloudplatform/internal/microservice/models"
+	common "smlcloudplatform/pkg/models"
 	product_models "smlcloudplatform/pkg/product/productbarcode/models"
 	productbarcode_repo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	product_services "smlcloudplatform/pkg/product/productbarcode/services"
@@ -26,7 +27,7 @@ type IProductImportService interface {
 	Delete(shopID string, guid string) error
 	DeleteTask(shopID string, taskID string) error
 	ImportFromFile(shopID string, authUsername string, fileUpload io.Reader) (string, error)
-	SaveTask(shopID string, authUsername string, taskID string) error
+	SaveTask(shopID string, authUsername string, taskID string, docHeader models.ProductImportHeader) error
 	Verify(shopID string, taskID string) error
 }
 
@@ -346,7 +347,7 @@ func (svc ProductImportService) updateExist(shopID string, taskID string, isExis
 	return nil
 }
 
-func (svc ProductImportService) SaveTask(shopID string, authUsername string, taskID string) error {
+func (svc ProductImportService) SaveTask(shopID string, authUsername string, taskID string, docHeader models.ProductImportHeader) error {
 
 	err := svc.Verify(shopID, taskID)
 
@@ -380,56 +381,47 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 		return err
 	}
 
-	tempDetails := []product_models.ProductBarcodeDoc{}
+	dataDocs := []product_models.ProductBarcodeDoc{}
 
-	barcodes := []string{}
-	tempBarcodes := map[string]models.ProductImportDoc{}
-	for i, doc := range docs {
-		barcodes = append(barcodes, doc.Barcode)
-		tempBarcodes[docs[i].Barcode] = docs[i]
-		if (i > 1 && i%5000 == 0) || i == len(docs)-1 {
-			productList, err := svc.productBarcodeRepo.FindByBarcodes(context.Background(), shopID, barcodes)
-			if err != nil {
-				return err
-			}
+	createdAt := svc.timeNow()
+	createdBy := authUsername
+	for _, doc := range docs {
 
-			for _, product := range productList {
-				productTemp := product_models.ProductBarcodeDoc{}
-				temp := tempBarcodes[product.Barcode]
+		temp := product_models.ProductBarcodeDoc{}
 
-				productTemp.ItemCode = product.ItemCode
-				productTemp.Barcode = product.Barcode
-				productTemp.Names = product.Names
-				productTemp.ItemType = product.ItemType
-				productTemp.TaxType = product.TaxType
-				productTemp.VatType = product.VatType
-				productTemp.DivideValue = product.DivideValue
-				productTemp.StandValue = product.StandValue
-				productTemp.VatCal = product.VatCal
-				productTemp.ItemUnitCode = product.ItemUnitCode
+		temp.GuidFixed = svc.generateGUID()
+		temp.ShopID = shopID
+		temp.Barcode = doc.Barcode
+		temp.ItemUnitCode = doc.UnitCode
 
-				priceTemp := []product_models.ProductPrice{}
+		productPrices := []product_models.ProductPrice{}
 
-				priceTemp = append(priceTemp, product_models.ProductPrice{
-					KeyNumber: 0,
-					Price:     temp.Price,
-				})
+		productPrices = append(productPrices, product_models.ProductPrice{
+			KeyNumber: 0,
+			Price:     doc.Price,
+		})
 
-				priceTemp = append(priceTemp, product_models.ProductPrice{
-					KeyNumber: 1,
-					Price:     temp.PriceMember,
-				})
+		productPrices = append(productPrices, product_models.ProductPrice{
+			KeyNumber: 1,
+			Price:     doc.PriceMember,
+		})
+		temp.Prices = &productPrices
 
-				productTemp.Prices = &priceTemp
-				tempDetails = append(tempDetails, productTemp)
-			}
+		productNames := []common.NameX{}
 
-			barcodes = []string{}
-			tempBarcodes = map[string]models.ProductImportDoc{}
-		}
+		productNames = append(productNames, common.NameX{
+			Code: &docHeader.LanguangeCode,
+			Name: &doc.Name,
+		})
+
+		temp.Names = &productNames
+		temp.CreatedAt = createdAt
+		temp.CreatedBy = createdBy
+
+		dataDocs = append(dataDocs, temp)
 	}
 
-	err = svc.productBarcodeRepo.CreateInBatch(context.Background(), tempDetails)
+	err = svc.productBarcodeRepo.CreateInBatch(context.Background(), dataDocs)
 
 	if err != nil {
 		return err

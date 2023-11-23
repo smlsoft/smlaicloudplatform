@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type ProductImportHeader struct {
+	LanguangeCode string `json:"languangecode" validate:"required,min=2,max=3"`
+}
+
 type ProductImportRaw struct {
 	Barcode     string  `json:"barcode" ch:"barcode"`
 	Name        string  `json:"name" ch:"name"`

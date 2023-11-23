@@ -2433,6 +2433,9 @@ definitions:
         type: string
       condition:
         type: boolean
+      dimensions:
+        additionalProperties: true
+        type: object
       discount:
         type: string
       dividevalue:
@@ -2640,6 +2643,15 @@ definitions:
         type: string
       unitcode:
         type: string
+    type: object
+  models.ProductImportHeader:
+    properties:
+      languangecode:
+        maxLength: 3
+        minLength: 2
+        type: string
+    required:
+    - languangecode
     type: object
   models.ProductOption:
     properties:
@@ -6179,6 +6191,9 @@ definitions:
         type: string
       condition:
         type: boolean
+      dimensions:
+        additionalProperties: true
+        type: object
       discount:
         type: string
       dividevalue:
@@ -17205,6 +17220,12 @@ paths:
         name: task-id
         required: true
         type: string
+      - description: ProductImportHeader
+        in: body
+        name: ProductImportHeader
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductImportHeader'
       responses:
         "201":
           description: Created

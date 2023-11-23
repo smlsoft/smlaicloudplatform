@@ -16750,6 +16750,15 @@ const docTemplate = `{
                         "name": "task-id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "ProductImportHeader",
+                        "name": "ProductImportHeader",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductImportHeader"
+                        }
                     }
                 ],
                 "responses": {
@@ -36473,6 +36482,10 @@ const docTemplate = `{
                 "condition": {
                     "type": "boolean"
                 },
+                "dimensions": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "discount": {
                     "type": "string"
                 },
@@ -36774,6 +36787,19 @@ const docTemplate = `{
                 },
                 "unitcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ProductImportHeader": {
+            "type": "object",
+            "required": [
+                "languangecode"
+            ],
+            "properties": {
+                "languangecode": {
+                    "type": "string",
+                    "maxLength": 3,
+                    "minLength": 2
                 }
             }
         },
@@ -42058,6 +42084,10 @@ const docTemplate = `{
                 },
                 "condition": {
                     "type": "boolean"
+                },
+                "dimensions": {
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "discount": {
                     "type": "string"
