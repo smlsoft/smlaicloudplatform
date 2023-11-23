@@ -80,7 +80,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	svcZone := zone.NewZoneService(repoZone, masterSyncCacheRepo)
 
 	repoSaleInvoice := saleinvoice_repositories.NewSaleInvoiceRepository(pst)
-	svcSaleInvoice := saleinvoice_services.NewSaleInvoiceHttpService(repoSaleInvoice, nil, nil, nil)
+	svcSaleInvoice := saleinvoice_services.NewSaleInvoiceHttpService(repoSaleInvoice, nil, nil, nil, nil)
 
 	svcTable := table.NewTableService(repoTable, masterSyncCacheRepo)
 	svcKitchen := kitchen.NewKitchenService(repoKitchen, masterSyncCacheRepo)

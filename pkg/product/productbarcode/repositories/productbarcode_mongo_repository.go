@@ -51,6 +51,7 @@ type IProductBarcodeRepository interface {
 	FindByRefBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 	FindByBOMBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.ProductBarcodeDoc, error)
 	FindByBarcode(ctx context.Context, shopID string, barcode string) (models.ProductBarcodeDoc, error)
 	FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 	FindPageByUnits(ctx context.Context, shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)

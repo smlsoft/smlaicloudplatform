@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
@@ -31,9 +32,11 @@ func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg config.IConfig) SaleI
 	repo := repositories.NewSaleInvoiceRepository(pst)
 	repoMq := repositories.NewSaleInvoiceMessageQueueRepository(producer)
 
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewSaleInvoiceHttpService(repo, productBarcodeRepo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return SaleInvoiceHttp{
 		ms:  ms,

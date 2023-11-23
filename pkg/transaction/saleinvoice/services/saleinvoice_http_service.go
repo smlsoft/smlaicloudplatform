@@ -7,6 +7,8 @@ import (
 	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_models "smlcloudplatform/pkg/product/productbarcode/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/services"
 	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
@@ -41,26 +43,34 @@ const (
 )
 
 type SaleInvoiceHttpService struct {
-	repoMq           repositories.ISaleInvoiceMessageQueueRepository
-	repo             repositories.ISaleInvoiceRepository
-	repoCache        trancache.ICacheRepository
-	cacheExpireDocNo time.Duration
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+	repoMq             repositories.ISaleInvoiceMessageQueueRepository
+	repo               repositories.ISaleInvoiceRepository
+	repoCache          trancache.ICacheRepository
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
+	cacheExpireDocNo   time.Duration
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity]
 	contextTimeout time.Duration
 }
 
-func NewSaleInvoiceHttpService(repo repositories.ISaleInvoiceRepository, repoCache trancache.ICacheRepository, repoMq repositories.ISaleInvoiceMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SaleInvoiceHttpService {
+func NewSaleInvoiceHttpService(
+	repo repositories.ISaleInvoiceRepository,
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository,
+	repoCache trancache.ICacheRepository,
+	repoMq repositories.ISaleInvoiceMessageQueueRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *SaleInvoiceHttpService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &SaleInvoiceHttpService{
-		repo:             repo,
-		repoMq:           repoMq,
-		repoCache:        repoCache,
-		syncCacheRepo:    syncCacheRepo,
-		cacheExpireDocNo: time.Hour * 24,
-		contextTimeout:   contextTimeout,
+		repo:               repo,
+		productbarcodeRepo: productbarcodeRepo,
+		repoMq:             repoMq,
+		repoCache:          repoCache,
+		syncCacheRepo:      syncCacheRepo,
+		cacheExpireDocNo:   time.Hour * 24,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity](repo)
@@ -165,6 +175,11 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 		docData.TaxDocNo = docNo
 	}
 
+	err = svc.prepareSaleInvoiceDetail(ctx, shopID, docData.SaleInvoice.Details)
+	if err != nil {
+		return "", "", err
+	}
+
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
@@ -186,6 +201,49 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 	return newGuidFixed, docNo, nil
 }
 
+func (svc SaleInvoiceHttpService) prepareSaleInvoiceDetail(ctx context.Context, shopID string, details *[]models.SaleInvoiceDetail) error {
+	var tempBarcodes []string
+	for _, doc := range *details {
+		tempBarcodes = append(tempBarcodes, doc.Barcode)
+	}
+
+	productBarcodes, err := svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, tempBarcodes)
+	if err != nil {
+		return err
+	}
+
+	productBarcodeDict := map[string]productbarcode_models.ProductBarcodeInfo{}
+	for _, doc := range productBarcodes {
+		productBarcodeDict[doc.Barcode] = doc
+	}
+
+	for i := 0; i < len(*details); i++ {
+		tempDetail := (*details)[i]
+		tempProduct := productBarcodeDict[tempDetail.Barcode]
+		if _, ok := productBarcodeDict[tempDetail.Barcode]; ok {
+			tempDetail.ItemGuid = tempProduct.GuidFixed
+			tempDetail.UnitCode = tempProduct.ItemUnitCode
+			tempDetail.UnitNames = tempProduct.ItemUnitNames
+			tempDetail.ManufacturerGUID = tempProduct.ManufacturerGUID
+
+			tempDetail.ItemCode = tempProduct.ItemCode
+			tempDetail.ItemNames = tempProduct.Names
+			tempDetail.ItemType = tempProduct.ItemType
+			tempDetail.TaxType = tempProduct.TaxType
+			tempDetail.VatType = tempProduct.VatType
+			tempDetail.Discount = tempProduct.Discount
+
+			tempDetail.DivideValue = tempProduct.DivideValue
+			tempDetail.StandValue = tempProduct.StandValue
+			tempDetail.VatCal = tempProduct.VatCal
+		}
+
+		(*details)[i] = tempDetail
+	}
+
+	return nil
+}
+
 func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
@@ -203,6 +261,12 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 
 	docData := findDoc
 	docData.SaleInvoice = doc
+
+	err = svc.prepareSaleInvoiceDetail(ctx, shopID, docData.SaleInvoice.Details)
+
+	if err != nil {
+		return err
+	}
 
 	docData.DocNo = findDoc.DocNo
 	docData.UpdatedBy = authUsername
