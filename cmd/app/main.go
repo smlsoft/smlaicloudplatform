@@ -18,7 +18,9 @@ import (
 	"smlcloudplatform/pkg/debtaccount/customergroup"
 	"smlcloudplatform/pkg/debtaccount/debtor"
 	"smlcloudplatform/pkg/debtaccount/debtorgroup"
+	"smlcloudplatform/pkg/dimension"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
+	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/notify"
@@ -289,7 +291,14 @@ func main() {
 		notify.NewNotifyHttp(ms, cfg),
 		slipimage.NewSlipImageHttp(ms, cfg),
 		productimport.NewProductImportHttp(ms, cfg),
+
+		dimension.NewDimensionHttp(ms, cfg),
 	}
+
+	azureFileBlob := microservice.NewPersisterAzureBlob()
+	imagePersister := microservice.NewPersisterImage(azureFileBlob)
+
+	ms.RegisterHttp(images.NewImagesHttp(ms, cfg, imagePersister))
 
 	serviceStartHttp(ms, httpServices...)
 

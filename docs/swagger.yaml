@@ -839,6 +839,30 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
     type: object
+  models.Dimension:
+    properties:
+      isdisabled:
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/models.DimensionItem'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.DimensionItem:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   models.DocumentFormate:
     properties:
       accountgroup:
@@ -2434,8 +2458,9 @@ definitions:
       condition:
         type: boolean
       dimensions:
-        additionalProperties: true
-        type: object
+        items:
+          $ref: '#/definitions/models.ProductDimension'
+        type: array
       discount:
         type: string
       dividevalue:
@@ -2615,6 +2640,30 @@ definitions:
     required:
     - names
     - refunitnames
+    type: object
+  models.ProductDimension:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      item:
+        $ref: '#/definitions/models.ProductDimensionItem'
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.ProductDimensionItem:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.ProductImage:
     properties:
@@ -6192,8 +6241,9 @@ definitions:
       condition:
         type: boolean
       dimensions:
-        additionalProperties: true
-        type: object
+        items:
+          $ref: '#/definitions/models.ProductDimension'
+        type: array
       discount:
         type: string
       dividevalue:
@@ -8598,6 +8648,202 @@ paths:
       - AccessToken: []
       tags:
       - Debtor
+  /dimension:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Dimension
+      parameters:
+      - description: Dimension GUIDs
+        in: body
+        name: Dimension
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+    post:
+      consumes:
+      - application/json
+      description: Create Dimension
+      parameters:
+      - description: Dimension
+        in: body
+        name: Dimension
+        required: true
+        schema:
+          $ref: '#/definitions/models.Dimension'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+  /dimension/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Dimension
+      parameters:
+      - description: Dimension ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+    get:
+      consumes:
+      - application/json
+      description: get Dimension info by guidfixed
+      parameters:
+      - description: Dimension guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+    put:
+      consumes:
+      - application/json
+      description: Update Dimension
+      parameters:
+      - description: Dimension ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dimension
+        in: body
+        name: Dimension
+        required: true
+        schema:
+          $ref: '#/definitions/models.Dimension'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+  /dimension/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
   /documentimage:
     get:
       consumes:

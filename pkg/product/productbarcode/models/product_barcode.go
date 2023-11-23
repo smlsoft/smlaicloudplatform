@@ -57,6 +57,20 @@ type ProductBarcodeBase struct {
 	Discount             string              `json:"discount" bson:"discount"`
 	IsStockForRestaurant bool                `json:"isstockforrestaurant" bson:"isstockforrestaurant"`
 	ManufacturerGUID     string              `json:"manufacturerguid" bson:"manufacturerguid"`
+	Dimensions           []ProductDimension  `json:"dimensions" bson:"dimensions"`
+}
+
+type ProductDimension struct {
+	models.DocIdentity `bson:"inline"`
+	Names              *[]models.NameX      `json:"names" bson:"names"`
+	IsDisabled         bool                 `json:"isdisabled" bson:"isdisabled"`
+	Item               ProductDimensionItem `json:"item" bson:"item"`
+}
+
+type ProductDimensionItem struct {
+	models.DocIdentity `bson:"inline"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
+	IsDisabled         bool            `json:"isdisabled" bson:"isdisabled"`
 }
 
 type RefProductBarcode struct {

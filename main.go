@@ -17,6 +17,7 @@ import (
 	"smlcloudplatform/pkg/debtaccount/customergroup"
 	"smlcloudplatform/pkg/debtaccount/debtor"
 	"smlcloudplatform/pkg/debtaccount/debtorgroup"
+	"smlcloudplatform/pkg/dimension"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
@@ -307,6 +308,8 @@ func main() {
 
 			stockbalanceimport.NewStockBalanceImportHttp(ms, cfg),
 			productimport.NewProductImportHttp(ms, cfg),
+
+			dimension.NewDimensionHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)
