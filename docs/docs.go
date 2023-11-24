@@ -2864,6 +2864,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "description": "disabled",
+                        "name": "disabled",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
@@ -2997,6 +3003,12 @@ const docTemplate = `{
                     "Dimension"
                 ],
                 "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "disabled",
+                        "name": "disabled",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -14225,6 +14237,36 @@ const docTemplate = `{
                         "name": "codes",
                         "in": "query"
                     }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/export": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ProductBarcode Export",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
                 ],
                 "responses": {
                     "200": {

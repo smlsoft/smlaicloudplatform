@@ -2,8 +2,10 @@ package services
 
 import (
 	"context"
+	"encoding/csv"
 	"errors"
 	"fmt"
+	"os"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
@@ -14,6 +16,7 @@ import (
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strconv"
 	"time"
 
 	"github.com/samber/lo"
@@ -44,6 +47,7 @@ type IProductBarcodeHttpService interface {
 	GetModuleName() string
 	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	Export(shopID string) ([][]string, error)
 }
 
 type ProductBarcodeHttpService struct {
@@ -910,4 +914,80 @@ func (svc ProductBarcodeHttpService) saveMasterSync(shopID string) {
 
 func (svc ProductBarcodeHttpService) GetModuleName() string {
 	return "productbarcode"
+}
+
+func (svc ProductBarcodeHttpService) Export(shopID string) ([][]string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	filters := bson.M{}
+
+	docs, err := svc.repo.Find(ctx, shopID, filters)
+
+	if err != nil {
+		return [][]string{}, err
+	}
+
+	// fileName := fmt.Sprintf("tmp/%s_productbarcode_%s.csv", shopID, time.Now().Format("20060102150405"))
+
+	results := prepareDataToCSV(docs)
+
+	return results, nil
+}
+
+func dataToCSV(data []models.ProductBarcodeDoc, filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	// Write your data to the CSV file
+	for _, value := range data {
+		langCode := "th"
+
+		productName := getName(value.Names, langCode)
+		unitName := getName(value.ItemUnitNames, langCode)
+		groupName := getName(value.GroupNames, langCode)
+
+		itemType := strconv.Itoa(int(value.ItemType))
+		writer.Write([]string{value.Barcode, productName, value.ItemUnitCode, unitName, itemType, value.GroupCode, groupName}) // Adjust fields as per your struct
+	}
+
+	return nil
+}
+func prepareDataToCSV(data []models.ProductBarcodeDoc) [][]string {
+
+	results := [][]string{}
+
+	for _, value := range data {
+		langCode := "th"
+
+		productName := getName(value.Names, langCode)
+		unitName := getName(value.ItemUnitNames, langCode)
+		groupName := getName(value.GroupNames, langCode)
+
+		itemType := strconv.Itoa(int(value.ItemType))
+		results = append(results, []string{value.Barcode, productName, value.ItemUnitCode, unitName, itemType, value.GroupCode, groupName})
+	}
+
+	return results
+}
+
+func getName(names *[]common.NameX, langCode string) string {
+	if names == nil {
+		return ""
+	}
+
+	for _, name := range *names {
+		if *name.Code == langCode {
+			return *name.Name
+		}
+	}
+
+	return ""
 }

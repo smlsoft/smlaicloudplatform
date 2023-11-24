@@ -8680,6 +8680,10 @@ paths:
       - application/json
       description: get list step
       parameters:
+      - description: disabled
+        in: query
+        name: disabled
+        type: boolean
       - description: Search Value
         in: query
         name: q
@@ -8813,6 +8817,10 @@ paths:
       - application/json
       description: search limit offset
       parameters:
+      - description: disabled
+        in: query
+        name: disabled
+        type: boolean
       - description: Search Value
         in: query
         name: q
@@ -15828,6 +15836,24 @@ paths:
         in: query
         name: codes
         type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
+  /product/barcode/export:
+    get:
+      consumes:
+      - application/json
+      description: ProductBarcode Export
       responses:
         "200":
           description: OK

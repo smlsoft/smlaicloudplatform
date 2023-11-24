@@ -1,7 +1,10 @@
 package productbarcode
 
 import (
+	"encoding/csv"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
@@ -16,6 +19,9 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/requestfilter"
 	"strings"
+	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 type IProductBarcodeHttp interface{}
@@ -69,6 +75,8 @@ func (h ProductBarcodeHttp) RegisterHttp() {
 
 	h.ms.GET("/product/barcode/units", h.GetroductBarcodeByAllUnits)
 	h.ms.GET("/product/barcode/groups", h.GetroductBarcodeByGroups)
+
+	h.ms.GET("/product/barcode/export", h.Export)
 }
 
 // Create ProductBarcode godoc
@@ -712,5 +720,45 @@ func (h ProductBarcodeHttp) GetroductBarcodeByGroups(ctx microservice.IContext) 
 		Pagination: pagination,
 		Data:       docs,
 	})
+	return nil
+}
+
+// Get  Export
+// @Description ProductBarcode Export
+// @Tags		ProductBarcode
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/export [get]
+func (h ProductBarcodeHttp) Export(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	results, err := h.svc.Export(shopID)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	fileName := fmt.Sprintf("%s_productbarcode_%s.csv", shopID, time.Now().Format("20060102150405"))
+
+	ctx.EchoContext().Response().Header().Set(echo.HeaderContentType, "text/csv")
+	ctx.EchoContext().Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=\""+fileName+"\"")
+	ctx.EchoContext().Response().WriteHeader(http.StatusOK)
+
+	csvWriter := csv.NewWriter(ctx.EchoContext().Response())
+	defer csvWriter.Flush()
+
+	for _, value := range results {
+
+		err := csvWriter.Write(value)
+		if err != nil {
+			log.Fatal("Error writing record to CSV:", err)
+			return err
+		}
+	}
+
 	return nil
 }

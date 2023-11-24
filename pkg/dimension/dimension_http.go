@@ -240,6 +240,7 @@ func (h DimensionHttp) InfoDimension(ctx microservice.IContext) error {
 // List Dimension step godoc
 // @Description get list step
 // @Tags		Dimension
+// @Param		disabled		query	boolean		false  "disabled"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -254,7 +255,13 @@ func (h DimensionHttp) SearchDimensionPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{})
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "disabled",
+			Field: "isdisabled",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+	})
 
 	docList, pagination, err := h.svc.SearchDimension(shopID, filters, pageable)
 
@@ -274,6 +281,7 @@ func (h DimensionHttp) SearchDimensionPage(ctx microservice.IContext) error {
 // List Dimension godoc
 // @Description search limit offset
 // @Tags		Dimension
+// @Param		disabled		query	boolean		false  "disabled"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -291,7 +299,13 @@ func (h DimensionHttp) SearchDimensionStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{})
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "isdisabled",
+			Field: "isdisabled",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+	})
 
 	docList, total, err := h.svc.SearchDimensionStep(shopID, lang, filters, pageableStep)
 

@@ -12,6 +12,7 @@ import (
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IProductBarcodeRepository interface {
@@ -51,6 +52,7 @@ type IProductBarcodeRepository interface {
 	FindByRefBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 	FindByBOMBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 
+	Find(ctx context.Context, shopID string, filters interface{}, opts ...*options.FindOptions) ([]models.ProductBarcodeDoc, error)
 	FindOne(ctx context.Context, shopID string, filters interface{}) (models.ProductBarcodeDoc, error)
 	FindByBarcode(ctx context.Context, shopID string, barcode string) (models.ProductBarcodeDoc, error)
 	FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
@@ -129,6 +131,30 @@ func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(ctx context.Context
 	}
 
 	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, bson.M{"$set": bson.M{"parentguid": parentGUID}})
+}
+
+func (repo ProductBarcodeRepository) Find(ctx context.Context, shopID string, filters interface{}, opts ...*options.FindOptions) ([]models.ProductBarcodeDoc, error) {
+
+	var filterQuery interface{}
+
+	switch filterType := filters.(type) {
+	case bson.M:
+		tempQuery := filterType
+		tempQuery["shopid"] = shopID
+		tempQuery["deletedat"] = bson.M{"$exists": false}
+		filterQuery = tempQuery
+	default:
+		return nil, errors.New("invalid query filter type")
+	}
+
+	docs := []models.ProductBarcodeDoc{}
+	err := repo.pst.Find(ctx, models.ProductBarcodeDoc{}, filterQuery, &docs, opts...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return docs, nil
 }
 
 func (repo ProductBarcodeRepository) FindMasterInCodes(ctx context.Context, codes []string) ([]models.ProductBarcodeInfo, error) {
