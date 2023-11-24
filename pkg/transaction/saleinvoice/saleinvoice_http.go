@@ -1,7 +1,10 @@
 package saleinvoice
 
 import (
+	"encoding/csv"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
@@ -14,6 +17,9 @@ import (
 	"smlcloudplatform/pkg/transaction/saleinvoice/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/requestfilter"
+	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 type ISaleInvoiceHttp interface{}
@@ -58,6 +64,7 @@ func (h SaleInvoiceHttp) RegisterHttp() {
 	h.ms.PUT("/transaction/sale-invoice/:id", h.UpdateSaleInvoice)
 	h.ms.DELETE("/transaction/sale-invoice/:id", h.DeleteSaleInvoice)
 	h.ms.DELETE("/transaction/sale-invoice", h.DeleteSaleInvoiceByGUIDs)
+	h.ms.GET("/transaction/sale-invoice/export", h.Export)
 }
 
 // Create SaleInvoice godoc
@@ -460,6 +467,53 @@ func (h SaleInvoiceHttp) SaveBulk(ctx microservice.IContext) error {
 			BulkImport: bulkResponse,
 		},
 	)
+
+	return nil
+}
+
+// Get  Export
+// @Description SaleInvoice Export
+// @Tags		SaleInvoice
+// @Param		lang	query	string		false  "language code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice/export [get]
+func (h SaleInvoiceHttp) Export(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	languageCode := ctx.QueryParam("lang")
+
+	if languageCode == "" {
+		languageCode = "en"
+	}
+
+	results, err := h.svc.Export(shopID, languageCode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	fileName := fmt.Sprintf("%s_sale_invoice_%s.csv", shopID, time.Now().Format("20060102150405"))
+
+	ctx.EchoContext().Response().Header().Set(echo.HeaderContentType, "text/csv")
+	ctx.EchoContext().Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=\""+fileName+"\"")
+	ctx.EchoContext().Response().WriteHeader(http.StatusOK)
+
+	csvWriter := csv.NewWriter(ctx.EchoContext().Response())
+	defer csvWriter.Flush()
+
+	for _, value := range results {
+
+		err := csvWriter.Write(value)
+		if err != nil {
+			log.Fatal("Error writing record to CSV:", err)
+			return err
+		}
+	}
 
 	return nil
 }

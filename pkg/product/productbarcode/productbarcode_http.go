@@ -726,6 +726,7 @@ func (h ProductBarcodeHttp) GetroductBarcodeByGroups(ctx microservice.IContext) 
 // Get  Export
 // @Description ProductBarcode Export
 // @Tags		ProductBarcode
+// @Param		lang	query	string		false  "language code"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -735,7 +736,13 @@ func (h ProductBarcodeHttp) Export(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	results, err := h.svc.Export(shopID)
+	languageCode := ctx.QueryParam("lang")
+
+	if languageCode == "" {
+		languageCode = "en"
+	}
+
+	results, err := h.svc.Export(shopID, languageCode)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

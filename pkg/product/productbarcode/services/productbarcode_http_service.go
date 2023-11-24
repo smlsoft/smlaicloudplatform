@@ -47,7 +47,7 @@ type IProductBarcodeHttpService interface {
 	GetModuleName() string
 	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
-	Export(shopID string) ([][]string, error)
+	Export(shopID string, languageCode string) ([][]string, error)
 }
 
 type ProductBarcodeHttpService struct {
@@ -916,7 +916,7 @@ func (svc ProductBarcodeHttpService) GetModuleName() string {
 	return "productbarcode"
 }
 
-func (svc ProductBarcodeHttpService) Export(shopID string) ([][]string, error) {
+func (svc ProductBarcodeHttpService) Export(shopID string, languageCode string) ([][]string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -929,9 +929,21 @@ func (svc ProductBarcodeHttpService) Export(shopID string) ([][]string, error) {
 		return [][]string{}, err
 	}
 
-	// fileName := fmt.Sprintf("tmp/%s_productbarcode_%s.csv", shopID, time.Now().Format("20060102150405"))
+	results := [][]string{
+		{
+			"รหัสบาร์โค้ด",
+			"ชื่อสินค้า",
+			"รหัสหน่วยนับ",
+			"ชื่อหน่วยนับ",
+			"ราคาขาย",
+			"ประเภทสินค้า",
+			"กลุ่มสินค้า",
+			"ชื่อกลุ่มสินค้า",
+		},
+	}
 
-	results := prepareDataToCSV(docs)
+	temp := prepareDataToCSV(languageCode, docs)
+	results = append(results, temp...)
 
 	return results, nil
 }
@@ -957,22 +969,32 @@ func dataToCSV(data []models.ProductBarcodeDoc, filename string) error {
 		itemType := strconv.Itoa(int(value.ItemType))
 		writer.Write([]string{value.Barcode, productName, value.ItemUnitCode, unitName, itemType, value.GroupCode, groupName}) // Adjust fields as per your struct
 	}
-
 	return nil
 }
-func prepareDataToCSV(data []models.ProductBarcodeDoc) [][]string {
+func prepareDataToCSV(languageCode string, data []models.ProductBarcodeDoc) [][]string {
 
 	results := [][]string{}
 
 	for _, value := range data {
-		langCode := "th"
+		langCode := languageCode
 
 		productName := getName(value.Names, langCode)
 		unitName := getName(value.ItemUnitNames, langCode)
 		groupName := getName(value.GroupNames, langCode)
 
+		price := "0"
+
+		if value.Prices != nil && len(*value.Prices) > 0 {
+			for _, priceItem := range *value.Prices {
+				if priceItem.KeyNumber == 0 {
+					price = fmt.Sprintf("%.2f", priceItem.Price)
+					break
+				}
+			}
+		}
+
 		itemType := strconv.Itoa(int(value.ItemType))
-		results = append(results, []string{value.Barcode, productName, value.ItemUnitCode, unitName, itemType, value.GroupCode, groupName})
+		results = append(results, []string{value.Barcode, productName, value.ItemUnitCode, unitName, price, itemType, value.GroupCode, groupName})
 	}
 
 	return results

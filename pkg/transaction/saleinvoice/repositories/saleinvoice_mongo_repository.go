@@ -29,6 +29,7 @@ type ISaleInvoiceRepository interface {
 	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error)
 	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error)
 
+	Find(ctx context.Context, shopID string, searchInFields []string, q string) ([]models.SaleInvoiceInfo, error)
 	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceDeleteActivity, error)

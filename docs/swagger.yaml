@@ -15854,6 +15854,11 @@ paths:
       consumes:
       - application/json
       description: ProductBarcode Export
+      parameters:
+      - description: language code
+        in: query
+        name: lang
+        type: string
       responses:
         "200":
           description: OK
@@ -24454,6 +24459,29 @@ paths:
         in: path
         name: code
         required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+  /transaction/sale-invoice/export:
+    get:
+      consumes:
+      - application/json
+      description: SaleInvoice Export
+      parameters:
+      - description: language code
+        in: query
+        name: lang
         type: string
       responses:
         "200":

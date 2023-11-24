@@ -14268,6 +14268,14 @@ const docTemplate = `{
                 "tags": [
                     "ProductBarcode"
                 ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "language code",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -28101,6 +28109,44 @@ const docTemplate = `{
                         "name": "code",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/export": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "SaleInvoice Export",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "language code",
+                        "name": "lang",
+                        "in": "query"
                     }
                 ],
                 "responses": {

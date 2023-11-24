@@ -34,6 +34,7 @@ type ISaleInvoiceHttpService interface {
 	SearchSaleInvoiceStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error)
 	GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error)
+	Export(languageCode string, shopID string) ([][]string, error)
 
 	GetModuleName() string
 }
@@ -551,4 +552,79 @@ func (svc SaleInvoiceHttpService) saveMasterSync(shopID string) {
 
 func (svc SaleInvoiceHttpService) GetModuleName() string {
 	return "saleInvoice"
+}
+
+func (svc SaleInvoiceHttpService) Export(shopID string, languageCode string) ([][]string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docs, err := svc.repo.Find(ctx, shopID, []string{}, "")
+
+	if err != nil {
+		return [][]string{}, err
+	}
+
+	results := [][]string{
+		[]string{
+			"วันที่",
+			"เลขที่เอกสาร",
+			"บาร์โค้ด",
+			"ชื่อสินค้า",
+			"หน่วยนับ",
+			"ชื่อหน่วยนับ",
+			"จำนวน",
+			"ราคา",
+			"มูลค่าส่วนลด",
+			"มูลค่าสินค้า",
+		},
+	}
+	for _, doc := range docs {
+		tempResults := prepareDataToCSV(languageCode, doc)
+		results = append(results, tempResults...)
+	}
+
+	return results, nil
+}
+
+func prepareDataToCSV(languageCode string, data models.SaleInvoiceInfo) [][]string {
+
+	results := [][]string{}
+
+	if data.Details == nil {
+		return results
+	}
+
+	for _, value := range *data.Details {
+		langCode := languageCode
+
+		productName := getName(value.ItemNames, langCode)
+		unitName := getName(value.UnitNames, langCode)
+
+		qty := fmt.Sprintf("%.2f", value.Qty)
+		price := fmt.Sprintf("%.2f", value.Price)
+		discountAmount := fmt.Sprintf("%.2f", value.DiscountAmount)
+		sumAmount := fmt.Sprintf("%.2f", value.SumAmount)
+
+		dateLayout := "2006-01-02"
+		docDate := data.DocDatetime.Format(dateLayout)
+
+		results = append(results, []string{docDate, data.DocNo, value.Barcode, productName, value.UnitCode, unitName, qty, price, discountAmount, sumAmount})
+	}
+
+	return results
+}
+
+func getName(names *[]common.NameX, langCode string) string {
+	if names == nil {
+		return ""
+	}
+
+	for _, name := range *names {
+		if *name.Code == langCode {
+			return *name.Name
+		}
+	}
+
+	return ""
 }
