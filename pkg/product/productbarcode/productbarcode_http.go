@@ -22,6 +22,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 type IProductBarcodeHttp interface{}
@@ -751,11 +753,13 @@ func (h ProductBarcodeHttp) Export(ctx microservice.IContext) error {
 
 	fileName := fmt.Sprintf("%s_productbarcode_%s.csv", shopID, time.Now().Format("20060102150405"))
 
-	ctx.EchoContext().Response().Header().Set(echo.HeaderContentType, "text/csv; charset=UTF-8")
+	ctx.EchoContext().Response().Header().Set(echo.HeaderContentType, "application/octet-stream; charset=UTF-8")
 	ctx.EchoContext().Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=\""+fileName+"\"")
 	ctx.EchoContext().Response().WriteHeader(http.StatusOK)
 
-	csvWriter := csv.NewWriter(ctx.EchoContext().Response())
+	t := transform.NewWriter(ctx.EchoContext().Response(), unicode.UTF8.NewEncoder())
+
+	csvWriter := csv.NewWriter(t)
 	defer csvWriter.Flush()
 
 	for _, value := range results {
