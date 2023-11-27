@@ -499,7 +499,7 @@ func (h SaleInvoiceHttp) Export(ctx microservice.IContext) error {
 
 	fileName := fmt.Sprintf("%s_sale_invoice_%s.csv", shopID, time.Now().Format("20060102150405"))
 
-	ctx.EchoContext().Response().Header().Set(echo.HeaderContentType, "text/csv")
+	ctx.EchoContext().Response().Header().Set(echo.HeaderContentType, "text/cs; charset=UTF-8")
 	ctx.EchoContext().Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=\""+fileName+"\"")
 	ctx.EchoContext().Response().WriteHeader(http.StatusOK)
 
