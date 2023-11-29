@@ -14274,6 +14274,48 @@ const docTemplate = `{
                         "description": "language code",
                         "name": "lang",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Barcode",
+                        "name": "barcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Product Name",
+                        "name": "productname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Unit Code",
+                        "name": "unitcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Unit Name",
+                        "name": "unitname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Price",
+                        "name": "price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Item Type",
+                        "name": "itemtype",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Group Code",
+                        "name": "groupcode",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -28147,6 +28189,66 @@ const docTemplate = `{
                         "description": "language code",
                         "name": "lang",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Doc Date",
+                        "name": "docdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Doc No",
+                        "name": "docno",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Barcode",
+                        "name": "barcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Product Name",
+                        "name": "productname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Unit Code",
+                        "name": "unitcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Unit Name",
+                        "name": "unitname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Qty",
+                        "name": "qty",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Price",
+                        "name": "price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Discount Amount",
+                        "name": "discountamount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Label Sum Amount",
+                        "name": "sumamount",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -34089,7 +34191,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "countrycode": {
                     "type": "string"

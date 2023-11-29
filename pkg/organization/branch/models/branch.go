@@ -34,15 +34,15 @@ type BranchPOS struct {
 }
 
 type Contact struct {
-	Address         string  `json:"address" bson:"address"`
-	CountryCode     string  `json:"countrycode" bson:"countrycode"`
-	ProvinceCode    string  `json:"provincecode" bson:"provincecode"`
-	DistrictCode    string  `json:"districtcode" bson:"districtcode"`
-	SubDistrictCode string  `json:"subdistrictcode" bson:"subdistrictcode"`
-	ZipCode         string  `json:"zipcode" bson:"zipcode"`
-	PhoneNumber     string  `json:"phonenumber" bson:"phonenumber"`
-	Latitude        float64 `json:"latitude" bson:"latitude"`
-	Longitude       float64 `json:"longitude" bson:"longitude"`
+	Address         []models.NameX `json:"address" bson:"address"`
+	CountryCode     string         `json:"countrycode" bson:"countrycode"`
+	ProvinceCode    string         `json:"provincecode" bson:"provincecode"`
+	DistrictCode    string         `json:"districtcode" bson:"districtcode"`
+	SubDistrictCode string         `json:"subdistrictcode" bson:"subdistrictcode"`
+	ZipCode         string         `json:"zipcode" bson:"zipcode"`
+	PhoneNumber     string         `json:"phonenumber" bson:"phonenumber"`
+	Latitude        float64        `json:"latitude" bson:"latitude"`
+	Longitude       float64        `json:"longitude" bson:"longitude"`
 }
 
 type BranchInfo struct {

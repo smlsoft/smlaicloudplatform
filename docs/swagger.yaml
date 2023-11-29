@@ -548,7 +548,9 @@ definitions:
   models.Contact:
     properties:
       address:
-        type: string
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       countrycode:
         type: string
       districtcode:
@@ -15859,6 +15861,34 @@ paths:
         in: query
         name: lang
         type: string
+      - description: Label Barcode
+        in: query
+        name: barcode
+        type: string
+      - description: Label Product Name
+        in: query
+        name: productname
+        type: string
+      - description: Label Unit Code
+        in: query
+        name: unitcode
+        type: string
+      - description: Label Unit Name
+        in: query
+        name: unitname
+        type: string
+      - description: Label Price
+        in: query
+        name: price
+        type: string
+      - description: Label Item Type
+        in: query
+        name: itemtype
+        type: string
+      - description: Label Group Code
+        in: query
+        name: groupcode
+        type: string
       responses:
         "200":
           description: OK
@@ -24482,6 +24512,46 @@ paths:
       - description: language code
         in: query
         name: lang
+        type: string
+      - description: Label Doc Date
+        in: query
+        name: docdate
+        type: string
+      - description: Label Doc No
+        in: query
+        name: docno
+        type: string
+      - description: Label Barcode
+        in: query
+        name: barcode
+        type: string
+      - description: Label Product Name
+        in: query
+        name: productname
+        type: string
+      - description: Label Unit Code
+        in: query
+        name: unitcode
+        type: string
+      - description: Label Unit Name
+        in: query
+        name: unitname
+        type: string
+      - description: Label Qty
+        in: query
+        name: qty
+        type: string
+      - description: Label Price
+        in: query
+        name: price
+        type: string
+      - description: Label Discount Amount
+        in: query
+        name: discountamount
+        type: string
+      - description: Label Sum Amount
+        in: query
+        name: sumamount
         type: string
       responses:
         "200":
