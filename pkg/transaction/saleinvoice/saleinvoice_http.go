@@ -20,6 +20,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 type ISaleInvoiceHttp interface{}
@@ -475,6 +477,16 @@ func (h SaleInvoiceHttp) SaveBulk(ctx microservice.IContext) error {
 // @Description SaleInvoice Export
 // @Tags		SaleInvoice
 // @Param		lang	query	string		false  "language code"
+// @Param		docdate	query	string		false  "Label Doc Date"
+// @Param		docno	query	string		false  "Label Doc No"
+// @Param		barcode	query	string		false  "Label Barcode"
+// @Param		productname	query	string		false  "Label Product Name"
+// @Param		unitcode	query	string		false  "Label Unit Code"
+// @Param		unitname	query	string		false  "Label Unit Name"
+// @Param		qty	query	string		false  "Label Qty"
+// @Param		price	query	string		false  "Label Price"
+// @Param		discountamount	query	string		false  "Label Discount Amount"
+// @Param		sumamount	query	string		false  "Label Sum Amount"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -490,7 +502,26 @@ func (h SaleInvoiceHttp) Export(ctx microservice.IContext) error {
 		languageCode = "en"
 	}
 
-	results, err := h.svc.Export(shopID, languageCode)
+	keyCols := []string{
+		"docdate",        //"วันที่",
+		"docno",          //เลขที่เอกสาร",
+		"barcode",        //บาร์โค้ด",
+		"productname",    //"ชื่อสินค้า",
+		"unitcode",       //"หน่วยนับ",
+		"unitname",       //"ชื่อหน่วยนับ",
+		"qty",            //"จำนวน",
+		"price",          //ราคา",
+		"discountamount", // "มูลค่าส่วนลด",
+		"sumamount",      //"มูลค่าสินค้า",
+	}
+
+	languageHeader := map[string]string{}
+
+	for _, key := range keyCols {
+		languageHeader[key] = ctx.QueryParam(key)
+	}
+
+	results, err := h.svc.Export(shopID, languageCode, languageHeader)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -503,7 +534,10 @@ func (h SaleInvoiceHttp) Export(ctx microservice.IContext) error {
 	ctx.EchoContext().Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=\""+fileName+"\"")
 	ctx.EchoContext().Response().WriteHeader(http.StatusOK)
 
-	csvWriter := csv.NewWriter(ctx.EchoContext().Response())
+	t := transform.NewWriter(ctx.EchoContext().Response(), unicode.UTF8BOM.NewEncoder())
+
+	csvWriter := csv.NewWriter(t)
+
 	defer csvWriter.Flush()
 
 	for _, value := range results {

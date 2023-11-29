@@ -34,7 +34,7 @@ type ISaleInvoiceHttpService interface {
 	SearchSaleInvoiceStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error)
 	GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error)
-	Export(languageCode string, shopID string) ([][]string, error)
+	Export(languageCode string, shopID string, languageHeader map[string]string) ([][]string, error)
 
 	GetModuleName() string
 }
@@ -554,7 +554,7 @@ func (svc SaleInvoiceHttpService) GetModuleName() string {
 	return "saleInvoice"
 }
 
-func (svc SaleInvoiceHttpService) Export(shopID string, languageCode string) ([][]string, error) {
+func (svc SaleInvoiceHttpService) Export(shopID string, languageCode string, languageHeader map[string]string) ([][]string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -565,20 +565,32 @@ func (svc SaleInvoiceHttpService) Export(shopID string, languageCode string) ([]
 		return [][]string{}, err
 	}
 
-	results := [][]string{
-		[]string{
-			"วันที่",
-			"เลขที่เอกสาร",
-			"บาร์โค้ด",
-			"ชื่อสินค้า",
-			"หน่วยนับ",
-			"ชื่อหน่วยนับ",
-			"จำนวน",
-			"ราคา",
-			"มูลค่าส่วนลด",
-			"มูลค่าสินค้า",
-		},
+	keyCols := []string{
+		"docdate",        //"วันที่",
+		"docno",          //เลขที่เอกสาร",
+		"barcode",        //บาร์โค้ด",
+		"productname",    //"ชื่อสินค้า",
+		"unitcode",       //"หน่วยนับ",
+		"unitname",       //"ชื่อหน่วยนับ",
+		"qty",            //"จำนวน",
+		"price",          //ราคา",
+		"discountamount", // "มูลค่าส่วนลด",
+		"sumamount",      //"มูลค่าสินค้า",
 	}
+
+	headerRow := []string{}
+	for _, keyCol := range keyCols {
+		tempVal := keyCol
+		if val, ok := languageHeader[keyCol]; ok && val != "" {
+			tempVal = val
+		}
+		headerRow = append(headerRow, tempVal)
+	}
+
+	results := [][]string{}
+
+	results = append(results, headerRow)
+
 	for _, doc := range docs {
 		tempResults := prepareDataToCSV(languageCode, doc)
 		results = append(results, tempResults...)

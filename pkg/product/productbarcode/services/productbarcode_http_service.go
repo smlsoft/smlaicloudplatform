@@ -47,7 +47,7 @@ type IProductBarcodeHttpService interface {
 	GetModuleName() string
 	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
-	Export(shopID string, languageCode string) ([][]string, error)
+	Export(shopID string, languageCode string, languageHeader map[string]string) ([][]string, error)
 }
 
 type ProductBarcodeHttpService struct {
@@ -916,7 +916,7 @@ func (svc ProductBarcodeHttpService) GetModuleName() string {
 	return "productbarcode"
 }
 
-func (svc ProductBarcodeHttpService) Export(shopID string, languageCode string) ([][]string, error) {
+func (svc ProductBarcodeHttpService) Export(shopID string, languageCode string, languageHeader map[string]string) ([][]string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -929,18 +929,28 @@ func (svc ProductBarcodeHttpService) Export(shopID string, languageCode string) 
 		return [][]string{}, err
 	}
 
-	results := [][]string{
-		{
-			"รหัสบาร์โค้ด",
-			"ชื่อสินค้า",
-			"รหัสหน่วยนับ",
-			"ชื่อหน่วยนับ",
-			"ราคาขาย",
-			"ประเภทสินค้า",
-			"กลุ่มสินค้า",
-			"ชื่อกลุ่มสินค้า",
-		},
+	keyCols := []string{
+		"barcode",     //บาร์โค้ด",
+		"productname", //"ชื่อสินค้า",
+		"unitcode",    //"หน่วยนับ",
+		"unitname",    //"ชื่อหน่วยนับ",
+		"price",       //ราคาขาย",
+		"itemtype",    //ประเภทสินค้า",
+		"groupcode",   //กลุ่มสินค้า",
 	}
+
+	headerRow := []string{}
+	for _, keyCol := range keyCols {
+		tempVal := keyCol
+		if val, ok := languageHeader[keyCol]; ok && val != "" {
+			tempVal = val
+		}
+		headerRow = append(headerRow, tempVal)
+	}
+
+	results := [][]string{}
+
+	results = append(results, headerRow)
 
 	temp := prepareDataToCSV(languageCode, docs)
 	results = append(results, temp...)
