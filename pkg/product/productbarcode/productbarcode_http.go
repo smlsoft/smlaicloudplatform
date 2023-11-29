@@ -729,6 +729,13 @@ func (h ProductBarcodeHttp) GetroductBarcodeByGroups(ctx microservice.IContext) 
 // @Description ProductBarcode Export
 // @Tags		ProductBarcode
 // @Param		lang	query	string		false  "language code"
+// @Param		barcode	query	string		false  "Label Barcode"
+// @Param		productname	query	string		false  "Label Product Name"
+// @Param		unitcode	query	string		false  "Label Unit Code"
+// @Param		unitname	query	string		false  "Label Unit Name"
+// @Param		price	query	string		false  "Label Price"
+// @Param		itemtype	query	string		false  "Label Item Type"
+// @Param		groupcode	query	string		false  "Label Group Code"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -744,7 +751,22 @@ func (h ProductBarcodeHttp) Export(ctx microservice.IContext) error {
 		languageCode = "en"
 	}
 
-	results, err := h.svc.Export(shopID, languageCode)
+	keyCols := []string{
+		"barcode",     //บาร์โค้ด",
+		"productname", //"ชื่อสินค้า",
+		"unitcode",    //"หน่วยนับ",
+		"unitname",    //"ชื่อหน่วยนับ",
+		"price",       //ราคาขาย",
+		"itemtype",    //ประเภทสินค้า",
+		"groupcode",   //กลุ่มสินค้า",
+	}
+
+	languageHeader := map[string]string{}
+	for _, key := range keyCols {
+		languageHeader[key] = ctx.QueryParam(key)
+	}
+
+	results, err := h.svc.Export(shopID, languageCode, languageHeader)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -757,7 +779,7 @@ func (h ProductBarcodeHttp) Export(ctx microservice.IContext) error {
 	ctx.EchoContext().Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=\""+fileName+"\"")
 	ctx.EchoContext().Response().WriteHeader(http.StatusOK)
 
-	t := transform.NewWriter(ctx.EchoContext().Response(), unicode.UTF8.NewEncoder())
+	t := transform.NewWriter(ctx.EchoContext().Response(), unicode.UTF8BOM.NewEncoder())
 
 	csvWriter := csv.NewWriter(t)
 	defer csvWriter.Flush()
