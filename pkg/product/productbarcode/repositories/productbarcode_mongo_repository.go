@@ -246,8 +246,7 @@ func (repo ProductBarcodeRepository) FindByBarcode(ctx context.Context, shopID s
 		"barcode":   barcode,
 	}
 
-	var result models.ProductBarcodeDoc
-	err := repo.pst.Find(ctx, models.ProductBarcodeDoc{}, filters, &result)
+	result, err := repo.FindOne(ctx, shopID, filters)
 
 	if err != nil {
 		return models.ProductBarcodeDoc{}, err
