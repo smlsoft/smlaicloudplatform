@@ -27,6 +27,12 @@ type Debtor struct {
 	CreditDay          int        `json:"creditday" bson:"creditday"`
 	IsMember           bool       `json:"ismember" bson:"ismember"`
 	GroupGUIDs         *[]string  `json:"-" bson:"groups"`
+	Auth               DebtorAuth `json:"auth" bson:"auth"`
+}
+
+type DebtorAuth struct {
+	Username string `json:"username" bson:"username"`
+	Password string `json:"password" bson:"password"`
 }
 
 type Address struct {

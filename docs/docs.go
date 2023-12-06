@@ -34222,6 +34222,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CreditorAuth": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -34255,6 +34266,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address"
                     }
+                },
+                "auth": {
+                    "$ref": "#/definitions/models.CreditorAuth"
                 },
                 "branchnumber": {
                     "type": "string"
@@ -34391,6 +34405,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DebtorAuth": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "models.DebtorGroup": {
             "type": "object",
             "required": [
@@ -34424,6 +34449,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address"
                     }
+                },
+                "auth": {
+                    "$ref": "#/definitions/models.DebtorAuth"
                 },
                 "branchnumber": {
                     "type": "string"

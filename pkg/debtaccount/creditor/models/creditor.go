@@ -16,16 +16,22 @@ type Creditor struct {
 	Images                   *[]Image        `json:"images" bson:"images"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 
-	AddressForBilling  Address    `json:"addressforbilling" bson:"addressforbilling"`
-	AddressForShipping *[]Address `json:"addressforshipping" bson:"addressforshipping"`
-	TaxId              string     `json:"taxid" bson:"taxid"`
-	Email              string     `json:"email" bson:"email"`
-	CustomerType       int        `json:"customertype" bson:"customertype"`
-	BranchNumber       string     `json:"branchnumber" bson:"branchnumber"`
-	FundCode           string     `json:"fundcode" bson:"fundcode"`
-	CreditDay          int        `json:"creditday" bson:"creditday"`
-	IsMember           bool       `json:"ismember" bson:"ismember"`
-	GroupGUIDs         *[]string  `json:"-" bson:"groups"`
+	AddressForBilling  Address      `json:"addressforbilling" bson:"addressforbilling"`
+	AddressForShipping *[]Address   `json:"addressforshipping" bson:"addressforshipping"`
+	TaxId              string       `json:"taxid" bson:"taxid"`
+	Email              string       `json:"email" bson:"email"`
+	CustomerType       int          `json:"customertype" bson:"customertype"`
+	BranchNumber       string       `json:"branchnumber" bson:"branchnumber"`
+	FundCode           string       `json:"fundcode" bson:"fundcode"`
+	CreditDay          int          `json:"creditday" bson:"creditday"`
+	IsMember           bool         `json:"ismember" bson:"ismember"`
+	GroupGUIDs         *[]string    `json:"-" bson:"groups"`
+	Auth               CreditorAuth `json:"auth" bson:"auth"`
+}
+
+type CreditorAuth struct {
+	Username string `json:"username" bson:"username"`
+	Password string `json:"password" bson:"password"`
 }
 
 type Address struct {

@@ -568,6 +568,13 @@ definitions:
       zipcode:
         type: string
     type: object
+  models.CreditorAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -589,6 +596,8 @@ definitions:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address'
         type: array
+      auth:
+        $ref: '#/definitions/models.CreditorAuth'
       branchnumber:
         type: string
       code:
@@ -682,6 +691,13 @@ definitions:
     required:
     - names
     type: object
+  models.DebtorAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   models.DebtorGroup:
     properties:
       groupcode:
@@ -703,6 +719,8 @@ definitions:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address'
         type: array
+      auth:
+        $ref: '#/definitions/models.DebtorAuth'
       branchnumber:
         type: string
       code:
