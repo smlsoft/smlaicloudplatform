@@ -2573,6 +2573,47 @@
                 }
             }
         },
+        "/debtaccount/debtor/auth": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Auth Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Debtor Auth",
+                        "name": "DebtorAuth",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorAuth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/debtaccount/debtor/bulk": {
             "post": {
                 "security": [

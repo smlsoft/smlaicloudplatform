@@ -31,7 +31,13 @@ func NewDebtorHttp(ms *microservice.Microservice, cfg config.IConfig) DebtorHttp
 	repoGroup := groupRepositories.NewDebtorGroupRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewDebtorHttpService(repo, repoGroup, masterSyncCacheRepo)
+	svc := services.NewDebtorHttpService(
+		repo,
+		repoGroup,
+		masterSyncCacheRepo,
+		utils.HashPassword,
+		utils.CheckHashPassword,
+	)
 
 	return DebtorHttp{
 		ms:  ms,
@@ -44,6 +50,7 @@ func (h DebtorHttp) RegisterHttp() {
 
 	h.ms.POST("/debtaccount/debtor/bulk", h.SaveBulk)
 
+	h.ms.POST("/debtaccount/debtor/auth", h.AuthDebtor)
 	h.ms.GET("/debtaccount/debtor", h.SearchDebtorPage)
 	h.ms.GET("/debtaccount/debtor/list", h.SearchDebtorStep)
 	h.ms.POST("/debtaccount/debtor", h.CreateDebtor)
@@ -51,6 +58,47 @@ func (h DebtorHttp) RegisterHttp() {
 	h.ms.PUT("/debtaccount/debtor/:id", h.UpdateDebtor)
 	h.ms.DELETE("/debtaccount/debtor/:id", h.DeleteDebtor)
 	h.ms.DELETE("/debtaccount/debtor", h.DeleteDebtorByGUIDs)
+}
+
+// Auth Debtor godoc
+// @Description Auth Debtor
+// @Tags		Debtor
+// @Param		DebtorAuth  body      models.DebtorAuth  true  "Debtor Auth"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /debtaccount/debtor/auth [post]
+func (h DebtorHttp) AuthDebtor(ctx microservice.IContext) error {
+
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	payload := &models.DebtorAuth{}
+	err := json.Unmarshal([]byte(input), &payload)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(payload); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	idx, err := h.svc.InfoAuthDebtor(shopID, payload.Username, payload.Password)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      idx,
+	})
+	return nil
 }
 
 // Create Debtor godoc

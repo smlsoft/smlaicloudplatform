@@ -32,27 +32,37 @@ type IDebtorHttpService interface {
 	SearchDebtor(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DebtorInfo, mongopagination.PaginationData, error)
 	SearchDebtorStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DebtorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.DebtorRequest) (common.BulkImport, error)
+	InfoAuthDebtor(shopID string, username string, password string) (models.DebtorInfo, error)
 
 	GetModuleName() string
 }
 
 type DebtorHttpService struct {
-	repo      repositories.IDebtorRepository
-	repoGroup groupRepositories.IDebtorGroupRepository
-
+	repo          repositories.IDebtorRepository
+	repoGroup     groupRepositories.IDebtorGroupRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.DebtorActivity, models.DebtorDeleteActivity]
-	contextTimeout time.Duration
+	hashPassword      func(password string) (string, error)
+	checkHashPassword func(password, hash string) bool
+	contextTimeout    time.Duration
 }
 
-func NewDebtorHttpService(repo repositories.IDebtorRepository, repoGroup groupRepositories.IDebtorGroupRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *DebtorHttpService {
+func NewDebtorHttpService(
+	repo repositories.IDebtorRepository,
+	repoGroup groupRepositories.IDebtorGroupRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+	hashPassword func(password string) (string, error),
+	checkHashPassword func(password, hash string) bool,
+) *DebtorHttpService {
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &DebtorHttpService{
-		repo:           repo,
-		repoGroup:      repoGroup,
-		syncCacheRepo:  syncCacheRepo,
-		contextTimeout: contextTimeout,
+		repo:              repo,
+		repoGroup:         repoGroup,
+		syncCacheRepo:     syncCacheRepo,
+		hashPassword:      hashPassword,
+		checkHashPassword: checkHashPassword,
+		contextTimeout:    contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.DebtorActivity, models.DebtorDeleteActivity](repo)
@@ -62,6 +72,44 @@ func NewDebtorHttpService(repo repositories.IDebtorRepository, repoGroup groupRe
 
 func (svc DebtorHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
+func (svc DebtorHttpService) InfoAuthDebtor(shopID string, username string, password string) (models.DebtorInfo, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	if username == "" || password == "" {
+		return models.DebtorInfo{}, errors.New("username or password incorrect")
+	}
+
+	findDoc, err := svc.repo.FindAuthByUsername(ctx, shopID, username)
+
+	if err != nil {
+		return models.DebtorInfo{}, err
+	}
+
+	if findDoc.Auth.Username == "" {
+		return models.DebtorInfo{}, errors.New("username or password incorrect")
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.DebtorInfo{}, errors.New("username or password incorrect")
+	}
+
+	if findDoc.Auth.Password == "" {
+		return models.DebtorInfo{}, errors.New("username or password incorrect")
+	}
+
+	invalidPassword := !svc.checkHashPassword(password, findDoc.Auth.Password)
+
+	if invalidPassword {
+		return models.DebtorInfo{}, errors.New("username or password incorrect")
+	}
+
+	findDoc.Auth.Password = ""
+
+	return findDoc.DebtorInfo, nil
+
 }
 
 func (svc DebtorHttpService) CreateDebtor(shopID string, authUsername string, doc models.DebtorRequest) (string, error) {
@@ -76,7 +124,19 @@ func (svc DebtorHttpService) CreateDebtor(shopID string, authUsername string, do
 	}
 
 	if findDoc.Code != "" {
-		return "", errors.New("Code is exists")
+		return "", errors.New("code is exists")
+	}
+
+	if doc.Auth.Username != "" {
+		findDocAuth, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "auth.username", doc.Code)
+
+		if err != nil {
+			return "", err
+		}
+
+		if findDocAuth.Auth.Username != "" {
+			return "", errors.New("auth username is exists")
+		}
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -89,6 +149,14 @@ func (svc DebtorHttpService) CreateDebtor(shopID string, authUsername string, do
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
+
+	if doc.Auth.Password != "" {
+		hashedPassword, err := svc.hashPassword(doc.Auth.Password)
+		if err != nil {
+			return "", err
+		}
+		docData.Auth.Password = hashedPassword
+	}
 
 	_, err = svc.repo.Create(ctx, docData)
 
@@ -116,11 +184,32 @@ func (svc DebtorHttpService) UpdateDebtor(shopID string, guid string, authUserna
 		return errors.New("document not found")
 	}
 
+	if doc.Auth.Username != "" {
+		findDocAuth, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "auth.username", doc.Auth.Username)
+
+		if err != nil {
+			return err
+		}
+
+		if findDoc.Auth.Username != findDocAuth.Auth.Username && findDocAuth.Auth.Username != "" {
+			return errors.New("auth username is exists")
+		}
+
+	}
+
 	findDoc.Debtor = doc.Debtor
 	findDoc.GroupGUIDs = &doc.Groups
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
+
+	if doc.Auth.Password != "" {
+		hashedPassword, err := svc.hashPassword(doc.Auth.Password)
+		if err != nil {
+			return err
+		}
+		findDoc.Auth.Password = hashedPassword
+	}
 
 	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
@@ -202,7 +291,10 @@ func (svc DebtorHttpService) InfoDebtor(shopID string, guid string) (models.Debt
 
 	findDoc.DebtorInfo.Groups = &custGroupInfo
 
-	return findDoc.DebtorInfo, nil
+	docInfo := findDoc.DebtorInfo
+	docInfo.Auth.Password = ""
+
+	return docInfo, nil
 
 }
 
@@ -235,7 +327,10 @@ func (svc DebtorHttpService) InfoDebtorByCode(shopID string, code string) (model
 
 	findDoc.DebtorInfo.Groups = &custGroupInfo
 
-	return findDoc.DebtorInfo, nil
+	docInfo := findDoc.DebtorInfo
+	docInfo.Auth.Password = ""
+
+	return docInfo, nil
 
 }
 
@@ -275,6 +370,10 @@ func (svc DebtorHttpService) SearchDebtor(shopID string, filters map[string]inte
 
 			docList[idx].Groups = &custGroupInfo
 		}
+	}
+
+	for i := 0; i < len(docList); i++ {
+		docList[i].Auth.Password = ""
 	}
 
 	return docList, pagination, nil
@@ -318,6 +417,10 @@ func (svc DebtorHttpService) SearchDebtorStep(shopID string, langCode string, fi
 
 			docList[idx].Groups = &custGroupInfo
 		}
+	}
+
+	for i := 0; i < len(docList); i++ {
+		docList[i].Auth.Password = ""
 	}
 
 	return docList, total, nil

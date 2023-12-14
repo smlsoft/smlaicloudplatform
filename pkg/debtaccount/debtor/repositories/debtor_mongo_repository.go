@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IDebtorRepository interface {
@@ -30,6 +31,8 @@ type IDebtorRepository interface {
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DebtorActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DebtorDeleteActivity, error)
 	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DebtorActivity, error)
+
+	FindAuthByUsername(ctx context.Context, shopID string, username string) (models.DebtorDoc, error)
 }
 
 type DebtorRepository struct {
@@ -52,4 +55,22 @@ func NewDebtorRepository(pst microservice.IPersisterMongo) *DebtorRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.DebtorActivity, models.DebtorDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo DebtorRepository) FindAuthByUsername(ctx context.Context, shopID string, username string) (models.DebtorDoc, error) {
+	var doc models.DebtorDoc
+
+	filter := bson.M{
+		"shopid":        shopID,
+		"deletedat":     bson.M{"$exists": false},
+		"auth.username": username,
+	}
+
+	err := repo.pst.FindOne(ctx, models.DebtorDoc{}, filter, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, err
 }

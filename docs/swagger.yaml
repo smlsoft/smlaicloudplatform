@@ -8576,6 +8576,31 @@ paths:
       - AccessToken: []
       tags:
       - Debtor
+  /debtaccount/debtor/auth:
+    post:
+      consumes:
+      - application/json
+      description: Auth Debtor
+      parameters:
+      - description: Debtor Auth
+        in: body
+        name: DebtorAuth
+        required: true
+        schema:
+          $ref: '#/definitions/models.DebtorAuth'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
   /debtaccount/debtor/bulk:
     post:
       consumes:
