@@ -194,12 +194,12 @@ func (svc *ProductImportService) ImportFromFile(shopID string, authUsername stri
 }
 func (svc *ProductImportService) prepareData(shopID string, taskID string, rowNumber float64, colIdx map[string]int, doc []string) (models.ProductImportDoc, error) {
 
-	price, err := strconv.ParseFloat(doc[colIdx["Amount"]], 64)
+	price, err := strconv.ParseFloat(doc[colIdx["Price"]], 64)
 	if err != nil {
 		return models.ProductImportDoc{}, fmt.Errorf("price in row %d invalid", int(rowNumber))
 	}
 
-	priceMember, err := strconv.ParseFloat(doc[colIdx["Amount"]], 64)
+	priceMember, err := strconv.ParseFloat(doc[colIdx["Price Member"]], 64)
 	if err != nil {
 		return models.ProductImportDoc{}, fmt.Errorf("price member in row %d invalid", int(rowNumber))
 	}
