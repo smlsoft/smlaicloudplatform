@@ -100,8 +100,24 @@ type BOMProductBarcode struct {
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
 	ProductBarcodeBase       `bson:"inline"`
-	RefBarcodes              *[]RefProductBarcode `json:"refbarcodes" bson:"refbarcodes"`
-	BOM                      *[]BOMProductBarcode `json:"bom" bson:"bom"`
+	RefBarcodes              *[]RefProductBarcode          `json:"refbarcodes" bson:"refbarcodes"`
+	BOM                      *[]BOMProductBarcode          `json:"bom" bson:"bom"`
+	BusinessTypes            *[]ProductBarcodeBusinessType `json:"businesstypes" bson:"businesstypes" `
+	Branches                 *[]ProductBarcodeBranch       `json:"branches" bson:"branches" `
+}
+
+type ProductBarcodeBusinessType struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
+	IsIgnore           bool            `json:"isignore" bson:"isignore"`
+}
+
+type ProductBarcodeBranch struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
+	IsIgnore           bool            `json:"isignore" bson:"isignore"`
 }
 
 type ProductImage struct {
@@ -187,8 +203,10 @@ func (ProductBarcodeDeleteActivity) CollectionName() string {
 
 type ProductBarcodeRequest struct {
 	ProductBarcodeBase
-	RefBarcodes []BarcodeRequest `json:"refbarcodes"`
-	BOM         []BOMRequest     `json:"bom"`
+	RefBarcodes   []BarcodeRequest             `json:"refbarcodes"`
+	BOM           []BOMRequest                 `json:"bom"`
+	Branches      []ProductBarcodeBranch       `json:"branches"`
+	BusinessTypes []ProductBarcodeBusinessType `json:"businesstypes"`
 }
 
 func (p ProductBarcodeRequest) ToProductBarcode() ProductBarcode {

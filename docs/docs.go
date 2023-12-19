@@ -14078,6 +14078,18 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "business type code ex. bt1,bt2",
+                        "name": "businesstypecode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code ex. b1,b2",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "is A La Carte",
                         "name": "isalacarte",
                         "in": "query"
@@ -14213,6 +14225,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/barcode/branch": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductBarcode Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product BarcodeBranch Request",
+                        "name": "ProductBarcodeBranchRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductBarcodeBranchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/barcode/bulk": {
             "post": {
                 "security": [
@@ -14246,6 +14299,47 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/business-type": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductBarcode Business Type",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product Barcode Business Type Request",
+                        "name": "ProductBarcodeBusinessTypeRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductBarcodeBusinessTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -14428,6 +14522,18 @@ const docTemplate = `{
                     "ProductBarcode"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "business type code ex. bt1,bt2",
+                        "name": "businesstypecode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code ex. b1,b2",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "is A La Carte",
@@ -37756,6 +37862,74 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductBarcodeBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isignore": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.ProductBarcodeBranchRequest": {
+            "type": "object",
+            "properties": {
+                "branch": {
+                    "$ref": "#/definitions/models.ProductBarcodeBranch"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.ProductBarcodeBusinessType": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isignore": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.ProductBarcodeBusinessTypeRequest": {
+            "type": "object",
+            "properties": {
+                "businesstype": {
+                    "$ref": "#/definitions/models.ProductBarcodeBusinessType"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.ProductBarcodeRequest": {
             "type": "object",
             "required": [
@@ -37771,6 +37945,18 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.BOMRequest"
+                    }
+                },
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductBarcodeBranch"
+                    }
+                },
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductBarcodeBusinessType"
                     }
                 },
                 "colorselect": {
@@ -43711,6 +43897,18 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.BOMProductBarcode"
+                    }
+                },
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductBarcodeBranch"
+                    }
+                },
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductBarcodeBusinessType"
                     }
                 },
                 "colorselect": {

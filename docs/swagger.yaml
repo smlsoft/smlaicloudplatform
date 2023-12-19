@@ -2462,6 +2462,50 @@ definitions:
       success:
         type: boolean
     type: object
+  models.ProductBarcodeBranch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      isignore:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.ProductBarcodeBranchRequest:
+    properties:
+      branch:
+        $ref: '#/definitions/models.ProductBarcodeBranch'
+      products:
+        items:
+          type: string
+        type: array
+    type: object
+  models.ProductBarcodeBusinessType:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      isignore:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.ProductBarcodeBusinessTypeRequest:
+    properties:
+      businesstype:
+        $ref: '#/definitions/models.ProductBarcodeBusinessType'
+      products:
+        items:
+          type: string
+        type: array
+    type: object
   models.ProductBarcodeRequest:
     properties:
       barcode:
@@ -2470,6 +2514,14 @@ definitions:
       bom:
         items:
           $ref: '#/definitions/models.BOMRequest'
+        type: array
+      branches:
+        items:
+          $ref: '#/definitions/models.ProductBarcodeBranch'
+        type: array
+      businesstypes:
+        items:
+          $ref: '#/definitions/models.ProductBarcodeBusinessType'
         type: array
       colorselect:
         type: string
@@ -6451,6 +6503,14 @@ definitions:
       bom:
         items:
           $ref: '#/definitions/models.BOMProductBarcode'
+        type: array
+      branches:
+        items:
+          $ref: '#/definitions/models.ProductBarcodeBranch'
+        type: array
+      businesstypes:
+        items:
+          $ref: '#/definitions/models.ProductBarcodeBusinessType'
         type: array
       colorselect:
         type: string
@@ -15903,6 +15963,14 @@ paths:
       - application/json
       description: get struct array by ID
       parameters:
+      - description: business type code ex. bt1,bt2
+        in: query
+        name: businesstypecode
+        type: string
+      - description: branch code ex. b1,b2
+        in: query
+        name: branchcode
+        type: string
       - description: is A La Carte
         in: query
         name: isalacarte
@@ -16042,6 +16110,31 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/barcode/branch:
+    put:
+      consumes:
+      - application/json
+      description: Update ProductBarcode Branch
+      parameters:
+      - description: Product BarcodeBranch Request
+        in: body
+        name: ProductBarcodeBranchRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductBarcodeBranchRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
   /product/barcode/bulk:
     post:
       consumes:
@@ -16061,6 +16154,31 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
+  /product/barcode/business-type:
+    put:
+      consumes:
+      - application/json
+      description: Update ProductBarcode Business Type
+      parameters:
+      - description: Product Barcode Business Type Request
+        in: body
+        name: ProductBarcodeBusinessTypeRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductBarcodeBusinessTypeRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
@@ -16172,6 +16290,14 @@ paths:
       - application/json
       description: search limit offset
       parameters:
+      - description: business type code ex. bt1,bt2
+        in: query
+        name: businesstypecode
+        type: string
+      - description: branch code ex. b1,b2
+        in: query
+        name: branchcode
+        type: string
       - description: is A La Carte
         in: query
         name: isalacarte

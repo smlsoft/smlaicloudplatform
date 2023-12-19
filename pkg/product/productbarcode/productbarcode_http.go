@@ -72,6 +72,9 @@ func (h ProductBarcodeHttp) RegisterHttp() {
 	h.ms.GET("/product/barcode/master", h.InfoArrayMaster)
 	h.ms.PUT("/product/barcode/xsort", h.UpdateProductBarcodeXSort)
 	h.ms.PUT("/product/barcode/:id", h.UpdateProductBarcode)
+	h.ms.PUT("/product/barcode/branch", h.UpdateProductBarcodeBranch)
+	h.ms.PUT("/product/barcode/business-type", h.UpdateProductBarcodeBusinessType)
+
 	h.ms.DELETE("/product/barcode/:id", h.DeleteProductBarcode)
 	h.ms.DELETE("/product/barcode", h.DeleteProductBarcodeByGUIDs)
 
@@ -171,6 +174,92 @@ func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) erro
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Update ProductBarcode Branch godoc
+// @Description Update ProductBarcode Branch
+// @Tags		ProductBarcode
+// @Param		ProductBarcodeBranchRequest  body      models.ProductBarcodeBranchRequest  true  "Product BarcodeBranch Request"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/branch [put]
+func (h ProductBarcodeHttp) UpdateProductBarcodeBranch(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docReq := &models.ProductBarcodeBranchRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateProductBarcodeBranch(shopID, authUsername, docReq.Branch, docReq.Products)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Update ProductBarcode Business Type  godoc
+// @Description Update ProductBarcode Business Type
+// @Tags		ProductBarcode
+// @Param		ProductBarcodeBusinessTypeRequest  body      models.ProductBarcodeBusinessTypeRequest  true  "Product Barcode Business Type Request"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/business-type [put]
+func (h ProductBarcodeHttp) UpdateProductBarcodeBusinessType(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docReq := &models.ProductBarcodeBusinessTypeRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateProductBarcodeBusinessType(shopID, authUsername, docReq.BusinessType, docReq.Products)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil
@@ -425,6 +514,8 @@ func (h ProductBarcodeHttp) InfoArrayMaster(ctx microservice.IContext) error {
 // List ProductBarcode godoc
 // @Description get struct array by ID
 // @Tags		ProductBarcode
+// @Param		businesstypecode		query	string		false  "business type code ex. bt1,bt2"
+// @Param		branchcode		query	string		false  "branch code ex. b1,b2"
 // @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		itemtype		query	int8		false  "item type"
@@ -457,6 +548,16 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 			Param: "itemtype",
 			Field: "itemtype",
 			Type:  requestfilter.FieldTypeInt,
+		},
+		{
+			Param: "businesstypecode",
+			Field: "businesstypes.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "branchcode",
+			Field: "branches.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 
@@ -509,6 +610,8 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // List ProductBarcode godoc
 // @Description search limit offset
 // @Tags		ProductBarcode
+// @Param		businesstypecode		query	string		false  "business type code ex. bt1,bt2"
+// @Param		branchcode		query	string		false  "branch code ex. b1,b2"
 // @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		itemtype		query	int8		false  "item type"
@@ -544,6 +647,16 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 			Param: "itemtype",
 			Field: "itemtype",
 			Type:  requestfilter.FieldTypeInt,
+		},
+		{
+			Param: "businesstypecode",
+			Field: "businesstypes.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "branchcode",
+			Field: "branches.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

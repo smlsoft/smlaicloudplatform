@@ -64,6 +64,9 @@ type IProductBarcodeRepository interface {
 	UpdateAllProductGroupByCode(ctx context.Context, shopID string, doc models.ProductGroup) error
 	UpdateAllProductUnitByCode(ctx context.Context, shopID string, doc models.ProductUnit) error
 	UpdateAllProductOrderTypeByGUID(ctx context.Context, shopID string, guid string, doc models.ProductOrderType) error
+
+	UpdateBranch(ctx context.Context, shopID string, branch models.ProductBarcodeBranch, productBarcodeGUIDFixedes []string) error
+	UpdateBusinessType(ctx context.Context, shopID string, businessType models.ProductBarcodeBusinessType, productBarcodeGUIDFixedes []string) error
 }
 
 type ProductBarcodeRepository struct {
@@ -403,6 +406,44 @@ func (repo ProductBarcodeRepository) UpdateAllProductOrderTypeByGUID(ctx context
 			"ordertypes.$.code":  doc.Code,
 			"ordertypes.$.names": doc.Names,
 			"ordertypes.$.price": doc.Price,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
+}
+
+func (repo ProductBarcodeRepository) UpdateBranch(ctx context.Context, shopID string, branch models.ProductBarcodeBranch, productBarcodeGUIDFixedes []string) error {
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"guidfixed": bson.M{"$in": productBarcodeGUIDFixedes},
+		"branches.code": bson.M{
+			"$ne": branch.Code,
+		},
+	}
+
+	update := bson.M{
+		"$push": bson.M{
+			"branches": branch,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
+}
+
+func (repo ProductBarcodeRepository) UpdateBusinessType(ctx context.Context, shopID string, businessType models.ProductBarcodeBusinessType, productBarcodeGUIDFixedes []string) error {
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"guidfixed": bson.M{"$in": productBarcodeGUIDFixedes},
+		"branches.code": bson.M{
+			"$ne": businessType.Code,
+		},
+	}
+
+	update := bson.M{
+		"$push": bson.M{
+			"businesstypes": businessType,
 		},
 	}
 

@@ -44,6 +44,9 @@ type IProductBarcodeHttpService interface {
 	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
 	GetProductBarcodeByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 
+	UpdateProductBarcodeBranch(shopID string, authUsername string, branch models.ProductBarcodeBranch, productBarcodeGUIDFixedes []string) error
+	UpdateProductBarcodeBusinessType(shopID string, authUsername string, businessType models.ProductBarcodeBusinessType, productBarcodeGUIDFixedes []string) error
+
 	GetModuleName() string
 	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
@@ -107,6 +110,8 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
 	docData.ProductBarcode = docReq.ToProductBarcode()
+	docData.Branches = &docReq.Branches
+	docData.BusinessTypes = &docReq.BusinessTypes
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -178,6 +183,8 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 
 	docData.Barcode = findDoc.Barcode
 	docData.ItemCode = findDoc.ItemCode
+	docData.Branches = &docReq.Branches
+	docData.BusinessTypes = &docReq.BusinessTypes
 
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
@@ -227,6 +234,38 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	}
 
 	svc.categorySvc.UpdateBarcode(shopID, categoryBarcode)
+
+	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc ProductBarcodeHttpService) UpdateProductBarcodeBranch(shopID string, authUsername string, branch models.ProductBarcodeBranch, productBarcodeGUIDFixedes []string) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.UpdateBranch(ctx, shopID, branch, productBarcodeGUIDFixedes)
+
+	if err != nil {
+		return err
+	}
+
+	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc ProductBarcodeHttpService) UpdateProductBarcodeBusinessType(shopID string, authUsername string, businessType models.ProductBarcodeBusinessType, productBarcodeGUIDFixedes []string) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.UpdateBusinessType(ctx, shopID, businessType, productBarcodeGUIDFixedes)
+
+	if err != nil {
+		return err
+	}
 
 	svc.saveMasterSync(shopID)
 
@@ -677,6 +716,9 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 			}
 			docReq.RefBarcodes = tempBarcodes
 
+			docReq.BusinessTypes = *dataReq.BusinessTypes
+			docReq.Branches = *dataReq.Branches
+
 			svc.UpdateProductBarcode(shopID, doc.GuidFixed, authUsername, docReq)
 
 			// err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
@@ -704,12 +746,16 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 					})
 				}
 
+				docReq.Branches = *doc.Branches
+				docReq.BusinessTypes = *doc.BusinessTypes
+
 				docReq.RefBarcodes = tempBarcodes
 				_, err = svc.CreateProductBarcode(shopID, authUsername, docReq)
 
 				if err != nil {
 					return err
 				}
+
 			}
 
 			return nil
