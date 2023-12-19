@@ -276,6 +276,8 @@ func (h PaidHttp) InfoPaidByCode(ctx microservice.IContext) error {
 // @Description get list step
 // @Tags		Paid
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
@@ -301,6 +303,11 @@ func (h PaidHttp) SearchPaidPage(ctx microservice.IContext) error {
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
 		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
 	docList, pagination, err := h.svc.SearchPaid(shopID, filters, pageable)
@@ -322,6 +329,8 @@ func (h PaidHttp) SearchPaidPage(ctx microservice.IContext) error {
 // @Description search limit offset
 // @Tags		Paid
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
@@ -349,6 +358,11 @@ func (h PaidHttp) SearchPaidStep(ctx microservice.IContext) error {
 			Param: "-",
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

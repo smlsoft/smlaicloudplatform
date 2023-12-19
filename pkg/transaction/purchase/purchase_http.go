@@ -277,8 +277,9 @@ func (h PurchaseHttp) InfoPurchaseByCode(ctx microservice.IContext) error {
 // List Purchase step godoc
 // @Description get list step
 // @Tags		Purchase
-// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
@@ -304,6 +305,11 @@ func (h PurchaseHttp) SearchPurchasePage(ctx microservice.IContext) error {
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
 		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
 	docList, pagination, err := h.svc.SearchPurchase(shopID, filters, pageable)
@@ -325,6 +331,8 @@ func (h PurchaseHttp) SearchPurchasePage(ctx microservice.IContext) error {
 // @Description search limit offset
 // @Tags		Purchase
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
@@ -352,6 +360,11 @@ func (h PurchaseHttp) SearchPurchaseStep(ctx microservice.IContext) error {
 			Param: "-",
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

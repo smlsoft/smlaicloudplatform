@@ -284,8 +284,9 @@ func (h StockBalanceHttp) InfoStockBalanceByCode(ctx microservice.IContext) erro
 // List StockBalance step godoc
 // @Description get list step
 // @Tags		StockBalance
-// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
@@ -311,6 +312,11 @@ func (h StockBalanceHttp) SearchStockBalancePage(ctx microservice.IContext) erro
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
 		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
 	docList, pagination, err := h.svc.SearchStockBalance(shopID, filters, pageable)
@@ -332,6 +338,8 @@ func (h StockBalanceHttp) SearchStockBalancePage(ctx microservice.IContext) erro
 // @Description search limit offset
 // @Tags		StockBalance
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
@@ -359,6 +367,11 @@ func (h StockBalanceHttp) SearchStockBalanceStep(ctx microservice.IContext) erro
 			Param: "-",
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

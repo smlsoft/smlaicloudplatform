@@ -276,8 +276,9 @@ func (h StockPickupProductHttp) InfoStockPickupProductByCode(ctx microservice.IC
 // List StockPickupProduct step godoc
 // @Description get list step
 // @Tags		StockPickupProduct
-// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
@@ -303,6 +304,11 @@ func (h StockPickupProductHttp) SearchStockPickupProductPage(ctx microservice.IC
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
 		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
 	docList, pagination, err := h.svc.SearchStockPickupProduct(shopID, filters, pageable)
@@ -324,6 +330,8 @@ func (h StockPickupProductHttp) SearchStockPickupProductPage(ctx microservice.IC
 // @Description search limit offset
 // @Tags		StockPickupProduct
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
@@ -351,6 +359,11 @@ func (h StockPickupProductHttp) SearchStockPickupProductStep(ctx microservice.IC
 			Param: "-",
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

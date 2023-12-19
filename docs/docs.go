@@ -25386,6 +25386,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -25615,6 +25627,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -25804,6 +25828,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -26037,6 +26073,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -26224,14 +26272,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -26359,6 +26413,452 @@ const docTemplate = `{
                 }
             }
         },
+        "/transaction/purchase-order": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create PurchaseOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseOrder",
+                        "name": "PurchaseOrder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete PurchaseOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseOrder GUIDs",
+                        "name": "PurchaseOrder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-order/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create PurchaseOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseOrder",
+                        "name": "PurchaseOrder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PurchaseOrder"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-order/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get PurchaseOrder info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseOrder Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-order/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-order/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get PurchaseOrder info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseOrder guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update PurchaseOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseOrder ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "PurchaseOrder",
+                        "name": "PurchaseOrder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete PurchaseOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseOrder ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/transaction/purchase-return": {
             "get": {
                 "security": [
@@ -26376,14 +26876,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -26613,6 +27119,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -26893,6 +27411,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -27082,6 +27612,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -27315,6 +27857,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -27502,8 +28056,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -27522,12 +28088,6 @@ const docTemplate = `{
                         "type": "boolean",
                         "description": "is POS",
                         "name": "ispos",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
                         "in": "query"
                     },
                     {
@@ -27660,14 +28220,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -27947,6 +28513,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -28568,14 +29146,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -28809,6 +29393,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -28996,14 +29592,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -29611,6 +30213,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -29798,14 +30412,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -30039,6 +30659,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -30226,14 +30858,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -30467,6 +31105,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -30654,14 +31304,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -30895,6 +31551,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "from date",
                         "name": "fromdate",
                         "in": "query"
@@ -31082,14 +31750,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "customer code",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
                         "name": "custcode",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -31275,6 +31949,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cust code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch code",
+                        "name": "branchcode",
                         "in": "query"
                     },
                     {
@@ -37698,6 +38384,257 @@ const docTemplate = `{
                 "billtaxtype": {
                     "type": "integer"
                 },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
+                },
+                "buffetcode": {
+                    "type": "string"
+                },
+                "canceldatetime": {
+                    "type": "string"
+                },
+                "canceldescription": {
+                    "type": "string"
+                },
+                "cancelreason": {
+                    "type": "string"
+                },
+                "cancelusercode": {
+                    "type": "string"
+                },
+                "cancelusername": {
+                    "type": "string"
+                },
+                "cashiercode": {
+                    "type": "string"
+                },
+                "cashiername": {
+                    "type": "string"
+                },
+                "childcount": {
+                    "type": "integer"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "customertelephone": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "detaildiscountformula": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "detailtotalamount": {
+                    "type": "number"
+                },
+                "detailtotalamountbeforediscount": {
+                    "type": "number"
+                },
+                "detailtotaldiscount": {
+                    "type": "number"
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "fullvataddress": {
+                    "type": "string"
+                },
+                "fullvatbranchnumber": {
+                    "type": "string"
+                },
+                "fullvatdocnumber": {
+                    "type": "string"
+                },
+                "fullvatname": {
+                    "type": "string"
+                },
+                "fullvatprint": {
+                    "type": "boolean"
+                },
+                "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "ismanualamount": {
+                    "type": "boolean"
+                },
+                "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "isvatregister": {
+                    "type": "boolean"
+                },
+                "mancount": {
+                    "type": "integer"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paycashamount": {
+                    "type": "number"
+                },
+                "paycashchange": {
+                    "type": "number"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "paymentdetailraw": {
+                    "type": "string"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "printcopybilldatetime": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roundamount": {
+                    "type": "number"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "sumcheque": {
+                    "type": "number"
+                },
+                "sumcoupon": {
+                    "type": "number"
+                },
+                "sumcredit": {
+                    "type": "number"
+                },
+                "sumcreditcard": {
+                    "type": "number"
+                },
+                "summoneytransfer": {
+                    "type": "number"
+                },
+                "sumqrcode": {
+                    "type": "number"
+                },
+                "tableclosedatetime": {
+                    "type": "string"
+                },
+                "tablenumber": {
+                    "type": "string"
+                },
+                "tableopendatetime": {
+                    "type": "string"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalamountafterdiscount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totaldiscountexceptvatamount": {
+                    "type": "number"
+                },
+                "totaldiscountvatamount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalqty": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "womancount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PurchaseOrder": {
+            "type": "object",
+            "properties": {
+                "billtaxtype": {
+                    "type": "integer"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
+                },
                 "buffetcode": {
                     "type": "string"
                 },
@@ -37942,6 +38879,9 @@ const docTemplate = `{
             "properties": {
                 "billtaxtype": {
                     "type": "integer"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
                 },
                 "buffetcode": {
                     "type": "string"
@@ -38637,6 +39577,9 @@ const docTemplate = `{
                 "billtaxtype": {
                     "type": "integer"
                 },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
+                },
                 "buffetcode": {
                     "type": "string"
                 },
@@ -39084,6 +40027,9 @@ const docTemplate = `{
             "properties": {
                 "billtaxtype": {
                     "type": "integer"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
                 },
                 "buffetcode": {
                     "type": "string"
@@ -39943,6 +40889,9 @@ const docTemplate = `{
                 "billtaxtype": {
                     "type": "integer"
                 },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
+                },
                 "buffetcode": {
                     "type": "string"
                 },
@@ -40188,6 +41137,9 @@ const docTemplate = `{
                 "billtaxtype": {
                     "type": "integer"
                 },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
+                },
                 "buffetcode": {
                     "type": "string"
                 },
@@ -40426,6 +41378,9 @@ const docTemplate = `{
             "properties": {
                 "billtaxtype": {
                     "type": "integer"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
                 },
                 "buffetcode": {
                     "type": "string"
@@ -40704,6 +41659,9 @@ const docTemplate = `{
                 "billtaxtype": {
                     "type": "integer"
                 },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
+                },
                 "buffetcode": {
                     "type": "string"
                 },
@@ -40948,6 +41906,9 @@ const docTemplate = `{
             "properties": {
                 "billtaxtype": {
                     "type": "integer"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
                 },
                 "buffetcode": {
                     "type": "string"
@@ -41194,6 +42155,9 @@ const docTemplate = `{
                 "billtaxtype": {
                     "type": "integer"
                 },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
+                },
                 "buffetcode": {
                     "type": "string"
                 },
@@ -41438,6 +42402,9 @@ const docTemplate = `{
             "properties": {
                 "billtaxtype": {
                     "type": "integer"
+                },
+                "branch": {
+                    "$ref": "#/definitions/models.TransactionBranch"
                 },
                 "buffetcode": {
                     "type": "string"
@@ -41934,6 +42901,23 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.TransactionBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },

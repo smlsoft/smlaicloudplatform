@@ -2889,6 +2889,173 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
+      buffetcode:
+        type: string
+      canceldatetime:
+        type: string
+      canceldescription:
+        type: string
+      cancelreason:
+        type: string
+      cancelusercode:
+        type: string
+      cancelusername:
+        type: string
+      cashiercode:
+        type: string
+      cashiername:
+        type: string
+      childcount:
+        type: integer
+      custcode:
+        type: string
+      custnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      customertelephone:
+        type: string
+      description:
+        type: string
+      detaildiscountformula:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/models.Detail'
+        type: array
+      detailtotalamount:
+        type: number
+      detailtotalamountbeforediscount:
+        type: number
+      detailtotaldiscount:
+        type: number
+      discountword:
+        type: string
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      docrefdate:
+        type: string
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      fullvataddress:
+        type: string
+      fullvatbranchnumber:
+        type: string
+      fullvatdocnumber:
+        type: string
+      fullvatname:
+        type: string
+      fullvatprint:
+        type: boolean
+      fullvattaxid:
+        type: string
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      iscancel:
+        type: boolean
+      ismanualamount:
+        type: boolean
+      istableallacratemode:
+        type: boolean
+      isvatregister:
+        type: boolean
+      mancount:
+        type: integer
+      membercode:
+        type: string
+      paycashamount:
+        type: number
+      paycashchange:
+        type: number
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
+      paymentdetailraw:
+        type: string
+      posid:
+        type: string
+      printcopybilldatetime:
+        items:
+          type: string
+        type: array
+      roundamount:
+        type: number
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      sumcheque:
+        type: number
+      sumcoupon:
+        type: number
+      sumcredit:
+        type: number
+      sumcreditcard:
+        type: number
+      summoneytransfer:
+        type: number
+      sumqrcode:
+        type: number
+      tableclosedatetime:
+        type: string
+      tablenumber:
+        type: string
+      tableopendatetime:
+        type: string
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
+        type: number
+      totalamount:
+        type: number
+      totalamountafterdiscount:
+        type: number
+      totalbeforevat:
+        type: number
+      totalcost:
+        type: number
+      totaldiscount:
+        type: number
+      totaldiscountexceptvatamount:
+        type: number
+      totaldiscountvatamount:
+        type: number
+      totalexceptvat:
+        type: number
+      totalqty:
+        type: number
+      totalvalue:
+        type: number
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: number
+      vattype:
+        type: integer
+      womancount:
+        type: integer
+    type: object
+  models.PurchaseOrder:
+    properties:
+      billtaxtype:
+        type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -3052,6 +3219,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -3521,6 +3690,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -3819,6 +3990,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -4390,6 +4563,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -4553,6 +4728,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -4712,6 +4889,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -4896,6 +5075,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -5059,6 +5240,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -5222,6 +5405,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -5385,6 +5570,8 @@ definitions:
     properties:
       billtaxtype:
         type: integer
+      branch:
+        $ref: '#/definitions/models.TransactionBranch'
       buffetcode:
         type: string
       canceldatetime:
@@ -5717,6 +5904,17 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  models.TransactionBranch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.TransportChannel:
     properties:
@@ -22731,6 +22929,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -22923,6 +23129,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -22993,6 +23207,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -23186,6 +23408,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -23253,13 +23483,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -23316,6 +23550,285 @@ paths:
       - AccessToken: []
       tags:
       - Purchase
+  /transaction/purchase-order:
+    delete:
+      consumes:
+      - application/json
+      description: Delete PurchaseOrder
+      parameters:
+      - description: PurchaseOrder GUIDs
+        in: body
+        name: PurchaseOrder
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+    post:
+      consumes:
+      - application/json
+      description: Create PurchaseOrder
+      parameters:
+      - description: PurchaseOrder
+        in: body
+        name: PurchaseOrder
+        required: true
+        schema:
+          $ref: '#/definitions/models.PurchaseOrder'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+  /transaction/purchase-order/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete PurchaseOrder
+      parameters:
+      - description: PurchaseOrder ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+    get:
+      consumes:
+      - application/json
+      description: get PurchaseOrder info by guidfixed
+      parameters:
+      - description: PurchaseOrder guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+    put:
+      consumes:
+      - application/json
+      description: Update PurchaseOrder
+      parameters:
+      - description: PurchaseOrder ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: PurchaseOrder
+        in: body
+        name: PurchaseOrder
+        required: true
+        schema:
+          $ref: '#/definitions/models.PurchaseOrder'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+  /transaction/purchase-order/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create PurchaseOrder
+      parameters:
+      - description: PurchaseOrder
+        in: body
+        name: PurchaseOrder
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.PurchaseOrder'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+  /transaction/purchase-order/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get PurchaseOrder info by Code
+      parameters:
+      - description: PurchaseOrder Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
+  /transaction/purchase-order/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseOrder
   /transaction/purchase-return:
     delete:
       consumes:
@@ -23348,13 +23861,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -23548,6 +24065,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -23720,6 +24245,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -23790,6 +24323,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -23983,6 +24524,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -24050,9 +24599,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: cust code
         in: query
         name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -24066,10 +24623,6 @@ paths:
         in: query
         name: ispos
         type: boolean
-      - description: Search Value
-        in: query
-        name: q
-        type: string
       - description: Page
         in: query
         name: page
@@ -24149,13 +24702,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -24379,6 +24936,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -24717,13 +25282,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -24917,6 +25486,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -24984,13 +25561,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -25418,6 +25999,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -25485,13 +26074,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -25685,6 +26278,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -25752,13 +26353,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -25952,6 +26557,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -26019,13 +26632,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -26219,6 +26836,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
+        type: string
       - description: from date
         in: query
         name: fromdate
@@ -26286,13 +26911,17 @@ paths:
       - application/json
       description: get list step
       parameters:
-      - description: customer code
-        in: query
-        name: custcode
-        type: string
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query
@@ -26458,6 +27087,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: cust code
+        in: query
+        name: custcode
+        type: string
+      - description: branch code
+        in: query
+        name: branchcode
         type: string
       - description: from date
         in: query

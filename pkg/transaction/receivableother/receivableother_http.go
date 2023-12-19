@@ -276,6 +276,8 @@ func (h ReceivableOtherHttp) InfoReceivableOtherByCode(ctx microservice.IContext
 // @Description get list step
 // @Tags		ReceivableOther
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
@@ -301,6 +303,11 @@ func (h ReceivableOtherHttp) SearchReceivableOtherPage(ctx microservice.IContext
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
 		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
 	docList, pagination, err := h.svc.SearchReceivableOther(shopID, filters, pageable)
@@ -322,6 +329,8 @@ func (h ReceivableOtherHttp) SearchReceivableOtherPage(ctx microservice.IContext
 // @Description search limit offset
 // @Tags		ReceivableOther
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
@@ -349,6 +358,11 @@ func (h ReceivableOtherHttp) SearchReceivableOtherStep(ctx microservice.IContext
 			Param: "-",
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

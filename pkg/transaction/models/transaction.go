@@ -6,42 +6,43 @@ import (
 )
 
 type TransactionHeader struct {
-	DocNo            string          `json:"docno" bson:"docno"`
-	DocDatetime      time.Time       `json:"docdatetime" bson:"docdatetime"`
-	GuidRef          string          `json:"guidref" bson:"guidref"`
-	TransFlag        int             `json:"transflag" bson:"transflag"`
-	DocRefType       int8            `json:"docreftype" bson:"docreftype"`
-	DocRefNo         string          `json:"docrefno" bson:"docrefno"`
-	DocRefDate       time.Time       `json:"docrefdate" bson:"docrefdate"`
-	TaxDocDate       time.Time       `json:"taxdocdate" bson:"taxdocdate"`
-	TaxDocNo         string          `json:"taxdocno" bson:"taxdocno"`
-	DocType          int8            `json:"doctype" bson:"doctype"`
-	InquiryType      int             `json:"inquirytype" bson:"inquirytype"`
-	VatType          int8            `json:"vattype" bson:"vattype"`
-	VatRate          float64         `json:"vatrate" bson:"vatrate"`
-	CustCode         string          `json:"custcode" bson:"custcode"`
-	CustNames        *[]models.NameX `json:"custnames" bson:"custnames"`
-	Description      string          `json:"description" bson:"description"`
-	DiscountWord     string          `json:"discountword" bson:"discountword"`
-	TotalDiscount    float64         `json:"totaldiscount" bson:"totaldiscount"`
-	TotalValue       float64         `json:"totalvalue" bson:"totalvalue"`
-	TotalExceptVat   float64         `json:"totalexceptvat" bson:"totalexceptvat"`
-	TotalAfterVat    float64         `json:"totalaftervat" bson:"totalaftervat"`
-	TotalBeforeVat   float64         `json:"totalbeforevat" bson:"totalbeforevat"`
-	TotalVatValue    float64         `json:"totalvatvalue" bson:"totalvatvalue"`
-	TotalAmount      float64         `json:"totalamount" bson:"totalamount"`
-	TotalCost        float64         `json:"totalcost" bson:"totalcost"`
-	PosID            string          `json:"posid" bson:"posid"`
-	CashierCode      string          `json:"cashiercode" bson:"cashiercode"`
-	SaleCode         string          `json:"salecode" bson:"salecode"`
-	SaleName         string          `json:"salename" bson:"salename"`
-	MemberCode       string          `json:"membercode" bson:"membercode"`
-	IsCancel         bool            `json:"iscancel" bson:"iscancel"`
-	IsManualAmount   bool            `json:"ismanualamount" bson:"ismanualamount"`
-	Status           int8            `json:"status" bson:"status"`
-	PaymentDetail    PaymentDetail   `json:"paymentdetail" bson:"paymentdetail"`
-	PaymentDetailRaw string          `json:"paymentdetailraw" bson:"paymentdetailraw"`
-	PayCashAmount    float64         `json:"paycashamount" bson:"paycashamount"`
+	DocNo            string            `json:"docno" bson:"docno"`
+	DocDatetime      time.Time         `json:"docdatetime" bson:"docdatetime"`
+	GuidRef          string            `json:"guidref" bson:"guidref"`
+	TransFlag        int               `json:"transflag" bson:"transflag"`
+	DocRefType       int8              `json:"docreftype" bson:"docreftype"`
+	DocRefNo         string            `json:"docrefno" bson:"docrefno"`
+	DocRefDate       time.Time         `json:"docrefdate" bson:"docrefdate"`
+	TaxDocDate       time.Time         `json:"taxdocdate" bson:"taxdocdate"`
+	TaxDocNo         string            `json:"taxdocno" bson:"taxdocno"`
+	DocType          int8              `json:"doctype" bson:"doctype"`
+	InquiryType      int               `json:"inquirytype" bson:"inquirytype"`
+	VatType          int8              `json:"vattype" bson:"vattype"`
+	VatRate          float64           `json:"vatrate" bson:"vatrate"`
+	CustCode         string            `json:"custcode" bson:"custcode"`
+	CustNames        *[]models.NameX   `json:"custnames" bson:"custnames"`
+	Description      string            `json:"description" bson:"description"`
+	DiscountWord     string            `json:"discountword" bson:"discountword"`
+	TotalDiscount    float64           `json:"totaldiscount" bson:"totaldiscount"`
+	TotalValue       float64           `json:"totalvalue" bson:"totalvalue"`
+	TotalExceptVat   float64           `json:"totalexceptvat" bson:"totalexceptvat"`
+	TotalAfterVat    float64           `json:"totalaftervat" bson:"totalaftervat"`
+	TotalBeforeVat   float64           `json:"totalbeforevat" bson:"totalbeforevat"`
+	TotalVatValue    float64           `json:"totalvatvalue" bson:"totalvatvalue"`
+	TotalAmount      float64           `json:"totalamount" bson:"totalamount"`
+	TotalCost        float64           `json:"totalcost" bson:"totalcost"`
+	PosID            string            `json:"posid" bson:"posid"`
+	CashierCode      string            `json:"cashiercode" bson:"cashiercode"`
+	SaleCode         string            `json:"salecode" bson:"salecode"`
+	SaleName         string            `json:"salename" bson:"salename"`
+	MemberCode       string            `json:"membercode" bson:"membercode"`
+	IsCancel         bool              `json:"iscancel" bson:"iscancel"`
+	IsManualAmount   bool              `json:"ismanualamount" bson:"ismanualamount"`
+	Status           int8              `json:"status" bson:"status"`
+	PaymentDetail    PaymentDetail     `json:"paymentdetail" bson:"paymentdetail"`
+	PaymentDetailRaw string            `json:"paymentdetailraw" bson:"paymentdetailraw"`
+	PayCashAmount    float64           `json:"paycashamount" bson:"paycashamount"`
+	Branch           TransactionBranch `json:"branch" bson:"branch"`
 
 	BillTaxType                     int8     `json:"billtaxtype" bson:"billtaxtype"`
 	CancelDateTime                  string   `json:"canceldatetime" bson:"canceldatetime"`
@@ -88,6 +89,12 @@ type TransactionHeader struct {
 type Transaction struct {
 	TransactionHeader `bson:"inline"`
 	Details           *[]Detail `json:"details" bson:"details"`
+}
+
+type TransactionBranch struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
 type Detail struct {

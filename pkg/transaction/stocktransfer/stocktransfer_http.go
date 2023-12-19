@@ -274,8 +274,9 @@ func (h StockTransferHttp) InfoStockTransferByCode(ctx microservice.IContext) er
 // List StockTransfer step godoc
 // @Description get list step
 // @Tags		StockTransfer
-// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
@@ -301,6 +302,11 @@ func (h StockTransferHttp) SearchStockTransferPage(ctx microservice.IContext) er
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
 		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
 	docList, pagination, err := h.svc.SearchStockTransfer(shopID, filters, pageable)
@@ -322,6 +328,8 @@ func (h StockTransferHttp) SearchStockTransferPage(ctx microservice.IContext) er
 // @Description search limit offset
 // @Tags		StockTransfer
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
@@ -349,6 +357,11 @@ func (h StockTransferHttp) SearchStockTransferStep(ctx microservice.IContext) er
 			Param: "-",
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

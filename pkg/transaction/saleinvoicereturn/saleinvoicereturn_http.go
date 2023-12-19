@@ -313,8 +313,9 @@ func (h SaleInvoiceReturnHttp) GetLastPOSDocNo(ctx microservice.IContext) error 
 // List SaleInvoiceReturn step godoc
 // @Description get list step
 // @Tags		SaleInvoiceReturn
-// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		ispos	query	boolean		false  "is POS"
@@ -346,6 +347,11 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
 		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
 	docList, pagination, err := h.svc.SearchSaleInvoiceReturn(shopID, filters, pageable)
@@ -367,6 +373,8 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 // @Description search limit offset
 // @Tags		SaleInvoiceReturn
 // @Param		q		query	string		false  "Search Value"
+// @Param		custcode	query	string		false  "cust code"
+// @Param		branchcode	query	string		false  "branch code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		ispos	query	boolean		false  "is POS"
@@ -400,6 +408,11 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnStep(ctx microservice.ICon
 			Param: "-",
 			Field: "docdatetime",
 			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 
