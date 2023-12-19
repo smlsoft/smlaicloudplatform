@@ -69,6 +69,7 @@ import (
 	"smlcloudplatform/pkg/transaction/paid"
 	"smlcloudplatform/pkg/transaction/pay"
 	"smlcloudplatform/pkg/transaction/purchase"
+	"smlcloudplatform/pkg/transaction/purchaseorder"
 	"smlcloudplatform/pkg/transaction/purchasereturn"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
 	"smlcloudplatform/pkg/transaction/saleinvoicereturn"
@@ -273,6 +274,7 @@ func main() {
 			pay.NewPayHttp(ms, cfg),
 			stockbalance.NewStockBalanceHttp(ms, cfg),
 			stockbalancedetaildetail.NewStockBalanceDetailHttp(ms, cfg),
+			purchaseorder.NewPurchaseOrderHttp(ms, cfg),
 
 			//product section
 			sectionbranch.NewSectionBranchHttp(ms, cfg),
