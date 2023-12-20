@@ -38236,6 +38236,12 @@ const docTemplate = `{
                 "refbarcode": {
                     "type": "string"
                 },
+                "refbarcodenames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "refproductcode": {
                     "type": "string"
                 },
