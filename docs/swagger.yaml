@@ -2699,6 +2699,10 @@ definitions:
         type: number
       refbarcode:
         type: string
+      refbarcodenames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       refproductcode:
         type: string
       refunitcode:
