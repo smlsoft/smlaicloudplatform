@@ -305,6 +305,17 @@ definitions:
     - banknames
     - names
     type: object
+  models.BranchBusinessType:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   models.BranchPOS:
     properties:
       footerreceiptpos:
@@ -6404,6 +6415,8 @@ definitions:
     type: object
   smlcloudplatform_pkg_organization_branch_models.Branch:
     properties:
+      businesstype:
+        $ref: '#/definitions/models.BranchBusinessType'
       businesstypes:
         items:
           type: string

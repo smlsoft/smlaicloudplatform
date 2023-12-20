@@ -13,6 +13,7 @@ import (
 	businessTypeRepositories "smlcloudplatform/pkg/organization/businesstype/repositories"
 	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IBranchHttp interface{}
@@ -289,7 +290,15 @@ func (h BranchHttp) SearchBranchPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchBranch(shopID, map[string]interface{}{}, pageable)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "businesstypecode",
+			Field: "businesstype.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchBranch(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -324,7 +333,15 @@ func (h BranchHttp) SearchBranchStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchBranchStep(shopID, lang, pageableStep)
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "businesstypecode",
+			Field: "businesstype.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	docList, total, err := h.svc.SearchBranchStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

@@ -34667,6 +34667,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.BranchBusinessType": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.BranchPOS": {
             "type": "object",
             "properties": {
@@ -43749,6 +43766,9 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "businesstype": {
+                    "$ref": "#/definitions/models.BranchBusinessType"
+                },
                 "businesstypes": {
                     "type": "array",
                     "items": {

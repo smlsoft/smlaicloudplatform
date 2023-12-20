@@ -28,7 +28,7 @@ type IBranchHttpService interface {
 	InfoBranch(shopID string, guid string) (models.BranchInfoResponse, error)
 	InfoBranchByCode(shopID string, code string) (models.BranchInfoResponse, error)
 	SearchBranch(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchInfoResponse, mongopagination.PaginationData, error)
-	SearchBranchStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BranchInfoResponse, int, error)
+	SearchBranchStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.BranchInfoResponse, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Branch) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -349,7 +349,7 @@ func (svc BranchHttpService) SearchBranch(shopID string, filters map[string]inte
 	return resultDocs, pagination, nil
 }
 
-func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BranchInfoResponse, int, error) {
+func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.BranchInfoResponse, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -361,7 +361,7 @@ func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pa
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.BranchInfoResponse{}, 0, err
