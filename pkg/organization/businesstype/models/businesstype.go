@@ -12,6 +12,7 @@ type BusinessType struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string          `json:"code" bson:"code"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	IsDefault                bool            `json:"isdefault" bson:"isdefault"`
 }
 
 type BusinessTypeInfo struct {

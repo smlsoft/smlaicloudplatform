@@ -6,12 +6,15 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
+	"smlcloudplatform/pkg/logger"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	branchModel "smlcloudplatform/pkg/organization/branch/models"
 	branchRepositories "smlcloudplatform/pkg/organization/branch/repositories"
 	branchServices "smlcloudplatform/pkg/organization/branch/services"
+	businessTypeModels "smlcloudplatform/pkg/organization/businesstype/models"
 	businessTypeRepositories "smlcloudplatform/pkg/organization/businesstype/repositories"
+	businessTypeServices "smlcloudplatform/pkg/organization/businesstype/services"
 	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
@@ -32,12 +35,13 @@ type IShopHttp interface {
 }
 
 type ShopHttp struct {
-	ms               *microservice.Microservice
-	cfg              config.IConfig
-	service          IShopService
-	serviceBranch    branchServices.IBranchHttpService
-	serviceWarehouse warehouseServices.IWarehouseHttpService
-	authService      *microservice.AuthService
+	ms                  *microservice.Microservice
+	cfg                 config.IConfig
+	service             IShopService
+	serviceBranch       branchServices.IBranchHttpService
+	serviceWarehouse    warehouseServices.IWarehouseHttpService
+	servicebusinessType businessTypeServices.IBusinessTypeHttpService
+	authService         *microservice.AuthService
 }
 
 func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
@@ -58,16 +62,19 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	serviceBranch := branchServices.NewBranchHttpService(repoBrach, repoDepartment, repoBusinessType, masterSyncCacheRepo)
 
+	serviceBusinessType := businessTypeServices.NewBusinessTypeHttpService(repoBusinessType, masterSyncCacheRepo)
+
 	repoWarehouse := warehouseRepositories.NewWarehouseRepository(pst)
 	svcWarehouse := warehouseServices.NewWarehouseHttpService(repoWarehouse, masterSyncCacheRepo)
 
 	return ShopHttp{
-		ms:               ms,
-		cfg:              cfg,
-		service:          service,
-		serviceBranch:    serviceBranch,
-		serviceWarehouse: svcWarehouse,
-		authService:      authService,
+		ms:                  ms,
+		cfg:                 cfg,
+		service:             service,
+		serviceBranch:       serviceBranch,
+		serviceWarehouse:    svcWarehouse,
+		servicebusinessType: serviceBusinessType,
+		authService:         authService,
 	}
 }
 
@@ -111,15 +118,17 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	shopReq := &models.Shop{}
-	err := json.Unmarshal([]byte(input), &shopReq)
+	shopPayload := &models.ShopRequest{}
+	err := json.Unmarshal([]byte(input), &shopPayload)
 
 	if err != nil {
 		ctx.ResponseError(400, "shop payload invalid")
 		return err
 	}
 
-	shopID, err := h.service.CreateShop(authUsername, *shopReq)
+	shopTemp := shopPayload.Shop
+
+	shopID, err := h.service.CreateShop(authUsername, shopTemp)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
@@ -128,6 +137,31 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 		})
 		return err
 	}
+
+	err = h.initialShop(shopID, authUsername, *shopPayload)
+
+	if err != nil {
+		err = h.service.DeleteShop(shopID, authUsername)
+
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Shop " + err.Error())
+		}
+
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, &common.ApiResponse{
+		Success: true,
+		ID:      shopID,
+	})
+
+	return nil
+}
+func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models.ShopRequest) (err error) {
 
 	branchDefault := branchModel.Branch{}
 
@@ -175,13 +209,49 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 		},
 	}
 
-	_, err = h.serviceBranch.CreateBranch(shopID, authUsername, branchDefault)
+	branchGUIDFixed, err := h.serviceBranch.CreateBranch(shopID, authUsername, branchDefault)
 
 	if err != nil {
-		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
-			Success: false,
-			Message: err.Error(),
-		})
+		return err
+	}
+
+	businessTypeDefault := businessTypeModels.BusinessType{}
+
+	businessTypeDefault.Code = shopReq.BusinessType.Code
+	businessTypeDefault.Names = shopReq.BusinessType.Names
+	businessTypeDefault.IsDefault = true
+
+	if len(businessTypeDefault.Code) < 1 {
+
+		businessTypeDefault.Code = "00000"
+
+		businessTypeMainCodeTH := "th"
+		businessTypeMainNameTH := "ธุรกิจหลัก"
+
+		businessTypeMainCodeEN := "en"
+		businessTypeMainNameEN := "Main Business"
+
+		businessTypeDefault.Names = &[]common.NameX{
+			{
+				Code: &businessTypeMainCodeTH,
+				Name: &businessTypeMainNameTH,
+			},
+			{
+				Code: &businessTypeMainCodeEN,
+				Name: &businessTypeMainNameEN,
+			},
+		}
+	}
+
+	businessTypeGUIDFixed, err := h.servicebusinessType.CreateBusinessType(shopID, authUsername, businessTypeDefault)
+
+	if err != nil {
+		err = h.serviceBranch.DeleteBranch(shopID, branchGUIDFixed, authUsername)
+
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Branch " + err.Error())
+		}
+
 		return err
 	}
 
@@ -208,17 +278,21 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 	_, err = h.serviceWarehouse.CreateWarehouse(shopID, authUsername, warehouseDefault)
 
 	if err != nil {
-		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
-			Success: false,
-			Message: err.Error(),
-		})
+
+		err = h.serviceBranch.DeleteBranch(shopID, branchGUIDFixed, authUsername)
+
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Branch " + err.Error())
+		}
+
+		err = h.servicebusinessType.DeleteBusinessType(shopID, businessTypeGUIDFixed, authUsername)
+
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback BusinessType " + err.Error())
+		}
+
 		return err
 	}
-
-	ctx.Response(http.StatusOK, &common.ApiResponse{
-		Success: true,
-		ID:      shopID,
-	})
 
 	return nil
 }

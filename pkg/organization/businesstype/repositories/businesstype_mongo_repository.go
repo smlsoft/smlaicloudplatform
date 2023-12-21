@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IBusinessTypeRepository interface {
@@ -30,6 +31,11 @@ type IBusinessTypeRepository interface {
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BusinessTypeActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.BusinessTypeDeleteActivity, error)
 	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.BusinessTypeActivity, error)
+
+	ClearDefault(ctx context.Context, shopID string) error
+	GetDefault(ctx context.Context, shopID string) (models.BusinessTypeDoc, error)
+
+	Transaction(ctx context.Context, transaction func(ctx context.Context) error) error
 }
 
 type BusinessTypeRepository struct {
@@ -52,4 +58,43 @@ func NewBusinessTypeRepository(pst microservice.IPersisterMongo) *BusinessTypeRe
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.BusinessTypeActivity, models.BusinessTypeDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo BusinessTypeRepository) ClearDefault(ctx context.Context, shopID string) error {
+
+	filter := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"isdefault": true,
+	}
+
+	data := bson.M{
+		"$set": bson.M{
+			"isdefault": false,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.BusinessTypeDoc{}, filter, data)
+}
+
+func (repo BusinessTypeRepository) GetDefault(ctx context.Context, shopID string) (models.BusinessTypeDoc, error) {
+
+	filter := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"isdefault": true,
+	}
+
+	doc := models.BusinessTypeDoc{}
+	err := repo.pst.FindOne(ctx, models.BusinessTypeDoc{}, filter, &doc, nil)
+
+	return doc, err
+}
+
+func (repo BusinessTypeRepository) Transaction(ctx context.Context, transaction func(ctx context.Context) error) error {
+	return repo.pst.Transaction(ctx, transaction)
 }

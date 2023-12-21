@@ -30,6 +30,8 @@ type IBusinessTypeHttpService interface {
 	SearchBusinessTypeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BusinessTypeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.BusinessType) (common.BulkImport, error)
 
+	InfoBusinessTypeDefault(shopID string) (models.BusinessTypeInfo, error)
+
 	GetModuleName() string
 }
 
@@ -79,17 +81,33 @@ func (svc BusinessTypeHttpService) CreateBusinessType(shopID string, authUsernam
 	// Create new GuidFixed
 	newGuidFixed := utils.NewGUID()
 
-	// Create new document
-	docData := models.BusinessTypeDoc{}
-	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
-	docData.BusinessType = doc
+	err = svc.repo.Transaction(ctx, func(tctx context.Context) error {
 
-	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+		if doc.IsDefault {
+			err = svc.repo.ClearDefault(tctx, shopID)
+			if err != nil {
+				return err
+			}
+		}
 
-	// Create document to database
-	_, err = svc.repo.Create(ctx, docData)
+		// Create new document
+		docData := models.BusinessTypeDoc{}
+		docData.ShopID = shopID
+		docData.GuidFixed = newGuidFixed
+		docData.BusinessType = doc
+
+		docData.CreatedBy = authUsername
+		docData.CreatedAt = time.Now()
+
+		// Create document to database
+		_, err = svc.repo.Create(ctx, docData)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 
 	if err != nil {
 		return "", err
@@ -111,18 +129,34 @@ func (svc BusinessTypeHttpService) UpdateBusinessType(shopID string, guid string
 		return err
 	}
 
-	// If the document is not found, return an error.
 	if len(findDoc.GuidFixed) < 1 {
 		return errors.New("document not found")
 	}
 
-	// Update the document.
-	findDoc.BusinessType = doc
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	err = svc.repo.Transaction(ctx, func(tctx context.Context) error {
 
-	// Save the updated document.
-	err = svc.repo.Update(ctx, shopID, guid, findDoc)
+		if doc.IsDefault {
+			err = svc.repo.ClearDefault(tctx, shopID)
+			if err != nil {
+				return err
+			}
+		}
+
+		// Update the document.
+		findDoc.BusinessType = doc
+		findDoc.UpdatedBy = authUsername
+		findDoc.UpdatedAt = time.Now()
+
+		// Save the updated document.
+		err = svc.repo.Update(tctx, shopID, guid, findDoc)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	})
+
 	if err != nil {
 		return err
 	}
@@ -174,6 +208,24 @@ func (svc BusinessTypeHttpService) DeleteBusinessTypeByGUIDs(shopID string, auth
 	}
 
 	return nil
+}
+
+func (svc BusinessTypeHttpService) InfoBusinessTypeDefault(shopID string) (models.BusinessTypeInfo, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.GetDefault(ctx, shopID)
+
+	if err != nil {
+		return models.BusinessTypeInfo{}, err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return models.BusinessTypeInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.BusinessTypeInfo, nil
 }
 
 func (svc BusinessTypeHttpService) InfoBusinessType(shopID string, guid string) (models.BusinessTypeInfo, error) {
