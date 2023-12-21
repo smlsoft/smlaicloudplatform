@@ -9842,6 +9842,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/organization/business-type/default": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get BusinessType info default",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/organization/business-type/list": {
             "get": {
                 "security": [
@@ -43859,6 +43889,9 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "string"
+                },
+                "isdefault": {
+                    "type": "boolean"
                 },
                 "names": {
                     "type": "array",

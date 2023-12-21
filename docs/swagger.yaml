@@ -6470,6 +6470,8 @@ definitions:
     properties:
       code:
         type: string
+      isdefault:
+        type: boolean
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -13389,6 +13391,24 @@ paths:
         name: code
         required: true
         type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BusinessType
+  /organization/business-type/default:
+    get:
+      consumes:
+      - application/json
+      description: get BusinessType info default
       responses:
         "200":
           description: OK
