@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 )
@@ -561,6 +562,18 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 		},
 	})
 
+	if temp, ok := filters["branches.code"]; ok {
+		if tempBson, ok := temp.(bson.M); ok {
+			if tempIn, ok := tempBson["$in"]; ok {
+				filters["ignorebranches.code"] = bson.M{
+					"$nin": tempIn,
+				}
+			}
+		}
+		delete(filters, "branches.code")
+
+	}
+
 	docList, pagination, err := h.svc.SearchProductBarcode(shopID, filters, pageable)
 
 	if err != nil {
@@ -659,6 +672,18 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 			Type:  requestfilter.FieldTypeString,
 		},
 	})
+
+	if temp, ok := filters["branches.code"]; ok {
+		if tempBson, ok := temp.(bson.M); ok {
+			if tempIn, ok := tempBson["$in"]; ok {
+				filters["ignorebranches.code"] = bson.M{
+					"$nin": tempIn,
+				}
+			}
+		}
+		delete(filters, "branches.code")
+
+	}
 
 	docList, total, err := h.svc.SearchProductBarcodeStep(shopID, lang, filters, pageableStep)
 

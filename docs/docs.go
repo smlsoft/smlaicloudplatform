@@ -9237,6 +9237,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "business type code",
+                        "name": "businesstypecode",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Page",
                         "name": "page",
@@ -9451,6 +9457,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "business type code",
+                        "name": "businesstypecode",
                         "in": "query"
                     },
                     {
@@ -37964,12 +37976,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.BOMRequest"
                     }
                 },
-                "branches": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductBarcodeBranch"
-                    }
-                },
                 "businesstypes": {
                     "type": "array",
                     "items": {
@@ -38007,6 +38013,12 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "ignorebranches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductBarcodeBranch"
                     }
                 },
                 "images": {
@@ -43925,12 +43937,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.BOMProductBarcode"
                     }
                 },
-                "branches": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductBarcodeBranch"
-                    }
-                },
                 "businesstypes": {
                     "type": "array",
                     "items": {
@@ -43968,6 +43974,12 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "ignorebranches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductBarcodeBranch"
                     }
                 },
                 "images": {

@@ -103,7 +103,7 @@ type ProductBarcode struct {
 	RefBarcodes              *[]RefProductBarcode          `json:"refbarcodes" bson:"refbarcodes"`
 	BOM                      *[]BOMProductBarcode          `json:"bom" bson:"bom"`
 	BusinessTypes            *[]ProductBarcodeBusinessType `json:"businesstypes" bson:"businesstypes" `
-	Branches                 *[]ProductBarcodeBranch       `json:"branches" bson:"branches" `
+	IgnoreBranches           *[]ProductBarcodeBranch       `json:"ignorebranches" bson:"ignorebranches"`
 }
 
 type ProductBarcodeBusinessType struct {
@@ -203,10 +203,10 @@ func (ProductBarcodeDeleteActivity) CollectionName() string {
 
 type ProductBarcodeRequest struct {
 	ProductBarcodeBase
-	RefBarcodes   []BarcodeRequest             `json:"refbarcodes"`
-	BOM           []BOMRequest                 `json:"bom"`
-	Branches      []ProductBarcodeBranch       `json:"branches"`
-	BusinessTypes []ProductBarcodeBusinessType `json:"businesstypes"`
+	RefBarcodes    []BarcodeRequest             `json:"refbarcodes"`
+	BOM            []BOMRequest                 `json:"bom"`
+	IgnoreBranches []ProductBarcodeBranch       `json:"ignorebranches"`
+	BusinessTypes  []ProductBarcodeBusinessType `json:"businesstypes"`
 }
 
 func (p ProductBarcodeRequest) ToProductBarcode() ProductBarcode {

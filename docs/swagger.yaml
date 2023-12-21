@@ -2526,10 +2526,6 @@ definitions:
         items:
           $ref: '#/definitions/models.BOMRequest'
         type: array
-      branches:
-        items:
-          $ref: '#/definitions/models.ProductBarcodeBranch'
-        type: array
       businesstypes:
         items:
           $ref: '#/definitions/models.ProductBarcodeBusinessType'
@@ -2555,6 +2551,10 @@ definitions:
       groupnames:
         items:
           $ref: '#/definitions/models.NameX'
+        type: array
+      ignorebranches:
+        items:
+          $ref: '#/definitions/models.ProductBarcodeBranch'
         type: array
       images:
         items:
@@ -6521,10 +6521,6 @@ definitions:
         items:
           $ref: '#/definitions/models.BOMProductBarcode'
         type: array
-      branches:
-        items:
-          $ref: '#/definitions/models.ProductBarcodeBranch'
-        type: array
       businesstypes:
         items:
           $ref: '#/definitions/models.ProductBarcodeBusinessType'
@@ -6550,6 +6546,10 @@ definitions:
       groupnames:
         items:
           $ref: '#/definitions/models.NameX'
+        type: array
+      ignorebranches:
+        items:
+          $ref: '#/definitions/models.ProductBarcodeBranch'
         type: array
       images:
         items:
@@ -12973,6 +12973,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: business type code
+        in: query
+        name: businesstypecode
+        type: string
       - description: Page
         in: query
         name: page
@@ -13156,6 +13160,10 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: business type code
+        in: query
+        name: businesstypecode
         type: string
       - description: offset
         in: query

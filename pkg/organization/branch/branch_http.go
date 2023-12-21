@@ -277,6 +277,7 @@ func (h BranchHttp) InfoBranchByCode(ctx microservice.IContext) error {
 // @Description get list step
 // @Tags		Branch
 // @Param		q		query	string		false  "Search Value"
+// @Param		businesstypecode		query	string		false  "business type code"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -317,6 +318,7 @@ func (h BranchHttp) SearchBranchPage(ctx microservice.IContext) error {
 // @Description search limit offset
 // @Tags		Branch
 // @Param		q		query	string		false  "Search Value"
+// @Param		businesstypecode		query	string		false  "business type code"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"

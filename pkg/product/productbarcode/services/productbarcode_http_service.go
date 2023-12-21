@@ -110,7 +110,7 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
 	docData.ProductBarcode = docReq.ToProductBarcode()
-	docData.Branches = &docReq.Branches
+	docData.IgnoreBranches = &docReq.IgnoreBranches
 	docData.BusinessTypes = &docReq.BusinessTypes
 
 	docData.CreatedBy = authUsername
@@ -183,7 +183,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 
 	docData.Barcode = findDoc.Barcode
 	docData.ItemCode = findDoc.ItemCode
-	docData.Branches = &docReq.Branches
+	docData.IgnoreBranches = &docReq.IgnoreBranches
 	docData.BusinessTypes = &docReq.BusinessTypes
 
 	docData.UpdatedBy = authUsername
@@ -717,7 +717,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 			docReq.RefBarcodes = tempBarcodes
 
 			docReq.BusinessTypes = *dataReq.BusinessTypes
-			docReq.Branches = *dataReq.Branches
+			docReq.IgnoreBranches = *dataReq.IgnoreBranches
 
 			svc.UpdateProductBarcode(shopID, doc.GuidFixed, authUsername, docReq)
 
@@ -746,7 +746,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 					})
 				}
 
-				docReq.Branches = *doc.Branches
+				docReq.IgnoreBranches = *doc.IgnoreBranches
 				docReq.BusinessTypes = *doc.BusinessTypes
 
 				docReq.RefBarcodes = tempBarcodes
