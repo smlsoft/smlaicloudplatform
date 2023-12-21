@@ -45,6 +45,7 @@ func (h BusinessTypeHttp) RegisterHttp() {
 	h.ms.GET("/organization/business-type/list", h.SearchBusinessTypeStep)
 	h.ms.POST("/organization/business-type", h.CreateBusinessType)
 	h.ms.GET("/organization/business-type/:id", h.InfoBusinessType)
+	h.ms.GET("/organization/business-type/default", h.InfoBusinessTypeDefault)
 	h.ms.GET("/organization/business-type/code/:code", h.InfoBusinessTypeByCode)
 	h.ms.PUT("/organization/business-type/:id", h.UpdateBusinessType)
 	h.ms.DELETE("/organization/business-type/:id", h.DeleteBusinessType)
@@ -227,6 +228,32 @@ func (h BusinessTypeHttp) InfoBusinessType(ctx microservice.IContext) error {
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get BusinessType default godoc
+// @Description get BusinessType info default
+// @Tags		BusinessType
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /organization/business-type/default [get]
+func (h BusinessTypeHttp) InfoBusinessTypeDefault(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	doc, err := h.svc.InfoBusinessTypeDefault(shopID)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}

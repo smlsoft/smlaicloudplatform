@@ -8,6 +8,16 @@ import (
 
 const shopCollectionName = "shops"
 
+type ShopRequest struct {
+	Shop
+	BusinessType ShopBusinessType `json:"businesstype"`
+}
+
+type ShopBusinessType struct {
+	Code  string          `json:"code" bson:"code"`
+	Names *[]models.NameX `json:"names" bson:"names"`
+}
+
 type Shop struct {
 	ProfilePicture string         `json:"profilepicture" bson:"profilepicture"`
 	Name1          string         `json:"name1" bson:"name1"`
