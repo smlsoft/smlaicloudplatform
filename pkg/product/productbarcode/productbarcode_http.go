@@ -569,6 +569,10 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 					"$nin": tempIn,
 				}
 			}
+		} else {
+			filters["ignorebranches.code"] = bson.M{
+				"$ne": temp,
+			}
 		}
 		delete(filters, "branches.code")
 
@@ -679,6 +683,10 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 				filters["ignorebranches.code"] = bson.M{
 					"$nin": tempIn,
 				}
+			}
+		} else {
+			filters["ignorebranches.code"] = bson.M{
+				"$ne": temp,
 			}
 		}
 		delete(filters, "branches.code")
