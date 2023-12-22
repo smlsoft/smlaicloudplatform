@@ -104,7 +104,7 @@ func Docs() {
 // @Description Create Shop
 // @Tags		Shop
 // @Accept 		json
-// @Param		Shop  body      models.Shop  true  "Add Shop"
+// @Param		ShopRequest  body      models.ShopRequest  true  "Add Shop"
 // @Success		200	{object}		models.Shop
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken

@@ -21996,11 +21996,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Add Shop",
-                        "name": "Shop",
+                        "name": "ShopRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Shop"
+                            "$ref": "#/definitions/models.ShopRequest"
                         }
                     }
                 ],
@@ -40866,6 +40866,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ShopBusinessType": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.ShopImage": {
             "type": "object",
             "properties": {
@@ -40891,6 +40905,50 @@ const docTemplate = `{
                 },
                 "guidfixed": {
                     "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopImage"
+                    }
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "profilepicture": {
+                    "type": "string"
+                },
+                "settings": {
+                    "$ref": "#/definitions/models.ShopSettings"
+                },
+                "telephone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "branchcode": {
+                    "type": "string"
+                },
+                "businesstype": {
+                    "$ref": "#/definitions/models.ShopBusinessType"
                 },
                 "images": {
                     "type": "array",
