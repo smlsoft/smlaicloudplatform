@@ -163,6 +163,40 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 }
 func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models.ShopRequest) (err error) {
 
+	businessTypeDefault := businessTypeModels.BusinessType{}
+
+	businessTypeDefault.Code = shopReq.BusinessType.Code
+	businessTypeDefault.Names = shopReq.BusinessType.Names
+	businessTypeDefault.IsDefault = true
+
+	if len(businessTypeDefault.Code) < 1 {
+
+		businessTypeDefault.Code = "00000"
+
+		businessTypeMainCodeTH := "th"
+		businessTypeMainNameTH := "ธุรกิจหลัก"
+
+		businessTypeMainCodeEN := "en"
+		businessTypeMainNameEN := "Main Business"
+
+		businessTypeDefault.Names = &[]common.NameX{
+			{
+				Code: &businessTypeMainCodeTH,
+				Name: &businessTypeMainNameTH,
+			},
+			{
+				Code: &businessTypeMainCodeEN,
+				Name: &businessTypeMainNameEN,
+			},
+		}
+	}
+
+	businessTypeGUIDFixed, err := h.servicebusinessType.CreateBusinessType(shopID, authUsername, businessTypeDefault)
+
+	if err != nil {
+		return err
+	}
+
 	branchDefault := branchModel.Branch{}
 
 	if len(shopReq.Settings.LanguageConfigs) > 0 {
@@ -209,49 +243,17 @@ func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models
 		},
 	}
 
+	branchDefault.BusinessType.GuidFixed = businessTypeGUIDFixed
+	branchDefault.BusinessType.Code = businessTypeDefault.Code
+	branchDefault.BusinessType.Names = businessTypeDefault.Names
+
 	branchGUIDFixed, err := h.serviceBranch.CreateBranch(shopID, authUsername, branchDefault)
 
 	if err != nil {
-		return err
-	}
-
-	businessTypeDefault := businessTypeModels.BusinessType{}
-
-	businessTypeDefault.Code = shopReq.BusinessType.Code
-	businessTypeDefault.Names = shopReq.BusinessType.Names
-	businessTypeDefault.IsDefault = true
-
-	if len(businessTypeDefault.Code) < 1 {
-
-		businessTypeDefault.Code = "00000"
-
-		businessTypeMainCodeTH := "th"
-		businessTypeMainNameTH := "ธุรกิจหลัก"
-
-		businessTypeMainCodeEN := "en"
-		businessTypeMainNameEN := "Main Business"
-
-		businessTypeDefault.Names = &[]common.NameX{
-			{
-				Code: &businessTypeMainCodeTH,
-				Name: &businessTypeMainNameTH,
-			},
-			{
-				Code: &businessTypeMainCodeEN,
-				Name: &businessTypeMainNameEN,
-			},
-		}
-	}
-
-	businessTypeGUIDFixed, err := h.servicebusinessType.CreateBusinessType(shopID, authUsername, businessTypeDefault)
-
-	if err != nil {
-		err = h.serviceBranch.DeleteBranch(shopID, branchGUIDFixed, authUsername)
-
+		err = h.servicebusinessType.DeleteBusinessType(shopID, businessTypeGUIDFixed, authUsername)
 		if err != nil {
-			logger.GetLogger().Error("HTTP:: Error Rollback Branch " + err.Error())
+			logger.GetLogger().Error("HTTP:: Error Rollback BusinessType " + err.Error())
 		}
-
 		return err
 	}
 
