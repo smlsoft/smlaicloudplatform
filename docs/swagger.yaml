@@ -4445,6 +4445,15 @@ definitions:
       telephone:
         type: string
     type: object
+  models.ShopBusinessType:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   models.ShopImage:
     properties:
       uri:
@@ -4462,6 +4471,35 @@ definitions:
         type: string
       guidfixed:
         type: string
+      images:
+        items:
+          $ref: '#/definitions/models.ShopImage'
+        type: array
+      logo:
+        type: string
+      name1:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      profilepicture:
+        type: string
+      settings:
+        $ref: '#/definitions/models.ShopSettings'
+      telephone:
+        type: string
+    type: object
+  models.ShopRequest:
+    properties:
+      address:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      branchcode:
+        type: string
+      businesstype:
+        $ref: '#/definitions/models.ShopBusinessType'
       images:
         items:
           $ref: '#/definitions/models.ShopImage'
@@ -6466,6 +6504,8 @@ definitions:
     properties:
       code:
         type: string
+      isdefault:
+        type: boolean
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -13377,6 +13417,24 @@ paths:
         name: code
         required: true
         type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BusinessType
+  /organization/business-type/default:
+    get:
+      consumes:
+      - application/json
+      description: get BusinessType info default
       responses:
         "200":
           description: OK
@@ -20838,10 +20896,10 @@ paths:
       parameters:
       - description: Add Shop
         in: body
-        name: Shop
+        name: ShopRequest
         required: true
         schema:
-          $ref: '#/definitions/models.Shop'
+          $ref: '#/definitions/models.ShopRequest'
       responses:
         "200":
           description: OK
