@@ -29,6 +29,7 @@ type Pay struct {
 	PaymentDetailRaw         string                    `json:"paymentdetailraw" bson:"paymentdetailraw"`
 
 	PayCashAmount    float64 `json:"paycashamount" bson:"paycashamount"`
+	PayCashChange    float64 `json:"paycashchange" bson:"paycashchange"`
 	SumQrCode        float64 `json:"sumqrcode" bson:"sumqrcode"`               // ชำระเงินโดย QR Code
 	SumCreditCard    float64 `json:"sumcreditcard" bson:"sumcreditcard"`       // ชำระเงินโดย Credit Card
 	SumMoneyTransfer float64 `json:"summoneytransfer" bson:"summoneytransfer"` // ชำระเงินโดยเงินโอน
