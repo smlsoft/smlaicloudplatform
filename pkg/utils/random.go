@@ -37,6 +37,14 @@ func RandStringBytesMaskImprSrcUnsafe(n int) string {
 	return *(*string)(unsafe.Pointer(&b))
 }
 
+func RandNumber(n int) string {
+	var result string
+	for i := 0; i < n; i++ {
+		result += fmt.Sprint(rand.Intn(9))
+	}
+	return result
+}
+
 func NewGUID() string {
 	newid := ksuid.New()
 	return newid.String()

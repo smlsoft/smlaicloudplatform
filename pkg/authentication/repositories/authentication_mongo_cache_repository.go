@@ -1,11 +1,11 @@
-package authentication
+package repositories
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/authentication/models"
 	"time"
 
 	"github.com/jellydator/ttlcache/v3"
@@ -14,7 +14,9 @@ import (
 )
 
 type IAuthenticationMongoCacheRepository interface {
+	FindByIdentity(ctx context.Context, fieldName string, value string) (*models.UserDoc, error)
 	FindUser(ctx context.Context, id string) (*models.UserDoc, error)
+	FindByPhonenumber(ctx context.Context, phonenumber models.PhoneNumberField) (*models.UserDoc, error)
 	CreateUser(ctx context.Context, doc models.UserDoc) (primitive.ObjectID, error)
 	UpdateUser(ctx context.Context, username string, user models.UserDoc) error
 }
@@ -46,6 +48,18 @@ func (r AuthenticationMongoCacheRepository) clearnCache(username string) {
 	r.cache.Del(cacheKey)
 }
 
+func (r AuthenticationMongoCacheRepository) FindByIdentity(ctx context.Context, fieldName string, value string) (*models.UserDoc, error) {
+
+	findUser := &models.UserDoc{}
+	err := r.pst.FindOne(ctx, &models.UserDoc{}, bson.M{fieldName: value}, findUser)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return findUser, nil
+}
+
 func (r AuthenticationMongoCacheRepository) FindUser(ctx context.Context, username string) (*models.UserDoc, error) {
 
 	cacheKey := r.getCacheKey(username)
@@ -64,7 +78,6 @@ func (r AuthenticationMongoCacheRepository) FindUser(ctx context.Context, userna
 	}
 
 	if len(userCache) > 0 {
-		fmt.Println("user redis cache")
 		user := &models.UserDoc{}
 		err := json.Unmarshal([]byte(userCache), user)
 
@@ -74,7 +87,6 @@ func (r AuthenticationMongoCacheRepository) FindUser(ctx context.Context, userna
 		}
 	}
 
-	fmt.Println("get user from mongo ")
 	findUser := &models.UserDoc{}
 	err = r.pst.FindOne(ctx, &models.UserDoc{}, bson.M{"username": username}, findUser)
 
@@ -97,6 +109,18 @@ func (r AuthenticationMongoCacheRepository) FindUser(ctx context.Context, userna
 				fmt.Println(err.Error())
 			}
 		}()
+	}
+
+	return findUser, nil
+}
+
+func (r AuthenticationMongoCacheRepository) FindByPhonenumber(ctx context.Context, phonenumber models.PhoneNumberField) (*models.UserDoc, error) {
+
+	findUser := &models.UserDoc{}
+	err := r.pst.FindOne(ctx, &models.UserDoc{}, bson.M{"countrycode": phonenumber.CountryCode, "phonenumber": phonenumber.PhoneNumber}, findUser)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return findUser, nil

@@ -4850,7 +4850,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authentication.ShopFavoriteRequest"
+                            "$ref": "#/definitions/models.ShopFavoriteRequest"
                         }
                     }
                 ],
@@ -4865,6 +4865,43 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/forgot-password-phonenumber": {
+            "post": {
+                "description": "For User Forgot Password Phonenumber",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Forgot Password By Phonenumber",
+                "parameters": [
+                    {
+                        "description": "Forgot Password PhoneNumber Request",
+                        "name": "ForgotPasswordPhoneNumberRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ForgotPasswordPhoneNumberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -7021,7 +7058,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.ShopUserInfo"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.ShopUserInfo"
                             }
                         }
                     },
@@ -7050,7 +7087,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserLoginRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserLoginRequest"
                         }
                     }
                 ],
@@ -7090,7 +7127,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse"
+                                "$ref": "#/definitions/models.ApiResponse"
                             }
                         }
                     },
@@ -17469,7 +17506,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse"
                             }
                         }
                     },
@@ -17493,11 +17530,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Update account",
-                        "name": "User",
+                        "name": "UserProfileRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileRequest"
                         }
                     }
                 ],
@@ -17537,7 +17574,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse"
                             }
                         }
                     },
@@ -17566,7 +17603,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authentication.TokenLoginRequest"
+                            "$ref": "#/definitions/models.TokenLoginRequest"
                         }
                     }
                 ],
@@ -17599,11 +17636,122 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Register account",
-                        "name": "User",
+                        "name": "RegisterEmailRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRequest"
+                            "$ref": "#/definitions/models.RegisterEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/register-phonenumber": {
+            "post": {
+                "description": "For User Register Phonenumber",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register By Phonenumber",
+                "parameters": [
+                    {
+                        "description": "OTP Request",
+                        "name": "OTPRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/register/exists-phonenumber": {
+            "post": {
+                "description": "Check Exists Phone Number",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register Check Exists Phone Number",
+                "parameters": [
+                    {
+                        "description": "Username",
+                        "name": "PhoneNumber",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhoneNumberField"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/register/exists-username": {
+            "post": {
+                "description": "Check Exists Username",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register Check Exists Username",
+                "parameters": [
+                    {
+                        "description": "Username",
+                        "name": "Username",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UsernameField"
                         }
                     }
                 ],
@@ -21897,7 +22045,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.ShopSelectRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.ShopSelectRequest"
                         }
                     }
                 ],
@@ -21932,6 +22080,43 @@ const docTemplate = `{
                     "WSDocumentRef"
                 ],
                 "summary": "List Document Ref selected",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/send-phonenumber-otp": {
+            "post": {
+                "description": "For User Send Phonenumber OTP",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send Phonenumber OTP",
+                "parameters": [
+                    {
+                        "description": "OTP Request",
+                        "name": "OTPRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OTPRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -22710,7 +22895,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRoleRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRoleRequest"
                         }
                     }
                 ],
@@ -25051,7 +25236,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authentication.TokenLoginRequest"
+                            "$ref": "#/definitions/models.TokenLoginRequest"
                         }
                     }
                 ],
@@ -34263,28 +34448,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "authentication.ShopFavoriteRequest": {
-            "type": "object",
-            "properties": {
-                "isfavorite": {
-                    "type": "boolean"
-                },
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "authentication.TokenLoginRequest": {
-            "type": "object",
-            "required": [
-                "token"
-            ],
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
         "models.AccountGroup": {
             "type": "object",
             "required": [
@@ -35914,6 +36077,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ForgotPasswordPhoneNumberRequest": {
+            "type": "object",
+            "required": [
+                "countrycode",
+                "password",
+                "phonenumber"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "otppin": {
+                    "type": "string"
+                },
+                "otprefcode": {
+                    "type": "string"
+                },
+                "otptoken": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "phonenumber": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
         "models.ImageEdit": {
             "type": "object",
             "properties": {
@@ -36953,6 +37148,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.OTPRequest": {
+            "type": "object",
+            "required": [
+                "countrycode",
+                "phonenumber"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "phonenumber": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
         "models.OptionDetail": {
             "type": "object",
             "required": [
@@ -37743,6 +37955,23 @@ const docTemplate = `{
                 },
                 "docdatetime": {
                     "type": "string"
+                }
+            }
+        },
+        "models.PhoneNumberField": {
+            "type": "object",
+            "required": [
+                "countrycode",
+                "phonenumber"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "phonenumber": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -39649,6 +39878,49 @@ const docTemplate = `{
                 }
             }
         },
+        "models.RegisterEmailRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom"
+                },
+                "email": {
+                    "type": "string",
+                    "maxLength": 233
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "registertype": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
         "models.ResponseSuccess": {
             "type": "object",
             "properties": {
@@ -40877,6 +41149,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                }
+            }
+        },
+        "models.ShopFavoriteRequest": {
+            "type": "object",
+            "properties": {
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "shopid": {
+                    "type": "string"
                 }
             }
         },
@@ -43202,6 +43485,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.TokenLoginRequest": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "models.TotalStatus": {
             "type": "object",
             "properties": {
@@ -43438,6 +43732,45 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                }
+            }
+        },
+        "models.UserLoginPhoneNumberRequest": {
+            "type": "object",
+            "required": [
+                "countrycode",
+                "password",
+                "phonenumber"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "phonenumber": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UsernameField": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 3
                 }
             }
         },
@@ -43681,6 +44014,193 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.DedeZoom": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "phonenumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.ShopSelectRequest": {
+            "type": "object",
+            "required": [
+                "shopid"
+            ],
+            "properties": {
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.ShopUserInfo": {
+            "type": "object",
+            "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "createdby": {
+                    "type": "string"
+                },
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "lastaccessedat": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRole"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserLoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 3
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserProfile": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "registertype": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 3
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserProfileReponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfile"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserProfileRequest": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "registertype": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserRole": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-comments": {
+                "ROLE_ADMIN": "\"ADMIN\"",
+                "ROLE_OWNER": "\"OWNER\"",
+                "ROLE_USER": "\"USER\""
+            },
+            "x-enum-varnames": [
+                "ROLE_USER",
+                "ROLE_ADMIN",
+                "ROLE_OWNER"
+            ]
+        },
+        "smlcloudplatform_pkg_authentication_models.UserRoleRequest": {
+            "type": "object",
+            "properties": {
+                "editusername": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRole"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
@@ -44564,230 +45084,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.DedeZoom": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "phonenumber": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.ShopSelectRequest": {
-            "type": "object",
-            "required": [
-                "shopid"
-            ],
-            "properties": {
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.ShopUserInfo": {
-            "type": "object",
-            "properties": {
-                "branchcode": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "isfavorite": {
-                    "type": "boolean"
-                },
-                "lastaccessedat": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "role": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRole"
-                },
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.UserLoginRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.UserProfile": {
-            "type": "object",
-            "required": [
-                "name",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.UserProfileReponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserProfile"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.UserProfileRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.UserRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_models.UserRole": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-comments": {
-                "ROLE_ADMIN": "\"ADMIN\"",
-                "ROLE_OWNER": "\"OWNER\"",
-                "ROLE_USER": "\"USER\""
-            },
-            "x-enum-varnames": [
-                "ROLE_USER",
-                "ROLE_ADMIN",
-                "ROLE_OWNER"
-            ]
-        },
-        "smlcloudplatform_pkg_shop_models.UserRoleRequest": {
-            "type": "object",
-            "properties": {
-                "editusername": {
-                    "type": "string"
-                },
-                "role": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_models.UserRole"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         },

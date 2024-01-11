@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
+	auth_model "smlcloudplatform/pkg/authentication/models"
 	"smlcloudplatform/pkg/shop/models"
 	"time"
 
@@ -50,7 +51,7 @@ func (svc ShopService) CreateShop(username string, doc models.Shop) (string, err
 		return "", err
 	}
 
-	err = svc.shopUserRepo.Save(context.Background(), shopID, username, models.ROLE_OWNER)
+	err = svc.shopUserRepo.Save(context.Background(), shopID, username, auth_model.ROLE_OWNER)
 
 	if err != nil {
 		return "", err

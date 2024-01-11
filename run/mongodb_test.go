@@ -2,7 +2,7 @@ package run_test
 
 import (
 	"context"
-	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/authentication/models"
 	"testing"
 
 	"github.com/tj/assert"
@@ -47,12 +47,10 @@ func TestMongodbCreateData(t *testing.T) {
 
 		mt.AddMockResponses(mtest.CreateSuccessResponse())
 
-		giveUser := models.UserDoc{
-			ID: id,
-			UsernameCode: models.UsernameCode{
-				Username: "john",
-			},
-		}
+		giveUser := models.UserDoc{}
+
+		giveUser.ID = id
+		giveUser.Username = "john"
 
 		insertedUser, err := userCollection.InsertOne(context.Background(), giveUser)
 

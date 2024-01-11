@@ -1,18 +1,4 @@
 definitions:
-  authentication.ShopFavoriteRequest:
-    properties:
-      isfavorite:
-        type: boolean
-      shopid:
-        type: string
-    type: object
-  authentication.TokenLoginRequest:
-    properties:
-      token:
-        type: string
-    required:
-    - token
-    type: object
   models.AccountGroup:
     properties:
       code:
@@ -1116,6 +1102,29 @@ definitions:
       zipcode:
         type: string
     type: object
+  models.ForgotPasswordPhoneNumberRequest:
+    properties:
+      countrycode:
+        maxLength: 20
+        type: string
+      otppin:
+        type: string
+      otprefcode:
+        type: string
+      otptoken:
+        type: string
+      password:
+        maxLength: 233
+        minLength: 5
+        type: string
+      phonenumber:
+        maxLength: 100
+        type: string
+    required:
+    - countrycode
+    - password
+    - phonenumber
+    type: object
   models.ImageEdit:
     properties:
       editedat:
@@ -1815,6 +1824,18 @@ definitions:
       issavebill:
         type: boolean
     type: object
+  models.OTPRequest:
+    properties:
+      countrycode:
+        maxLength: 20
+        type: string
+      phonenumber:
+        maxLength: 100
+        type: string
+    required:
+    - countrycode
+    - phonenumber
+    type: object
   models.OptionDetail:
     properties:
       choicedetails:
@@ -2357,6 +2378,18 @@ definitions:
         type: array
       docdatetime:
         type: string
+    type: object
+  models.PhoneNumberField:
+    properties:
+      countrycode:
+        maxLength: 20
+        type: string
+      phonenumber:
+        maxLength: 100
+        type: string
+    required:
+    - countrycode
+    - phonenumber
     type: object
   models.PosSettingBranch:
     properties:
@@ -3633,6 +3666,36 @@ definitions:
       xtype:
         type: integer
     type: object
+  models.RegisterEmailRequest:
+    properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+      email:
+        maxLength: 233
+        type: string
+      name:
+        type: string
+      password:
+        maxLength: 233
+        minLength: 5
+        type: string
+      registertype:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      uid:
+        type: string
+      yeartype:
+        maxLength: 21
+        type: string
+    required:
+    - email
+    - password
+    type: object
   models.ResponseSuccess:
     properties:
       success:
@@ -4457,6 +4520,13 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+    type: object
+  models.ShopFavoriteRequest:
+    properties:
+      isfavorite:
+        type: boolean
+      shopid:
+        type: string
     type: object
   models.ShopImage:
     properties:
@@ -6003,6 +6073,13 @@ definitions:
       taxrate:
         type: number
     type: object
+  models.TokenLoginRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
   models.TotalStatus:
     properties:
       status:
@@ -6172,6 +6249,34 @@ definitions:
     - names
     - unitcode
     type: object
+  models.UserLoginPhoneNumberRequest:
+    properties:
+      countrycode:
+        maxLength: 20
+        type: string
+      password:
+        maxLength: 233
+        minLength: 5
+        type: string
+      phonenumber:
+        maxLength: 100
+        type: string
+      shopid:
+        type: string
+    required:
+    - countrycode
+    - password
+    - phonenumber
+    type: object
+  models.UsernameField:
+    properties:
+      username:
+        maxLength: 233
+        minLength: 3
+        type: string
+    required:
+    - username
+    type: object
   models.Vat:
     properties:
       address:
@@ -6335,6 +6440,133 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  smlcloudplatform_pkg_authentication_models.DedeZoom:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      phonenumber:
+        type: string
+    type: object
+  smlcloudplatform_pkg_authentication_models.ShopSelectRequest:
+    properties:
+      shopid:
+        type: string
+    required:
+    - shopid
+    type: object
+  smlcloudplatform_pkg_authentication_models.ShopUserInfo:
+    properties:
+      branchcode:
+        type: string
+      createdby:
+        type: string
+      isfavorite:
+        type: boolean
+      lastaccessedat:
+        type: string
+      name:
+        type: string
+      role:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRole'
+      shopid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserLoginRequest:
+    properties:
+      password:
+        maxLength: 233
+        minLength: 5
+        type: string
+      shopid:
+        type: string
+      username:
+        maxLength: 233
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserProfile:
+    properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+      name:
+        type: string
+      registertype:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      uid:
+        type: string
+      username:
+        maxLength: 233
+        minLength: 3
+        type: string
+      yeartype:
+        maxLength: 21
+        type: string
+    required:
+    - username
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserProfileReponse:
+    properties:
+      data:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfile'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserProfileRequest:
+    properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+      name:
+        type: string
+      registertype:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      uid:
+        type: string
+      yeartype:
+        maxLength: 21
+        type: string
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserRole:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-comments:
+      ROLE_ADMIN: '"ADMIN"'
+      ROLE_OWNER: '"OWNER"'
+      ROLE_USER: '"USER"'
+    x-enum-varnames:
+    - ROLE_USER
+    - ROLE_ADMIN
+    - ROLE_OWNER
+  smlcloudplatform_pkg_authentication_models.UserRoleRequest:
+    properties:
+      editusername:
+        type: string
+      role:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRole'
+      shopid:
+        type: string
+      username:
+        type: string
     type: object
   smlcloudplatform_pkg_debtaccount_creditor_models.Address:
     properties:
@@ -6924,160 +7156,6 @@ definitions:
         items:
           type: string
         type: array
-    type: object
-  smlcloudplatform_pkg_shop_models.DedeZoom:
-    properties:
-      address:
-        type: string
-      email:
-        type: string
-      phonenumber:
-        type: string
-    type: object
-  smlcloudplatform_pkg_shop_models.ShopSelectRequest:
-    properties:
-      shopid:
-        type: string
-    required:
-    - shopid
-    type: object
-  smlcloudplatform_pkg_shop_models.ShopUserInfo:
-    properties:
-      branchcode:
-        type: string
-      createdby:
-        type: string
-      isfavorite:
-        type: boolean
-      lastaccessedat:
-        type: string
-      name:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      role:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserRole'
-      shopid:
-        type: string
-    type: object
-  smlcloudplatform_pkg_shop_models.UserLoginRequest:
-    properties:
-      password:
-        maxLength: 233
-        minLength: 5
-        type: string
-      shopid:
-        type: string
-      username:
-        maxLength: 233
-        minLength: 5
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  smlcloudplatform_pkg_shop_models.UserProfile:
-    properties:
-      avatar:
-        type: string
-      dedezoom:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom'
-      name:
-        type: string
-      timezonelabel:
-        type: string
-      timezoneoffset:
-        type: string
-      username:
-        maxLength: 233
-        minLength: 5
-        type: string
-      yeartype:
-        maxLength: 21
-        type: string
-    required:
-    - name
-    - username
-    type: object
-  smlcloudplatform_pkg_shop_models.UserProfileReponse:
-    properties:
-      data:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserProfile'
-      success:
-        type: boolean
-    type: object
-  smlcloudplatform_pkg_shop_models.UserProfileRequest:
-    properties:
-      avatar:
-        type: string
-      dedezoom:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom'
-      name:
-        type: string
-      timezonelabel:
-        type: string
-      timezoneoffset:
-        type: string
-      yeartype:
-        maxLength: 21
-        type: string
-    required:
-    - name
-    type: object
-  smlcloudplatform_pkg_shop_models.UserRequest:
-    properties:
-      avatar:
-        type: string
-      dedezoom:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_models.DedeZoom'
-      name:
-        type: string
-      password:
-        maxLength: 233
-        minLength: 5
-        type: string
-      timezonelabel:
-        type: string
-      timezoneoffset:
-        type: string
-      username:
-        maxLength: 233
-        minLength: 5
-        type: string
-      yeartype:
-        maxLength: 21
-        type: string
-    required:
-    - name
-    - password
-    - username
-    type: object
-  smlcloudplatform_pkg_shop_models.UserRole:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-comments:
-      ROLE_ADMIN: '"ADMIN"'
-      ROLE_OWNER: '"OWNER"'
-      ROLE_USER: '"USER"'
-    x-enum-varnames:
-    - ROLE_USER
-    - ROLE_ADMIN
-    - ROLE_OWNER
-  smlcloudplatform_pkg_shop_models.UserRoleRequest:
-    properties:
-      editusername:
-        type: string
-      role:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserRole'
-      shopid:
-        type: string
-      username:
-        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -10246,7 +10324,7 @@ paths:
         name: ShopFavoriteRequest
         required: true
         schema:
-          $ref: '#/definitions/authentication.ShopFavoriteRequest'
+          $ref: '#/definitions/models.ShopFavoriteRequest'
       responses:
         "200":
           description: OK
@@ -10258,6 +10336,30 @@ paths:
             $ref: '#/definitions/models.ApiResponse'
       security:
       - AccessToken: []
+      tags:
+      - Authentication
+  /forgot-password-phonenumber:
+    post:
+      consumes:
+      - application/json
+      description: For User Forgot Password Phonenumber
+      parameters:
+      - description: Forgot Password PhoneNumber Request
+        in: body
+        name: ForgotPasswordPhoneNumberRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgotPasswordPhoneNumberRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Forgot Password By Phonenumber
       tags:
       - Authentication
   /gl/accountgroup:
@@ -11613,7 +11715,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_shop_models.ShopUserInfo'
+              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.ShopUserInfo'
             type: array
         "401":
           description: Unauthorized
@@ -11634,7 +11736,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserLoginRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserLoginRequest'
       responses:
         "200":
           description: OK
@@ -11656,7 +11758,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse'
+              $ref: '#/definitions/models.ApiResponse'
             type: array
         "401":
           description: Unauthorized
@@ -18101,7 +18203,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse'
+              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse'
             type: array
         "401":
           description: Unauthorized
@@ -18118,10 +18220,10 @@ paths:
       parameters:
       - description: Update account
         in: body
-        name: User
+        name: UserProfileRequest
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserProfileRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileRequest'
       responses:
         "200":
           description: OK
@@ -18144,7 +18246,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserProfileReponse'
+              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse'
             type: array
         "401":
           description: Unauthorized
@@ -18165,7 +18267,7 @@ paths:
         name: TokenLoginRequest
         required: true
         schema:
-          $ref: '#/definitions/authentication.TokenLoginRequest'
+          $ref: '#/definitions/models.TokenLoginRequest'
       responses:
         "200":
           description: OK
@@ -18185,10 +18287,10 @@ paths:
       parameters:
       - description: Register account
         in: body
-        name: User
+        name: RegisterEmailRequest
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserRequest'
+          $ref: '#/definitions/models.RegisterEmailRequest'
       responses:
         "200":
           description: OK
@@ -18199,6 +18301,78 @@ paths:
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
       summary: Register An Account
+      tags:
+      - Authentication
+  /register-phonenumber:
+    post:
+      consumes:
+      - application/json
+      description: For User Register Phonenumber
+      parameters:
+      - description: OTP Request
+        in: body
+        name: OTPRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.OTPRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register By Phonenumber
+      tags:
+      - Authentication
+  /register/exists-phonenumber:
+    post:
+      consumes:
+      - application/json
+      description: Check Exists Phone Number
+      parameters:
+      - description: Username
+        in: body
+        name: PhoneNumber
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhoneNumberField'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register Check Exists Phone Number
+      tags:
+      - Authentication
+  /register/exists-username:
+    post:
+      consumes:
+      - application/json
+      description: Check Exists Username
+      parameters:
+      - description: Username
+        in: body
+        name: Username
+        required: true
+        schema:
+          $ref: '#/definitions/models.UsernameField'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register Check Exists Username
       tags:
       - Authentication
   /report/execute:
@@ -20848,7 +21022,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_models.ShopSelectRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.ShopSelectRequest'
       responses:
         "200":
           description: OK
@@ -20881,6 +21055,30 @@ paths:
       summary: List Document Ref selected
       tags:
       - WSDocumentRef
+  /send-phonenumber-otp:
+    post:
+      consumes:
+      - application/json
+      description: For User Send Phonenumber OTP
+      parameters:
+      - description: OTP Request
+        in: body
+        name: OTPRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.OTPRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Send Phonenumber OTP
+      tags:
+      - Authentication
   /shop:
     get:
       consumes:
@@ -21430,7 +21628,7 @@ paths:
         name: UserRoleRequest
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_models.UserRoleRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRoleRequest'
       responses:
         "200":
           description: OK
@@ -22817,7 +23015,7 @@ paths:
         name: TokenLoginRequest
         required: true
         schema:
-          $ref: '#/definitions/authentication.TokenLoginRequest'
+          $ref: '#/definitions/models.TokenLoginRequest'
       responses:
         "200":
           description: OK

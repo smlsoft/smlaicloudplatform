@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/authentication/models"
 	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
 )
 

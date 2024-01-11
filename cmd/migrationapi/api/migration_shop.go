@@ -3,14 +3,15 @@ package api
 import (
 	"context"
 	"smlcloudplatform/pkg/shop"
-	"smlcloudplatform/pkg/shop/models"
-	shopModel "smlcloudplatform/pkg/shop/models"
+
+	auth_model "smlcloudplatform/pkg/authentication/models"
+	shop_model "smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (m *MigrationService) ImportShop(shops []shopModel.ShopDoc) error {
+func (m *MigrationService) ImportShop(shops []shop_model.ShopDoc) error {
 	shopRepo := shop.NewShopRepository(m.mongoPersister)
 	for _, shop := range shops {
 
@@ -35,12 +36,12 @@ func (m *MigrationService) ImportShop(shops []shopModel.ShopDoc) error {
 	return nil
 }
 
-func (m *MigrationService) ImportShopUser(shop shopModel.ShopDoc) error {
+func (m *MigrationService) ImportShopUser(shop shop_model.ShopDoc) error {
 
 	username := shop.GuidFixed
-	findUser := &shopModel.UserDoc{}
+	findUser := &auth_model.UserDoc{}
 
-	err := m.mongoPersister.FindOne(context.Background(), &models.UserDoc{}, bson.M{"username": username}, findUser)
+	err := m.mongoPersister.FindOne(context.Background(), &auth_model.UserDoc{}, bson.M{"username": username}, findUser)
 
 	if err != nil {
 		return err
@@ -51,15 +52,15 @@ func (m *MigrationService) ImportShopUser(shop shopModel.ShopDoc) error {
 		if err != nil {
 			return err
 		}
-		newUser := shopModel.UserDoc{
-			UsernameCode: shopModel.UsernameCode{
+		newUser := auth_model.UserDoc{
+			UsernameCode: auth_model.UsernameCode{
 				Username: username,
 			},
-			UserPassword: shopModel.UserPassword{
+			UserPassword: auth_model.UserPassword{
 				Password: userPassword,
 			},
 		}
-		_, err = m.mongoPersister.Create(context.Background(), &shopModel.UserDoc{}, newUser)
+		_, err = m.mongoPersister.Create(context.Background(), &auth_model.UserDoc{}, newUser)
 		if err != nil {
 			return err
 		}
@@ -69,7 +70,7 @@ func (m *MigrationService) ImportShopUser(shop shopModel.ShopDoc) error {
 
 	if findUserShop.Username == "" {
 
-		err = m.userShopRepo.Save(context.Background(), shop.GuidFixed, username, models.ROLE_OWNER)
+		err = m.userShopRepo.Save(context.Background(), shop.GuidFixed, username, auth_model.ROLE_OWNER)
 
 		if err != nil {
 			return err

@@ -17,6 +17,17 @@ func NormalizeUsername(username string) string {
 	return username
 }
 
+func NormalizePhonenumber(phoneNumber string) string {
+	phoneNumber = strings.TrimSpace(phoneNumber)
+	phoneNumber = strings.TrimPrefix(phoneNumber, "0")
+	return phoneNumber
+}
+
+func NormalizeEmail(email string) string {
+	email = strings.TrimSpace(email)
+	return email
+}
+
 func NormalizeName(username string) string {
 	username = strings.TrimSpace(username)
 	return username

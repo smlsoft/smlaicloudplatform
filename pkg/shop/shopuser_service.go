@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
-	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/authentication/models"
 	"smlcloudplatform/pkg/utils"
 
 	"github.com/userplant/mongopagination"
