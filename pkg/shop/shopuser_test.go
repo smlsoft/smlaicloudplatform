@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/authentication/models"
 	"smlcloudplatform/pkg/shop"
-	"smlcloudplatform/pkg/shop/models"
 	"testing"
 )
 

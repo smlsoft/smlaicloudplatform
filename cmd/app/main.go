@@ -125,8 +125,13 @@ func main() {
 	publicPath := []string{
 		"/swagger",
 		"/login",
+		"/login/phone-number",
 		"/register",
 		"/refresh",
+		"/register-phonenumber",
+		"/register/exists-username",
+		"/register/exists-phonenumber",
+		"/send-phonenumber-otp",
 
 		"/employee/login",
 

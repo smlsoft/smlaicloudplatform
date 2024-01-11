@@ -1,18 +1,4 @@
 definitions:
-  authentication.ShopFavoriteRequest:
-    properties:
-      isfavorite:
-        type: boolean
-      shopid:
-        type: string
-    type: object
-  authentication.TokenLoginRequest:
-    properties:
-      token:
-        type: string
-    required:
-    - token
-    type: object
   models.AccountGroup:
     properties:
       code:
@@ -767,15 +753,6 @@ definitions:
     required:
     - names
     type: object
-  models.DedeZoom:
-    properties:
-      address:
-        type: string
-      email:
-        type: string
-      phonenumber:
-        type: string
-    type: object
   models.Detail:
     properties:
       averagecost:
@@ -1124,6 +1101,29 @@ definitions:
         type: string
       zipcode:
         type: string
+    type: object
+  models.ForgotPasswordPhoneNumberRequest:
+    properties:
+      countrycode:
+        maxLength: 20
+        type: string
+      otppin:
+        type: string
+      otprefcode:
+        type: string
+      otptoken:
+        type: string
+      password:
+        maxLength: 233
+        minLength: 5
+        type: string
+      phonenumber:
+        maxLength: 100
+        type: string
+    required:
+    - countrycode
+    - password
+    - phonenumber
     type: object
   models.ImageEdit:
     properties:
@@ -1739,6 +1739,53 @@ definitions:
     - code
     - name
     type: object
+  models.Notifier:
+    properties:
+      accceptedat:
+        type: string
+      accceptedby:
+        type: string
+      code:
+        maxLength: 255
+        minLength: 1
+        type: string
+      message:
+        maxLength: 255
+        minLength: 1
+        type: string
+      notifiedat:
+        type: string
+      rejectedat:
+        type: string
+      rejectedby:
+        type: string
+      title:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - code
+    - message
+    - title
+    type: object
+  models.NotifierDeviceConfirmAuthPayload:
+    properties:
+      deviceid:
+        type: string
+      devicename:
+        type: string
+      fcmtoken:
+        maxLength: 255
+        minLength: 1
+        type: string
+      refcode:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - fcmtoken
+    - refcode
+    type: object
   models.Notify:
     properties:
       branchevents:
@@ -1776,6 +1823,18 @@ definitions:
         type: boolean
       issavebill:
         type: boolean
+    type: object
+  models.OTPRequest:
+    properties:
+      countrycode:
+        maxLength: 20
+        type: string
+      phonenumber:
+        maxLength: 100
+        type: string
+    required:
+    - countrycode
+    - phonenumber
     type: object
   models.OptionDetail:
     properties:
@@ -2323,6 +2382,18 @@ definitions:
         type: array
       docdatetime:
         type: string
+    type: object
+  models.PhoneNumberField:
+    properties:
+      countrycode:
+        maxLength: 20
+        type: string
+      phonenumber:
+        maxLength: 100
+        type: string
+    required:
+    - countrycode
+    - phonenumber
     type: object
   models.PosSettingBranch:
     properties:
@@ -3599,6 +3670,36 @@ definitions:
       xtype:
         type: integer
     type: object
+  models.RegisterEmailRequest:
+    properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+      email:
+        maxLength: 233
+        type: string
+      name:
+        type: string
+      password:
+        maxLength: 233
+        minLength: 5
+        type: string
+      registertype:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      uid:
+        type: string
+      yeartype:
+        maxLength: 21
+        type: string
+    required:
+    - email
+    - password
+    type: object
   models.ResponseSuccess:
     properties:
       success:
@@ -4424,6 +4525,13 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
     type: object
+  models.ShopFavoriteRequest:
+    properties:
+      isfavorite:
+        type: boolean
+      shopid:
+        type: string
+    type: object
   models.ShopImage:
     properties:
       uri:
@@ -4489,13 +4597,6 @@ definitions:
       telephone:
         type: string
     type: object
-  models.ShopSelectRequest:
-    properties:
-      shopid:
-        type: string
-    required:
-    - shopid
-    type: object
   models.ShopSettings:
     properties:
       emailowners:
@@ -4528,27 +4629,6 @@ definitions:
         type: integer
       vattypesale:
         type: number
-    type: object
-  models.ShopUserInfo:
-    properties:
-      branchcode:
-        type: string
-      createdby:
-        type: string
-      isfavorite:
-        type: boolean
-      lastaccessedat:
-        type: string
-      name:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      role:
-        $ref: '#/definitions/models.UserRole'
-      shopid:
-        type: string
     type: object
   models.SmsPaymentSettings:
     properties:
@@ -5997,6 +6077,13 @@ definitions:
       taxrate:
         type: number
     type: object
+  models.TokenLoginRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
   models.TotalStatus:
     properties:
       status:
@@ -6166,122 +6253,33 @@ definitions:
     - names
     - unitcode
     type: object
-  models.UserLoginRequest:
+  models.UserLoginPhoneNumberRequest:
     properties:
-      password:
-        maxLength: 233
-        minLength: 5
-        type: string
-      shopid:
-        type: string
-      username:
-        maxLength: 233
-        minLength: 5
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  models.UserProfile:
-    properties:
-      avatar:
-        type: string
-      dedezoom:
-        $ref: '#/definitions/models.DedeZoom'
-      name:
-        type: string
-      timezonelabel:
-        type: string
-      timezoneoffset:
-        type: string
-      username:
-        maxLength: 233
-        minLength: 5
-        type: string
-      yeartype:
-        maxLength: 21
-        type: string
-    required:
-    - name
-    - username
-    type: object
-  models.UserProfileReponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.UserProfile'
-      success:
-        type: boolean
-    type: object
-  models.UserProfileRequest:
-    properties:
-      avatar:
-        type: string
-      dedezoom:
-        $ref: '#/definitions/models.DedeZoom'
-      name:
-        type: string
-      timezonelabel:
-        type: string
-      timezoneoffset:
-        type: string
-      yeartype:
-        maxLength: 21
-        type: string
-    required:
-    - name
-    type: object
-  models.UserRequest:
-    properties:
-      avatar:
-        type: string
-      dedezoom:
-        $ref: '#/definitions/models.DedeZoom'
-      name:
+      countrycode:
+        maxLength: 20
         type: string
       password:
         maxLength: 233
         minLength: 5
         type: string
-      timezonelabel:
+      phonenumber:
+        maxLength: 100
         type: string
-      timezoneoffset:
-        type: string
-      username:
-        maxLength: 233
-        minLength: 5
-        type: string
-      yeartype:
-        maxLength: 21
-        type: string
-    required:
-    - name
-    - password
-    - username
-    type: object
-  models.UserRole:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-comments:
-      ROLE_ADMIN: '"ADMIN"'
-      ROLE_OWNER: '"OWNER"'
-      ROLE_USER: '"USER"'
-    x-enum-varnames:
-    - ROLE_USER
-    - ROLE_ADMIN
-    - ROLE_OWNER
-  models.UserRoleRequest:
-    properties:
-      editusername:
-        type: string
-      role:
-        $ref: '#/definitions/models.UserRole'
       shopid:
         type: string
+    required:
+    - countrycode
+    - password
+    - phonenumber
+    type: object
+  models.UsernameField:
+    properties:
       username:
+        maxLength: 233
+        minLength: 3
         type: string
+    required:
+    - username
     type: object
   models.Vat:
     properties:
@@ -6446,6 +6444,133 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  smlcloudplatform_pkg_authentication_models.DedeZoom:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      phonenumber:
+        type: string
+    type: object
+  smlcloudplatform_pkg_authentication_models.ShopSelectRequest:
+    properties:
+      shopid:
+        type: string
+    required:
+    - shopid
+    type: object
+  smlcloudplatform_pkg_authentication_models.ShopUserInfo:
+    properties:
+      branchcode:
+        type: string
+      createdby:
+        type: string
+      isfavorite:
+        type: boolean
+      lastaccessedat:
+        type: string
+      name:
+        type: string
+      role:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRole'
+      shopid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserLoginRequest:
+    properties:
+      password:
+        maxLength: 233
+        minLength: 5
+        type: string
+      shopid:
+        type: string
+      username:
+        maxLength: 233
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserProfile:
+    properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+      name:
+        type: string
+      registertype:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      uid:
+        type: string
+      username:
+        maxLength: 233
+        minLength: 3
+        type: string
+      yeartype:
+        maxLength: 21
+        type: string
+    required:
+    - username
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserProfileReponse:
+    properties:
+      data:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfile'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserProfileRequest:
+    properties:
+      avatar:
+        type: string
+      dedezoom:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+      name:
+        type: string
+      registertype:
+        type: string
+      timezonelabel:
+        type: string
+      timezoneoffset:
+        type: string
+      uid:
+        type: string
+      yeartype:
+        maxLength: 21
+        type: string
+    type: object
+  smlcloudplatform_pkg_authentication_models.UserRole:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-comments:
+      ROLE_ADMIN: '"ADMIN"'
+      ROLE_OWNER: '"OWNER"'
+      ROLE_USER: '"USER"'
+    x-enum-varnames:
+    - ROLE_USER
+    - ROLE_ADMIN
+    - ROLE_OWNER
+  smlcloudplatform_pkg_authentication_models.UserRoleRequest:
+    properties:
+      editusername:
+        type: string
+      role:
+        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRole'
+      shopid:
+        type: string
+      username:
+        type: string
     type: object
   smlcloudplatform_pkg_debtaccount_creditor_models.Address:
     properties:
@@ -6852,6 +6977,64 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductPrice'
         type: array
+    type: object
+  smlcloudplatform_pkg_report_reportqueryc_models.ReportParam:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery:
+    properties:
+      code:
+        maxLength: 50
+        minLength: 1
+        type: string
+      isactived:
+        type: boolean
+      isapproved:
+        type: boolean
+      params:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportParam'
+        type: array
+      sql:
+        type: string
+    required:
+    - code
+    type: object
+  smlcloudplatform_pkg_report_reportquerym_models.ReportParam:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  smlcloudplatform_pkg_report_reportquerym_models.ReportQuery:
+    properties:
+      code:
+        maxLength: 50
+        minLength: 1
+        type: string
+      collection:
+        type: string
+      fields:
+        items:
+          type: string
+        type: array
+      filter:
+        type: string
+      isactived:
+        type: boolean
+      isapproved:
+        type: boolean
+      params:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportParam'
+        type: array
+    required:
+    - code
     type: object
   smlcloudplatform_pkg_restaurant_device_models.Device:
     properties:
@@ -10145,7 +10328,7 @@ paths:
         name: ShopFavoriteRequest
         required: true
         schema:
-          $ref: '#/definitions/authentication.ShopFavoriteRequest'
+          $ref: '#/definitions/models.ShopFavoriteRequest'
       responses:
         "200":
           description: OK
@@ -10157,6 +10340,30 @@ paths:
             $ref: '#/definitions/models.ApiResponse'
       security:
       - AccessToken: []
+      tags:
+      - Authentication
+  /forgot-password-phonenumber:
+    post:
+      consumes:
+      - application/json
+      description: For User Forgot Password Phonenumber
+      parameters:
+      - description: Forgot Password PhoneNumber Request
+        in: body
+        name: ForgotPasswordPhoneNumberRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgotPasswordPhoneNumberRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Forgot Password By Phonenumber
       tags:
       - Authentication
   /gl/accountgroup:
@@ -11512,7 +11719,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.ShopUserInfo'
+              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.ShopUserInfo'
             type: array
         "401":
           description: Unauthorized
@@ -11533,7 +11740,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/models.UserLoginRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserLoginRequest'
       responses:
         "200":
           description: OK
@@ -11555,7 +11762,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.UserProfileReponse'
+              $ref: '#/definitions/models.ApiResponse'
             type: array
         "401":
           description: Unauthorized
@@ -18000,7 +18207,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.UserProfileReponse'
+              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse'
             type: array
         "401":
           description: Unauthorized
@@ -18017,10 +18224,10 @@ paths:
       parameters:
       - description: Update account
         in: body
-        name: User
+        name: UserProfileRequest
         required: true
         schema:
-          $ref: '#/definitions/models.UserProfileRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileRequest'
       responses:
         "200":
           description: OK
@@ -18043,7 +18250,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.UserProfileReponse'
+              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse'
             type: array
         "401":
           description: Unauthorized
@@ -18064,7 +18271,7 @@ paths:
         name: TokenLoginRequest
         required: true
         schema:
-          $ref: '#/definitions/authentication.TokenLoginRequest'
+          $ref: '#/definitions/models.TokenLoginRequest'
       responses:
         "200":
           description: OK
@@ -18084,10 +18291,10 @@ paths:
       parameters:
       - description: Register account
         in: body
-        name: User
+        name: RegisterEmailRequest
         required: true
         schema:
-          $ref: '#/definitions/models.UserRequest'
+          $ref: '#/definitions/models.RegisterEmailRequest'
       responses:
         "200":
           description: OK
@@ -18100,6 +18307,618 @@ paths:
       summary: Register An Account
       tags:
       - Authentication
+  /register-phonenumber:
+    post:
+      consumes:
+      - application/json
+      description: For User Register Phonenumber
+      parameters:
+      - description: OTP Request
+        in: body
+        name: OTPRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.OTPRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register By Phonenumber
+      tags:
+      - Authentication
+  /register/exists-phonenumber:
+    post:
+      consumes:
+      - application/json
+      description: Check Exists Phone Number
+      parameters:
+      - description: Username
+        in: body
+        name: PhoneNumber
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhoneNumberField'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register Check Exists Phone Number
+      tags:
+      - Authentication
+  /register/exists-username:
+    post:
+      consumes:
+      - application/json
+      description: Check Exists Username
+      parameters:
+      - description: Username
+        in: body
+        name: Username
+        required: true
+        schema:
+          $ref: '#/definitions/models.UsernameField'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register Check Exists Username
+      tags:
+      - Authentication
+  /report/execute:
+    post:
+      consumes:
+      - application/json
+      description: Execute ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/playground:
+    post:
+      consumes:
+      - application/json
+      description: Playground ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery GUIDs
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    post:
+      consumes:
+      - application/json
+      description: Create ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by guidfixed
+      parameters:
+      - description: ReportQuery guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    put:
+      consumes:
+      - application/json
+      description: Update ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by Code
+      parameters:
+      - description: ReportQuery Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/execute:
+    post:
+      consumes:
+      - application/json
+      description: Execute ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/playground:
+    post:
+      consumes:
+      - application/json
+      description: Playground ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery GUIDs
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    post:
+      consumes:
+      - application/json
+      description: Create ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by guidfixed
+      parameters:
+      - description: ReportQuery guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    put:
+      consumes:
+      - application/json
+      description: Update ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by Code
+      parameters:
+      - description: ReportQuery Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
   /restaurant/device:
     delete:
       consumes:
@@ -18540,6 +19359,367 @@ paths:
       - AccessToken: []
       tags:
       - Restaurant
+  /restaurant/notifier:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notifier
+      parameters:
+      - description: Notifier GUIDs
+        in: body
+        name: Notifier
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    post:
+      consumes:
+      - application/json
+      description: Create Notifier
+      parameters:
+      - description: Notifier
+        in: body
+        name: Notifier
+        required: true
+        schema:
+          $ref: '#/definitions/models.Notifier'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier-device:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notifier
+      parameters:
+      - description: Notifier GUIDs
+        in: body
+        name: Notifier
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier-device/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notifier
+      parameters:
+      - description: Notifier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    get:
+      consumes:
+      - application/json
+      description: get Notifier info by guidfixed
+      parameters:
+      - description: Notifier guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    put:
+      consumes:
+      - application/json
+      description: Update Notifier
+      parameters:
+      - description: Notifier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Notifier
+        in: body
+        name: Notifier
+        required: true
+        schema:
+          $ref: '#/definitions/models.Notifier'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier-device/ref:
+    post:
+      consumes:
+      - application/json
+      description: Ref Notifier
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier-device/ref-confirm:
+    post:
+      consumes:
+      - application/json
+      description: Ref confirm Notifier
+      parameters:
+      - description: NotifierDeviceConfirmAuthPayload
+        in: body
+        name: NotifierDeviceConfirmAuthPayload
+        required: true
+        schema:
+          $ref: '#/definitions/models.NotifierDeviceConfirmAuthPayload'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Notifier
+      parameters:
+      - description: Notifier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    get:
+      consumes:
+      - application/json
+      description: get Notifier info by guidfixed
+      parameters:
+      - description: Notifier guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+    put:
+      consumes:
+      - application/json
+      description: Update Notifier
+      parameters:
+      - description: Notifier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Notifier
+        in: body
+        name: Notifier
+        required: true
+        schema:
+          $ref: '#/definitions/models.Notifier'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
+  /restaurant/notifier/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Notifier info by Code
+      parameters:
+      - description: Notifier Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Notifier
   /restaurant/printer:
     get:
       consumes:
@@ -19846,7 +21026,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/models.ShopSelectRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.ShopSelectRequest'
       responses:
         "200":
           description: OK
@@ -19879,6 +21059,30 @@ paths:
       summary: List Document Ref selected
       tags:
       - WSDocumentRef
+  /send-phonenumber-otp:
+    post:
+      consumes:
+      - application/json
+      description: For User Send Phonenumber OTP
+      parameters:
+      - description: OTP Request
+        in: body
+        name: OTPRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.OTPRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Send Phonenumber OTP
+      tags:
+      - Authentication
   /shop:
     get:
       consumes:
@@ -20428,7 +21632,7 @@ paths:
         name: UserRoleRequest
         required: true
         schema:
-          $ref: '#/definitions/models.UserRoleRequest'
+          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRoleRequest'
       responses:
         "200":
           description: OK
@@ -21815,7 +23019,7 @@ paths:
         name: TokenLoginRequest
         required: true
         schema:
-          $ref: '#/definitions/authentication.TokenLoginRequest'
+          $ref: '#/definitions/models.TokenLoginRequest'
       responses:
         "200":
           description: OK

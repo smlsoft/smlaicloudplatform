@@ -5,24 +5,25 @@ import (
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	auth_model "smlcloudplatform/pkg/authentication/models"
 	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/logger"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	branchModel "smlcloudplatform/pkg/organization/branch/models"
-	branchRepositories "smlcloudplatform/pkg/organization/branch/repositories"
-	branchServices "smlcloudplatform/pkg/organization/branch/services"
-	businessTypeModels "smlcloudplatform/pkg/organization/businesstype/models"
-	businessTypeRepositories "smlcloudplatform/pkg/organization/businesstype/repositories"
-	businessTypeServices "smlcloudplatform/pkg/organization/businesstype/services"
-	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
+	branch_model "smlcloudplatform/pkg/organization/branch/models"
+	branch_repositories "smlcloudplatform/pkg/organization/branch/repositories"
+	branch_services "smlcloudplatform/pkg/organization/branch/services"
+	businesstype_models "smlcloudplatform/pkg/organization/businesstype/models"
+	businesstype_repositories "smlcloudplatform/pkg/organization/businesstype/repositories"
+	businesstype_services "smlcloudplatform/pkg/organization/businesstype/services"
+	deparment_repositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	warehouseModels "smlcloudplatform/pkg/warehouse/models"
-	warehouseRepositories "smlcloudplatform/pkg/warehouse/repositories"
-	warehouseServices "smlcloudplatform/pkg/warehouse/services"
+	warehouse_models "smlcloudplatform/pkg/warehouse/models"
+	warehouse_repositories "smlcloudplatform/pkg/warehouse/repositories"
+	warehouse_services "smlcloudplatform/pkg/warehouse/services"
 )
 
 type IShopHttp interface {
@@ -38,9 +39,9 @@ type ShopHttp struct {
 	ms                  *microservice.Microservice
 	cfg                 config.IConfig
 	service             IShopService
-	serviceBranch       branchServices.IBranchHttpService
-	serviceWarehouse    warehouseServices.IWarehouseHttpService
-	servicebusinessType businessTypeServices.IBusinessTypeHttpService
+	serviceBranch       branch_services.IBranchHttpService
+	serviceWarehouse    warehouse_services.IWarehouseHttpService
+	servicebusinessType businesstype_services.IBusinessTypeHttpService
 	authService         *microservice.AuthService
 }
 
@@ -54,18 +55,18 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3*time.Hour, 24*30*time.Hour)
 
-	repoBrach := branchRepositories.NewBranchRepository(pst)
+	repoBrach := branch_repositories.NewBranchRepository(pst)
 
-	repoDepartment := deparmentRepositories.NewDepartmentRepository(pst)
-	repoBusinessType := businessTypeRepositories.NewBusinessTypeRepository(pst)
+	repoDepartment := deparment_repositories.NewDepartmentRepository(pst)
+	repoBusinessType := businesstype_repositories.NewBusinessTypeRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	serviceBranch := branchServices.NewBranchHttpService(repoBrach, repoDepartment, repoBusinessType, masterSyncCacheRepo)
+	serviceBranch := branch_services.NewBranchHttpService(repoBrach, repoDepartment, repoBusinessType, masterSyncCacheRepo)
 
-	serviceBusinessType := businessTypeServices.NewBusinessTypeHttpService(repoBusinessType, masterSyncCacheRepo)
+	serviceBusinessType := businesstype_services.NewBusinessTypeHttpService(repoBusinessType, masterSyncCacheRepo)
 
-	repoWarehouse := warehouseRepositories.NewWarehouseRepository(pst)
-	svcWarehouse := warehouseServices.NewWarehouseHttpService(repoWarehouse, masterSyncCacheRepo)
+	repoWarehouse := warehouse_repositories.NewWarehouseRepository(pst)
+	svcWarehouse := warehouse_services.NewWarehouseHttpService(repoWarehouse, masterSyncCacheRepo)
 
 	return ShopHttp{
 		ms:                  ms,
@@ -163,7 +164,7 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 }
 func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models.ShopRequest) (err error) {
 
-	businessTypeDefault := businessTypeModels.BusinessType{}
+	businessTypeDefault := businesstype_models.BusinessType{}
 
 	businessTypeDefault.Code = shopReq.BusinessType.Code
 	businessTypeDefault.Names = shopReq.BusinessType.Names
@@ -197,7 +198,7 @@ func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models
 		return err
 	}
 
-	branchDefault := branchModel.Branch{}
+	branchDefault := branch_model.Branch{}
 
 	if len(shopReq.Settings.LanguageConfigs) > 0 {
 		primaryLanguageConfigs := shopReq.Settings.LanguageConfigs[0]
@@ -257,7 +258,7 @@ func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models
 		return err
 	}
 
-	warehouseDefault := warehouseModels.Warehouse{}
+	warehouseDefault := warehouse_models.Warehouse{}
 	warehouseDefault.Code = "00000"
 
 	warehouseMainCodeTH := "th"
@@ -323,7 +324,7 @@ func (h ShopHttp) UpdateShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	if userInfo.Role != models.ROLE_OWNER {
+	if userInfo.Role != auth_model.ROLE_OWNER {
 		ctx.Response(http.StatusOK, &common.ApiResponse{
 			Success: false,
 			Message: "permission denied",
@@ -365,7 +366,7 @@ func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	if userInfo.Role != models.ROLE_OWNER {
+	if userInfo.Role != auth_model.ROLE_OWNER {
 		ctx.Response(http.StatusOK, &common.ApiResponse{
 			Success: false,
 			Message: "permission denied",

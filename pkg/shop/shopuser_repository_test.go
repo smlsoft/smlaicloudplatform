@@ -7,8 +7,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/mock"
+	"smlcloudplatform/pkg/authentication/models"
 	"smlcloudplatform/pkg/shop"
-	"smlcloudplatform/pkg/shop/models"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"

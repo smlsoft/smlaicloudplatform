@@ -3,7 +3,7 @@ package shop
 import (
 	"context"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/authentication/models"
 )
 
 type IShopUserAccessLogRepository interface {

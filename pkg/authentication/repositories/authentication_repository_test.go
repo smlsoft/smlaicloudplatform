@@ -1,12 +1,12 @@
-package authentication_test
+package repositories_test
 
 import (
 	"context"
 	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/authentication"
-	"smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/authentication/models"
+	"smlcloudplatform/pkg/authentication/repositories"
 	"smlcloudplatform/pkg/utils"
 	"testing"
 	"time"
@@ -16,12 +16,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var repoMock authentication.AuthenticationRepository
+var repoMock repositories.AuthenticationRepository
 
 func init() {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repoMock = authentication.NewAuthenticationRepository(mongoPersister)
+	repoMock = repositories.NewAuthenticationRepository(mongoPersister)
 }
 
 // mock Persister
@@ -33,7 +33,7 @@ func TestFindUser(t *testing.T) {
 	}
 	password, _ := utils.HashPassword("test")
 
-	username := models.UsernameCode{
+	username := models.UsernameField{
 		Username: "test",
 	}
 
@@ -47,17 +47,17 @@ func TestFindUser(t *testing.T) {
 
 	createAt := time.Now()
 	give := &models.UserDoc{
-		UsernameCode: username,
-		UserPassword: userPass,
-		UserDetail:   userDetail,
-		CreatedAt:    createAt,
+		UsernameField: username,
+		UserPassword:  userPass,
+		UserDetail:    userDetail,
+		CreatedAt:     createAt,
 	}
 
 	want := &models.UserDoc{
-		UsernameCode: username,
-		UserPassword: userPass,
-		UserDetail:   userDetail,
-		CreatedAt:    createAt,
+		UsernameField: username,
+		UserPassword:  userPass,
+		UserDetail:    userDetail,
+		CreatedAt:     createAt,
 	}
 
 	createUserID, err := repoMock.CreateUser(context.TODO(), *give)

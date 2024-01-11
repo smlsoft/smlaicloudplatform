@@ -1,13 +1,13 @@
-package authentication_test
+package services_test
 
 import (
 	"context"
 	"errors"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
-	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/authentication/models"
+	"smlcloudplatform/pkg/authentication/services"
 	"smlcloudplatform/pkg/firebase"
-	"smlcloudplatform/pkg/shop/models"
 	"testing"
 	"time"
 
@@ -70,6 +70,7 @@ func TestAuthService_Login(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
 	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
+	smsRepo := new(SMSRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	mockLoginData(authRepo, shopUserRepo, microAuthServiceMock)
@@ -147,7 +148,19 @@ func TestAuthService_Login(t *testing.T) {
 		},
 	}
 
-	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
+	authService := services.NewAuthenticationService(
+		authRepo,
+		shopUserRepo,
+		shopUserAccessLogRepo,
+		smsRepo,
+		microAuthServiceMock,
+		MockRandomString,
+		MockRandomNumber,
+		MockGUID,
+		MockHashPassword,
+		MockCheckPasswordHash,
+		MockTime,
+		MockFirebaseAdapter())
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 
@@ -156,7 +169,7 @@ func TestAuthService_Login(t *testing.T) {
 			userReq.Password = tt.args.password
 			userReq.ShopID = tt.args.shopID
 
-			authContext := authentication.AuthenticationContext{
+			authContext := models.AuthenticationContext{
 				Ip: "localhost",
 			}
 
@@ -178,6 +191,7 @@ func TestAuthService_Register(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
 	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
+	smsRepo := new(SMSRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	mockLoginData(authRepo, shopUserRepo, microAuthServiceMock)
@@ -218,10 +232,22 @@ func TestAuthService_Register(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
+			authService := services.NewAuthenticationService(
+				authRepo,
+				shopUserRepo,
+				shopUserAccessLogRepo,
+				smsRepo,
+				microAuthServiceMock,
+				MockRandomString,
+				MockRandomNumber,
+				MockGUID,
+				MockHashPassword,
+				MockCheckPasswordHash,
+				MockTime,
+				MockFirebaseAdapter())
 
-			userReq := models.UserRequest{}
-			userReq.Username = tt.args.username
+			userReq := models.RegisterEmailRequest{}
+			userReq.Email = tt.args.username
 			userReq.Password = tt.args.password
 			userReq.Name = tt.args.name
 
@@ -243,6 +269,7 @@ func TestAuthService_Update(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
 	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
+	smsRepo := new(SMSRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	userDoc := &models.UserDoc{}
@@ -282,7 +309,19 @@ func TestAuthService_Update(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
+			authService := services.NewAuthenticationService(
+				authRepo,
+				shopUserRepo,
+				shopUserAccessLogRepo,
+				smsRepo,
+				microAuthServiceMock,
+				MockRandomString,
+				MockRandomNumber,
+				MockGUID,
+				MockHashPassword,
+				MockCheckPasswordHash,
+				MockTime,
+				MockFirebaseAdapter())
 
 			userReq := models.UserProfileRequest{}
 			userReq.Name = tt.args.name
@@ -303,6 +342,7 @@ func TestAuthService_UpdatePassword(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
 	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
+	smsRepo := new(SMSRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	userDoc := &models.UserDoc{}
@@ -353,7 +393,18 @@ func TestAuthService_UpdatePassword(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
+			authService := services.NewAuthenticationService(
+				authRepo,
+				shopUserRepo,
+				shopUserAccessLogRepo,
+				smsRepo,
+				microAuthServiceMock,
+				MockRandomString,
+				MockRandomNumber,
+				MockGUID,
+				MockHashPassword,
+				MockCheckPasswordHash,
+				MockTime, MockFirebaseAdapter())
 
 			err := authService.UpdatePassword(tt.args.username, tt.args.currentPassword, tt.args.newPassword)
 
@@ -371,6 +422,7 @@ func TestAuthService_AccessShop(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
 	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
+	smsRepo := new(SMSRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	microAuthServiceMock.On("GetTokenFromAuthorizationHeader", "authorization_header_valid").Return("valid_token", nil)
@@ -438,13 +490,25 @@ func TestAuthService_AccessShop(t *testing.T) {
 		},
 	}
 
-	authContext := authentication.AuthenticationContext{
+	authContext := models.AuthenticationContext{
 		Ip: "localhost",
 	}
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
+			authService := services.NewAuthenticationService(
+				authRepo,
+				shopUserRepo,
+				shopUserAccessLogRepo,
+				smsRepo,
+				microAuthServiceMock,
+				MockRandomString,
+				MockRandomNumber,
+				MockGUID,
+				MockHashPassword,
+				MockCheckPasswordHash,
+				MockTime,
+				MockFirebaseAdapter())
 			err := authService.AccessShop(tt.args.shopID, tt.args.username, tt.args.authorizationHeader, authContext)
 
 			if tt.wantErr {
@@ -461,8 +525,20 @@ type AuthenticationRepositoryMock struct {
 	mock.Mock
 }
 
+func (m *AuthenticationRepositoryMock) FindByIdentity(ctx context.Context, fieldName string, value string) (*models.UserDoc, error) {
+
+	args := m.Called(fieldName, value)
+
+	return args.Get(0).(*models.UserDoc), args.Error(1)
+}
+
 func (m *AuthenticationRepositoryMock) FindUser(ctx context.Context, id string) (*models.UserDoc, error) {
 	args := m.Called(id)
+	return args.Get(0).(*models.UserDoc), args.Error(1)
+}
+
+func (m *AuthenticationRepositoryMock) FindByPhonenumber(ctx context.Context, phonenumber models.PhoneNumberField) (*models.UserDoc, error) {
+	args := m.Called(phonenumber)
 	return args.Get(0).(*models.UserDoc), args.Error(1)
 }
 
@@ -633,6 +709,35 @@ func (m *AuthServiceMock) RefreshToken(token string) (string, string, error) {
 	return args.String(0), args.String(1), args.Error(2)
 }
 
+type SMSRepositoryMock struct {
+	mock.Mock
+}
+
+func (m *SMSRepositoryMock) SendSMS(phoneNumber string, message string, expire time.Duration) error {
+	args := m.Called(phoneNumber, message, expire)
+	return args.Error(0)
+}
+
+func (m *SMSRepositoryMock) SendOTP(phoneNumber string, refCode string, otpCode string, expire time.Duration) error {
+	args := m.Called(phoneNumber, refCode, otpCode, expire)
+	return args.Error(0)
+}
+
+func (m *SMSRepositoryMock) VerifyOTP(refCode string, otpCode string) (bool, error) {
+	args := m.Called(refCode, otpCode)
+	return args.Bool(0), args.Error(1)
+}
+
+func (m *SMSRepositoryMock) SendOTPViaLink(fullPhoneNumber string) (models.OTPResponse, error) {
+	args := m.Called(fullPhoneNumber)
+	return args.Get(0).(models.OTPResponse), args.Error(1)
+}
+
+func (m *SMSRepositoryMock) VerifyOTPViaLink(otpToken, optRefCode, otpPin string) (bool, error) {
+	args := m.Called(otpToken, optRefCode, otpPin)
+	return args.Bool(0), args.Error(1)
+}
+
 func MockObjectID() primitive.ObjectID {
 	idx, _ := primitive.ObjectIDFromHex("62f9cb12c76fd9e83ac1b2ff")
 	return idx
@@ -653,4 +758,16 @@ func MockTime() time.Time {
 
 func MockFirebaseAdapter() firebase.IFirebaseAdapter {
 	return &firebase.FirebaseAdapter{}
+}
+
+func MockGUID() string {
+	return "mock_guid"
+}
+
+func MockRandomString(n int) string {
+	return "123456"
+}
+
+func MockRandomNumber(n int) string {
+	return "123456"
 }

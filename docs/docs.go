@@ -4850,7 +4850,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authentication.ShopFavoriteRequest"
+                            "$ref": "#/definitions/models.ShopFavoriteRequest"
                         }
                     }
                 ],
@@ -4865,6 +4865,43 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/forgot-password-phonenumber": {
+            "post": {
+                "description": "For User Forgot Password Phonenumber",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Forgot Password By Phonenumber",
+                "parameters": [
+                    {
+                        "description": "Forgot Password PhoneNumber Request",
+                        "name": "ForgotPasswordPhoneNumberRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ForgotPasswordPhoneNumberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -7021,7 +7058,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.ShopUserInfo"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.ShopUserInfo"
                             }
                         }
                     },
@@ -7050,7 +7087,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserLoginRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserLoginRequest"
                         }
                     }
                 ],
@@ -7090,7 +7127,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserProfileReponse"
+                                "$ref": "#/definitions/models.ApiResponse"
                             }
                         }
                     },
@@ -17469,7 +17506,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserProfileReponse"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse"
                             }
                         }
                     },
@@ -17493,11 +17530,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Update account",
-                        "name": "User",
+                        "name": "UserProfileRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserProfileRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileRequest"
                         }
                     }
                 ],
@@ -17537,7 +17574,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserProfileReponse"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse"
                             }
                         }
                     },
@@ -17566,7 +17603,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authentication.TokenLoginRequest"
+                            "$ref": "#/definitions/models.TokenLoginRequest"
                         }
                     }
                 ],
@@ -17599,11 +17636,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Register account",
-                        "name": "User",
+                        "name": "RegisterEmailRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserRequest"
+                            "$ref": "#/definitions/models.RegisterEmailRequest"
                         }
                     }
                 ],
@@ -17616,6 +17653,989 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/register-phonenumber": {
+            "post": {
+                "description": "For User Register Phonenumber",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register By Phonenumber",
+                "parameters": [
+                    {
+                        "description": "OTP Request",
+                        "name": "OTPRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/register/exists-phonenumber": {
+            "post": {
+                "description": "Check Exists Phone Number",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register Check Exists Phone Number",
+                "parameters": [
+                    {
+                        "description": "Username",
+                        "name": "PhoneNumber",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhoneNumberField"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/register/exists-username": {
+            "post": {
+                "description": "Check Exists Username",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register Check Exists Username",
+                "parameters": [
+                    {
+                        "description": "Username",
+                        "name": "Username",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UsernameField"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/execute": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Execute ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/playground": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Playground ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery GUIDs",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/execute": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Execute ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/playground": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Playground ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery GUIDs",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -18311,6 +19331,589 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Kitchen ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "Notifier",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Notifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "Notifier GUIDs",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier-device": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "Notifier GUIDs",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier-device/ref": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Ref Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier-device/ref-confirm": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Ref confirm Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "description": "NotifierDeviceConfirmAuthPayload",
+                        "name": "NotifierDeviceConfirmAuthPayload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.NotifierDeviceConfirmAuthPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier-device/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Notifier info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Notifier",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Notifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Notifier info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/notifier/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Notifier info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Notifier",
+                        "name": "Notifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Notifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifier"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notifier ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -20442,7 +22045,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ShopSelectRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.ShopSelectRequest"
                         }
                     }
                 ],
@@ -20477,6 +22080,43 @@ const docTemplate = `{
                     "WSDocumentRef"
                 ],
                 "summary": "List Document Ref selected",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/send-phonenumber-otp": {
+            "post": {
+                "description": "For User Send Phonenumber OTP",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send Phonenumber OTP",
+                "parameters": [
+                    {
+                        "description": "OTP Request",
+                        "name": "OTPRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OTPRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -21255,7 +22895,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserRoleRequest"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRoleRequest"
                         }
                     }
                 ],
@@ -23596,7 +25236,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authentication.TokenLoginRequest"
+                            "$ref": "#/definitions/models.TokenLoginRequest"
                         }
                     }
                 ],
@@ -32808,28 +34448,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "authentication.ShopFavoriteRequest": {
-            "type": "object",
-            "properties": {
-                "isfavorite": {
-                    "type": "boolean"
-                },
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "authentication.TokenLoginRequest": {
-            "type": "object",
-            "required": [
-                "token"
-            ],
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
         "models.AccountGroup": {
             "type": "object",
             "required": [
@@ -33939,20 +35557,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.DedeZoom": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "phonenumber": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Detail": {
             "type": "object",
             "properties": {
@@ -34470,6 +36074,38 @@ const docTemplate = `{
                 },
                 "zipcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ForgotPasswordPhoneNumberRequest": {
+            "type": "object",
+            "required": [
+                "countrycode",
+                "password",
+                "phonenumber"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "otppin": {
+                    "type": "string"
+                },
+                "otprefcode": {
+                    "type": "string"
+                },
+                "otptoken": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "phonenumber": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -35389,6 +37025,71 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Notifier": {
+            "type": "object",
+            "required": [
+                "code",
+                "message",
+                "title"
+            ],
+            "properties": {
+                "accceptedat": {
+                    "type": "string"
+                },
+                "accceptedby": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "message": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "notifiedat": {
+                    "type": "string"
+                },
+                "rejectedat": {
+                    "type": "string"
+                },
+                "rejectedby": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "models.NotifierDeviceConfirmAuthPayload": {
+            "type": "object",
+            "required": [
+                "fcmtoken",
+                "refcode"
+            ],
+            "properties": {
+                "deviceid": {
+                    "type": "string"
+                },
+                "devicename": {
+                    "type": "string"
+                },
+                "fcmtoken": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "refcode": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
         "models.Notify": {
             "type": "object",
             "properties": {
@@ -35444,6 +37145,23 @@ const docTemplate = `{
                 },
                 "issavebill": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.OTPRequest": {
+            "type": "object",
+            "required": [
+                "countrycode",
+                "phonenumber"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "phonenumber": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -36243,6 +37961,23 @@ const docTemplate = `{
                 },
                 "docdatetime": {
                     "type": "string"
+                }
+            }
+        },
+        "models.PhoneNumberField": {
+            "type": "object",
+            "required": [
+                "countrycode",
+                "phonenumber"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "phonenumber": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -38149,6 +39884,49 @@ const docTemplate = `{
                 }
             }
         },
+        "models.RegisterEmailRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom"
+                },
+                "email": {
+                    "type": "string",
+                    "maxLength": 233
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "registertype": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
         "models.ResponseSuccess": {
             "type": "object",
             "properties": {
@@ -39380,6 +41158,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ShopFavoriteRequest": {
+            "type": "object",
+            "properties": {
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ShopImage": {
             "type": "object",
             "properties": {
@@ -39479,17 +41268,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ShopSelectRequest": {
-            "type": "object",
-            "required": [
-                "shopid"
-            ],
-            "properties": {
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
         "models.ShopSettings": {
             "type": "object",
             "properties": {
@@ -39537,38 +41315,6 @@ const docTemplate = `{
                 },
                 "vattypesale": {
                     "type": "number"
-                }
-            }
-        },
-        "models.ShopUserInfo": {
-            "type": "object",
-            "properties": {
-                "branchcode": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "isfavorite": {
-                    "type": "boolean"
-                },
-                "lastaccessedat": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "role": {
-                    "$ref": "#/definitions/models.UserRole"
-                },
-                "shopid": {
-                    "type": "string"
                 }
             }
         },
@@ -41745,6 +43491,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.TokenLoginRequest": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "models.TotalStatus": {
             "type": "object",
             "properties": {
@@ -41984,170 +43741,42 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UserLoginRequest": {
+        "models.UserLoginPhoneNumberRequest": {
             "type": "object",
             "required": [
+                "countrycode",
                 "password",
-                "username"
+                "phonenumber"
             ],
             "properties": {
-                "password": {
+                "countrycode": {
                     "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                }
-            }
-        },
-        "models.UserProfile": {
-            "type": "object",
-            "required": [
-                "name",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "models.UserProfileReponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.UserProfile"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.UserProfileRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "models.UserRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "dedezoom": {
-                    "$ref": "#/definitions/models.DedeZoom"
-                },
-                "name": {
-                    "type": "string"
+                    "maxLength": 20
                 },
                 "password": {
                     "type": "string",
                     "maxLength": 233,
                     "minLength": 5
                 },
-                "timezonelabel": {
-                    "type": "string"
-                },
-                "timezoneoffset": {
-                    "type": "string"
-                },
-                "username": {
+                "phonenumber": {
                     "type": "string",
-                    "maxLength": 233,
-                    "minLength": 5
-                },
-                "yeartype": {
-                    "type": "string",
-                    "maxLength": 21
-                }
-            }
-        },
-        "models.UserRole": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-comments": {
-                "ROLE_ADMIN": "\"ADMIN\"",
-                "ROLE_OWNER": "\"OWNER\"",
-                "ROLE_USER": "\"USER\""
-            },
-            "x-enum-varnames": [
-                "ROLE_USER",
-                "ROLE_ADMIN",
-                "ROLE_OWNER"
-            ]
-        },
-        "models.UserRoleRequest": {
-            "type": "object",
-            "properties": {
-                "editusername": {
-                    "type": "string"
-                },
-                "role": {
-                    "$ref": "#/definitions/models.UserRole"
+                    "maxLength": 100
                 },
                 "shopid": {
                     "type": "string"
-                },
+                }
+            }
+        },
+        "models.UsernameField": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 3
                 }
             }
         },
@@ -42391,6 +44020,193 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.DedeZoom": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "phonenumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.ShopSelectRequest": {
+            "type": "object",
+            "required": [
+                "shopid"
+            ],
+            "properties": {
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.ShopUserInfo": {
+            "type": "object",
+            "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "createdby": {
+                    "type": "string"
+                },
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "lastaccessedat": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRole"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserLoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 3
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserProfile": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "registertype": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 3
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserProfileReponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserProfile"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserProfileRequest": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "dedezoom": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "registertype": {
+                    "type": "string"
+                },
+                "timezonelabel": {
+                    "type": "string"
+                },
+                "timezoneoffset": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "yeartype": {
+                    "type": "string",
+                    "maxLength": 21
+                }
+            }
+        },
+        "smlcloudplatform_pkg_authentication_models.UserRole": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-comments": {
+                "ROLE_ADMIN": "\"ADMIN\"",
+                "ROLE_OWNER": "\"OWNER\"",
+                "ROLE_USER": "\"USER\""
+            },
+            "x-enum-varnames": [
+                "ROLE_USER",
+                "ROLE_ADMIN",
+                "ROLE_OWNER"
+            ]
+        },
+        "smlcloudplatform_pkg_authentication_models.UserRoleRequest": {
+            "type": "object",
+            "properties": {
+                "editusername": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRole"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
@@ -43000,6 +44816,93 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ProductPrice"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportParam"
+                    }
+                },
+                "sql": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportQuery": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "collection": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportParam"
                     }
                 }
             }
