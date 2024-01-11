@@ -53,13 +53,12 @@ func (m *MigrationService) ImportShopUser(shop shop_model.ShopDoc) error {
 			return err
 		}
 		newUser := auth_model.UserDoc{
-			UsernameCode: auth_model.UsernameCode{
-				Username: username,
-			},
 			UserPassword: auth_model.UserPassword{
 				Password: userPassword,
 			},
 		}
+		newUser.Username = username
+
 		_, err = m.mongoPersister.Create(context.Background(), &auth_model.UserDoc{}, newUser)
 		if err != nil {
 			return err
