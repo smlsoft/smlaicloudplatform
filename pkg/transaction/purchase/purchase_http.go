@@ -388,7 +388,7 @@ func (h PurchaseHttp) SearchPurchaseStep(ctx microservice.IContext) error {
 // @Tags		Purchase
 // @Param		Purchase  body      []models.Purchase  true  "Purchase"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/purchase/bulk [post]
@@ -417,7 +417,7 @@ func (h PurchaseHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

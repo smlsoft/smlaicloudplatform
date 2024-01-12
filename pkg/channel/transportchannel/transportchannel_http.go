@@ -339,7 +339,7 @@ func (h TransportChannelHttp) SearchTransportChannelStep(ctx microservice.IConte
 // @Tags		TransportChannel
 // @Param		TransportChannel  body      []models.TransportChannel  true  "TransportChannel"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transport-channel/bulk [post]
@@ -368,7 +368,7 @@ func (h TransportChannelHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

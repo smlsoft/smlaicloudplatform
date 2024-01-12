@@ -343,7 +343,7 @@ func (h OrderTypeHttp) SearchOrderTypeStep(ctx microservice.IContext) error {
 // @Tags		OrderType
 // @Param		OrderType  body      []models.OrderType  true  "OrderType"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /product/order-type/bulk [post]
@@ -372,7 +372,7 @@ func (h OrderTypeHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

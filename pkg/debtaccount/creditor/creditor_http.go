@@ -360,7 +360,7 @@ func (h CreditorHttp) SearchCreditorStep(ctx microservice.IContext) error {
 // @Tags		Creditor
 // @Param		Creditor  body      []models.CreditorRequest  true  "Creditor"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /debtaccount/creditor/bulk [post]
@@ -389,7 +389,7 @@ func (h CreditorHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

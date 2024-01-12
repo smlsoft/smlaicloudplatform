@@ -393,7 +393,7 @@ func (h ProductCategoryHttp) SearchProductCategoryLimit(ctx microservice.IContex
 // @Tags		ProductCategory
 // @Param		ProductCategory  body      []models.ProductCategory  true  "ProductCategory"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /product/category/bulk [post]

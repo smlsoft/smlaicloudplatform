@@ -344,7 +344,7 @@ func (h ProductTypeHttp) SearchProductTypeStep(ctx microservice.IContext) error 
 // @Tags		ProductType
 // @Param		ProductType  body      []models.ProductType  true  "ProductType"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /product/type/bulk [post]
@@ -373,7 +373,7 @@ func (h ProductTypeHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

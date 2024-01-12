@@ -358,7 +358,7 @@ func (h PromotionHttp) SearchPromotionStep(ctx microservice.IContext) error {
 // @Tags		Promotion
 // @Param		Promotion  body      []models.Promotion  true  "Promotion"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /product/promotion/bulk [post]
@@ -387,7 +387,7 @@ func (h PromotionHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

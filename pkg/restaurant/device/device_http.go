@@ -308,7 +308,7 @@ func (h DeviceHttp) SearchDeviceLimit(ctx microservice.IContext) error {
 // @Tags		Restaurant
 // @Param		Device  body      []models.Device  true  "Device"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/device/bulk [post]
@@ -337,7 +337,7 @@ func (h DeviceHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

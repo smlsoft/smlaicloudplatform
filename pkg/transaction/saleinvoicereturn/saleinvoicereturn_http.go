@@ -436,7 +436,7 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnStep(ctx microservice.ICon
 // @Tags		SaleInvoiceReturn
 // @Param		SaleInvoiceReturn  body      []models.SaleInvoiceReturn  true  "SaleInvoiceReturn"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/sale-invoice-return/bulk [post]
@@ -465,7 +465,7 @@ func (h SaleInvoiceReturnHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

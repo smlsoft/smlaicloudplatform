@@ -381,7 +381,7 @@ func (h DocumentFormateHttp) SearchDocumentFormateStep(ctx microservice.IContext
 // @Tags		DocumentFormate
 // @Param		DocumentFormate  body      []models.DocumentFormate  true  "DocumentFormate"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/document-formate/bulk [post]
@@ -410,7 +410,7 @@ func (h DocumentFormateHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

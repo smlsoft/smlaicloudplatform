@@ -395,7 +395,7 @@ func (h StockBalanceHttp) SearchStockBalanceStep(ctx microservice.IContext) erro
 // @Tags		StockBalance
 // @Param		StockBalance  body      []models.StockBalance  true  "StockBalance"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/stock-balance/bulk [post]
@@ -424,7 +424,7 @@ func (h StockBalanceHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

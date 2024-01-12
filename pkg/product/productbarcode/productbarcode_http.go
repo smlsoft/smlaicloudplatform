@@ -713,7 +713,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 // @Tags		ProductBarcode
 // @Param		ProductBarcode  body      []models.ProductBarcode  true  "ProductBarcode"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /product/barcode/bulk [post]
@@ -742,7 +742,7 @@ func (h ProductBarcodeHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

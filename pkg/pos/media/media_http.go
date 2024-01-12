@@ -340,7 +340,7 @@ func (h MediaHttp) SearchMediaStep(ctx microservice.IContext) error {
 // @Tags		Media
 // @Param		Media  body      []models.Media  true  "Media"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /pos/media/bulk [post]
@@ -369,7 +369,7 @@ func (h MediaHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

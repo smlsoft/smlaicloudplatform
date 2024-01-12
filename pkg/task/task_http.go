@@ -448,7 +448,7 @@ func (h TaskHttp) SearchTaskLimit(ctx microservice.IContext) error {
 // @Tags		Task
 // @Param		Task  body      []models.Task  true  "Task"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /task/bulk [post]
@@ -477,7 +477,7 @@ func (h TaskHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

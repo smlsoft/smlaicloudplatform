@@ -387,7 +387,7 @@ func (h StockPickupProductHttp) SearchStockPickupProductStep(ctx microservice.IC
 // @Tags		StockPickupProduct
 // @Param		StockPickupProduct  body      []models.StockPickupProduct  true  "StockPickupProduct"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/stock-prickup-product/bulk [post]
@@ -416,7 +416,7 @@ func (h StockPickupProductHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

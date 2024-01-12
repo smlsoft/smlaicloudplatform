@@ -7,7 +7,7 @@ type BulkImport struct {
 	PayloadDuplicate []string `json:"payloadDuplicate"`
 }
 
-type BulkReponse struct {
+type BulkResponse struct {
 	Success bool `json:"success"`
 	BulkImport
 }

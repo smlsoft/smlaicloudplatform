@@ -309,7 +309,7 @@ func (h QrPaymentHttp) SearchQrPaymentLimit(ctx microservice.IContext) error {
 // @Tags		QrPayment
 // @Param		QrPayment  body      []models.QrPayment  true  "QrPayment"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /payment/qrpayment/bulk [post]
@@ -338,7 +338,7 @@ func (h QrPaymentHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

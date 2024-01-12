@@ -308,7 +308,7 @@ func (h BankMasterHttp) SearchBankMasterLimit(ctx microservice.IContext) error {
 // @Tags		BankMaster
 // @Param		BankMaster  body      []models.BankMaster  true  "BankMaster"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /payment/bankmaster/bulk [post]
@@ -337,7 +337,7 @@ func (h BankMasterHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

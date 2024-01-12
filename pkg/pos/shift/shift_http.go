@@ -357,7 +357,7 @@ func (h ShiftHttp) SearchShiftStep(ctx microservice.IContext) error {
 // @Tags		Shift
 // @Param		Shift  body      []models.Shift  true  "Shift"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /pos/shift/bulk [post]
@@ -386,7 +386,7 @@ func (h ShiftHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

@@ -339,7 +339,7 @@ func (h SaleChannelHttp) SearchSaleChannelStep(ctx microservice.IContext) error 
 // @Tags		SaleChannel
 // @Param		SaleChannel  body      []models.SaleChannel  true  "SaleChannel"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /sale-channel/bulk [post]
@@ -368,7 +368,7 @@ func (h SaleChannelHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

@@ -386,7 +386,7 @@ func (h ReceivableOtherHttp) SearchReceivableOtherStep(ctx microservice.IContext
 // @Tags		ReceivableOther
 // @Param		ReceivableOther  body      []models.ReceivableOther  true  "ReceivableOther"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/receivableother/bulk [post]
@@ -415,7 +415,7 @@ func (h ReceivableOtherHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

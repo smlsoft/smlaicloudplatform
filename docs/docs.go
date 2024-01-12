@@ -251,7 +251,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -835,7 +835,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -1060,7 +1060,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -1610,7 +1610,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -1835,7 +1835,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -2385,7 +2385,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -2651,7 +2651,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -8322,7 +8322,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -8622,7 +8622,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -9020,7 +9020,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -9424,7 +9424,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -9828,7 +9828,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -10256,7 +10256,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -10661,7 +10661,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -11020,7 +11020,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -11379,7 +11379,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -12030,7 +12030,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -12428,7 +12428,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -12832,7 +12832,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -13236,7 +13236,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -13588,7 +13588,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -13947,7 +13947,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -14377,7 +14377,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -15264,7 +15264,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -15673,7 +15673,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -16111,7 +16111,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -16515,7 +16515,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -16919,7 +16919,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -18809,7 +18809,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -20745,7 +20745,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -21792,7 +21792,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -24908,7 +24908,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -25428,7 +25428,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -25886,7 +25886,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -26332,7 +26332,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -26936,7 +26936,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -27382,7 +27382,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -27670,7 +27670,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -28116,7 +28116,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -28732,7 +28732,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -29070,7 +29070,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -29652,7 +29652,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -30472,7 +30472,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -30918,7 +30918,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -31364,7 +31364,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -31810,7 +31810,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -32634,7 +32634,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -33038,7 +33038,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -33686,7 +33686,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.BulkReponse"
+                            "$ref": "#/definitions/models.BulkResponse"
                         }
                     },
                     "401": {
@@ -34950,7 +34950,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.BulkReponse": {
+        "models.BulkResponse": {
             "type": "object",
             "properties": {
                 "created": {

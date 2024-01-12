@@ -342,7 +342,7 @@ definitions:
           type: string
         type: array
     type: object
-  models.BulkReponse:
+  models.BulkResponse:
     properties:
       created:
         items:
@@ -7537,7 +7537,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -7899,7 +7899,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -8039,7 +8039,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -8381,7 +8381,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -8521,7 +8521,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -8863,7 +8863,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -9028,7 +9028,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -12592,7 +12592,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -12778,7 +12778,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -13025,7 +13025,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -13276,7 +13276,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -13527,7 +13527,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -13821,7 +13821,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -14044,7 +14044,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -14267,7 +14267,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -14490,7 +14490,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -14896,7 +14896,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -15143,7 +15143,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -15394,7 +15394,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -15616,7 +15616,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -15834,7 +15834,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -16086,7 +16086,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -16354,7 +16354,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -16904,7 +16904,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -17158,7 +17158,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -17429,7 +17429,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -17680,7 +17680,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -17931,7 +17931,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -19108,7 +19108,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -20308,7 +20308,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -20957,7 +20957,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -22931,7 +22931,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -23224,7 +23224,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -23509,7 +23509,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -23788,7 +23788,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -24166,7 +24166,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -24445,7 +24445,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -24625,7 +24625,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -24904,7 +24904,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -25290,7 +25290,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -25501,7 +25501,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -25866,7 +25866,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -26379,7 +26379,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -26658,7 +26658,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -26937,7 +26937,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -27216,7 +27216,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -27731,7 +27731,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -28011,7 +28011,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:
@@ -28654,7 +28654,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.BulkReponse'
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:

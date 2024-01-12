@@ -387,7 +387,7 @@ func (h PayHttp) SearchPayStep(ctx microservice.IContext) error {
 // @Tags		Pay
 // @Param		Pay  body      []models.Pay  true  "Pay"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/pay/bulk [post]
@@ -416,7 +416,7 @@ func (h PayHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

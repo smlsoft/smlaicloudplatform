@@ -220,7 +220,7 @@ func (h OptionPatternHttp) SearchOptionPattern(ctx microservice.IContext) error 
 // @Tags		OptionPattern
 // @Param		OptionPattern  body      []models.OptionPattern  true  "OptionPattern"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optionpattern/bulk [post]
@@ -249,7 +249,7 @@ func (h OptionPatternHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

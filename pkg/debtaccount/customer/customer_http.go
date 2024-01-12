@@ -369,7 +369,7 @@ func (h CustomerHttp) SearchCustomerStep(ctx microservice.IContext) error {
 // @Tags		Customer
 // @Param		Customer  body      []models.CustomerRequest  true  "Customer"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /debtaccount/customer/bulk [post]
@@ -398,7 +398,7 @@ func (h CustomerHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

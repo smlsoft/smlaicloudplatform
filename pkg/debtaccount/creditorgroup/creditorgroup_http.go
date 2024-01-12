@@ -309,7 +309,7 @@ func (h CreditorGroupHttp) SearchCreditorGroupStep(ctx microservice.IContext) er
 // @Tags		CreditorGroup
 // @Param		CreditorGroup  body      []models.CreditorGroup  true  "CreditorGroup"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /debtaccount/creditor-group/bulk [post]
@@ -338,7 +338,7 @@ func (h CreditorGroupHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

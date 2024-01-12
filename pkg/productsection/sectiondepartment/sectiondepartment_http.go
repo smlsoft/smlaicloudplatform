@@ -298,7 +298,7 @@ func (h SectionDepartmentHttp) SearchSectionDepartmentStep(ctx microservice.ICon
 // @Tags		SectionDepartment
 // @Param		SectionDepartment  body      []models.SectionDepartment  true  "SectionDepartment"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /product-section/department/bulk [post]
@@ -327,7 +327,7 @@ func (h SectionDepartmentHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

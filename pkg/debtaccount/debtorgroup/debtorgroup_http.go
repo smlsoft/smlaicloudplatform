@@ -309,7 +309,7 @@ func (h DebtorGroupHttp) SearchDebtorGroupStep(ctx microservice.IContext) error 
 // @Tags		DebtorGroup
 // @Param		DebtorGroup  body      []models.DebtorGroup  true  "DebtorGroup"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /debtaccount/debtor-group/bulk [post]
@@ -338,7 +338,7 @@ func (h DebtorGroupHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

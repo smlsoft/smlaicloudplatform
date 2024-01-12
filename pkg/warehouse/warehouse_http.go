@@ -750,7 +750,7 @@ func (h WarehouseHttp) SearchWarehouseStep(ctx microservice.IContext) error {
 // @Tags		Warehouse
 // @Param		Warehouse  body      []models.Warehouse  true  "Warehouse"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /warehouse/bulk [post]
@@ -779,7 +779,7 @@ func (h WarehouseHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

@@ -339,7 +339,7 @@ func (h SettingHttp) SearchSettingStep(ctx microservice.IContext) error {
 // @Tags		Setting
 // @Param		Setting  body      []models.Setting  true  "Setting"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /pos/setting/bulk [post]
@@ -368,7 +368,7 @@ func (h SettingHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

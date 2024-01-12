@@ -411,7 +411,7 @@ func (h UnitHttp) SearchUnitLimit(ctx microservice.IContext) error {
 // @Tags		Unit
 // @Param		Unit  body      []models.Unit  true  "Unit"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /unit/bulk [post]
@@ -440,7 +440,7 @@ func (h UnitHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

@@ -366,7 +366,7 @@ func (h BusinessTypeHttp) SearchBusinessTypeStep(ctx microservice.IContext) erro
 // @Tags		BusinessType
 // @Param		BusinessType  body      []models.BusinessType  true  "BusinessType"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /organization/business-type/bulk [post]
@@ -395,7 +395,7 @@ func (h BusinessTypeHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

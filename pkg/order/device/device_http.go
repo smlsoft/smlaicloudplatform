@@ -340,7 +340,7 @@ func (h DeviceHttp) SearchDeviceStep(ctx microservice.IContext) error {
 // @Tags		Device
 // @Param		Device  body      []models.OrderDevice  true  "Device"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /order/device/bulk [post]
@@ -369,7 +369,7 @@ func (h DeviceHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

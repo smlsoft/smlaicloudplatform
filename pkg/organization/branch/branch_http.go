@@ -363,7 +363,7 @@ func (h BranchHttp) SearchBranchStep(ctx microservice.IContext) error {
 // @Tags		Branch
 // @Param		Branch  body      []models.Branch  true  "Branch"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /organization/branch/bulk [post]
@@ -392,7 +392,7 @@ func (h BranchHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

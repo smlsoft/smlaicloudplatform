@@ -304,7 +304,7 @@ func (h ColorHttp) SearchColorStep(ctx microservice.IContext) error {
 // @Tags		Color
 // @Param		Color  body      []models.Color  true  "Color"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /color/bulk [post]
@@ -333,7 +333,7 @@ func (h ColorHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

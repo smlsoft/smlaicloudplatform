@@ -309,7 +309,7 @@ func (h BookBankHttp) SearchBookBankLimit(ctx microservice.IContext) error {
 // @Tags		BookBank
 // @Param		BookBank  body      []models.BookBank  true  "BookBank"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /payment/bookbank/bulk [post]
@@ -338,7 +338,7 @@ func (h BookBankHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
+		common.BulkResponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},
