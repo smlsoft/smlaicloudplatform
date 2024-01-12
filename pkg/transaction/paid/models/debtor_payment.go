@@ -37,6 +37,7 @@ type Paid struct {
 	SumCoupon        float64 `json:"sumcoupon" bson:"sumcoupon"`               // ชำระเงินโดย Coupon
 	SumCredit        float64 `json:"sumcredit" bson:"sumcredit"`
 	RoundAmount      float64 `json:"roundamount" bson:"roundamount"`
+	IsCancel         bool    `json:"iscancel" bson:"iscancel"`
 }
 
 type PaidDetail struct {

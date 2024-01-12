@@ -37566,6 +37566,9 @@
                 "doctype": {
                     "type": "integer"
                 },
+                "iscancel": {
+                    "type": "boolean"
+                },
                 "paycashamount": {
                     "type": "number"
                 },
@@ -37679,6 +37682,9 @@
                 },
                 "doctype": {
                     "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
                 },
                 "paycashamount": {
                     "type": "number"
@@ -38291,6 +38297,9 @@
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isdiscountpointofpurchase": {
                     "type": "boolean"
                 },
                 "isdividend": {
@@ -44061,6 +44070,12 @@
                 "name": {
                     "type": "string"
                 },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "role": {
                     "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRole"
                 },
@@ -44604,6 +44619,9 @@
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isdiscountpointofpurchase": {
                     "type": "boolean"
                 },
                 "isdividend": {

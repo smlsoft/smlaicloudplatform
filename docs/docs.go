@@ -37571,6 +37571,9 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "iscancel": {
+                    "type": "boolean"
+                },
                 "paycashamount": {
                     "type": "number"
                 },
@@ -37684,6 +37687,9 @@ const docTemplate = `{
                 },
                 "doctype": {
                     "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
                 },
                 "paycashamount": {
                     "type": "number"
@@ -38296,6 +38302,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isdiscountpointofpurchase": {
                     "type": "boolean"
                 },
                 "isdividend": {
@@ -44066,6 +44075,12 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "role": {
                     "$ref": "#/definitions/smlcloudplatform_pkg_authentication_models.UserRole"
                 },
@@ -44609,6 +44624,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isdiscountpointofpurchase": {
                     "type": "boolean"
                 },
                 "isdividend": {

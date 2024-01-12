@@ -2118,6 +2118,8 @@ definitions:
         type: string
       doctype:
         type: integer
+      iscancel:
+        type: boolean
       paycashamount:
         type: number
       paycashchange:
@@ -2195,6 +2197,8 @@ definitions:
         type: string
       doctype:
         type: integer
+      iscancel:
+        type: boolean
       paycashamount:
         type: number
       paycashchange:
@@ -2600,6 +2604,8 @@ definitions:
       imageuri:
         type: string
       isalacarte:
+        type: boolean
+      isdiscountpointofpurchase:
         type: boolean
       isdividend:
         type: boolean
@@ -6473,6 +6479,10 @@ definitions:
         type: string
       name:
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       role:
         $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRole'
       shopid:
@@ -6834,6 +6844,8 @@ definitions:
       imageuri:
         type: string
       isalacarte:
+        type: boolean
+      isdiscountpointofpurchase:
         type: boolean
       isdividend:
         type: boolean
