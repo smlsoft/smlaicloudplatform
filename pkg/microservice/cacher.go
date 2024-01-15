@@ -69,6 +69,12 @@ type ICacher interface {
 
 	RPush(key string, value interface{}) error
 	LRange(key string) ([]string, error)
+
+	LLen(key string) (int64, error)
+	LSet(key string, index int64, value interface{}) error
+
+	// Find Position of value in list NOT WORK with redis lower 6.0.0
+	LPos(key string, value interface{}) (int64, error)
 }
 
 type pubsubChannels struct {
@@ -1560,4 +1566,59 @@ func (cache *Cacher) Healthcheck() error {
 		}
 		return nil
 	}
+}
+
+func (cache *Cacher) LLen(key string) (int64, error) {
+	c, err := cache.getClient()
+	if err != nil {
+		return 0, err
+	}
+	return c.LLen(context.Background(), key).Result()
+}
+
+func (cache *Cacher) LSet(key string, index int64, value interface{}) error {
+
+	c, err := cache.getClient()
+	if err != nil {
+		return err
+	}
+
+	str, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+
+	intCmd := c.LSet(context.Background(), key, index, str)
+	err = intCmd.Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Find Position of value in list not work with redis lower 6.0.0
+func (cache *Cacher) LPos(key string, value interface{}) (int64, error) {
+
+	c, err := cache.getClient()
+	if err != nil {
+		return 0, err
+	}
+
+	str, err := json.Marshal(value)
+	if err != nil {
+		return 0, err
+	}
+
+	intCmd := c.LPos(context.Background(), key, string(str), redis.LPosArgs{
+		Rank:   0,
+		MaxLen: 1,
+	})
+	err = intCmd.Err()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return intCmd.Val(), nil
 }
