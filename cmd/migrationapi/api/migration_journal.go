@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	"smlcloudplatform/pkg/utils"
-	journalModels "smlcloudplatform/pkg/vfgl/journal/models"
-	journalRepo "smlcloudplatform/pkg/vfgl/journal/repositories"
+	"smlcloudplatform/internal/utils"
+	journalModels "smlcloudplatform/internal/vfgl/journal/models"
+	journalRepo "smlcloudplatform/internal/vfgl/journal/repositories"
 )
 
 func (m *MigrationService) ImportJournal(journals []journalModels.JournalDoc) error {

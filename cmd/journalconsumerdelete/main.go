@@ -2,9 +2,9 @@ package main
 
 import (
 	"os"
-	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/config"
-	"smlcloudplatform/pkg/vfgl/journal"
+	"smlcloudplatform/internal/config"
+	"smlcloudplatform/internal/vfgl/journal"
+	"smlcloudplatform/pkg/microservice"
 )
 
 func main() {

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/authentication"
-	"smlcloudplatform/pkg/config"
+	"smlcloudplatform/internal/authentication"
+	"smlcloudplatform/internal/config"
+	"smlcloudplatform/pkg/microservice"
 	"time"
 )
 

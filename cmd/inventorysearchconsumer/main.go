@@ -1,8 +1,8 @@
 package main
 
 import (
-	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/config"
+	"smlcloudplatform/internal/config"
+	"smlcloudplatform/pkg/microservice"
 )
 
 func main() {

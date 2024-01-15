@@ -2,7 +2,7 @@ package run_test
 
 import (
 	"context"
-	"smlcloudplatform/pkg/authentication/models"
+	"smlcloudplatform/internal/authentication/models"
 	"testing"
 
 	"github.com/tj/assert"

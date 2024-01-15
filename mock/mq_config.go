@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"smlcloudplatform/pkg/config"
+	"smlcloudplatform/internal/config"
 
 	"github.com/joho/godotenv"
 )

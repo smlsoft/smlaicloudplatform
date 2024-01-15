@@ -1,12 +1,12 @@
 package api
 
 import (
-	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/logger"
-	"smlcloudplatform/pkg/shop"
-	shopModel "smlcloudplatform/pkg/shop/models"
-	chartOfAccountModels "smlcloudplatform/pkg/vfgl/chartofaccount/models"
-	journalModels "smlcloudplatform/pkg/vfgl/journal/models"
+	"smlcloudplatform/internal/logger"
+	"smlcloudplatform/internal/shop"
+	shopModel "smlcloudplatform/internal/shop/models"
+	chartOfAccountModels "smlcloudplatform/internal/vfgl/chartofaccount/models"
+	journalModels "smlcloudplatform/internal/vfgl/journal/models"
+	"smlcloudplatform/pkg/microservice"
 )
 
 type IMigrationService interface {

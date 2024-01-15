@@ -1,10 +1,10 @@
 package main
 
 import (
-	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/config"
-	"smlcloudplatform/pkg/member"
-	"smlcloudplatform/pkg/product/productcategory"
+	"smlcloudplatform/internal/config"
+	"smlcloudplatform/internal/member"
+	"smlcloudplatform/internal/product/productcategory"
+	"smlcloudplatform/pkg/microservice"
 	"time"
 )
 
