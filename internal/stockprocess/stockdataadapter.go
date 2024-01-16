@@ -1,6 +1,6 @@
 package stockprocess
 
-import "vfapi/pkg/microservice"
+import "smlcloudplatform/pkg/microservice"
 
 type IStockDataAdapter interface {
 	GetStockDataLength(shopID string, barcode string) int64

@@ -65,6 +65,7 @@ func (pst *PersisterClickHouse) getClient() (driver.Conn, error) {
 	pst.dbMutex.Lock()
 	pst.db = connection
 	pst.dbMutex.Unlock()
+
 	return pst.db, nil
 }
 

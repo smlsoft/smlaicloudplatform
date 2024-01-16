@@ -1,11 +1,11 @@
 package stocktransaction_test
 
 import (
+	pkgModels "smlcloudplatform/internal/models"
+	stockprocessmodels "smlcloudplatform/internal/stockprocess/models"
+	stocktransactionmodels "smlcloudplatform/internal/transaction/models"
+	stocktransaction "smlcloudplatform/internal/transaction/transactionconsumer/stocktransaction"
 	"testing"
-	pkgModels "vfapi/internal/models"
-	stockprocessmodels "vfapi/internal/stockprocess/models"
-	stocktransactionmodels "vfapi/internal/transaction/models"
-	stocktransaction "vfapi/internal/transaction/transactionconsumer/stocktransaction"
 
 	"github.com/tj/assert"
 )

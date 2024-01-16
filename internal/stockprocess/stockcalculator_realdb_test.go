@@ -1,12 +1,12 @@
 package stockprocess_test
 
 import (
+	"smlcloudplatform/internal/config"
+	productbarcoderepository "smlcloudplatform/internal/product/productbarcode/repositories"
+	"smlcloudplatform/internal/stockprocess"
+	"smlcloudplatform/internal/stockprocess/repositories"
+	"smlcloudplatform/pkg/microservice"
 	"testing"
-	productbarcoderepository "vfapi/internal/product/productbarcode/repositories"
-	"vfapi/internal/stockprocess"
-	"vfapi/internal/stockprocess/repositories"
-	"vfapi/pkg/config"
-	"vfapi/pkg/microservice"
 )
 
 var repo repositories.IStockProcessPGRepository

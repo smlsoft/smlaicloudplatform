@@ -1,10 +1,10 @@
 package creditorpayment_test
 
 import (
+	"smlcloudplatform/internal/config"
 	pkgModels "smlcloudplatform/internal/models"
 	models "smlcloudplatform/internal/transaction/models"
 	"smlcloudplatform/internal/transaction/transactionconsumer/creditorpayment"
-	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/microservice"
 	"testing"
 

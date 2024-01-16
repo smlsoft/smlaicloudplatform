@@ -1,9 +1,9 @@
 package stockprocess_test
 
 import (
+	"smlcloudplatform/internal/stockprocess"
+	stockModel "smlcloudplatform/internal/stockprocess/models"
 	"testing"
-	"vfapi/internal/stockprocess"
-	stockModel "vfapi/internal/stockprocess/models"
 
 	"github.com/stretchr/testify/mock"
 )

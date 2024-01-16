@@ -51,3 +51,5 @@ mock/*.env
 docs.sh
 cmd/app/tdict-std.txt
 cmd/app/*.crt
+
+*_debug_*

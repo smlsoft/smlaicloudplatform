@@ -1,11 +1,11 @@
 package repositories_test
 
 import (
+	"smlcloudplatform/internal/config"
+	"smlcloudplatform/internal/stockprocess/models"
+	"smlcloudplatform/internal/stockprocess/repositories"
+	"smlcloudplatform/pkg/microservice"
 	"testing"
-	"vfapi/internal/stockprocess/models"
-	"vfapi/internal/stockprocess/repositories"
-	"vfapi/pkg/config"
-	"vfapi/pkg/microservice"
 
 	"github.com/stretchr/testify/assert"
 )

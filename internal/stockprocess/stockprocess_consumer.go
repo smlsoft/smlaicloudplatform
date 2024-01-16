@@ -2,13 +2,13 @@ package stockprocess
 
 import (
 	"encoding/json"
+	"smlcloudplatform/internal/config"
+	productBarcodeRepositories "smlcloudplatform/internal/product/productbarcode/repositories"
+	stockProcessConfig "smlcloudplatform/internal/stockprocess/config"
+	"smlcloudplatform/internal/stockprocess/models"
+	"smlcloudplatform/internal/stockprocess/repositories"
+	"smlcloudplatform/pkg/microservice"
 	"time"
-	productBarcodeRepositories "vfapi/internal/product/productbarcode/repositories"
-	stockProcessConfig "vfapi/internal/stockprocess/config"
-	"vfapi/internal/stockprocess/models"
-	"vfapi/internal/stockprocess/repositories"
-	"vfapi/pkg/config"
-	"vfapi/pkg/microservice"
 )
 
 type IStockProcessConsumer interface {
