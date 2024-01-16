@@ -55,6 +55,7 @@ func (h DebtorHttp) RegisterHttp() {
 	h.ms.GET("/debtaccount/debtor/list", h.SearchDebtorStep)
 	h.ms.POST("/debtaccount/debtor", h.CreateDebtor)
 	h.ms.GET("/debtaccount/debtor/:id", h.InfoDebtor)
+	h.ms.GET("/debtaccount/debtor/code/:code", h.InfoDebtorByCode)
 	h.ms.PUT("/debtaccount/debtor/:id", h.UpdateDebtor)
 	h.ms.DELETE("/debtaccount/debtor/:id", h.DeleteDebtor)
 	h.ms.DELETE("/debtaccount/debtor", h.DeleteDebtorByGUIDs)
