@@ -255,6 +255,10 @@ type ProductBarcodePg struct {
 	UnitCode                 string  `json:"unitcode" gorm:"column:unitcode"`
 	BalanceQty               float64 `json:"balanceqty" gorm:"column:balanceqty"`
 	MainBarcodeRef           string  `json:"mainbarcoderef" gorm:"column:mainbarcoderef"`
+	StandValue               float64 `json:"standvalue" gorm:"column:standvalue"`
+	DivideValue              float64 `json:"dividevalue" gorm:"column:dividevalue"`
+	BalanceAmount            float64 `json:"balanceamount" gorm:"column:balanceamount"`
+	AverageCost              float64 `json:"averagecost" gorm:"column:averagecost"`
 }
 
 func (ProductBarcodePg) TableName() string {

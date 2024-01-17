@@ -12,9 +12,9 @@ type SalesInvoiceTransactionPhaser struct{}
 
 func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.SaleInvoiceDoc) (*models.SaleInvoiceTransactionPG, error) {
 
-	details := make([]models.SaleInvoiceTransactionDetailPG, len(*doc.Transaction.Details))
+	details := make([]models.SaleInvoiceTransactionDetailPG, len(*doc.Details))
 
-	for i, detail := range *doc.Transaction.Details {
+	for i, detail := range *doc.Details {
 		stockDetail := models.SaleInvoiceTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
 				DocNo:               doc.DocNo,
@@ -74,27 +74,27 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			TransFlag:      44,
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
-			TaxDocDate:     doc.Transaction.TaxDocDate,
-			TaxDocNo:       doc.Transaction.TaxDocNo,
-			VatType:        doc.Transaction.VatType,
-			VatRate:        doc.Transaction.VatRate,
-			DocRefType:     doc.Transaction.DocRefType,
-			DocRefNo:       doc.Transaction.DocRefNo,
-			DocRefDate:     doc.Transaction.DocRefDate,
-			Description:    doc.Transaction.Description,
-			TotalValue:     doc.Transaction.TotalValue,
-			DiscountWord:   doc.Transaction.DiscountWord,
-			TotalDiscount:  doc.Transaction.TotalDiscount,
-			TotalBeforeVat: doc.Transaction.TotalBeforeVat,
-			TotalVatValue:  doc.Transaction.TotalVatValue,
-			TotalAfterVat:  doc.Transaction.TotalAfterVat,
-			TotalExceptVat: doc.Transaction.TotalExceptVat,
-			TotalAmount:    doc.Transaction.TotalAmount,
+			TaxDocDate:     doc.TaxDocDate,
+			TaxDocNo:       doc.TaxDocNo,
+			VatType:        doc.VatType,
+			VatRate:        doc.VatRate,
+			DocRefType:     doc.DocRefType,
+			DocRefNo:       doc.DocRefNo,
+			DocRefDate:     doc.DocRefDate,
+			Description:    doc.Description,
+			TotalValue:     doc.TotalValue,
+			DiscountWord:   doc.DiscountWord,
+			TotalDiscount:  doc.TotalDiscount,
+			TotalBeforeVat: doc.TotalBeforeVat,
+			TotalVatValue:  doc.TotalVatValue,
+			TotalAfterVat:  doc.TotalAfterVat,
+			TotalExceptVat: doc.TotalExceptVat,
+			TotalAmount:    doc.TotalAmount,
 		},
 
 		DebtorCode:       doc.CustCode,
 		DebtorNames:      *doc.CustNames,
-		TotalPayCash:     doc.Transaction.PaymentDetail.CashAmount,
+		TotalPayCash:     doc.PaymentDetail.CashAmount,
 		TotalPayCredit:   totalPayCreditAmount,
 		TotalPayTransfer: totalPayTransfer,
 		Items:            &details,
