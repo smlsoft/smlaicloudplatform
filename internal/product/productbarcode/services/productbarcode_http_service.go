@@ -51,6 +51,8 @@ type IProductBarcodeHttpService interface {
 	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	Export(shopID string, languageCode string, languageHeader map[string]string) ([][]string, error)
+
+	InfoBomView(shopID string, barcode string) (models.ProductBarcodeBOMView, error)
 }
 
 type ProductBarcodeHttpService struct {

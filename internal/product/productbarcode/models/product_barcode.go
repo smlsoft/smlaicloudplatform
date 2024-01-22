@@ -98,6 +98,40 @@ type BOMProductBarcode struct {
 	Qty           float64         `json:"qty" bson:"qty"`
 }
 
+type ProductBarcodeBOMView struct {
+	BOMProductBarcode `bson:"inline"`
+	ImageURI          string                  `json:"imageuri" bson:"imageuri"`
+	BOM               []ProductBarcodeBOMView `json:"bom" bson:"bom"`
+}
+
+func (pbbv *ProductBarcodeBOMView) FromProductBarcode(doc ProductBarcodeData) {
+	pbbv.GuidFixed = doc.GuidFixed
+	pbbv.Names = doc.Names
+	pbbv.ItemUnitCode = doc.ItemUnitCode
+	pbbv.ItemUnitNames = doc.ItemUnitNames
+	pbbv.Barcode = doc.Barcode
+	pbbv.Condition = doc.Condition
+	pbbv.DivideValue = doc.DivideValue
+	pbbv.StandValue = doc.StandValue
+	pbbv.Qty = doc.Qty
+	pbbv.ImageURI = doc.ImageURI
+}
+
+func (pbbv *ProductBarcodeBOMView) FromProductBOM(doc ProductBarcodeData, docBom BOMProductBarcode) {
+	pbbv.GuidFixed = docBom.GuidFixed
+
+	pbbv.Barcode = docBom.Barcode
+	pbbv.Condition = docBom.Condition
+	pbbv.DivideValue = docBom.DivideValue
+	pbbv.StandValue = docBom.StandValue
+	pbbv.Qty = docBom.Qty
+
+	pbbv.Names = doc.Names
+	pbbv.ItemUnitCode = doc.ItemUnitCode
+	pbbv.ItemUnitNames = doc.ItemUnitNames
+	pbbv.ImageURI = doc.ImageURI
+}
+
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
 	ProductBarcodeBase       `bson:"inline"`
@@ -200,36 +234,6 @@ type ProductBarcodeDeleteActivity struct {
 
 func (ProductBarcodeDeleteActivity) CollectionName() string {
 	return productBarcodeCollectionName
-}
-
-type ProductBarcodeRequest struct {
-	ProductBarcodeBase
-	RefBarcodes    []BarcodeRequest             `json:"refbarcodes"`
-	BOM            []BOMRequest                 `json:"bom"`
-	IgnoreBranches []ProductBarcodeBranch       `json:"ignorebranches"`
-	BusinessTypes  []ProductBarcodeBusinessType `json:"businesstypes"`
-}
-
-func (p ProductBarcodeRequest) ToProductBarcode() ProductBarcode {
-	return ProductBarcode{
-		ProductBarcodeBase: p.ProductBarcodeBase,
-	}
-}
-
-type BarcodeRequest struct {
-	Barcode     string  `json:"barcode" bson:"barcode" validate:"required,min=1"`
-	Condition   bool    `json:"condition" bson:"condition"`
-	DivideValue float64 `json:"dividevalue" bson:"dividevalue"`
-	StandValue  float64 `json:"standvalue" bson:"standvalue"`
-	Qty         float64 `json:"qty" bson:"qty"`
-}
-
-type BOMRequest struct {
-	Barcode     string  `json:"barcode" bson:"barcode" validate:"required,min=1"`
-	Condition   bool    `json:"condition" bson:"condition"`
-	DivideValue float64 `json:"dividevalue" bson:"dividevalue"`
-	StandValue  float64 `json:"standvalue" bson:"standvalue"`
-	Qty         float64 `json:"qty" bson:"qty"`
 }
 
 type ProductBarcodeSearch struct {

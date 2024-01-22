@@ -83,6 +83,8 @@ func (h ProductBarcodeHttp) RegisterHttp() {
 	h.ms.GET("/product/barcode/groups", h.GetroductBarcodeByGroups)
 
 	h.ms.GET("/product/barcode/export", h.Export)
+
+	h.ms.GET("/product/barcode/bom/:barcode", h.InfoBOMView)
 }
 
 // Create ProductBarcode godoc
@@ -939,5 +941,35 @@ func (h ProductBarcodeHttp) Export(ctx microservice.IContext) error {
 		}
 	}
 
+	return nil
+}
+
+// Get ProductBarcode BOM godoc
+// @Description get product barcode bom view information
+// @Tags		ProductBarcode
+// @Param		barcode  path      string  true  "Barcode"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/bom/{barcode} [get]
+func (h ProductBarcodeHttp) InfoBOMView(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	barcode := ctx.Param("barcode")
+
+	doc, err := h.svc.InfoBomView(shopID, barcode)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", barcode, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
 	return nil
 }
