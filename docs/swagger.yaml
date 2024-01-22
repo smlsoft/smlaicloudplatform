@@ -277,7 +277,7 @@ definitions:
         type: string
       images:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_payment_bookbank_models.Image'
+          $ref: '#/definitions/smlcloudplatform_internal_payment_bookbank_models.Image'
         type: array
       names:
         items:
@@ -588,10 +588,10 @@ definitions:
   models.CreditorRequest:
     properties:
       addressforbilling:
-        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address'
+        $ref: '#/definitions/smlcloudplatform_internal_debtaccount_creditor_models.Address'
       addressforshipping:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address'
+          $ref: '#/definitions/smlcloudplatform_internal_debtaccount_creditor_models.Address'
         type: array
       auth:
         $ref: '#/definitions/models.CreditorAuth'
@@ -613,7 +613,7 @@ definitions:
         type: array
       images:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Image'
+          $ref: '#/definitions/smlcloudplatform_internal_debtaccount_creditor_models.Image'
         type: array
       ismember:
         type: boolean
@@ -646,10 +646,10 @@ definitions:
   models.CustomerRequest:
     properties:
       addressforbilling:
-        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address'
+        $ref: '#/definitions/smlcloudplatform_internal_debtaccount_customer_models.Address'
       addressforshipping:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address'
+          $ref: '#/definitions/smlcloudplatform_internal_debtaccount_customer_models.Address'
         type: array
       branchnumber:
         type: string
@@ -669,7 +669,7 @@ definitions:
         type: array
       images:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Image'
+          $ref: '#/definitions/smlcloudplatform_internal_debtaccount_customer_models.Image'
         type: array
       iscreditor:
         type: boolean
@@ -711,10 +711,10 @@ definitions:
   models.DebtorRequest:
     properties:
       addressforbilling:
-        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address'
+        $ref: '#/definitions/smlcloudplatform_internal_debtaccount_debtor_models.Address'
       addressforshipping:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address'
+          $ref: '#/definitions/smlcloudplatform_internal_debtaccount_debtor_models.Address'
         type: array
       auth:
         $ref: '#/definitions/models.DebtorAuth'
@@ -736,7 +736,7 @@ definitions:
         type: array
       images:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Image'
+          $ref: '#/definitions/smlcloudplatform_internal_debtaccount_debtor_models.Image'
         type: array
       ismember:
         type: boolean
@@ -2654,7 +2654,7 @@ definitions:
           $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
+        $ref: '#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductType'
       qty:
         type: number
       refbarcodes:
@@ -2973,7 +2973,7 @@ definitions:
       name:
         type: string
       productbarcode:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode'
+        $ref: '#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode'
       promotiontype:
         type: integer
       remark:
@@ -2993,7 +2993,7 @@ definitions:
       minimum:
         type: number
       productbarcode:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode'
+        $ref: '#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode'
     type: object
   models.Purchase:
     properties:
@@ -3681,7 +3681,7 @@ definitions:
       avatar:
         type: string
       dedezoom:
-        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+        $ref: '#/definitions/smlcloudplatform_internal_authentication_models.DedeZoom'
       email:
         maxLength: 233
         type: string
@@ -4384,7 +4384,7 @@ definitions:
         type: string
       employees:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.POSEmployee'
+          $ref: '#/definitions/smlcloudplatform_internal_pos_setting_models.POSEmployee'
         type: array
       isejournal:
         type: boolean
@@ -5920,7 +5920,7 @@ definitions:
     properties:
       devices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_storefront_models.Device'
+          $ref: '#/definitions/smlcloudplatform_internal_storefront_models.Device'
         type: array
       name1:
         maxLength: 255
@@ -6332,7 +6332,7 @@ definitions:
         type: string
       location:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
+          $ref: '#/definitions/smlcloudplatform_internal_warehouse_models.Location'
         type: array
         uniqueItems: true
       names:
@@ -6451,7 +6451,7 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_authentication_models.DedeZoom:
+  smlcloudplatform_internal_authentication_models.DedeZoom:
     properties:
       address:
         type: string
@@ -6460,14 +6460,14 @@ definitions:
       phonenumber:
         type: string
     type: object
-  smlcloudplatform_pkg_authentication_models.ShopSelectRequest:
+  smlcloudplatform_internal_authentication_models.ShopSelectRequest:
     properties:
       shopid:
         type: string
     required:
     - shopid
     type: object
-  smlcloudplatform_pkg_authentication_models.ShopUserInfo:
+  smlcloudplatform_internal_authentication_models.ShopUserInfo:
     properties:
       branchcode:
         type: string
@@ -6484,11 +6484,11 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       role:
-        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRole'
+        $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserRole'
       shopid:
         type: string
     type: object
-  smlcloudplatform_pkg_authentication_models.UserLoginRequest:
+  smlcloudplatform_internal_authentication_models.UserLoginRequest:
     properties:
       password:
         maxLength: 233
@@ -6504,12 +6504,12 @@ definitions:
     - password
     - username
     type: object
-  smlcloudplatform_pkg_authentication_models.UserProfile:
+  smlcloudplatform_internal_authentication_models.UserProfile:
     properties:
       avatar:
         type: string
       dedezoom:
-        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+        $ref: '#/definitions/smlcloudplatform_internal_authentication_models.DedeZoom'
       name:
         type: string
       registertype:
@@ -6530,19 +6530,19 @@ definitions:
     required:
     - username
     type: object
-  smlcloudplatform_pkg_authentication_models.UserProfileReponse:
+  smlcloudplatform_internal_authentication_models.UserProfileReponse:
     properties:
       data:
-        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfile'
+        $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserProfile'
       success:
         type: boolean
     type: object
-  smlcloudplatform_pkg_authentication_models.UserProfileRequest:
+  smlcloudplatform_internal_authentication_models.UserProfileRequest:
     properties:
       avatar:
         type: string
       dedezoom:
-        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.DedeZoom'
+        $ref: '#/definitions/smlcloudplatform_internal_authentication_models.DedeZoom'
       name:
         type: string
       registertype:
@@ -6557,7 +6557,7 @@ definitions:
         maxLength: 21
         type: string
     type: object
-  smlcloudplatform_pkg_authentication_models.UserRole:
+  smlcloudplatform_internal_authentication_models.UserRole:
     enum:
     - 0
     - 1
@@ -6571,18 +6571,18 @@ definitions:
     - ROLE_USER
     - ROLE_ADMIN
     - ROLE_OWNER
-  smlcloudplatform_pkg_authentication_models.UserRoleRequest:
+  smlcloudplatform_internal_authentication_models.UserRoleRequest:
     properties:
       editusername:
         type: string
       role:
-        $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRole'
+        $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserRole'
       shopid:
         type: string
       username:
         type: string
     type: object
-  smlcloudplatform_pkg_debtaccount_creditor_models.Address:
+  smlcloudplatform_internal_debtaccount_creditor_models.Address:
     properties:
       address:
         items:
@@ -6613,14 +6613,14 @@ definitions:
       zipcode:
         type: string
     type: object
-  smlcloudplatform_pkg_debtaccount_creditor_models.Image:
+  smlcloudplatform_internal_debtaccount_creditor_models.Image:
     properties:
       uri:
         type: string
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_debtaccount_customer_models.Address:
+  smlcloudplatform_internal_debtaccount_customer_models.Address:
     properties:
       address:
         items:
@@ -6651,14 +6651,14 @@ definitions:
       zipcode:
         type: string
     type: object
-  smlcloudplatform_pkg_debtaccount_customer_models.Image:
+  smlcloudplatform_internal_debtaccount_customer_models.Image:
     properties:
       uri:
         type: string
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_debtaccount_debtor_models.Address:
+  smlcloudplatform_internal_debtaccount_debtor_models.Address:
     properties:
       address:
         items:
@@ -6689,19 +6689,19 @@ definitions:
       zipcode:
         type: string
     type: object
-  smlcloudplatform_pkg_debtaccount_debtor_models.Image:
+  smlcloudplatform_internal_debtaccount_debtor_models.Image:
     properties:
       uri:
         type: string
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_images_models.Image:
+  smlcloudplatform_internal_images_models.Image:
     properties:
       uri:
         type: string
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Branch:
+  smlcloudplatform_internal_organization_branch_models.Branch:
     properties:
       businesstype:
         $ref: '#/definitions/models.BranchBusinessType'
@@ -6719,7 +6719,7 @@ definitions:
         $ref: '#/definitions/models.Contact'
       departments:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Department'
+          $ref: '#/definitions/smlcloudplatform_internal_organization_branch_models.Department'
         type: array
       imageuri:
         type: string
@@ -6740,7 +6740,7 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Department:
+  smlcloudplatform_internal_organization_branch_models.Department:
     properties:
       code:
         description: GuidFixed string         `json:"guidfixed"`
@@ -6750,7 +6750,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
     type: object
-  smlcloudplatform_pkg_organization_businesstype_models.BusinessType:
+  smlcloudplatform_internal_organization_businesstype_models.BusinessType:
     properties:
       code:
         type: string
@@ -6765,7 +6765,7 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_organization_department_models.Department:
+  smlcloudplatform_internal_organization_department_models.Department:
     properties:
       code:
         type: string
@@ -6778,14 +6778,14 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_payment_bookbank_models.Image:
+  smlcloudplatform_internal_payment_bookbank_models.Image:
     properties:
       uri:
         type: string
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_pos_setting_models.POSEmployee:
+  smlcloudplatform_internal_pos_setting_models.POSEmployee:
     properties:
       code:
         type: string
@@ -6798,7 +6798,7 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
+  smlcloudplatform_internal_product_productbarcode_models.ProductBarcode:
     properties:
       barcode:
         minLength: 1
@@ -6894,7 +6894,7 @@ definitions:
           $ref: '#/definitions/models.ProductPrice'
         type: array
       producttype:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductType'
+        $ref: '#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductType'
       qty:
         type: number
       refbarcodes:
@@ -6930,7 +6930,7 @@ definitions:
     - barcode
     - names
     type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductType:
+  smlcloudplatform_internal_product_productbarcode_models.ProductType:
     properties:
       code:
         type: string
@@ -6941,7 +6941,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
     type: object
-  smlcloudplatform_pkg_product_productgroup_models.ProductGroup:
+  smlcloudplatform_internal_product_productgroup_models.ProductGroup:
     properties:
       code:
         type: string
@@ -6954,7 +6954,7 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_product_producttype_models.ProductType:
+  smlcloudplatform_internal_product_producttype_models.ProductType:
     properties:
       code:
         type: string
@@ -6967,7 +6967,7 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_product_promotion_models.ProductBarcode:
+  smlcloudplatform_internal_product_promotion_models.ProductBarcode:
     properties:
       barcode:
         type: string
@@ -6990,14 +6990,14 @@ definitions:
           $ref: '#/definitions/models.ProductPrice'
         type: array
     type: object
-  smlcloudplatform_pkg_report_reportqueryc_models.ReportParam:
+  smlcloudplatform_internal_report_reportqueryc_models.ReportParam:
     properties:
       name:
         type: string
       type:
         type: string
     type: object
-  smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery:
+  smlcloudplatform_internal_report_reportqueryc_models.ReportQuery:
     properties:
       code:
         maxLength: 50
@@ -7009,21 +7009,21 @@ definitions:
         type: boolean
       params:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportParam'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportParam'
         type: array
       sql:
         type: string
     required:
     - code
     type: object
-  smlcloudplatform_pkg_report_reportquerym_models.ReportParam:
+  smlcloudplatform_internal_report_reportquerym_models.ReportParam:
     properties:
       name:
         type: string
       type:
         type: string
     type: object
-  smlcloudplatform_pkg_report_reportquerym_models.ReportQuery:
+  smlcloudplatform_internal_report_reportquerym_models.ReportQuery:
     properties:
       code:
         maxLength: 50
@@ -7043,12 +7043,12 @@ definitions:
         type: boolean
       params:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportParam'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportParam'
         type: array
     required:
     - code
     type: object
-  smlcloudplatform_pkg_restaurant_device_models.Device:
+  smlcloudplatform_internal_restaurant_device_models.Device:
     properties:
       code:
         type: string
@@ -7064,17 +7064,17 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Branch:
+  smlcloudplatform_internal_shop_branch_models.Branch:
     properties:
       code:
         type: integer
       departments:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Department'
+          $ref: '#/definitions/smlcloudplatform_internal_shop_branch_models.Department'
         type: array
         uniqueItems: true
       location:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
+        $ref: '#/definitions/smlcloudplatform_internal_shop_branch_models.Location'
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -7087,7 +7087,7 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Department:
+  smlcloudplatform_internal_shop_branch_models.Department:
     properties:
       code:
         type: string
@@ -7101,14 +7101,14 @@ definitions:
     - code
     - names
     type: object
-  smlcloudplatform_pkg_shop_branch_models.Location:
+  smlcloudplatform_internal_shop_branch_models.Location:
     properties:
       lat:
         type: string
       lng:
         type: string
     type: object
-  smlcloudplatform_pkg_shop_employee_models.EmployeeRequestPassword:
+  smlcloudplatform_internal_shop_employee_models.EmployeeRequestPassword:
     properties:
       code:
         type: string
@@ -7117,7 +7117,7 @@ definitions:
       newpassword:
         type: string
     type: object
-  smlcloudplatform_pkg_shop_employee_models.EmployeeRequestRegister:
+  smlcloudplatform_internal_shop_employee_models.EmployeeRequestRegister:
     properties:
       branches:
         items:
@@ -7146,7 +7146,7 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_shop_employee_models.EmployeeRequestUpdate:
+  smlcloudplatform_internal_shop_employee_models.EmployeeRequestUpdate:
     properties:
       branches:
         items:
@@ -7173,19 +7173,19 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_pkg_storefront_models.Device:
+  smlcloudplatform_internal_storefront_models.Device:
     properties:
       os:
         type: string
       uuid:
         type: string
     type: object
-  smlcloudplatform_pkg_task_models.TaskStatus:
+  smlcloudplatform_internal_task_models.TaskStatus:
     properties:
       status:
         type: integer
     type: object
-  smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail:
+  smlcloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail:
     properties:
       averagecost:
         type: number
@@ -7292,7 +7292,7 @@ definitions:
     required:
     - docno
     type: object
-  smlcloudplatform_pkg_warehouse_models.Location:
+  smlcloudplatform_internal_warehouse_models.Location:
     properties:
       code:
         type: string
@@ -10314,7 +10314,7 @@ paths:
         name: Employee
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.EmployeeRequestPassword'
+          $ref: '#/definitions/smlcloudplatform_internal_shop_employee_models.EmployeeRequestPassword'
       responses:
         "200":
           description: OK
@@ -11731,7 +11731,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.ShopUserInfo'
+              $ref: '#/definitions/smlcloudplatform_internal_authentication_models.ShopUserInfo'
             type: array
         "401":
           description: Unauthorized
@@ -11752,7 +11752,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserLoginRequest'
+          $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserLoginRequest'
       responses:
         "200":
           description: OK
@@ -13168,7 +13168,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
+          $ref: '#/definitions/smlcloudplatform_internal_organization_branch_models.Branch'
       responses:
         "201":
           description: Created
@@ -13244,7 +13244,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
+          $ref: '#/definitions/smlcloudplatform_internal_organization_branch_models.Branch'
       responses:
         "201":
           description: Created
@@ -13270,7 +13270,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch'
+            $ref: '#/definitions/smlcloudplatform_internal_organization_branch_models.Branch'
           type: array
       responses:
         "201":
@@ -13419,7 +13419,7 @@ paths:
         name: BusinessType
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_businesstype_models.BusinessType'
+          $ref: '#/definitions/smlcloudplatform_internal_organization_businesstype_models.BusinessType'
       responses:
         "201":
           description: Created
@@ -13495,7 +13495,7 @@ paths:
         name: BusinessType
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_businesstype_models.BusinessType'
+          $ref: '#/definitions/smlcloudplatform_internal_organization_businesstype_models.BusinessType'
       responses:
         "201":
           description: Created
@@ -13521,7 +13521,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_organization_businesstype_models.BusinessType'
+            $ref: '#/definitions/smlcloudplatform_internal_organization_businesstype_models.BusinessType'
           type: array
       responses:
         "201":
@@ -13684,7 +13684,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+          $ref: '#/definitions/smlcloudplatform_internal_organization_department_models.Department'
       responses:
         "201":
           description: Created
@@ -13789,7 +13789,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+          $ref: '#/definitions/smlcloudplatform_internal_organization_department_models.Department'
       responses:
         "201":
           description: Created
@@ -13815,7 +13815,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+            $ref: '#/definitions/smlcloudplatform_internal_organization_department_models.Department'
           type: array
       responses:
         "201":
@@ -16311,6 +16311,30 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/barcode/bom/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: get product barcode bom view information
+      parameters:
+      - description: Barcode
+        in: path
+        name: barcode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
   /product/barcode/branch:
     put:
       consumes:
@@ -16348,7 +16372,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode'
+            $ref: '#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductBarcode'
           type: array
       responses:
         "201":
@@ -17050,7 +17074,7 @@ paths:
         name: ProductGroup
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup'
+          $ref: '#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup'
       responses:
         "201":
           description: Created
@@ -17126,7 +17150,7 @@ paths:
         name: ProductGroup
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup'
+          $ref: '#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup'
       responses:
         "201":
           description: Created
@@ -17152,7 +17176,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup'
+            $ref: '#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup'
           type: array
       responses:
         "201":
@@ -17238,7 +17262,7 @@ paths:
         name: ProductGroup
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productgroup_models.ProductGroup'
+          $ref: '#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup'
       responses:
         "201":
           description: Created
@@ -17823,7 +17847,7 @@ paths:
         name: ProductType
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_producttype_models.ProductType'
+          $ref: '#/definitions/smlcloudplatform_internal_product_producttype_models.ProductType'
       responses:
         "201":
           description: Created
@@ -17899,7 +17923,7 @@ paths:
         name: ProductType
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_producttype_models.ProductType'
+          $ref: '#/definitions/smlcloudplatform_internal_product_producttype_models.ProductType'
       responses:
         "201":
           description: Created
@@ -17925,7 +17949,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_product_producttype_models.ProductType'
+            $ref: '#/definitions/smlcloudplatform_internal_product_producttype_models.ProductType'
           type: array
       responses:
         "201":
@@ -18219,7 +18243,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse'
+              $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserProfileReponse'
             type: array
         "401":
           description: Unauthorized
@@ -18239,7 +18263,7 @@ paths:
         name: UserProfileRequest
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileRequest'
+          $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserProfileRequest'
       responses:
         "200":
           description: OK
@@ -18262,7 +18286,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserProfileReponse'
+              $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserProfileReponse'
             type: array
         "401":
           description: Unauthorized
@@ -18402,7 +18426,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -18427,7 +18451,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -18510,7 +18534,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -18586,7 +18610,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -18672,7 +18696,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -18697,7 +18721,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -18780,7 +18804,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -18856,7 +18880,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -19000,7 +19024,7 @@ paths:
         name: Device
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device'
+          $ref: '#/definitions/smlcloudplatform_internal_restaurant_device_models.Device'
       responses:
         "201":
           description: Created
@@ -19076,7 +19100,7 @@ paths:
         name: Device
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device'
+          $ref: '#/definitions/smlcloudplatform_internal_restaurant_device_models.Device'
       responses:
         "201":
           description: Created
@@ -19102,7 +19126,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device'
+            $ref: '#/definitions/smlcloudplatform_internal_restaurant_device_models.Device'
           type: array
       responses:
         "201":
@@ -21038,7 +21062,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.ShopSelectRequest'
+          $ref: '#/definitions/smlcloudplatform_internal_authentication_models.ShopSelectRequest'
       responses:
         "200":
           description: OK
@@ -21286,7 +21310,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch'
+          $ref: '#/definitions/smlcloudplatform_internal_shop_branch_models.Branch'
       responses:
         "201":
           description: Created
@@ -21362,7 +21386,7 @@ paths:
         name: Branch
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch'
+          $ref: '#/definitions/smlcloudplatform_internal_shop_branch_models.Branch'
       responses:
         "201":
           description: Created
@@ -21482,7 +21506,7 @@ paths:
         name: Employee
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.EmployeeRequestRegister'
+          $ref: '#/definitions/smlcloudplatform_internal_shop_employee_models.EmployeeRequestRegister'
       responses:
         "201":
           description: Created
@@ -21558,7 +21582,7 @@ paths:
         name: Employee
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.EmployeeRequestUpdate'
+          $ref: '#/definitions/smlcloudplatform_internal_shop_employee_models.EmployeeRequestUpdate'
       responses:
         "201":
           description: Created
@@ -21644,7 +21668,7 @@ paths:
         name: UserRoleRequest
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_authentication_models.UserRoleRequest'
+          $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserRoleRequest'
       responses:
         "200":
           description: OK
@@ -21775,7 +21799,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
+              $ref: '#/definitions/smlcloudplatform_internal_images_models.Image'
             type: array
         "400":
           description: Bad Request
@@ -22899,7 +22923,7 @@ paths:
         name: TaskStatus
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_task_models.TaskStatus'
+          $ref: '#/definitions/smlcloudplatform_internal_task_models.TaskStatus'
       responses:
         "201":
           description: Created
@@ -26088,7 +26112,7 @@ paths:
         name: StockBalanceDetail
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail'
+          $ref: '#/definitions/smlcloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail'
       responses:
         "201":
           description: Created
@@ -26164,7 +26188,7 @@ paths:
         name: StockBalanceDetail
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockbalancedetail_models.StockBalanceDetail'
+          $ref: '#/definitions/smlcloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail'
       responses:
         "201":
           description: Created
@@ -28123,7 +28147,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
+              $ref: '#/definitions/smlcloudplatform_internal_images_models.Image'
             type: array
         "400":
           description: Bad Request
@@ -28157,7 +28181,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
+              $ref: '#/definitions/smlcloudplatform_internal_images_models.Image'
             type: array
         "400":
           description: Bad Request
