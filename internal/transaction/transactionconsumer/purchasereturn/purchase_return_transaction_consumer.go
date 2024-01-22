@@ -1,7 +1,9 @@
 package purchasereturn
 
 import (
+	"encoding/json"
 	pkgConfig "smlcloudplatform/internal/config"
+	"smlcloudplatform/internal/logger"
 	"smlcloudplatform/internal/transaction/models"
 	purchaseReturnConfig "smlcloudplatform/internal/transaction/purchasereturn/config"
 	"smlcloudplatform/internal/transaction/transactionconsumer/creditortransaction"
@@ -10,17 +12,21 @@ import (
 	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
 	"smlcloudplatform/pkg/microservice"
 	"time"
+
+	trans_models "smlcloudplatform/internal/transaction/models"
+	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
 )
 
-type IPurchaseReturnTransactionConsumer struct {
-	ms                      *microservice.Microservice
-	cfg                     pkgConfig.IConfig
-	svc                     IPurchaseReturnTransactionConsumerService
-	trxPhaser               usecases.ITransactionPhaser[models.PurchaseReturnTransactionPG]
-	stockPhaser             usecases.IStockTransactionPhaser[models.PurchaseReturnTransactionPG]
-	creditorPhaser          usecases.ICreditorTransactionPhaser[models.PurchaseReturnTransactionPG]
-	stockConsumerService    stocktransaction.IStockTransactionConsumerService
-	creditorConsumerService creditortransaction.ICreditorTransactionConsumerService
+type PurchaseReturnTransactionConsumer struct {
+	ms                         *microservice.Microservice
+	cfg                        pkgConfig.IConfig
+	svc                        IPurchaseReturnTransactionConsumerService
+	trxPhaser                  usecases.ITransactionPhaser[models.PurchaseReturnTransactionPG]
+	stockPhaser                usecases.IStockTransactionPhaser[models.PurchaseReturnTransactionPG]
+	creditorPhaser             usecases.ICreditorTransactionPhaser[models.PurchaseReturnTransactionPG]
+	stockConsumerService       stocktransaction.IStockTransactionConsumerService
+	creditorConsumerService    creditortransaction.ICreditorTransactionConsumerService
+	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase
 }
 
 func NewTransactionPurchaseReturnConsumer(
@@ -29,21 +35,23 @@ func NewTransactionPurchaseReturnConsumer(
 	svc IPurchaseReturnTransactionConsumerService,
 	stockConsumerService stocktransaction.IStockTransactionConsumerService,
 	creditorConsumerService creditortransaction.ICreditorTransactionConsumerService,
+	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase,
 ) services.ITransactionDocConsumer {
 
 	purchaseReturnPhaser := PurchaseReturnTransactionPhaser{}
 	purchaseReturnStockPhaser := PurchaseReturnTransactionStockPhaser{}
 	purchaseReturnCreditorPhaser := PurchaseReturnTransactionCreditorPhaser{}
 
-	return &IPurchaseReturnTransactionConsumer{
-		ms:                      ms,
-		cfg:                     cfg,
-		svc:                     svc,
-		trxPhaser:               purchaseReturnPhaser,
-		stockPhaser:             purchaseReturnStockPhaser,
-		creditorPhaser:          purchaseReturnCreditorPhaser,
-		stockConsumerService:    stockConsumerService,
-		creditorConsumerService: creditorConsumerService,
+	return &PurchaseReturnTransactionConsumer{
+		ms:                         ms,
+		cfg:                        cfg,
+		svc:                        svc,
+		trxPhaser:                  purchaseReturnPhaser,
+		stockPhaser:                purchaseReturnStockPhaser,
+		creditorPhaser:             purchaseReturnCreditorPhaser,
+		stockConsumerService:       stockConsumerService,
+		creditorConsumerService:    creditorConsumerService,
+		transPaymentConsumeUsecase: transPaymentConsumeUsecase,
 	}
 }
 
@@ -56,13 +64,15 @@ func InitPurchaseReturnTransactionConsumer(ms *microservice.Microservice,
 	stockService := stocktransaction.NewStockTransactionConsumerService(persister, producer)
 	creditorService := creditortransaction.NewCreditorTransactionConsumerService(persister, producer)
 
+	transPaymentConsumeUsecase := transaction_payment_consume.InitPayment(persister)
+
 	purchaseReturnConsumerService := NewPurchaseReturnTransactionService(NewPurchaseReturnTransactionPGRepository(persister))
-	consumer := NewTransactionPurchaseReturnConsumer(ms, cfg, purchaseReturnConsumerService, stockService, creditorService)
+	consumer := NewTransactionPurchaseReturnConsumer(ms, cfg, purchaseReturnConsumerService, stockService, creditorService, transPaymentConsumeUsecase)
 
 	return consumer
 }
 
-func (t *IPurchaseReturnTransactionConsumer) RegisterConsumer(ms *microservice.Microservice) {
+func (t *PurchaseReturnTransactionConsumer) RegisterConsumer(ms *microservice.Microservice) {
 	trxConsumerGroup := pkgConfig.GetEnv("TRANSACTION_CONSUMER_GROUP", "transaction-consumer-group-01")
 	mq := microservice.NewMQ(t.cfg.MQConfig(), ms.Logger)
 
@@ -83,7 +93,7 @@ func (t *IPurchaseReturnTransactionConsumer) RegisterConsumer(ms *microservice.M
 	ms.Consume(t.cfg.MQConfig().URI(), purchaseKafkaConfig.TopicBulkDeleted(), trxConsumerGroup, time.Duration(-1), t.ConsumeOnBulkDelete)
 }
 
-func (t *IPurchaseReturnTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservice.IContext) error {
+func (t *PurchaseReturnTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 	transaction, err := t.trxPhaser.PhaseSingleDoc(msg)
 	if err != nil {
@@ -133,10 +143,27 @@ func (t *IPurchaseReturnTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microse
 		}
 	}
 
+	transMQDoc := trans_models.TransactionMessageQueue{}
+
+	err = json.Unmarshal([]byte(msg), &transMQDoc)
+
+	if err != nil {
+		logger.GetLogger().Errorf("Cannot Unmarshal Transaction Message Queue : %v", err.Error())
+		return err
+	}
+
+	if t.HasPaymentEffectDoc(transMQDoc) {
+		err = t.upsertPayment(transMQDoc)
+		if err != nil {
+			logger.GetLogger().Errorf("Cannot Upsert Transaction Payment : %v", err.Error())
+			return err
+		}
+	}
+
 	return nil
 }
 
-func (t *IPurchaseReturnTransactionConsumer) ConsumeOnDelete(ctx microservice.IContext) error {
+func (t *PurchaseReturnTransactionConsumer) ConsumeOnDelete(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 
 	trx, err := t.trxPhaser.PhaseSingleDoc(msg)
@@ -165,10 +192,17 @@ func (t *IPurchaseReturnTransactionConsumer) ConsumeOnDelete(ctx microservice.IC
 		return err
 	}
 
+	// delete transaction payment
+	err = t.transPaymentConsumeUsecase.Delete(trx.ShopID, trx.DocNo)
+	if err != nil {
+		t.ms.Logger.Errorf("Cannot Delete Transaction Payment : %v", err.Error())
+		return err
+	}
+
 	return nil
 }
 
-func (t *IPurchaseReturnTransactionConsumer) ConsumeOnBulkCreateOrUpdate(ctx microservice.IContext) error {
+func (t *PurchaseReturnTransactionConsumer) ConsumeOnBulkCreateOrUpdate(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 	transactions, err := t.trxPhaser.PhaseMultipleDoc(msg)
 	if err != nil {
@@ -218,10 +252,29 @@ func (t *IPurchaseReturnTransactionConsumer) ConsumeOnBulkCreateOrUpdate(ctx mic
 		}
 	}
 
+	transMQDocs := []trans_models.TransactionMessageQueue{}
+
+	err = json.Unmarshal([]byte(msg), &transMQDocs)
+
+	if err != nil {
+		logger.GetLogger().Errorf("Cannot Unmarshal Transaction Message Queue : %v", err.Error())
+		return err
+	}
+
+	for _, transMQDoc := range transMQDocs {
+		if t.HasPaymentEffectDoc(transMQDoc) {
+			err = t.upsertPayment(transMQDoc)
+			if err != nil {
+				logger.GetLogger().Errorf("Cannot Upsert Transaction Payment : %v", err.Error())
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
-func (t *IPurchaseReturnTransactionConsumer) ConsumeOnBulkDelete(ctx microservice.IContext) error {
+func (t *PurchaseReturnTransactionConsumer) ConsumeOnBulkDelete(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 
 	transactions, err := t.trxPhaser.PhaseMultipleDoc(msg)
@@ -250,9 +303,32 @@ func (t *IPurchaseReturnTransactionConsumer) ConsumeOnBulkDelete(ctx microservic
 			t.ms.Logger.Errorf("Cannot Delete CreditorTransaction : %v", err.Error())
 			return err
 		}
+
+		// delete transaction payment
+		err = t.transPaymentConsumeUsecase.Delete(trx.ShopID, trx.DocNo)
+		if err != nil {
+			t.ms.Logger.Errorf("Cannot Delete Transaction Payment : %v", err.Error())
+			return err
+		}
 	}
 
 	return nil
+}
+
+func (t *PurchaseReturnTransactionConsumer) upsertPayment(transMQDoc trans_models.TransactionMessageQueue) error {
+	// transaction payment InquiryType = 2,3
+
+	err := t.transPaymentConsumeUsecase.Upsert(transMQDoc)
+
+	if err != nil {
+		logger.GetLogger().Errorf("Cannot Upsert Transaction Payment : %v", err.Error())
+		return err
+	}
+	return nil
+}
+
+func (t *PurchaseReturnTransactionConsumer) HasPaymentEffectDoc(transDoc trans_models.TransactionMessageQueue) bool {
+	return transDoc.InquiryType == 2 || transDoc.InquiryType == 3
 }
 
 func MigrationDatabase(ms *microservice.Microservice, cfg pkgConfig.IConfig) error {

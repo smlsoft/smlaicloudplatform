@@ -6,6 +6,7 @@ import (
 	saleInvoiceReturnConfig "smlcloudplatform/internal/transaction/saleinvoicereturn/config"
 	"smlcloudplatform/internal/transaction/transactionconsumer/creditortransaction"
 	"smlcloudplatform/internal/transaction/transactionconsumer/debtortransaction"
+	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
 	"smlcloudplatform/internal/transaction/transactionconsumer/purchase"
 	"smlcloudplatform/internal/transaction/transactionconsumer/purchasereturn"
 	"smlcloudplatform/internal/transaction/transactionconsumer/saleinvoice"
@@ -51,17 +52,19 @@ func NewTransactionConsumer(ms *microservice.Microservice, cfg pkgConfig.IConfig
 	creditorService := creditortransaction.NewCreditorTransactionConsumerService(persister, producer)
 	debtorService := debtortransaction.NewDebtorTransactionService(persister, producer)
 
+	transPaymentConsumeUsecase := transaction_payment_consume.InitPayment(persister)
+
 	purchaseConsumerService := purchase.NewPurchaseTransactionService(purchase.NewPurchaseTransactionPGRepository(persister))
-	purchaseTransactionConsumer := purchase.NewPurchaseTransactionConsumer(ms, cfg, purchaseConsumerService, stockService, creditorService)
+	purchaseTransactionConsumer := purchase.NewPurchaseTransactionConsumer(ms, cfg, purchaseConsumerService, stockService, creditorService, transPaymentConsumeUsecase)
 
 	purchaseReturnConsumerService := purchasereturn.NewPurchaseReturnTransactionService(purchasereturn.NewPurchaseReturnTransactionPGRepository(persister))
-	purchaseReturnStockConsumer := purchasereturn.NewTransactionPurchaseReturnConsumer(ms, cfg, purchaseReturnConsumerService, stockService, creditorService)
+	purchaseReturnStockConsumer := purchasereturn.NewTransactionPurchaseReturnConsumer(ms, cfg, purchaseReturnConsumerService, stockService, creditorService, transPaymentConsumeUsecase)
 
 	saleInvoiceConsumerService := saleinvoice.NewSaleInvoiceTransactionConsumerService(saleinvoice.NewSaleInvoiceTransactionPGRepository(persister))
-	saleInvoiceStockConsumer := saleinvoice.NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService)
+	saleInvoiceStockConsumer := saleinvoice.NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService, transPaymentConsumeUsecase)
 
 	saleInvoiceReturnConsumerService := saleinvoicereturn.NewSaleInvoiceReturnTransactionConsumerService(saleinvoicereturn.NewSaleInvoiceReturnTransactionPGRepository(persister))
-	saleInvoiceReturnStockConsumer := saleinvoicereturn.NewSaleInvoiceReturnTransactionConsumer(ms, cfg, saleInvoiceReturnConsumerService, stockService, debtorService)
+	saleInvoiceReturnStockConsumer := saleinvoicereturn.NewSaleInvoiceReturnTransactionConsumer(ms, cfg, saleInvoiceReturnConsumerService, stockService, debtorService, transPaymentConsumeUsecase)
 
 	return &TransactionConsumer{
 		ms:                        ms,

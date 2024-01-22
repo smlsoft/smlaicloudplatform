@@ -1,6 +1,7 @@
 package saleinvoice
 
 import (
+	"encoding/json"
 	pkgConfig "smlcloudplatform/internal/config"
 	"smlcloudplatform/internal/logger"
 	"smlcloudplatform/internal/transaction/models"
@@ -11,17 +12,21 @@ import (
 	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
 	"smlcloudplatform/pkg/microservice"
 	"time"
+
+	trans_models "smlcloudplatform/internal/transaction/models"
+	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
 )
 
 type SaleInvoiceTransactionConsumer struct {
-	ms                    *microservice.Microservice
-	cfg                   pkgConfig.IConfig
-	svc                   ISaleInvoiceTransactionConsumerService
-	trxPhaser             usecases.ITransactionPhaser[models.SaleInvoiceTransactionPG]
-	stockPhaser           usecases.IStockTransactionPhaser[models.SaleInvoiceTransactionPG]
-	debtorPhaser          usecases.IDebtorTransactionPhaser[models.SaleInvoiceTransactionPG]
-	stockConsumerService  stocktransaction.IStockTransactionConsumerService
-	debtorConsumerService debtortransaction.IDebtorTransactionConsumerService
+	ms                         *microservice.Microservice
+	cfg                        pkgConfig.IConfig
+	svc                        ISaleInvoiceTransactionConsumerService
+	trxPhaser                  usecases.ITransactionPhaser[models.SaleInvoiceTransactionPG]
+	stockPhaser                usecases.IStockTransactionPhaser[models.SaleInvoiceTransactionPG]
+	debtorPhaser               usecases.IDebtorTransactionPhaser[models.SaleInvoiceTransactionPG]
+	stockConsumerService       stocktransaction.IStockTransactionConsumerService
+	debtorConsumerService      debtortransaction.IDebtorTransactionConsumerService
+	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase
 }
 
 func NewSaleInvoiceTransactionConsumer(
@@ -30,6 +35,7 @@ func NewSaleInvoiceTransactionConsumer(
 	svc ISaleInvoiceTransactionConsumerService,
 	stockConsumerService stocktransaction.IStockTransactionConsumerService,
 	debtorConsumerService debtortransaction.IDebtorTransactionConsumerService,
+	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase,
 ) services.ITransactionDocConsumer {
 
 	saleInvoiceTrxPhaser := SalesInvoiceTransactionPhaser{}
@@ -37,14 +43,15 @@ func NewSaleInvoiceTransactionConsumer(
 	saleInvoiceDebtorPhaser := SaleInvoiceDebtorTransactionPhaser{}
 
 	return &SaleInvoiceTransactionConsumer{
-		ms:                    ms,
-		cfg:                   cfg,
-		svc:                   svc,
-		trxPhaser:             saleInvoiceTrxPhaser,
-		stockPhaser:           saleInvoiceStockPhaser,
-		debtorPhaser:          saleInvoiceDebtorPhaser,
-		stockConsumerService:  stockConsumerService,
-		debtorConsumerService: debtorConsumerService,
+		ms:                         ms,
+		cfg:                        cfg,
+		svc:                        svc,
+		trxPhaser:                  saleInvoiceTrxPhaser,
+		stockPhaser:                saleInvoiceStockPhaser,
+		debtorPhaser:               saleInvoiceDebtorPhaser,
+		stockConsumerService:       stockConsumerService,
+		debtorConsumerService:      debtorConsumerService,
+		transPaymentConsumeUsecase: transPaymentConsumeUsecase,
 	}
 }
 
@@ -77,9 +84,10 @@ func InitSaleInvoiceTransactionConsumer(ms *microservice.Microservice, cfg pkgCo
 	stockService := stocktransaction.NewStockTransactionConsumerService(persister, producer)
 	debtorService := debtortransaction.NewDebtorTransactionService(persister, producer)
 
-	saleInvoiceConsumerService := NewSaleInvoiceTransactionConsumerService(NewSaleInvoiceTransactionPGRepository(persister))
+	transPaymentConsumeUsecase := transaction_payment_consume.InitPayment(persister)
 
-	consumer := NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService)
+	saleInvoiceConsumerService := NewSaleInvoiceTransactionConsumerService(NewSaleInvoiceTransactionPGRepository(persister))
+	consumer := NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService, transPaymentConsumeUsecase)
 
 	return consumer
 }
@@ -130,6 +138,21 @@ func (t *SaleInvoiceTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservic
 		}
 	}
 
+	// upsert transaction payment
+	transMQDoc := trans_models.TransactionMessageQueue{}
+
+	err = json.Unmarshal([]byte(msg), &transMQDoc)
+	if err != nil {
+		t.ms.Logger.Errorf("Cannot Unmarshal Transaction Message Queue : %v", err.Error())
+		return err
+	}
+
+	err = t.upsertPayment(transMQDoc)
+	if err != nil {
+		logger.GetLogger().Errorf("Cannot Upsert Payment : %v", err.Error())
+		return err
+	}
+
 	return nil
 }
 
@@ -159,6 +182,13 @@ func (t *SaleInvoiceTransactionConsumer) ConsumeOnDelete(ctx microservice.IConte
 	err = t.debtorConsumerService.Delete(trx.ShopID, trx.DocNo)
 	if err != nil {
 		t.ms.Logger.Errorf("Cannot Insert StockTransaction : %v", err.Error())
+		return err
+	}
+
+	// delete transaction payment
+	err = t.transPaymentConsumeUsecase.Delete(trx.ShopID, trx.DocNo)
+	if err != nil {
+		t.ms.Logger.Errorf("Cannot Delete Transaction Payment : %v", err.Error())
 		return err
 	}
 
@@ -208,6 +238,22 @@ func (t *SaleInvoiceTransactionConsumer) ConsumeOnBulkCreateOrUpdate(ctx microse
 		}
 	}
 
+	transMQDocs := []trans_models.TransactionMessageQueue{}
+	err = json.Unmarshal([]byte(msg), &transMQDocs)
+
+	if err != nil {
+		t.ms.Logger.Errorf("Cannot Unmarshal Transaction Message Queue : %v", err.Error())
+		return err
+	}
+
+	for _, transMQDoc := range transMQDocs {
+		err = t.upsertPayment(transMQDoc)
+		if err != nil {
+			logger.GetLogger().Errorf("Cannot Upsert Payment : %v", err.Error())
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -240,9 +286,34 @@ func (t *SaleInvoiceTransactionConsumer) ConsumeOnBulkDelete(ctx microservice.IC
 			t.ms.Logger.Errorf("Cannot Insert StockTransaction : %v", err.Error())
 			return err
 		}
+
+		// delete transaction payment
+		err = t.transPaymentConsumeUsecase.Delete(trx.ShopID, trx.DocNo)
+		if err != nil {
+			t.ms.Logger.Errorf("Cannot Delete Transaction Payment : %v", err.Error())
+			return err
+		}
 	}
 
 	return nil
+}
+
+func (t *SaleInvoiceTransactionConsumer) upsertPayment(transMQDoc trans_models.TransactionMessageQueue) error {
+	// transaction payment inquiryType = 1
+
+	if t.HasPaymentEffectDoc(transMQDoc) {
+		err := t.transPaymentConsumeUsecase.Upsert(transMQDoc)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (t *SaleInvoiceTransactionConsumer) HasPaymentEffectDoc(transDoc trans_models.TransactionMessageQueue) bool {
+	return transDoc.InquiryType == 1
 }
 
 func MigrationDatabase(ms *microservice.Microservice, cfg pkgConfig.IConfig) error {

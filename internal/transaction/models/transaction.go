@@ -91,6 +91,12 @@ type Transaction struct {
 	Details           *[]Detail `json:"details" bson:"details"`
 }
 
+type TransactionMessageQueue struct {
+	models.ShopIdentity `bson:"inline"`
+	models.DocIdentity  `bson:"inline"`
+	Transaction         `bson:"inline"`
+}
+
 type TransactionBranch struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`

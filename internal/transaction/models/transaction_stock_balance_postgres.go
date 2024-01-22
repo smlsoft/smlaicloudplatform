@@ -69,3 +69,12 @@ func (s *StockBalanceTransactionPG) CompareTo(other *StockBalanceTransactionPG) 
 
 	return false
 }
+
+func (s *StockBalanceTransactionDetailPG) CompareTo(other *StockBalanceTransactionDetailPG) bool {
+
+	diff := cmp.Diff(s, other,
+		cmpopts.IgnoreFields("ID"),
+	)
+
+	return diff == ""
+}
