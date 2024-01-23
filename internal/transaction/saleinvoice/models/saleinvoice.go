@@ -32,6 +32,9 @@ type SaleInvoice struct {
 	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`
 	SaleChannelGPType int8    `json:"salechannelgptype" bson:"salechannelgptype"`
 	TakeAway          int8    `json:"takeaway" bson:"takeaway"`
+
+	TotalAmountDetailVat       float64 `json:"totalamountdetailvat" bson:"totalamountdetailvat"`             // มูลค่าสินค้ามีภาษี
+	TotalAmountDetailExceptVat float64 `json:"totalamountdetailexceptvat" bson:"totalamountdetailexceptvat"` // มูลค่าสินค้ายกเว้นภาษี
 }
 
 type SaleInvoiceDetail struct {

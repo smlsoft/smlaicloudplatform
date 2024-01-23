@@ -39119,6 +39119,14 @@ const docTemplate = `{
                 "totalamountafterdiscount": {
                     "type": "number"
                 },
+                "totalamountdetailexceptvat": {
+                    "description": "มูลค่าสินค้ายกเว้นภาษี",
+                    "type": "number"
+                },
+                "totalamountdetailvat": {
+                    "description": "มูลค่าสินค้ามีภาษี",
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -39562,12 +39570,15 @@ const docTemplate = `{
                     }
                 },
                 "reftotalcorrect": {
+                    "description": "มูลค่าที่ถูกต้อง",
                     "type": "number"
                 },
                 "reftotaldiff": {
+                    "description": "ผลต่าง",
                     "type": "number"
                 },
                 "reftotaloriginal": {
+                    "description": "มูลค่าตามใบกำกับเดิม",
                     "type": "number"
                 },
                 "roundamount": {
@@ -39622,6 +39633,14 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalamountafterdiscount": {
+                    "type": "number"
+                },
+                "totalamountdetailexceptvat": {
+                    "description": "มูลค่าสินค้ายกเว้นภาษี",
+                    "type": "number"
+                },
+                "totalamountdetailvat": {
+                    "description": "มูลค่าสินค้ามีภาษี",
                     "type": "number"
                 },
                 "totalbeforevat": {
@@ -40409,6 +40428,14 @@ const docTemplate = `{
                 "totalamountafterdiscount": {
                     "type": "number"
                 },
+                "totalamountdetailexceptvat": {
+                    "description": "มูลค่าสินค้ายกเว้นภาษี",
+                    "type": "number"
+                },
+                "totalamountdetailvat": {
+                    "description": "มูลค่าสินค้ามีภาษี",
+                    "type": "number"
+                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -40795,12 +40822,15 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "reftotalcorrect": {
+                    "description": "มูลค่าที่ถูกต้อง",
                     "type": "number"
                 },
                 "reftotaldiff": {
+                    "description": "ผลต่าง",
                     "type": "number"
                 },
                 "reftotaloriginal": {
+                    "description": "มูลค่าตามใบกำกับเดิม",
                     "type": "number"
                 },
                 "roundamount": {
@@ -40864,6 +40894,14 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalamountafterdiscount": {
+                    "type": "number"
+                },
+                "totalamountdetailexceptvat": {
+                    "description": "มูลค่าสินค้ายกเว้นภาษี",
+                    "type": "number"
+                },
+                "totalamountdetailvat": {
+                    "description": "มูลค่าสินค้ามีภาษี",
                     "type": "number"
                 },
                 "totalbeforevat": {
