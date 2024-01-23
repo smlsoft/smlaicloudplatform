@@ -12,6 +12,10 @@ const purchasereturnCollectionName = "transactionPurchaseReturn"
 type PurchaseReturn struct {
 	models.PartitionIdentity `bson:"inline"`
 	transmodels.Transaction  `bson:"inline"`
+
+	RefTotalOriginal float64 `json:"reftotaloriginal" bson:"reftotaloriginal"`
+	RefTotalCorrect  float64 `json:"reftotalcorrect" bson:"reftotalcorrect"`
+	RefTotalDiff     float64 `json:"reftotaldiff" bson:"reftotaldiff"`
 }
 
 type PurchaseReturnInfo struct {

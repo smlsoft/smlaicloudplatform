@@ -39561,6 +39561,15 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "reftotalcorrect": {
+                    "type": "number"
+                },
+                "reftotaldiff": {
+                    "type": "number"
+                },
+                "reftotaloriginal": {
+                    "type": "number"
+                },
                 "roundamount": {
                     "type": "number"
                 },
@@ -40783,6 +40792,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "qrcodeamount": {
+                    "type": "number"
+                },
+                "reftotalcorrect": {
+                    "type": "number"
+                },
+                "reftotaldiff": {
+                    "type": "number"
+                },
+                "reftotaloriginal": {
                     "type": "number"
                 },
                 "roundamount": {

@@ -29,6 +29,10 @@ type SaleInvoiceReturn struct {
 	SaleChannelCode   string  `json:"salechannelcode" bson:"csalechannelode"`
 	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`
 	SaleChannelGPType int8    `json:"salechannelgptype" bson:"salechannelgptype"`
+
+	RefTotalOriginal float64 `json:"reftotaloriginal" bson:"reftotaloriginal"`
+	RefTotalCorrect  float64 `json:"reftotalcorrect" bson:"reftotalcorrect"`
+	RefTotalDiff     float64 `json:"reftotaldiff" bson:"reftotaldiff"`
 }
 
 type SaleInvoiceReturnInfo struct {

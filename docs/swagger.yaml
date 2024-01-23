@@ -3427,6 +3427,12 @@ definitions:
         items:
           type: string
         type: array
+      reftotalcorrect:
+        type: number
+      reftotaldiff:
+        type: number
+      reftotaloriginal:
+        type: number
       roundamount:
         type: number
       salecode:
@@ -4249,6 +4255,12 @@ definitions:
       qrcode:
         type: string
       qrcodeamount:
+        type: number
+      reftotalcorrect:
+        type: number
+      reftotaldiff:
+        type: number
+      reftotaloriginal:
         type: number
       roundamount:
         type: number
