@@ -7,7 +7,7 @@ import (
 )
 
 type IMicroserviceConsumer interface {
-	RegisterConsumer()
+	RegisterConsumer(*Microservice)
 }
 
 func (ms *Microservice) consumeSingle(servers string, topic string, groupID string, readTimeout time.Duration, h ServiceHandleFunc) {
@@ -98,5 +98,5 @@ func (ms *Microservice) ConsumeFromBegining(servers string, topic string, readTi
 }
 
 func (ms *Microservice) RegisterConsumer(consumer IMicroserviceConsumer) {
-	consumer.RegisterConsumer()
+	consumer.RegisterConsumer(ms)
 }

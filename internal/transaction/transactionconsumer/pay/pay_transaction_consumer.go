@@ -13,26 +13,26 @@ import (
 	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
 )
 
-type PaidTransactionConsumer struct {
+type PayTransactionConsumer struct {
 	ms                         *microservice.Microservice
 	cfg                        pkgConfig.IConfig
 	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase
 }
 
-func NewPaidTransactionConsumer(
+func NewPayTransactionConsumer(
 	ms *microservice.Microservice,
 	cfg pkgConfig.IConfig,
 	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase,
 ) services.ITransactionDocConsumer {
 
-	return &PaidTransactionConsumer{
+	return &PayTransactionConsumer{
 		ms:                         ms,
 		cfg:                        cfg,
 		transPaymentConsumeUsecase: transPaymentConsumeUsecase,
 	}
 }
 
-func InitPaidTransactionConsumer(
+func InitPayTransactionConsumer(
 	ms *microservice.Microservice,
 	cfg pkgConfig.IConfig,
 ) services.ITransactionDocConsumer {
@@ -41,12 +41,12 @@ func InitPaidTransactionConsumer(
 
 	transPaymentConsumeUsecase := transaction_payment_consume.InitPayment(persister)
 
-	consumer := NewPaidTransactionConsumer(ms, cfg, transPaymentConsumeUsecase)
+	consumer := NewPayTransactionConsumer(ms, cfg, transPaymentConsumeUsecase)
 
 	return consumer
 }
 
-func (t *PaidTransactionConsumer) RegisterConsumer(ms *microservice.Microservice) {
+func (t *PayTransactionConsumer) RegisterConsumer(ms *microservice.Microservice) {
 
 	trxConsumerGroup := pkgConfig.GetEnv("TRANSACTION_CONSUMER_GROUP", "transaction-consumer-group-06")
 	mq := microservice.NewMQ(t.cfg.MQConfig(), ms.Logger)
@@ -69,7 +69,7 @@ func (t *PaidTransactionConsumer) RegisterConsumer(ms *microservice.Microservice
 
 }
 
-func (t *PaidTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservice.IContext) error {
+func (t *PayTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 
 	transMQDoc := trans_models.TransactionMessageQueue{}
@@ -88,7 +88,7 @@ func (t *PaidTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservice.ICont
 	return nil
 }
 
-func (t *PaidTransactionConsumer) ConsumeOnDelete(ctx microservice.IContext) error {
+func (t *PayTransactionConsumer) ConsumeOnDelete(ctx microservice.IContext) error {
 
 	msg := ctx.ReadInput()
 
@@ -109,7 +109,7 @@ func (t *PaidTransactionConsumer) ConsumeOnDelete(ctx microservice.IContext) err
 	return nil
 }
 
-func (t *PaidTransactionConsumer) ConsumeOnBulkCreateOrUpdate(ctx microservice.IContext) error {
+func (t *PayTransactionConsumer) ConsumeOnBulkCreateOrUpdate(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 
 	transMQDoc := trans_models.TransactionMessageQueue{}
@@ -128,7 +128,7 @@ func (t *PaidTransactionConsumer) ConsumeOnBulkCreateOrUpdate(ctx microservice.I
 	return nil
 }
 
-func (t *PaidTransactionConsumer) ConsumeOnBulkDelete(ctx microservice.IContext) error {
+func (t *PayTransactionConsumer) ConsumeOnBulkDelete(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 
 	// transaction payment
@@ -152,7 +152,7 @@ func (t *PaidTransactionConsumer) ConsumeOnBulkDelete(ctx microservice.IContext)
 	return nil
 }
 
-func (t *PaidTransactionConsumer) upsertPayment(transMQDoc trans_models.TransactionMessageQueue) error {
+func (t *PayTransactionConsumer) upsertPayment(transMQDoc trans_models.TransactionMessageQueue) error {
 
 	err := t.transPaymentConsumeUsecase.Upsert(transMQDoc)
 
@@ -166,8 +166,8 @@ func (t *PaidTransactionConsumer) upsertPayment(transMQDoc trans_models.Transact
 func MigrationDatabase(ms *microservice.Microservice, cfg pkgConfig.IConfig) error {
 	pst := ms.Persister(cfg.PersisterConfig())
 	pst.AutoMigrate(
-		trans_models.PaidTransactionPG{},
-		trans_models.PaidTransactionDetailPG{},
+		trans_models.PayTransactionPG{},
+		trans_models.PayTransactionDetailPG{},
 	)
 	return nil
 }

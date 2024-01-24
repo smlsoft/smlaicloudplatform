@@ -63,10 +63,12 @@ import (
 	"smlcloudplatform/internal/slipimage"
 	"smlcloudplatform/internal/smsreceive/smstransaction"
 	"smlcloudplatform/internal/stockbalanceimport"
+	"smlcloudplatform/internal/stockprocess"
 	"smlcloudplatform/internal/task"
 	"smlcloudplatform/internal/transaction/documentformate"
 	"smlcloudplatform/internal/transaction/paid"
 	"smlcloudplatform/internal/transaction/pay"
+	"smlcloudplatform/internal/transaction/payment"
 	"smlcloudplatform/internal/transaction/purchase"
 	"smlcloudplatform/internal/transaction/purchaseorder"
 	"smlcloudplatform/internal/transaction/purchasereturn"
@@ -89,6 +91,27 @@ import (
 	"smlcloudplatform/internal/warehouse"
 	"smlcloudplatform/pkg/microservice"
 	"time"
+
+	"smlcloudplatform/internal/transaction/transactionconsumer"
+
+	paid_consumer "smlcloudplatform/internal/transaction/transactionconsumer/paid"
+	pay_consumer "smlcloudplatform/internal/transaction/transactionconsumer/pay"
+
+	purchase_consumer "smlcloudplatform/internal/transaction/transactionconsumer/purchase"
+	purchasereturn_consumer "smlcloudplatform/internal/transaction/transactionconsumer/purchasereturn"
+
+	saleinvoice_consumer "smlcloudplatform/internal/transaction/transactionconsumer/saleinvoice"
+	saleinvoicereutrn_consumer "smlcloudplatform/internal/transaction/transactionconsumer/saleinvoicereturn"
+
+	stockadjustment_consumer "smlcloudplatform/internal/transaction/transactionconsumer/stockadjustment"
+	stockpickupproduct_consumer "smlcloudplatform/internal/transaction/transactionconsumer/stockpickupproduct"
+	stockreceiveproduct_consumer "smlcloudplatform/internal/transaction/transactionconsumer/stockreceiveproduct"
+	stockreturnproduct_consumer "smlcloudplatform/internal/transaction/transactionconsumer/stockreturnproduct"
+
+	stocktranferproduct_consumer "smlcloudplatform/internal/transaction/transactionconsumer/stocktransfer"
+
+	creditorpayment_consumer "smlcloudplatform/internal/transaction/transactionconsumer/creditorpayment"
+	debtorpayment_consumer "smlcloudplatform/internal/transaction/transactionconsumer/debtorpayment"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -349,6 +372,50 @@ func main() {
 
 		// transactionconsumer.MigrationDatabase(ms, cfg)
 
+		payment.MigrationDatabase(ms, cfg)
+
+		pay_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(pay_consumer.InitPayTransactionConsumer(ms, cfg))
+
+		paid_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(paid_consumer.InitPaidTransactionConsumer(ms, cfg))
+
+		transactionconsumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(stockprocess.NewStockProcessConsumer(ms, cfg))
+
+		purchase_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
+
+		purchasereturn_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(purchasereturn_consumer.InitPurchaseReturnTransactionConsumer(ms, cfg))
+
+		saleinvoice_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))
+
+		saleinvoicereutrn_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(saleinvoicereutrn_consumer.InitSaleInvoiceReturnTransactionConsumer(ms, cfg))
+
+		stockreceiveproduct_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(stockreceiveproduct_consumer.InitStockReceiveTransactionConsumer(ms, cfg))
+
+		stockpickupproduct_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(stockpickupproduct_consumer.InitStockReceiveTransactionConsumer(ms, cfg))
+
+		stockreturnproduct_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(stockreturnproduct_consumer.InitStockReturnTransactionConsumer(ms, cfg))
+
+		stockadjustment_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(stockadjustment_consumer.InitStockAdjustmentTransactionConsumer(ms, cfg))
+
+		stocktranferproduct_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(stocktranferproduct_consumer.InitStockTransferTransactionConsumer(ms, cfg))
+
+		creditorpayment_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(creditorpayment_consumer.InitCreditorPaymentTransactionConsumer(ms, cfg))
+
+		debtorpayment_consumer.MigrationDatabase(ms, cfg)
+		ms.RegisterConsumer(debtorpayment_consumer.InitDebtorPaymentTransactionConsumer(ms, cfg))
+
 		consumerServices := []ConsumerRegister{
 			task.NewTaskConsumer(ms, cfg),
 			productbarcode.NewProductBarcodeConsumer(ms, cfg),
@@ -377,6 +444,6 @@ type ConsumerRegister interface {
 
 func serviceStartConsumer(ms *microservice.Microservice, services ...ConsumerRegister) {
 	for _, service := range services {
-		ms.RegisterConsumer(service)
+		service.RegisterConsumer()
 	}
 }
