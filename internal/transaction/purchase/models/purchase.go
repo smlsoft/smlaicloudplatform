@@ -12,9 +12,6 @@ const purchaseCollectionName = "transactionPurchase"
 type Purchase struct {
 	models.PartitionIdentity `bson:"inline"`
 	transmodels.Transaction  `bson:"inline"`
-
-	TotalAmountDetailVat       float64 `json:"totalamountdetailvat" bson:"totalamountdetailvat"`             // มูลค่าสินค้ามีภาษี
-	TotalAmountDetailExceptVat float64 `json:"totalamountdetailexceptvat" bson:"totalamountdetailexceptvat"` // มูลค่าสินค้ายกเว้นภาษี
 }
 
 type PurchaseInfo struct {

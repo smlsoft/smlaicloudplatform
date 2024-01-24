@@ -16,9 +16,6 @@ type PurchaseReturn struct {
 	RefTotalOriginal float64 `json:"reftotaloriginal" bson:"reftotaloriginal"` // มูลค่าตามใบกำกับเดิม
 	RefTotalCorrect  float64 `json:"reftotalcorrect" bson:"reftotalcorrect"`   // มูลค่าที่ถูกต้อง
 	RefTotalDiff     float64 `json:"reftotaldiff" bson:"reftotaldiff"`         // ผลต่าง
-
-	TotalAmountDetailVat       float64 `json:"totalamountdetailvat" bson:"totalamountdetailvat"`             // มูลค่าสินค้ามีภาษี
-	TotalAmountDetailExceptVat float64 `json:"totalamountdetailexceptvat" bson:"totalamountdetailexceptvat"` // มูลค่าสินค้ายกเว้นภาษี
 }
 
 type PurchaseReturnInfo struct {

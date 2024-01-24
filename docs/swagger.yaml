@@ -3133,12 +3133,6 @@ definitions:
         type: number
       totalamountafterdiscount:
         type: number
-      totalamountdetailexceptvat:
-        description: มูลค่าสินค้ายกเว้นภาษี
-        type: number
-      totalamountdetailvat:
-        description: มูลค่าสินค้ามีภาษี
-        type: number
       totalbeforevat:
         type: number
       totalcost:
@@ -3477,12 +3471,6 @@ definitions:
       totalamount:
         type: number
       totalamountafterdiscount:
-        type: number
-      totalamountdetailexceptvat:
-        description: มูลค่าสินค้ายกเว้นภาษี
-        type: number
-      totalamountdetailvat:
-        description: มูลค่าสินค้ามีภาษี
         type: number
       totalbeforevat:
         type: number
@@ -4015,12 +4003,6 @@ definitions:
         type: number
       totalamountafterdiscount:
         type: number
-      totalamountdetailexceptvat:
-        description: มูลค่าสินค้ายกเว้นภาษี
-        type: number
-      totalamountdetailvat:
-        description: มูลค่าสินค้ามีภาษี
-        type: number
       totalbeforevat:
         type: number
       totalcost:
@@ -4327,12 +4309,6 @@ definitions:
       totalamount:
         type: number
       totalamountafterdiscount:
-        type: number
-      totalamountdetailexceptvat:
-        description: มูลค่าสินค้ายกเว้นภาษี
-        type: number
-      totalamountdetailvat:
-        description: มูลค่าสินค้ามีภาษี
         type: number
       totalbeforevat:
         type: number

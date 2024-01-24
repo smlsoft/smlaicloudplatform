@@ -39114,14 +39114,6 @@
                 "totalamountafterdiscount": {
                     "type": "number"
                 },
-                "totalamountdetailexceptvat": {
-                    "description": "มูลค่าสินค้ายกเว้นภาษี",
-                    "type": "number"
-                },
-                "totalamountdetailvat": {
-                    "description": "มูลค่าสินค้ามีภาษี",
-                    "type": "number"
-                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -39628,14 +39620,6 @@
                     "type": "number"
                 },
                 "totalamountafterdiscount": {
-                    "type": "number"
-                },
-                "totalamountdetailexceptvat": {
-                    "description": "มูลค่าสินค้ายกเว้นภาษี",
-                    "type": "number"
-                },
-                "totalamountdetailvat": {
-                    "description": "มูลค่าสินค้ามีภาษี",
                     "type": "number"
                 },
                 "totalbeforevat": {
@@ -40423,14 +40407,6 @@
                 "totalamountafterdiscount": {
                     "type": "number"
                 },
-                "totalamountdetailexceptvat": {
-                    "description": "มูลค่าสินค้ายกเว้นภาษี",
-                    "type": "number"
-                },
-                "totalamountdetailvat": {
-                    "description": "มูลค่าสินค้ามีภาษี",
-                    "type": "number"
-                },
                 "totalbeforevat": {
                     "type": "number"
                 },
@@ -40889,14 +40865,6 @@
                     "type": "number"
                 },
                 "totalamountafterdiscount": {
-                    "type": "number"
-                },
-                "totalamountdetailexceptvat": {
-                    "description": "มูลค่าสินค้ายกเว้นภาษี",
-                    "type": "number"
-                },
-                "totalamountdetailvat": {
-                    "description": "มูลค่าสินค้ามีภาษี",
                     "type": "number"
                 },
                 "totalbeforevat": {
