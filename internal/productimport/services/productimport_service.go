@@ -32,35 +32,35 @@ type IProductImportService interface {
 }
 
 type ProductImportService struct {
-	deafultPartSize     int
-	sizeID              int
-	cacheExpire         time.Duration
-	chRepo              repositories.IProductImportClickHouseRepository
-	productBarcodeRepo  productbarcode_repo.IProductBarcodeRepository
-	stockBalanceService product_services.IProductBarcodeHttpService
-	generateID          func(int) string
-	generateGUID        func() string
-	timeNow             func() time.Time
+	deafultPartSize       int
+	sizeID                int
+	cacheExpire           time.Duration
+	chRepo                repositories.IProductImportClickHouseRepository
+	productBarcodeRepo    productbarcode_repo.IProductBarcodeRepository
+	productBarcodeService product_services.IProductBarcodeHttpService
+	generateID            func(int) string
+	generateGUID          func() string
+	timeNow               func() time.Time
 }
 
 func NewProductImportService(
 	chRepo repositories.IProductImportClickHouseRepository,
 	productBarcodeRepo productbarcode_repo.IProductBarcodeRepository,
-	stockBalanceService product_services.IProductBarcodeHttpService,
+	productBarcodeService product_services.IProductBarcodeHttpService,
 	generateID func(int) string,
 	generateGUID func() string,
 	timeNow func() time.Time,
 ) *ProductImportService {
 	return &ProductImportService{
-		deafultPartSize:     100,
-		sizeID:              12,
-		cacheExpire:         time.Minute * 60,
-		chRepo:              chRepo,
-		productBarcodeRepo:  productBarcodeRepo,
-		stockBalanceService: stockBalanceService,
-		generateID:          generateID,
-		generateGUID:        generateGUID,
-		timeNow:             timeNow,
+		deafultPartSize:       100,
+		sizeID:                12,
+		cacheExpire:           time.Minute * 60,
+		chRepo:                chRepo,
+		productBarcodeRepo:    productBarcodeRepo,
+		productBarcodeService: productBarcodeService,
+		generateID:            generateID,
+		generateGUID:          generateGUID,
+		timeNow:               timeNow,
 	}
 }
 
@@ -381,16 +381,12 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 		return err
 	}
 
-	dataDocs := []product_models.ProductBarcodeDoc{}
+	dataDocs := []product_models.ProductBarcode{}
 
-	createdAt := svc.timeNow()
-	createdBy := authUsername
 	for _, doc := range docs {
 
-		temp := product_models.ProductBarcodeDoc{}
+		temp := product_models.ProductBarcode{}
 
-		temp.GuidFixed = svc.generateGUID()
-		temp.ShopID = shopID
 		temp.Barcode = doc.Barcode
 		temp.ItemUnitCode = doc.UnitCode
 
@@ -415,13 +411,11 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 		})
 
 		temp.Names = &productNames
-		temp.CreatedAt = createdAt
-		temp.CreatedBy = createdBy
 
 		dataDocs = append(dataDocs, temp)
 	}
 
-	err = svc.productBarcodeRepo.CreateInBatch(context.Background(), dataDocs)
+	_, err = svc.productBarcodeService.SaveInBatch(shopID, authUsername, dataDocs)
 
 	if err != nil {
 		return err
