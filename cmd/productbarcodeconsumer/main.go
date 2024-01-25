@@ -17,8 +17,7 @@ func main() {
 
 	productbarcode.MigrationProductBarcodeTable(ms, cfg)
 	productBarcodeConsumer := productbarcode.NewProductBarcodeConsumer(ms, cfg)
-
-	ms.RegisterConsumer(productBarcodeConsumer)
+	productBarcodeConsumer.RegisterConsumer()
 
 	ms.Start()
 }

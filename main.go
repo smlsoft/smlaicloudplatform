@@ -19,6 +19,8 @@ import (
 	"smlcloudplatform/internal/dimension"
 	"smlcloudplatform/internal/documentwarehouse/documentimage"
 	"smlcloudplatform/internal/images"
+	"smlcloudplatform/internal/masterexpense"
+	"smlcloudplatform/internal/masterincome"
 	"smlcloudplatform/internal/mastersync"
 	"smlcloudplatform/internal/member"
 	"smlcloudplatform/internal/notify"
@@ -343,6 +345,10 @@ func main() {
 			productimport.NewProductImportHttp(ms, cfg),
 
 			dimension.NewDimensionHttp(ms, cfg),
+
+			// master
+			masterexpense.NewMasterExpenseHttp(ms, cfg),
+			masterincome.NewMasterIncomeHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)

@@ -20,6 +20,8 @@ import (
 	"smlcloudplatform/internal/dimension"
 	"smlcloudplatform/internal/documentwarehouse/documentimage"
 	"smlcloudplatform/internal/images"
+	"smlcloudplatform/internal/masterexpense"
+	"smlcloudplatform/internal/masterincome"
 	"smlcloudplatform/internal/mastersync"
 	"smlcloudplatform/internal/member"
 	"smlcloudplatform/internal/notify"
@@ -300,6 +302,10 @@ func main() {
 		productimport.NewProductImportHttp(ms, cfg),
 
 		dimension.NewDimensionHttp(ms, cfg),
+
+		// master
+		masterexpense.NewMasterExpenseHttp(ms, cfg),
+		masterincome.NewMasterIncomeHttp(ms, cfg),
 	}
 
 	azureFileBlob := microservice.NewPersisterAzureBlob()
@@ -312,10 +318,10 @@ func main() {
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)
 
-	consumeServices := []ConsumerRegister{
-		task.NewTaskConsumer(ms, cfg),
-		productbarcode.NewProductBarcodeConsumer(ms, cfg),
-	}
+	consumeServices := []ConsumerRegister{}
+
+	task.NewTaskConsumer(ms, cfg).RegisterConsumer()
+	productbarcode.NewProductBarcodeConsumer(ms, cfg).RegisterConsumer()
 
 	serviceStartConsumer(ms, consumeServices...)
 
@@ -355,7 +361,7 @@ func serviceStartHttp(ms *microservice.Microservice, services ...HttpRegister) {
 }
 
 type ConsumerRegister interface {
-	RegisterConsumer()
+	RegisterConsumer(*microservice.Microservice)
 }
 
 func serviceStartConsumer(ms *microservice.Microservice, services ...ConsumerRegister) {
