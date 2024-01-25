@@ -381,6 +381,25 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 		return err
 	}
 
+	dataDocs := svc.PrepareProductBarcodes(docHeader.LanguangeCode, docs)
+
+	_, err = svc.productBarcodeService.SaveInBatch(shopID, authUsername, dataDocs)
+
+	if err != nil {
+		return err
+	}
+
+	err = svc.DeleteTask(shopID, taskID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ProductImportService) PrepareProductBarcodes(langCode string, docs []models.ProductImportDoc) []product_models.ProductBarcode {
+
 	dataDocs := []product_models.ProductBarcode{}
 
 	for i := range docs {
@@ -406,7 +425,7 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 		productNames := []common.NameX{}
 
 		productNames = append(productNames, common.NameX{
-			Code: &docHeader.LanguangeCode,
+			Code: &langCode,
 			Name: &docs[i].Name,
 		})
 
@@ -415,17 +434,5 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 		dataDocs = append(dataDocs, temp)
 	}
 
-	_, err = svc.productBarcodeService.SaveInBatch(shopID, authUsername, dataDocs)
-
-	if err != nil {
-		return err
-	}
-
-	err = svc.DeleteTask(shopID, taskID)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return dataDocs
 }

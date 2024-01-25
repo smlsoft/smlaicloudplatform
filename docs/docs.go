@@ -38432,6 +38432,9 @@ const docTemplate = `{
         "models.Paid": {
             "type": "object",
             "properties": {
+                "branch": {
+                    "$ref": "#/definitions/models.PaidBranch"
+                },
                 "custcode": {
                     "type": "string"
                 },
@@ -38520,6 +38523,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.PaidBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.PaidDetail": {
             "type": "object",
             "properties": {
@@ -38549,6 +38569,9 @@ const docTemplate = `{
         "models.Pay": {
             "type": "object",
             "properties": {
+                "branch": {
+                    "$ref": "#/definitions/models.PayBranch"
+                },
                 "custcode": {
                     "type": "string"
                 },
@@ -38634,6 +38657,23 @@ const docTemplate = `{
                 },
                 "transflag": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.PayBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },

@@ -38,6 +38,14 @@ type Paid struct {
 	SumCredit        float64 `json:"sumcredit" bson:"sumcredit"`
 	RoundAmount      float64 `json:"roundamount" bson:"roundamount"`
 	IsCancel         bool    `json:"iscancel" bson:"iscancel"`
+
+	Branch PaidBranch `json:"branch" bson:"branch"`
+}
+
+type PaidBranch struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
 type PaidDetail struct {

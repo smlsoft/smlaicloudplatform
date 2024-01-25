@@ -38427,6 +38427,9 @@
         "models.Paid": {
             "type": "object",
             "properties": {
+                "branch": {
+                    "$ref": "#/definitions/models.PaidBranch"
+                },
                 "custcode": {
                     "type": "string"
                 },
@@ -38515,6 +38518,23 @@
                 }
             }
         },
+        "models.PaidBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.PaidDetail": {
             "type": "object",
             "properties": {
@@ -38544,6 +38564,9 @@
         "models.Pay": {
             "type": "object",
             "properties": {
+                "branch": {
+                    "$ref": "#/definitions/models.PayBranch"
+                },
                 "custcode": {
                     "type": "string"
                 },
@@ -38629,6 +38652,23 @@
                 },
                 "transflag": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.PayBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },

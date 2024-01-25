@@ -2136,6 +2136,8 @@ definitions:
     type: object
   models.Paid:
     properties:
+      branch:
+        $ref: '#/definitions/models.PaidBranch'
       custcode:
         type: string
       custnames:
@@ -2196,6 +2198,17 @@ definitions:
       transflag:
         type: integer
     type: object
+  models.PaidBranch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   models.PaidDetail:
     properties:
       balance:
@@ -2215,6 +2228,8 @@ definitions:
     type: object
   models.Pay:
     properties:
+      branch:
+        $ref: '#/definitions/models.PayBranch'
       custcode:
         type: string
       custnames:
@@ -2274,6 +2289,17 @@ definitions:
         type: number
       transflag:
         type: integer
+    type: object
+  models.PayBranch:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.PayDetail:
     properties:
