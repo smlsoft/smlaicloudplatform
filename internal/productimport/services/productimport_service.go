@@ -383,23 +383,23 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 
 	dataDocs := []product_models.ProductBarcode{}
 
-	for _, doc := range docs {
+	for i := range docs {
 
 		temp := product_models.ProductBarcode{}
 
-		temp.Barcode = doc.Barcode
-		temp.ItemUnitCode = doc.UnitCode
+		temp.Barcode = docs[i].Barcode
+		temp.ItemUnitCode = docs[i].UnitCode
 
 		productPrices := []product_models.ProductPrice{}
 
 		productPrices = append(productPrices, product_models.ProductPrice{
 			KeyNumber: 0,
-			Price:     doc.Price,
+			Price:     docs[i].Price,
 		})
 
 		productPrices = append(productPrices, product_models.ProductPrice{
 			KeyNumber: 1,
-			Price:     doc.PriceMember,
+			Price:     docs[i].PriceMember,
 		})
 		temp.Prices = &productPrices
 
@@ -407,7 +407,7 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 
 		productNames = append(productNames, common.NameX{
 			Code: &docHeader.LanguangeCode,
-			Name: &doc.Name,
+			Name: &docs[i].Name,
 		})
 
 		temp.Names = &productNames
