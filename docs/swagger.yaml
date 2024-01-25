@@ -1605,6 +1605,40 @@ definitions:
       success:
         type: boolean
     type: object
+  models.MasterExpense:
+    properties:
+      accountcode:
+        type: string
+      accountname:
+        type: string
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
+  models.MasterIncome:
+    properties:
+      accountcode:
+        type: string
+      accountname:
+        type: string
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.Media:
     properties:
       code:
@@ -11802,6 +11836,500 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+  /master-expense:
+    delete:
+      consumes:
+      - application/json
+      description: Delete MasterExpense
+      parameters:
+      - description: MasterExpense GUIDs
+        in: body
+        name: MasterExpense
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+    post:
+      consumes:
+      - application/json
+      description: Create MasterExpense
+      parameters:
+      - description: MasterExpense
+        in: body
+        name: MasterExpense
+        required: true
+        schema:
+          $ref: '#/definitions/models.MasterExpense'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+  /master-expense/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete MasterExpense
+      parameters:
+      - description: MasterExpense ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+    get:
+      consumes:
+      - application/json
+      description: get MasterExpense info by guidfixed
+      parameters:
+      - description: MasterExpense guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+    put:
+      consumes:
+      - application/json
+      description: Update MasterExpense
+      parameters:
+      - description: MasterExpense ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: MasterExpense
+        in: body
+        name: MasterExpense
+        required: true
+        schema:
+          $ref: '#/definitions/models.MasterExpense'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+  /master-expense/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create MasterExpense
+      parameters:
+      - description: MasterExpense
+        in: body
+        name: MasterExpense
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.MasterExpense'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+  /master-expense/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get MasterExpense info by Code
+      parameters:
+      - description: MasterExpense Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+  /master-expense/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterExpense
+  /master-income:
+    delete:
+      consumes:
+      - application/json
+      description: Delete MasterIncome
+      parameters:
+      - description: MasterIncome GUIDs
+        in: body
+        name: MasterIncome
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+    post:
+      consumes:
+      - application/json
+      description: Create MasterIncome
+      parameters:
+      - description: MasterIncome
+        in: body
+        name: MasterIncome
+        required: true
+        schema:
+          $ref: '#/definitions/models.MasterIncome'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+  /master-income/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete MasterIncome
+      parameters:
+      - description: MasterIncome ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+    get:
+      consumes:
+      - application/json
+      description: get MasterIncome info by guidfixed
+      parameters:
+      - description: MasterIncome guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+    put:
+      consumes:
+      - application/json
+      description: Update MasterIncome
+      parameters:
+      - description: MasterIncome ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: MasterIncome
+        in: body
+        name: MasterIncome
+        required: true
+        schema:
+          $ref: '#/definitions/models.MasterIncome'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+  /master-income/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create MasterIncome
+      parameters:
+      - description: MasterIncome
+        in: body
+        name: MasterIncome
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.MasterIncome'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+  /master-income/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get MasterIncome info by Code
+      parameters:
+      - description: MasterIncome Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
+  /master-income/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MasterIncome
   /master-sync:
     get:
       description: Master Sync

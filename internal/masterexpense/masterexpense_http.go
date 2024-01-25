@@ -345,7 +345,7 @@ func (h MasterExpenseHttp) SearchMasterExpenseStep(ctx microservice.IContext) er
 // @Tags		MasterExpense
 // @Param		MasterExpense  body      []models.MasterExpense  true  "MasterExpense"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /master-expense/bulk [post]

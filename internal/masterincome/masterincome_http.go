@@ -345,7 +345,7 @@ func (h MasterIncomeHttp) SearchMasterIncomeStep(ctx microservice.IContext) erro
 // @Tags		MasterIncome
 // @Param		MasterIncome  body      []models.MasterIncome  true  "MasterIncome"
 // @Accept 		json
-// @Success		201	{object}	common.BulkReponse
+// @Success		201	{object}	common.BulkResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /master-income/bulk [post]
