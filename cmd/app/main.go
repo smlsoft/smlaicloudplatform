@@ -88,7 +88,7 @@ import (
 	"smlcloudplatform/internal/transaction/smltransaction"
 	"smlcloudplatform/internal/transaction/stockadjustment"
 	"smlcloudplatform/internal/transaction/stockbalance"
-	stockbalancedetaildetail "smlcloudplatform/internal/transaction/stockbalancedetail"
+	"smlcloudplatform/internal/transaction/stockbalancedetail"
 	"smlcloudplatform/internal/transaction/stockpickupproduct"
 	"smlcloudplatform/internal/transaction/stockreceiveproduct"
 	"smlcloudplatform/internal/transaction/stockreturnproduct"
@@ -257,7 +257,7 @@ func main() {
 		stockadjustment.NewStockAdjustmentHttp(ms, cfg),
 		stocktransfer.NewStockTransferHttp(ms, cfg),
 		stockbalance.NewStockBalanceHttp(ms, cfg),
-		stockbalancedetaildetail.NewStockBalanceDetailHttp(ms, cfg),
+		stockbalancedetail.NewStockBalanceDetailHttp(ms, cfg),
 		purchaseorder.NewPurchaseOrderHttp(ms, cfg),
 
 		//product section

@@ -1,4 +1,4 @@
-package stockbalancedetaildetail
+package stockbalancedetail
 
 import (
 	"encoding/json"

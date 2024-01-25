@@ -326,7 +326,7 @@ func (svc StockBalanceImportService) SaveTask(shopID string, authUsername string
 
 	tempTransaction.StockBalanceHeader = headerDoc
 
-	_, docNo, err := svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
+	docGUIDFixed, docNo, err := svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
 	if err != nil {
 		return "", err
 	}
@@ -337,6 +337,12 @@ func (svc StockBalanceImportService) SaveTask(shopID string, authUsername string
 
 	err = svc.stockBalanceDetailService.CreateStockBalanceDetail(shopID, authUsername, tempDetails)
 	if err != nil {
+		err = svc.stockBalanceService.DeleteStockBalance(shopID, docGUIDFixed, authUsername)
+
+		if err != nil {
+			return "", err
+		}
+
 		return "", err
 	}
 
