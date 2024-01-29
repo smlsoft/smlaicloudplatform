@@ -38273,6 +38273,10 @@
                     "description": "ใช้งาน POS",
                     "type": "boolean"
                 },
+                "isvatregister": {
+                    "description": "ภาษี",
+                    "type": "boolean"
+                },
                 "kitchengroupnumber": {
                     "type": "integer"
                 },
@@ -38313,6 +38317,14 @@
                     "items": {
                         "$ref": "#/definitions/models.OrderSettingTimeForSale"
                     }
+                },
+                "vatrate": {
+                    "description": "อัตราภาษี",
+                    "type": "number"
+                },
+                "vattype": {
+                    "description": "ราคารวมภาษี หรือ ราคาไม่รวมภาษี",
+                    "type": "integer"
                 },
                 "zonegroupnumber": {
                     "type": "integer"
@@ -41910,6 +41922,7 @@
                     "type": "boolean"
                 },
                 "isvatregister": {
+                    "description": "ภาษี",
                     "type": "boolean"
                 },
                 "location": {
@@ -41968,9 +41981,11 @@
                     }
                 },
                 "vatrate": {
+                    "description": "อัตราภาษี",
                     "type": "number"
                 },
                 "vattype": {
+                    "description": "ราคารวมภาษี หรือ ราคาไม่รวมภาษี",
                     "type": "integer"
                 },
                 "wallet": {

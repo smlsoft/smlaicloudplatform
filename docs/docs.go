@@ -38278,6 +38278,10 @@ const docTemplate = `{
                     "description": "ใช้งาน POS",
                     "type": "boolean"
                 },
+                "isvatregister": {
+                    "description": "ภาษี",
+                    "type": "boolean"
+                },
                 "kitchengroupnumber": {
                     "type": "integer"
                 },
@@ -38318,6 +38322,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.OrderSettingTimeForSale"
                     }
+                },
+                "vatrate": {
+                    "description": "อัตราภาษี",
+                    "type": "number"
+                },
+                "vattype": {
+                    "description": "ราคารวมภาษี หรือ ราคาไม่รวมภาษี",
+                    "type": "integer"
                 },
                 "zonegroupnumber": {
                     "type": "integer"
@@ -41915,6 +41927,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "isvatregister": {
+                    "description": "ภาษี",
                     "type": "boolean"
                 },
                 "location": {
@@ -41973,9 +41986,11 @@ const docTemplate = `{
                     }
                 },
                 "vatrate": {
+                    "description": "อัตราภาษี",
                     "type": "number"
                 },
                 "vattype": {
+                    "description": "ราคารวมภาษี หรือ ราคาไม่รวมภาษี",
                     "type": "integer"
                 },
                 "wallet": {

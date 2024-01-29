@@ -2028,6 +2028,9 @@ definitions:
       isposactive:
         description: ใช้งาน POS
         type: boolean
+      isvatregister:
+        description: ภาษี
+        type: boolean
       kitchengroupnumber:
         type: integer
       label:
@@ -2059,6 +2062,12 @@ definitions:
         items:
           $ref: '#/definitions/models.OrderSettingTimeForSale'
         type: array
+      vatrate:
+        description: อัตราภาษี
+        type: number
+      vattype:
+        description: ราคารวมภาษี หรือ ราคาไม่รวมภาษี
+        type: integer
       zonegroupnumber:
         type: integer
     required:
@@ -4473,6 +4482,7 @@ definitions:
         description: ขายเชื่อได้
         type: boolean
       isvatregister:
+        description: ภาษี
         type: boolean
       location:
         $ref: '#/definitions/models.PosSettingLocation'
@@ -4513,8 +4523,10 @@ definitions:
           type: object
         type: array
       vatrate:
+        description: อัตราภาษี
         type: number
       vattype:
+        description: ราคารวมภาษี หรือ ราคาไม่รวมภาษี
         type: integer
       wallet:
         type: string

@@ -24,8 +24,6 @@ type Setting struct {
 	ActivePin                string                    `json:"activepin" bson:"activepin"`
 	Employees                []POSEmployee             `json:"employees" bson:"employees"`
 	DocFormateSaleReturn     string                    `json:"docformatesalereturn" bson:"docformatesalereturn"`
-	VatType                  int8                      `json:"vattype" bson:"vattype"`
-	VatRate                  float64                   `json:"vatrate" bson:"vatrate"`
 	Slips                    *[]PosSettingSlip         `json:"slips" bson:"slips"`
 	IsEJournal               bool                      `json:"isejournal" bson:"isejournal"`
 	Wallet                   string                    `json:"wallet" bson:"wallet"`
@@ -34,7 +32,6 @@ type Setting struct {
 	Transfers                *[]map[string]interface{} `json:"transfers" bson:"transfers"` // Book Bank Transfer เงินโอน
 	BillHeader               *[]models.NameX           `json:"billheader" bson:"billheader"`
 	BillFooter               *[]models.NameX           `json:"billfooter" bson:"billfooter"`
-	IsVatRegister            bool                      `json:"isvatregister" bson:"isvatregister"`
 	MediaGUID                string                    `json:"mediaguid" bson:"mediaguid"`
 	timezone.Timezone        `bson:"inline"`
 	TimeForSales             *[]PosSettingTimeForSale          `json:"timeforsales" bson:"timeforsales"`
@@ -44,6 +41,11 @@ type Setting struct {
 	PaymentType              int8                              `json:"paymenttype" bson:"paymenttype"`   // ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
 	IsPOSActive              bool                              `json:"isposactive" bson:"isposactive"`   // ใช้งาน POS
 	SaleChanels              *[]salechannel_models.SaleChannel `json:"salechanels" bson:"salechanels"`
+
+	// ภาษี
+	IsVatRegister bool    `json:"isvatregister" bson:"isvatregister"` // จดทะเบียนภาษี
+	VatType       int8    `json:"vattype" bson:"vattype"`             // ราคารวมภาษี หรือ ราคาไม่รวมภาษี
+	VatRate       float64 `json:"vatrate" bson:"vatrate"`             // อัตราภาษี
 }
 
 type PosSettingTimeForSale struct {

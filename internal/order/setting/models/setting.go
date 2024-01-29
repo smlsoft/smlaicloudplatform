@@ -32,6 +32,11 @@ type OrderSetting struct {
 	KitchenGroupNumber  int                        `json:"kitchengroupnumber" bson:"kitchengroupnumber"`
 	TableGroupNumber    int                        `json:"tablegroupnumber" bson:"tablegroupnumber"`
 	ZoneGroupNumber     int                        `json:"zonegroupnumber" bson:"zonegroupnumber"`
+
+	// ภาษี
+	IsVatRegister bool    `json:"isvatregister" bson:"isvatregister"` // จดทะเบียนภาษี
+	VatType       int8    `json:"vattype" bson:"vattype"`             // ราคารวมภาษี หรือ ราคาไม่รวมภาษี
+	VatRate       float64 `json:"vatrate" bson:"vatrate"`             // อัตราภาษี
 }
 
 type OrderSettingTimeForSale struct {
