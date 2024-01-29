@@ -91,7 +91,7 @@ func (h StockBalanceHttp) CreateStockBalance(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, docNo, err := h.svc.CreateStockBalance(shopID, authUsername, *docReq)
+	_, idx, docNo, err := h.svc.CreateStockBalance(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

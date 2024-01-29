@@ -6,14 +6,13 @@ import (
 	pkgModels "smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/transaction/models"
 	stockBalanceModels "smlcloudplatform/internal/transaction/stockbalance/models"
-	stockBalanceDetailModels "smlcloudplatform/internal/transaction/stockbalancedetail/models"
 )
 
 type StockBalanceTransactionPhaser struct{}
 
 func (p StockBalanceTransactionPhaser) PhaseSingleDoc(input string) (*models.StockBalanceTransactionPG, error) {
 
-	doc := stockBalanceModels.StockBalanceDoc{}
+	doc := stockBalanceModels.StockBalanceMessage{}
 	err := json.Unmarshal([]byte(input), &doc)
 	if err != nil {
 		return nil, errors.New("Cannot Unmarshal StockBalance Doc Error: " + err.Error())
@@ -28,7 +27,7 @@ func (p StockBalanceTransactionPhaser) PhaseSingleDoc(input string) (*models.Sto
 }
 
 func (p StockBalanceTransactionPhaser) PhaseMultipleDoc(input string) (*[]models.StockBalanceTransactionPG, error) {
-	docs := []stockBalanceModels.StockBalanceDoc{}
+	docs := []stockBalanceModels.StockBalanceMessage{}
 	err := json.Unmarshal([]byte(input), &docs)
 	if err != nil {
 		return nil, errors.New("Cannot Unmarshal StockBalance Doc Error: " + err.Error())
@@ -45,41 +44,61 @@ func (p StockBalanceTransactionPhaser) PhaseMultipleDoc(input string) (*[]models
 	return &transactions, nil
 }
 
-func (p StockBalanceTransactionPhaser) PhaseSingleDetailDoc(input string) (*models.StockBalanceTransactionDetailPG, error) {
+func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBalanceModels.StockBalanceMessage) (*models.StockBalanceTransactionPG, error) {
 
-	doc := stockBalanceDetailModels.StockBalanceDetailDoc{}
-	err := json.Unmarshal([]byte(input), &doc)
-	if err != nil {
-		return nil, errors.New("Cannot Unmarshal StockBalance Doc Error: " + err.Error())
-	}
+	// return nil, errors.New("Not Implement Yet")
+	details := make([]models.StockBalanceTransactionDetailPG, len(*doc.Details))
 
-	transaction, err := p.PhaseStockBalanceDetailTransaction(doc)
-	if err != nil {
-		return nil, errors.New("Cannot Phase StockBalance Doc Error: " + err.Error())
-	}
-	return transaction, nil
+	for i, detail := range *doc.Details {
 
-}
-
-func (p StockBalanceTransactionPhaser) PhaseMultiplDetaileDoc(input string) (*[]models.StockBalanceTransactionDetailPG, error) {
-	docs := []stockBalanceDetailModels.StockBalanceDetailDoc{}
-	err := json.Unmarshal([]byte(input), &docs)
-	if err != nil {
-		return nil, errors.New("Cannot Unmarshal StockBalance Doc Error: " + err.Error())
-	}
-
-	transactions := make([]models.StockBalanceTransactionDetailPG, len(docs))
-	for i, doc := range docs {
-		transaction, err := p.PhaseStockBalanceDetailTransaction(doc)
-		if err != nil {
-			return nil, errors.New("Cannot Phase StockBalance Doc Error: " + err.Error())
+		stockDetail := models.StockBalanceTransactionDetailPG{
+			TransactionDetailPG: models.TransactionDetailPG{
+				DocNo:               doc.DocNo,
+				ShopID:              doc.ShopID,
+				LineNumber:          int8(detail.LineNumber),
+				DocRef:              detail.DocRef,
+				DocRefDateTime:      detail.DocRefDatetime,
+				Barcode:             detail.Barcode,
+				UnitCode:            detail.UnitCode,
+				Qty:                 detail.Qty,
+				Price:               detail.Price,
+				PriceExcludeVat:     detail.PriceExcludeVat,
+				Discount:            detail.Discount,
+				DiscountAmount:      detail.DiscountAmount,
+				SumAmount:           detail.SumAmount,
+				SumAmountExcludeVat: detail.SumAmountExcludeVat,
+				WhCode:              detail.WhCode,
+				LocationCode:        detail.LocationCode,
+				VatType:             detail.VatType,
+				TaxType:             detail.TaxType,
+				StandValue:          detail.StandValue,
+				DivideValue:         detail.DivideValue,
+				ItemType:            detail.ItemType,
+				ItemGuid:            detail.ItemGuid,
+				TotalValueVat:       detail.TotalValueVat,
+				Remark:              detail.Remark,
+				ItemNames:           *(detail.ItemNames),
+			},
 		}
-		transactions[i] = *transaction
-	}
-	return &transactions, nil
-}
 
-func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBalanceModels.StockBalanceDoc) (*models.StockBalanceTransactionPG, error) {
+		//
+		// WhNames:             *(detail.WhNames),
+		// LocationNames:       *(detail.LocationNames),
+		// UnitNames:           *(detail.UnitNames),
+		if detail.WhNames != nil {
+			stockDetail.WhNames = *(detail.WhNames)
+		}
+
+		if detail.LocationNames != nil {
+			stockDetail.LocationNames = *(detail.LocationNames)
+		}
+
+		if detail.UnitNames != nil {
+			stockDetail.UnitNames = *(detail.UnitNames)
+		}
+
+		details[i] = stockDetail
+	}
 
 	stockTransaction := models.StockBalanceTransactionPG{
 		TransactionPG: models.TransactionPG{
@@ -109,45 +128,8 @@ func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBal
 			TotalExceptVat: doc.TotalExceptVat,
 			TotalAmount:    doc.TotalAmount,
 		},
+		Items: &details,
 	}
 	return &stockTransaction, nil
 
-}
-
-func (p StockBalanceTransactionPhaser) PhaseStockBalanceDetailTransaction(doc stockBalanceDetailModels.StockBalanceDetailDoc) (*models.StockBalanceTransactionDetailPG, error) {
-
-	stockDetail := models.StockBalanceTransactionDetailPG{
-		TransactionDetailPG: models.TransactionDetailPG{
-			DocNo:               doc.DocNo,
-			ShopID:              doc.ShopID,
-			LineNumber:          int8(doc.LineNumber),
-			DocRef:              doc.DocRef,
-			DocRefDateTime:      doc.DocRefDatetime,
-			Barcode:             doc.Barcode,
-			UnitCode:            doc.UnitCode,
-			Qty:                 doc.Qty,
-			Price:               doc.Price,
-			PriceExcludeVat:     doc.PriceExcludeVat,
-			Discount:            doc.Discount,
-			DiscountAmount:      doc.DiscountAmount,
-			SumAmount:           doc.SumAmount,
-			SumAmountExcludeVat: doc.SumAmountExcludeVat,
-			WhCode:              doc.WhCode,
-			LocationCode:        doc.LocationCode,
-			VatType:             doc.VatType,
-			TaxType:             doc.TaxType,
-			StandValue:          doc.StandValue,
-			DivideValue:         doc.DivideValue,
-			ItemType:            doc.ItemType,
-			ItemGuid:            doc.ItemGuid,
-			TotalValueVat:       doc.TotalValueVat,
-			Remark:              doc.Remark,
-			ItemNames:           *doc.ItemNames,
-			WhNames:             *doc.WhNames,
-			LocationNames:       *doc.LocationNames,
-			UnitNames:           *doc.UnitNames,
-		},
-	}
-
-	return &stockDetail, nil
 }

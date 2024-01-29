@@ -10,6 +10,8 @@ import (
 	productbarcode_repo "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/stockbalanceimport/models"
 	"smlcloudplatform/internal/stockbalanceimport/repositories"
+	transactionModels "smlcloudplatform/internal/transaction/models"
+	stockBalanceModels "smlcloudplatform/internal/transaction/stockbalance/models"
 	stockbalance_models "smlcloudplatform/internal/transaction/stockbalance/models"
 	stockbalance_services "smlcloudplatform/internal/transaction/stockbalance/services"
 	stockbalancedetail_models "smlcloudplatform/internal/transaction/stockbalancedetail/models"
@@ -271,6 +273,7 @@ func (svc StockBalanceImportService) SaveTask(shopID string, authUsername string
 	}
 
 	tempDetails := []stockbalancedetail_models.StockBalanceDetail{}
+	tempDocDetails := []transactionModels.Detail{}
 
 	barcodes := []string{}
 	tempBarcodes := map[string]models.StockBalanceImportDoc{}
@@ -315,10 +318,35 @@ func (svc StockBalanceImportService) SaveTask(shopID string, authUsername string
 				stockbalanceDetail.SumAmount = temp.SumAmount
 
 				tempDetails = append(tempDetails, stockbalanceDetail)
+
+				// create transaction detail for produce in kafka
+				tempDocDetail := transactionModels.Detail{}
+				tempDocDetail.DocRef = headerDoc.DocNo
+				tempDocDetail.DocRefDatetime = headerDoc.DocDatetime
+				tempDocDetail.Barcode = product.Barcode
+				tempDocDetail.ItemNames = product.Names
+				tempDocDetail.ItemType = product.ItemType
+				tempDocDetail.TaxType = product.TaxType
+				tempDocDetail.VatType = product.VatType
+				tempDocDetail.StandValue = product.StandValue
+				tempDocDetail.DivideValue = product.DivideValue
+				tempDocDetail.VatCal = product.VatCal
+				tempDocDetail.UnitCode = product.ItemUnitCode
+				tempDocDetail.WhCode = temp.WarehouseCode
+				tempDocDetail.LocationCode = temp.ShelfCode
+				tempDocDetail.Qty = temp.Qty
+				tempDocDetail.Price = temp.Price
+				tempDocDetail.PriceExcludeVat = temp.Price
+				tempDocDetail.TotalValueVat = temp.SumAmount
+				tempDocDetail.SumAmount = temp.SumAmount
+				tempDocDetail.SumAmountExcludeVat = temp.SumAmount
+
+				tempDocDetails = append(tempDocDetails, tempDocDetail)
 			}
 
 			barcodes = []string{}
 			tempBarcodes = map[string]models.StockBalanceImportDoc{}
+
 		}
 	}
 
@@ -326,7 +354,7 @@ func (svc StockBalanceImportService) SaveTask(shopID string, authUsername string
 
 	tempTransaction.StockBalanceHeader = headerDoc
 
-	docGUIDFixed, docNo, err := svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
+	docCreate, docGUIDFixed, docNo, err := svc.stockBalanceService.CreateStockBalance(shopID, authUsername, tempTransaction)
 	if err != nil {
 		return "", err
 	}
@@ -343,6 +371,19 @@ func (svc StockBalanceImportService) SaveTask(shopID string, authUsername string
 			return "", err
 		}
 
+		return "", err
+	}
+
+	stockBalanceMessage := stockBalanceModels.StockBalanceMessage{}
+	stockBalanceMessage.StockBalanceHeader = headerDoc
+	stockBalanceMessage.DocNo = docCreate.DocNo
+	stockBalanceMessage.ShopID = docCreate.ShopID
+	stockBalanceMessage.CreatedBy = docCreate.CreatedBy
+	stockBalanceMessage.CreatedAt = docCreate.CreatedAt
+	stockBalanceMessage.Details = &tempDocDetails
+
+	err = svc.stockBalanceService.ProduceCreateStockBalance(shopID, stockBalanceMessage)
+	if err != nil {
 		return "", err
 	}
 

@@ -71,6 +71,7 @@ import (
 	"smlcloudplatform/internal/transaction/paid"
 	"smlcloudplatform/internal/transaction/pay"
 	"smlcloudplatform/internal/transaction/payment"
+	"smlcloudplatform/internal/transaction/paymentdetail"
 	"smlcloudplatform/internal/transaction/purchase"
 	"smlcloudplatform/internal/transaction/purchaseorder"
 	"smlcloudplatform/internal/transaction/purchasereturn"
@@ -379,6 +380,7 @@ func main() {
 		// transactionconsumer.MigrationDatabase(ms, cfg)
 
 		payment.MigrationDatabase(ms, cfg)
+		paymentdetail.MigrationDatabase(ms, cfg)
 
 		pay_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(pay_consumer.InitPayTransactionConsumer(ms, cfg))

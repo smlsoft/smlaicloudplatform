@@ -23,7 +23,7 @@ import (
 )
 
 type IStockBalanceHttpService interface {
-	CreateStockBalance(shopID string, authUsername string, doc models.StockBalance) (string, string, error)
+	CreateStockBalance(shopID string, authUsername string, doc models.StockBalance) (*models.StockBalanceDoc, string, string, error)
 	UpdateStockBalance(shopID string, guid string, authUsername string, doc models.StockBalance) error
 	DeleteStockBalance(shopID string, guid string, authUsername string) error
 	DeleteStockBalanceByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -34,6 +34,8 @@ type IStockBalanceHttpService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []models.StockBalance) (common.BulkImport, error)
 
 	GetModuleName() string
+
+	ProduceCreateStockBalance(shopID string, doc models.StockBalanceMessage) error
 }
 
 const (
@@ -121,7 +123,7 @@ func (svc StockBalanceHttpService) generateNewDocNo(ctx context.Context, shopID,
 
 	return newDocNo, newDocNumber, nil
 }
-func (svc StockBalanceHttpService) CreateStockBalance(shopID string, authUsername string, doc models.StockBalance) (string, string, error) {
+func (svc StockBalanceHttpService) CreateStockBalance(shopID string, authUsername string, doc models.StockBalance) (*models.StockBalanceDoc, string, string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -132,7 +134,7 @@ func (svc StockBalanceHttpService) CreateStockBalance(shopID string, authUsernam
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(ctx, shopID, prefixDocNo, 1)
 
 	if err != nil {
-		return "", "", err
+		return nil, "", "", err
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -149,16 +151,19 @@ func (svc StockBalanceHttpService) CreateStockBalance(shopID string, authUsernam
 	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
-		return "", "", err
+		return nil, "", "", err
 	}
 
 	go func() {
-		svc.repoMq.Create(docData)
+		stockBalanceDocMessage := models.StockBalanceMessage{}
+		stockBalanceDocMessage.StockBalance = doc
+		svc.repoMq.Create(stockBalanceDocMessage)
+
 		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 		svc.saveMasterSync(shopID)
 	}()
 
-	return newGuidFixed, newDocNo, nil
+	return &docData, newGuidFixed, newDocNo, nil
 }
 
 func (svc StockBalanceHttpService) UpdateStockBalance(shopID string, guid string, authUsername string, doc models.StockBalance) error {
@@ -190,7 +195,9 @@ func (svc StockBalanceHttpService) UpdateStockBalance(shopID string, guid string
 	}
 
 	func() {
-		svc.repoMq.Update(docData)
+		stockBalanceDocMessage := models.StockBalanceMessage{}
+		stockBalanceDocMessage.StockBalance = findDoc.StockBalance
+		svc.repoMq.Update(stockBalanceDocMessage)
 		svc.saveMasterSync(shopID)
 	}()
 
@@ -232,7 +239,9 @@ func (svc StockBalanceHttpService) DeleteStockBalance(shopID string, guid string
 	}
 
 	func() {
-		svc.repoMq.Delete(findDoc)
+		stockBalanceDocMessage := models.StockBalanceMessage{}
+		stockBalanceDocMessage.StockBalance = findDoc.StockBalance
+		svc.repoMq.Delete(stockBalanceDocMessage)
 		svc.saveMasterSync(shopID)
 	}()
 
@@ -269,7 +278,16 @@ func (svc StockBalanceHttpService) DeleteStockBalanceByGUIDs(shopID string, auth
 	}
 
 	func() {
-		svc.repoMq.DeleteInBatch(docs)
+
+		stockBalanceDocMessages := []models.StockBalanceMessage{}
+
+		for _, doc := range docs {
+			stockBalanceDocMessage := models.StockBalanceMessage{}
+			stockBalanceDocMessage.StockBalance = doc.StockBalance
+			stockBalanceDocMessages = append(stockBalanceDocMessages, stockBalanceDocMessage)
+		}
+
+		svc.repoMq.DeleteInBatch(stockBalanceDocMessages)
 		svc.saveMasterSync(shopID)
 	}()
 
@@ -477,4 +495,9 @@ func (svc StockBalanceHttpService) saveMasterSync(shopID string) {
 
 func (svc StockBalanceHttpService) GetModuleName() string {
 	return "stockBalance"
+}
+
+func (svc StockBalanceHttpService) ProduceCreateStockBalance(shopID string, doc models.StockBalanceMessage) error {
+	svc.repoMq.Create(doc)
+	return nil
 }

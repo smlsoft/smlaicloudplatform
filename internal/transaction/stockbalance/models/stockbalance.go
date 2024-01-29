@@ -19,6 +19,14 @@ type StockBalance struct {
 	// Details                  *[]StockBalanceDetail `json:"details" bson:"details"`
 }
 
+type StockBalanceMessage struct {
+	models.DocIdentity
+	StockBalance
+	models.ShopIdentity
+	models.Activity
+	Details *[]trans_models.Detail `json:"details" bson:"details"`
+}
+
 type StockBalanceInfo struct {
 	models.DocIdentity `bson:"inline"`
 	StockBalance       `bson:"inline"`

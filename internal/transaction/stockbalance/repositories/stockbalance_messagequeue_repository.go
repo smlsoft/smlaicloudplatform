@@ -8,18 +8,18 @@ import (
 )
 
 type IStockBalanceMessageQueueRepository interface {
-	Create(doc models.StockBalanceDoc) error
-	Update(doc models.StockBalanceDoc) error
-	Delete(doc models.StockBalanceDoc) error
-	CreateInBatch(docList []models.StockBalanceDoc) error
-	UpdateInBatch(docList []models.StockBalanceDoc) error
-	DeleteInBatch(docList []models.StockBalanceDoc) error
+	Create(doc models.StockBalanceMessage) error
+	Update(doc models.StockBalanceMessage) error
+	Delete(doc models.StockBalanceMessage) error
+	CreateInBatch(docList []models.StockBalanceMessage) error
+	UpdateInBatch(docList []models.StockBalanceMessage) error
+	DeleteInBatch(docList []models.StockBalanceMessage) error
 }
 
 type StockBalanceMessageQueueRepository struct {
 	prod  microservice.IProducer
 	mqKey string
-	repositories.KafkaRepository[models.StockBalanceDoc]
+	repositories.KafkaRepository[models.StockBalanceMessage]
 }
 
 func NewStockBalanceMessageQueueRepository(prod microservice.IProducer) StockBalanceMessageQueueRepository {
@@ -29,6 +29,6 @@ func NewStockBalanceMessageQueueRepository(prod microservice.IProducer) StockBal
 		prod:  prod,
 		mqKey: mqKey,
 	}
-	insRepo.KafkaRepository = repositories.NewKafkaRepository[models.StockBalanceDoc](prod, config.StockBalanceMessageQueueConfig{}, "")
+	insRepo.KafkaRepository = repositories.NewKafkaRepository[models.StockBalanceMessage](prod, config.StockBalanceMessageQueueConfig{}, "")
 	return insRepo
 }
