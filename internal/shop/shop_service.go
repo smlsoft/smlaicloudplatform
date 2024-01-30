@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	auth_model "smlcloudplatform/internal/authentication/models"
+	common "smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/shop/models"
 	micromodels "smlcloudplatform/pkg/microservice/models"
 	"time"
@@ -44,6 +45,14 @@ func (svc ShopService) CreateShop(username string, doc models.Shop) (string, err
 	dataDoc.CreatedBy = username
 	dataDoc.CreatedAt = svc.timeNow()
 	dataDoc.Shop = doc
+
+	// if doc.Names == nil {
+	// 	return "", errors.New("names is required")
+	// }
+
+	if doc.Names == nil {
+		dataDoc.Names = []common.NameX{}
+	}
 
 	_, err := svc.shopRepo.Create(context.Background(), dataDoc)
 
