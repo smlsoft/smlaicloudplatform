@@ -166,6 +166,7 @@ func (*ShopUser) CollectionName() string {
 
 type ShopUserInfo struct {
 	ShopID         string         `json:"shopid" bson:"shopid"`
+	Name           string         `json:"name" bson:"name1"`
 	Name1          string         `json:"name1" bson:"name1"`
 	Names          []models.NameX `json:"names" bson:"names"`
 	BranchCode     string         `json:"branchcode" bson:"branchcode"`
