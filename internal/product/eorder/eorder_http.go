@@ -32,6 +32,8 @@ import (
 	saleinvoice_repositories "smlcloudplatform/internal/transaction/saleinvoice/repositories"
 	saleinvoice_services "smlcloudplatform/internal/transaction/saleinvoice/services"
 	"smlcloudplatform/internal/utils"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IEOrderHttp interface{}
@@ -118,6 +120,8 @@ func (h EOrderHttp) RegisterHttp() {
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
 	// h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
 	h.ms.GET("/e-order/product-barcode", h.SearchProductBarcodePage)
+	h.ms.POST("/e-order/product-barcode", h.SearchProductBarcodeManyBarcodePage)
+
 	h.ms.GET("/e-order/shop-info/v1.1", h.ShopInfo)
 	h.ms.GET("/e-order/shop-info", h.ShopInfoOld)
 	h.ms.GET("/e-order/restaurant/zone", h.SearchZone)
@@ -175,6 +179,7 @@ func (h EOrderHttp) SearchProductCategoryPage(ctx microservice.IContext) error {
 // @Description List Product
 // @Tags		E-Order
 // @Param		shopid		query	string		false  "Shop ID"
+// @Param		barcodes		query	string		false  "barcode json array"
 // @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		q		query	string		false  "Search Value"
@@ -183,13 +188,20 @@ func (h EOrderHttp) SearchProductCategoryPage(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
-// @Router /e-order/product [get]
+// @Router /e-order/product-barcode [get]
 func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 	shopID := ctx.QueryParam("shopid")
 
 	if len(shopID) == 0 {
 		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
 		return nil
+	}
+
+	rawBarcodes := ctx.QueryParam("barcodes")
+
+	barcodes := []string{}
+	if len(rawBarcodes) > 0 {
+		json.Unmarshal([]byte(rawBarcodes), &barcodes)
 	}
 
 	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
@@ -204,6 +216,72 @@ func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 			Type:  requestfilter.FieldTypeString,
 		},
 	})
+
+	if len(barcodes) > 0 {
+		filters["barcode"] = bson.M{"$in": barcodes}
+	}
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svcProduct.SearchProductBarcode(shopID, filters, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Product
+// @Description List Product
+// @Tags		E-Order
+// @Param		shopid		query	string		false  "Shop ID"
+// @Param		barcodes		body	[]string	false  "barcode json array"
+// @Param		isalacarte		query	string		false  "is A La Carte"
+// @Param		ordertypes		query	string		false  "order types ex. a01,a02"
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Router /e-order/product-barcode [post]
+func (h EOrderHttp) SearchProductBarcodeManyBarcodePage(ctx microservice.IContext) error {
+	shopID := ctx.QueryParam("shopid")
+
+	if len(shopID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
+		return nil
+	}
+
+	rawBarcodes := ctx.ReadInput()
+
+	barcodes := []string{}
+	if len(rawBarcodes) > 0 {
+		json.Unmarshal([]byte(rawBarcodes), &barcodes)
+	}
+
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+		{
+			Param: "isalacarte",
+			Field: "isalacarte",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+		{
+			Param: "ordertypes",
+			Field: "ordertypes.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	if len(barcodes) > 0 {
+		filters["barcode"] = bson.M{"$in": barcodes}
+	}
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 	docList, pagination, err := h.svcProduct.SearchProductBarcode(shopID, filters, pageable)

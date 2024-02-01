@@ -4396,8 +4396,48 @@ const docTemplate = `{
                 }
             }
         },
-        "/e-order/product": {
+        "/e-order/product-barcode": {
             "get": {
+                "description": "List Product By Barcodes",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "E-Order"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shop ID",
+                        "name": "shopid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "barcode json array",
+                        "name": "barcodes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
                 "description": "List Product",
                 "consumes": [
                     "application/json"
@@ -4411,6 +4451,17 @@ const docTemplate = `{
                         "description": "Shop ID",
                         "name": "shopid",
                         "in": "query"
+                    },
+                    {
+                        "description": "barcode json array",
+                        "name": "barcodes",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     },
                     {
                         "type": "string",
@@ -4440,48 +4491,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/e-order/product-barcode": {
-            "get": {
-                "description": "List Product By Barcodes",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "E-Order"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Shop ID",
-                        "name": "shopid",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "barcode json array",
-                        "name": "barcodes",
                         "in": "query"
                     }
                 ],
@@ -45036,7 +45045,7 @@ const docTemplate = `{
                 "lastaccessedat": {
                     "type": "string"
                 },
-                "name": {
+                "name1": {
                     "type": "string"
                 },
                 "names": {

@@ -6567,7 +6567,7 @@ definitions:
         type: boolean
       lastaccessedat:
         type: string
-      name:
+      name1:
         type: string
       names:
         items:
@@ -10140,8 +10140,34 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - E-Order
-  /e-order/product:
+  /e-order/product-barcode:
     get:
+      consumes:
+      - application/json
+      description: List Product By Barcodes
+      parameters:
+      - description: Shop ID
+        in: query
+        name: shopid
+        type: string
+      - description: barcode json array
+        in: query
+        name: barcodes
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      tags:
+      - E-Order
+    post:
       consumes:
       - application/json
       description: List Product
@@ -10150,6 +10176,13 @@ paths:
         in: query
         name: shopid
         type: string
+      - description: barcode json array
+        in: body
+        name: barcodes
+        schema:
+          items:
+            type: string
+          type: array
       - description: is A La Carte
         in: query
         name: isalacarte
@@ -10170,33 +10203,6 @@ paths:
         in: query
         name: limit
         type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      tags:
-      - E-Order
-  /e-order/product-barcode:
-    get:
-      consumes:
-      - application/json
-      description: List Product By Barcodes
-      parameters:
-      - description: Shop ID
-        in: query
-        name: shopid
-        type: string
-      - description: barcode json array
-        in: query
-        name: barcodes
-        type: string
       responses:
         "200":
           description: OK
