@@ -74,6 +74,8 @@ func (svc ProductCategoryHttpService) CreateProductCategory(shopID string, authU
 	docData.GuidFixed = newGuidFixed
 	docData.ProductCategory = doc
 
+	docData.EmptyOnNil()
+
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
@@ -181,6 +183,12 @@ func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, filte
 		"names.name",
 	}
 
+	if len(pageable.Sorts) == 0 {
+		pageable.Sorts = []micromodels.KeyInt{
+			{Key: "code", Value: 1},
+		}
+	}
+
 	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
@@ -198,6 +206,12 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 	searchInFields := []string{
 		"code",
 		"names.name",
+	}
+
+	if len(pageableStep.Sorts) == 0 {
+		pageableStep.Sorts = []micromodels.KeyInt{
+			{Key: "code", Value: 1},
+		}
 	}
 
 	selectFields := map[string]interface{}{}
@@ -227,6 +241,8 @@ func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername st
 		docData.ShopID = shopID
 		docData.GuidFixed = newGuidFixed
 		docData.ProductCategory = doc
+
+		docData.EmptyOnNil()
 
 		docData.CreatedBy = authUsername
 		docData.CreatedAt = createdAt
