@@ -10,19 +10,28 @@ const productcategoryCollectionName = "productCategories"
 
 type ProductCategory struct {
 	models.PartitionIdentity `bson:"inline"`
-	ChildCount               int             `json:"childcount" bson:"childcount"`
-	ParentGUID               string          `json:"parentguid" bson:"parentguid"`
-	ParentGUIDAll            string          `json:"parentguidall" bson:"parentguidall"`
-	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
-	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
-	CodeList                 *[]CodeXSort    `json:"codelist" bson:"codelist" validate:"unique=Barcode,dive"`
-	UseImageOrColor          bool            `json:"useimageorcolor" bson:"useimageorcolor"`
-	ColorSelect              string          `json:"colorselect" bson:"colorselect"`
-	ColorSelectHex           string          `json:"colorselecthex" bson:"colorselecthex"`
-	IsDisabled               bool            `json:"isdisabled" bson:"isdisabled"`
-	CoverURI                 string          `json:"coveruri" bson:"coveruri"`
-	GroupNumber              int             `json:"groupnumber" bson:"groupnumber"`
+	ChildCount               int                        `json:"childcount" bson:"childcount"`
+	ParentGUID               string                     `json:"parentguid" bson:"parentguid"`
+	ParentGUIDAll            string                     `json:"parentguidall" bson:"parentguidall"`
+	ImageUri                 string                     `json:"imageuri" bson:"imageuri"`
+	Names                    *[]models.NameX            `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	XSorts                   *[]models.XSort            `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
+	CodeList                 *[]CodeXSort               `json:"codelist" bson:"codelist" validate:"unique=Barcode,dive"`
+	UseImageOrColor          bool                       `json:"useimageorcolor" bson:"useimageorcolor"`
+	ColorSelect              string                     `json:"colorselect" bson:"colorselect"`
+	ColorSelectHex           string                     `json:"colorselecthex" bson:"colorselecthex"`
+	IsDisabled               bool                       `json:"isdisabled" bson:"isdisabled"`
+	CoverURI                 string                     `json:"coveruri" bson:"coveruri"`
+	GroupNumber              int                        `json:"groupnumber" bson:"groupnumber"`
+	TimeForSale              ProductCategoryTimeForSale `json:"timeforsale" bson:"timeforsale"`
+}
+
+type ProductCategoryTimeForSale struct {
+	DaysOfWeek []int8 `json:"daysofweek" bson:"daysofweek"`
+	FromDate   string `json:"fromdate" bson:"fromdate"`
+	ToDate     string `json:"todate" bson:"todate"`
+	FromTime   string `json:"fromtime" bson:"fromtime"`
+	ToTime     string `json:"totime" bson:"totime"`
 }
 
 type CodeXSort struct {
