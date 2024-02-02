@@ -184,7 +184,6 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	docData.ProductBarcode = docReq.ToProductBarcode()
 
 	docData.Barcode = findDoc.Barcode
-	docData.ItemCode = findDoc.ItemCode
 	docData.IgnoreBranches = &docReq.IgnoreBranches
 	docData.BusinessTypes = &docReq.BusinessTypes
 
