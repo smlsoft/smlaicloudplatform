@@ -2669,6 +2669,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      restaurant:
+        $ref: '#/definitions/models.ProductRestaurant'
       standvalue:
         type: number
       stockbarcode:
@@ -2878,6 +2880,18 @@ definitions:
         type: integer
       price:
         type: number
+    type: object
+  models.ProductRestaurant:
+    properties:
+      isfordelivery:
+        description: เดลิเวอรี่
+        type: boolean
+      isforrestaurant:
+        description: ทานที่ร้าน
+        type: boolean
+      isfortakeaway:
+        description: สั่งกลับบ้าน
+        type: boolean
     type: object
   models.ProfitAndLossSheetAccountDetail:
     properties:
@@ -6927,6 +6941,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      restaurant:
+        $ref: '#/definitions/models.ProductRestaurant'
       standvalue:
         type: number
       stockbarcode:

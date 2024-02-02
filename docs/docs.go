@@ -38438,6 +38438,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "restaurant": {
+                    "$ref": "#/definitions/models.ProductRestaurant"
+                },
                 "standvalue": {
                     "type": "number"
                 },
@@ -38742,6 +38745,23 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                }
+            }
+        },
+        "models.ProductRestaurant": {
+            "type": "object",
+            "properties": {
+                "isfordelivery": {
+                    "description": "เดลิเวอรี่",
+                    "type": "boolean"
+                },
+                "isforrestaurant": {
+                    "description": "ทานที่ร้าน",
+                    "type": "boolean"
+                },
+                "isfortakeaway": {
+                    "description": "สั่งกลับบ้าน",
+                    "type": "boolean"
                 }
             }
         },
@@ -44783,6 +44803,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "restaurant": {
+                    "$ref": "#/definitions/models.ProductRestaurant"
                 },
                 "standvalue": {
                     "type": "number"
