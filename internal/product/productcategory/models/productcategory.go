@@ -10,20 +10,20 @@ const productcategoryCollectionName = "productCategories"
 
 type ProductCategory struct {
 	models.PartitionIdentity `bson:"inline"`
-	ChildCount               int                        `json:"childcount" bson:"childcount"`
-	ParentGUID               string                     `json:"parentguid" bson:"parentguid"`
-	ParentGUIDAll            string                     `json:"parentguidall" bson:"parentguidall"`
-	ImageUri                 string                     `json:"imageuri" bson:"imageuri"`
-	Names                    *[]models.NameX            `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSorts                   *[]models.XSort            `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
-	CodeList                 *[]CodeXSort               `json:"codelist" bson:"codelist" validate:"unique=Barcode,dive"`
-	UseImageOrColor          bool                       `json:"useimageorcolor" bson:"useimageorcolor"`
-	ColorSelect              string                     `json:"colorselect" bson:"colorselect"`
-	ColorSelectHex           string                     `json:"colorselecthex" bson:"colorselecthex"`
-	IsDisabled               bool                       `json:"isdisabled" bson:"isdisabled"`
-	CoverURI                 string                     `json:"coveruri" bson:"coveruri"`
-	GroupNumber              int                        `json:"groupnumber" bson:"groupnumber"`
-	TimeForSale              ProductCategoryTimeForSale `json:"timeforsale" bson:"timeforsale"`
+	ChildCount               int                           `json:"childcount" bson:"childcount"`
+	ParentGUID               string                        `json:"parentguid" bson:"parentguid"`
+	ParentGUIDAll            string                        `json:"parentguidall" bson:"parentguidall"`
+	ImageUri                 string                        `json:"imageuri" bson:"imageuri"`
+	Names                    *[]models.NameX               `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	XSorts                   *[]models.XSort               `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
+	CodeList                 *[]CodeXSort                  `json:"codelist" bson:"codelist" validate:"unique=Barcode,dive"`
+	UseImageOrColor          bool                          `json:"useimageorcolor" bson:"useimageorcolor"`
+	ColorSelect              string                        `json:"colorselect" bson:"colorselect"`
+	ColorSelectHex           string                        `json:"colorselecthex" bson:"colorselecthex"`
+	IsDisabled               bool                          `json:"isdisabled" bson:"isdisabled"`
+	CoverURI                 string                        `json:"coveruri" bson:"coveruri"`
+	GroupNumber              int                           `json:"groupnumber" bson:"groupnumber"`
+	TimeForSales             *[]ProductCategoryTimeForSale `json:"timeforsales" bson:"timeforsales"`
 }
 
 type ProductCategoryTimeForSale struct {
@@ -62,6 +62,24 @@ type ProductCategoryDoc struct {
 	ID                  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	ProductCategoryData `bson:"inline"`
 	models.ActivityDoc  `bson:"inline"`
+}
+
+func (doc *ProductCategoryDoc) EmptyOnNil() {
+	if doc.Names == nil {
+		doc.Names = &[]models.NameX{}
+	}
+
+	if doc.XSorts == nil {
+		doc.XSorts = &[]models.XSort{}
+	}
+
+	if doc.CodeList == nil {
+		doc.CodeList = &[]CodeXSort{}
+	}
+
+	if doc.TimeForSales == nil {
+		doc.TimeForSales = &[]ProductCategoryTimeForSale{}
+	}
 }
 
 func (ProductCategoryDoc) CollectionName() string {

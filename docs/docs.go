@@ -38516,8 +38516,11 @@ const docTemplate = `{
                 "parentguidall": {
                     "type": "string"
                 },
-                "timeforsale": {
-                    "$ref": "#/definitions/models.ProductCategoryTimeForSale"
+                "timeforsales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductCategoryTimeForSale"
+                    }
                 },
                 "useimageorcolor": {
                     "type": "boolean"

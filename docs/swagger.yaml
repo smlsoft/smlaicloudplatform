@@ -2723,8 +2723,10 @@ definitions:
         type: string
       parentguidall:
         type: string
-      timeforsale:
-        $ref: '#/definitions/models.ProductCategoryTimeForSale'
+      timeforsales:
+        items:
+          $ref: '#/definitions/models.ProductCategoryTimeForSale'
+        type: array
       useimageorcolor:
         type: boolean
       xsorts:
