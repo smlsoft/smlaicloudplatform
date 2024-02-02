@@ -2723,6 +2723,8 @@ definitions:
         type: string
       parentguidall:
         type: string
+      timeforsale:
+        $ref: '#/definitions/models.ProductCategoryTimeForSale'
       useimageorcolor:
         type: boolean
       xsorts:
@@ -2732,6 +2734,21 @@ definitions:
         uniqueItems: true
     required:
     - names
+    type: object
+  models.ProductCategoryTimeForSale:
+    properties:
+      daysofweek:
+        items:
+          type: integer
+        type: array
+      fromdate:
+        type: string
+      fromtime:
+        type: string
+      todate:
+        type: string
+      totime:
+        type: string
     type: object
   models.ProductChoice:
     properties:

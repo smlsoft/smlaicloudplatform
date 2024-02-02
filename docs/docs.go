@@ -38516,6 +38516,9 @@ const docTemplate = `{
                 "parentguidall": {
                     "type": "string"
                 },
+                "timeforsale": {
+                    "$ref": "#/definitions/models.ProductCategoryTimeForSale"
+                },
                 "useimageorcolor": {
                     "type": "boolean"
                 },
@@ -38525,6 +38528,29 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.XSort"
                     }
+                }
+            }
+        },
+        "models.ProductCategoryTimeForSale": {
+            "type": "object",
+            "properties": {
+                "daysofweek": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "fromdate": {
+                    "type": "string"
+                },
+                "fromtime": {
+                    "type": "string"
+                },
+                "todate": {
+                    "type": "string"
+                },
+                "totime": {
+                    "type": "string"
                 }
             }
         },
