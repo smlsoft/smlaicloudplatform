@@ -59,6 +59,13 @@ type ProductBarcodeBase struct {
 	ManufacturerGUID          string              `json:"manufacturerguid" bson:"manufacturerguid"`
 	Dimensions                []ProductDimension  `json:"dimensions" bson:"dimensions"`
 	IsDiscountPointOfPurchase bool                `json:"isdiscountpointofpurchase" bson:"isdiscountpointofpurchase"`
+	Restaurant                ProductRestaurant   `json:"restaurant" bson:"restaurant"`
+}
+
+type ProductRestaurant struct {
+	IsForRestaurant bool `json:"isforrestaurant" bson:"isforrestaurant"` // ทานที่ร้าน
+	IsForTakeAway   bool `json:"isfortakeaway" bson:"isfortakeaway"`     // สั่งกลับบ้าน
+	IsForDelivery   bool `json:"isfordelivery" bson:"isfordelivery"`     // เดลิเวอรี่
 }
 
 type ProductDimension struct {
