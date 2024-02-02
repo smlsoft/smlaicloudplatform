@@ -378,6 +378,7 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
 		// transactionconsumer.MigrationDatabase(ms, cfg)
+		productbarcode.MigrationProductBarcodeTable(ms, cfg)
 
 		payment.MigrationDatabase(ms, cfg)
 		paymentdetail.MigrationDatabase(ms, cfg)
