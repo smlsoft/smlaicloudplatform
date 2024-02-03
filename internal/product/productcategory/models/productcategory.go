@@ -26,6 +26,25 @@ type ProductCategory struct {
 	TimeForSales             *[]ProductCategoryTimeForSale `json:"timeforsales" bson:"timeforsales"`
 }
 
+func (p *ProductCategory) EmptyOnNil() {
+
+	if p.Names == nil {
+		p.Names = &[]models.NameX{}
+	}
+
+	if p.XSorts == nil {
+		p.XSorts = &[]models.XSort{}
+	}
+
+	if p.CodeList == nil {
+		p.CodeList = &[]CodeXSort{}
+	}
+
+	if p.TimeForSales == nil {
+		p.TimeForSales = &[]ProductCategoryTimeForSale{}
+	}
+}
+
 type ProductCategoryTimeForSale struct {
 	DaysOfWeek []int8 `json:"daysofweek" bson:"daysofweek"`
 	FromDate   string `json:"fromdate" bson:"fromdate"`
@@ -62,24 +81,6 @@ type ProductCategoryDoc struct {
 	ID                  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	ProductCategoryData `bson:"inline"`
 	models.ActivityDoc  `bson:"inline"`
-}
-
-func (doc *ProductCategoryDoc) EmptyOnNil() {
-	if doc.Names == nil {
-		doc.Names = &[]models.NameX{}
-	}
-
-	if doc.XSorts == nil {
-		doc.XSorts = &[]models.XSort{}
-	}
-
-	if doc.CodeList == nil {
-		doc.CodeList = &[]CodeXSort{}
-	}
-
-	if doc.TimeForSales == nil {
-		doc.TimeForSales = &[]ProductCategoryTimeForSale{}
-	}
 }
 
 func (ProductCategoryDoc) CollectionName() string {

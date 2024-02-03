@@ -195,6 +195,12 @@ func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, filte
 		return []models.ProductCategoryInfo{}, pagination, err
 	}
 
+	for i := range docList {
+		if docList[i].TimeForSales == nil {
+			docList[i].TimeForSales = &[]models.ProductCategoryTimeForSale{}
+		}
+	}
+
 	return docList, pagination, nil
 }
 
@@ -220,6 +226,12 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 
 	if err != nil {
 		return []models.ProductCategoryInfo{}, 0, err
+	}
+
+	for i := range docList {
+		if docList[i].TimeForSales == nil {
+			docList[i].TimeForSales = &[]models.ProductCategoryTimeForSale{}
+		}
 	}
 
 	return docList, total, nil
