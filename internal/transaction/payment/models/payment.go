@@ -1,7 +1,7 @@
 package models
 
 import (
-	"smlcloudplatform/internal/models"
+	"smlcloudplatform/internal/transaction/models"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -9,18 +9,18 @@ import (
 )
 
 type TransactionPayment struct {
-	ID            int64        `json:"id" gorm:"column:id;primary"`
-	ShopID        string       `json:"shopid" gorm:"column:shopid"`
-	DocNo         string       `json:"docno" gorm:"column:docno"`
-	DocDate       time.Time    `json:"docdatetime" gorm:"column:docdate"`
-	GuidRef       string       `json:"guidref" gorm:"column:guidref"`
-	TransFlag     int8         `json:"transflag" gorm:"column:transflag"` //  44 ขาย 16 ส่งคืน 239 รับชำระ, 12 ซื้อ 48 รับคืน 19 จ่าย
-	DocType       int8         `json:"doctype" gorm:"column:doctype"`
-	InquiryType   int          `json:"inquirytype" gon:"column:inquirytype"`
-	IsCancel      bool         `json:"iscancel" gorm:"column:iscancel"`
-	PayCashAmount float64      `json:"paycashamount" gorm:"column:paycashamount"`
-	Branch        models.JSONB `json:"branch" gorm:"column:branch"`
-	CalcFlag      int8         `json:"calcflag" gorm:"column:calcflag"` // รับเงิน 1 , จ่ายเงิน -1
+	ID            int64                         `json:"id" gorm:"column:id;primary"`
+	ShopID        string                        `json:"shopid" gorm:"column:shopid"`
+	DocNo         string                        `json:"docno" gorm:"column:docno"`
+	DocDate       time.Time                     `json:"docdatetime" gorm:"column:docdate"`
+	GuidRef       string                        `json:"guidref" gorm:"column:guidref"`
+	TransFlag     int8                          `json:"transflag" gorm:"column:transflag"` //  44 ขาย 16 ส่งคืน 239 รับชำระ, 12 ซื้อ 48 รับคืน 19 จ่าย
+	DocType       int8                          `json:"doctype" gorm:"column:doctype"`
+	InquiryType   int                           `json:"inquirytype" gon:"column:inquirytype"`
+	IsCancel      bool                          `json:"iscancel" gorm:"column:iscancel"`
+	PayCashAmount float64                       `json:"paycashamount" gorm:"column:paycashamount"`
+	Branch        models.JSONBTransactionBranch `json:"branch" gorm:"column:branch"`
+	CalcFlag      int8                          `json:"calcflag" gorm:"column:calcflag"` // รับเงิน 1 , จ่ายเงิน -1
 
 	PayCashChange    float64 `json:"paycashchange" gorm:"column:paycashchange"`
 	SumQRCode        float64 `json:"sumqrcode" gorm:"column:sumqrcode"`
@@ -34,7 +34,7 @@ type TransactionPayment struct {
 }
 
 func (TransactionPayment) TableName() string {
-	return "transaction_payment"
+	return "payment_transaction"
 }
 
 func (m *TransactionPayment) CompareTo(other *TransactionPayment) bool {

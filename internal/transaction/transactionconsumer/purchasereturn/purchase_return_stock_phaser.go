@@ -19,36 +19,40 @@ func (p PurchaseReturnTransactionStockPhaser) PhaseSingleDoc(doc models.Purchase
 
 func (p PurchaseReturnTransactionStockPhaser) PhasePurchaseReturnStock(doc models.PurchaseReturnTransactionPG) (*models.StockTransaction, error) {
 
-	details := make([]models.StockTransactionDetail, len(*doc.Items))
+	details := []models.StockTransactionDetail{}
 
-	for i, detail := range *doc.Items {
+	if doc.Items != nil {
+		details := make([]models.StockTransactionDetail, len(*doc.Items))
 
-		stockDetail := models.StockTransactionDetail{
-			ShopID:              doc.ShopID,
-			DocNo:               doc.DocNo,
-			Barcode:             detail.Barcode,
-			ItemType:            detail.ItemType,
-			ItemGuid:            detail.ItemGuid,
-			VatType:             detail.VatType,
-			TaxType:             detail.TaxType,
-			UnitCode:            detail.UnitCode,
-			StandValue:          detail.StandValue,
-			DivideValue:         detail.DivideValue,
-			WhCode:              detail.WhCode,
-			LocationCode:        detail.LocationCode,
-			Qty:                 detail.Qty,
-			Price:               detail.Price,
-			PriceExcludeVat:     detail.PriceExcludeVat,
-			TotalValueVat:       detail.TotalValueVat,
-			SumAmount:           detail.SumAmount,
-			SumAmountExcludeVat: detail.SumAmountExcludeVat,
-			Discount:            detail.Discount,
-			DiscountAmount:      detail.DiscountAmount,
-			CalcFlag:            -1,
-			LineNumber:          int8(detail.LineNumber),
-			DocRef:              doc.DocRefNo,
+		for i, detail := range *doc.Items {
+
+			stockDetail := models.StockTransactionDetail{
+				ShopID:              doc.ShopID,
+				DocNo:               doc.DocNo,
+				Barcode:             detail.Barcode,
+				ItemType:            detail.ItemType,
+				ItemGuid:            detail.ItemGuid,
+				VatType:             detail.VatType,
+				TaxType:             detail.TaxType,
+				UnitCode:            detail.UnitCode,
+				StandValue:          detail.StandValue,
+				DivideValue:         detail.DivideValue,
+				WhCode:              detail.WhCode,
+				LocationCode:        detail.LocationCode,
+				Qty:                 detail.Qty,
+				Price:               detail.Price,
+				PriceExcludeVat:     detail.PriceExcludeVat,
+				TotalValueVat:       detail.TotalValueVat,
+				SumAmount:           detail.SumAmount,
+				SumAmountExcludeVat: detail.SumAmountExcludeVat,
+				Discount:            detail.Discount,
+				DiscountAmount:      detail.DiscountAmount,
+				CalcFlag:            -1,
+				LineNumber:          int8(detail.LineNumber),
+				DocRef:              doc.DocRefNo,
+			}
+			details[i] = stockDetail
 		}
-		details[i] = stockDetail
 	}
 
 	stockTransaction := models.StockTransaction{

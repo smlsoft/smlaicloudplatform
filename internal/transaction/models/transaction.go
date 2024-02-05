@@ -1,6 +1,9 @@
 package models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"smlcloudplatform/internal/models"
 	"time"
 )
@@ -101,6 +104,27 @@ type TransactionBranch struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
 	Names              *[]models.NameX `json:"names" bson:"names"`
+}
+
+type JSONBTransactionBranch TransactionBranch
+
+// Value Marshal
+func (a JSONBTransactionBranch) Value() (driver.Value, error) {
+
+	j, err := json.Marshal(a)
+	return j, err
+}
+
+// Scan Unmarshal
+func (a *JSONBTransactionBranch) Scan(value interface{}) error {
+
+	dataBytes, ok := value.([]byte)
+
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(dataBytes, &a)
 }
 
 type Detail struct {

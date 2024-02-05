@@ -27,3 +27,11 @@ func NewPaymentDetailRepository(pst microservice.IPersister) *PaymentDetailRepos
 	repo.ITransactionConsumerRepository = repositories.NewTransactionConsumerRepository[models.TransactionPaymentDetail](pst)
 	return repo
 }
+
+func (repo PaymentDetailRepository) Create(doc models.TransactionPaymentDetail) error {
+	err := repo.pst.Create(&doc)
+	if err != nil {
+		return err
+	}
+	return nil
+}

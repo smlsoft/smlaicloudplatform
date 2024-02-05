@@ -25,41 +25,46 @@ func (p PurchaseTransactionPhaser) PhaseSingleDoc(msg string) (*models.PurchaseT
 }
 
 func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchaseModels.PurchaseDoc) (*models.PurchaseTransactionPG, error) {
-	details := make([]models.PurchaseTransactionDetailPG, len(*doc.PurchaseData.Purchase.Details))
 
-	for i, detail := range *doc.PurchaseData.Purchase.Details {
-		stockDetail := models.PurchaseTransactionDetailPG{
-			TransactionDetailPG: models.TransactionDetailPG{
-				DocRef:              detail.DocRef,
-				DocRefDateTime:      detail.DocRefDatetime,
-				DocNo:               doc.DocNo,
-				ShopID:              doc.ShopID,
-				LineNumber:          int8(detail.LineNumber),
-				Barcode:             detail.Barcode,
-				UnitCode:            detail.UnitCode,
-				Qty:                 detail.Qty,
-				Price:               detail.Price,
-				PriceExcludeVat:     detail.PriceExcludeVat,
-				Discount:            detail.Discount,
-				DiscountAmount:      detail.DiscountAmount,
-				SumAmount:           detail.SumAmount,
-				SumAmountExcludeVat: detail.SumAmountExcludeVat,
-				TotalValueVat:       detail.TotalValueVat,
-				WhCode:              detail.WhCode,
-				LocationCode:        detail.LocationCode,
-				VatType:             detail.VatType,
-				TaxType:             detail.TaxType,
-				StandValue:          detail.StandValue,
-				DivideValue:         detail.DivideValue,
-				ItemType:            detail.ItemType,
-				ItemGuid:            detail.ItemGuid,
-				Remark:              detail.Remark,
-				ItemNames:           *detail.ItemNames,
-				WhNames:             *detail.WhNames,
-				LocationNames:       *detail.LocationNames,
-			},
+	details := []models.PurchaseTransactionDetailPG{}
+
+	if doc.PurchaseData.Purchase.Details != nil {
+		details = make([]models.PurchaseTransactionDetailPG, len(*doc.PurchaseData.Purchase.Details))
+
+		for i, detail := range *doc.PurchaseData.Purchase.Details {
+			stockDetail := models.PurchaseTransactionDetailPG{
+				TransactionDetailPG: models.TransactionDetailPG{
+					DocRef:              detail.DocRef,
+					DocRefDateTime:      detail.DocRefDatetime,
+					DocNo:               doc.DocNo,
+					ShopID:              doc.ShopID,
+					LineNumber:          int8(detail.LineNumber),
+					Barcode:             detail.Barcode,
+					UnitCode:            detail.UnitCode,
+					Qty:                 detail.Qty,
+					Price:               detail.Price,
+					PriceExcludeVat:     detail.PriceExcludeVat,
+					Discount:            detail.Discount,
+					DiscountAmount:      detail.DiscountAmount,
+					SumAmount:           detail.SumAmount,
+					SumAmountExcludeVat: detail.SumAmountExcludeVat,
+					TotalValueVat:       detail.TotalValueVat,
+					WhCode:              detail.WhCode,
+					LocationCode:        detail.LocationCode,
+					VatType:             detail.VatType,
+					TaxType:             detail.TaxType,
+					StandValue:          detail.StandValue,
+					DivideValue:         detail.DivideValue,
+					ItemType:            detail.ItemType,
+					ItemGuid:            detail.ItemGuid,
+					Remark:              detail.Remark,
+					ItemNames:           *detail.ItemNames,
+					WhNames:             *detail.WhNames,
+					LocationNames:       *detail.LocationNames,
+				},
+			}
+			details[i] = stockDetail
 		}
-		details[i] = stockDetail
 	}
 
 	totalPayCreditAmount := float64(0)
@@ -77,9 +82,15 @@ func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchas
 		}
 	}
 
+	custNames := &[]pkgModels.NameX{}
+
+	if doc.CustNames != nil {
+		custNames = doc.CustNames
+	}
+
 	transaction := models.PurchaseTransactionPG{
 		CreditorCode:  doc.CustCode,
-		CreditorNames: *doc.CustNames,
+		CreditorNames: *custNames,
 		TransactionPG: models.TransactionPG{
 			GuidFixed: doc.GuidFixed,
 			GuidRef:   doc.GuidRef,

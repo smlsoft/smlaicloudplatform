@@ -7,7 +7,7 @@ import (
 
 type TransactionPaymentDetail struct {
 	ID            int64   `json:"id" gorm:"column:id;primary"`
-	ShopID        string  `json:"shop_id" gorm:"column:shopid"`
+	ShopID        string  `json:"shopid" gorm:"column:shopid"`
 	DocNo         string  `json:"docno" gorm:"column:docno"`
 	TransFlag     int     `json:"trans_flag" gorm:"column:trans_flag"`
 	PaymentType   int     `json:"payment_type" gorm:"column:payment_type"`
@@ -33,7 +33,7 @@ type TransactionPaymentDetail struct {
 }
 
 func (TransactionPaymentDetail) TableName() string {
-	return "transaction_payment_detail"
+	return "payment_transaction_detail"
 }
 
 func (m *TransactionPaymentDetail) CompareTo(other *TransactionPaymentDetail) bool {
