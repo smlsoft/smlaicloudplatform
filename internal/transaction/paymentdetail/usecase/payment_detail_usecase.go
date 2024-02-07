@@ -22,7 +22,12 @@ func NewPaymentDetailUsecase(repo repositories.IPaymentDetailRepository) *Paymen
 
 func (s *PaymentDetailUsecase) Upsert(shopID string, docNo string, doc models.TransactionPaymentDetail) error {
 	foundDocument, err := s.repo.Get(shopID, docNo)
-	if err != nil {
+
+	if err != nil && err.Error() != "record not found" {
+		return err
+	}
+
+	if foundDocument == nil {
 		err = s.repo.Create(doc)
 		if err != nil {
 			return err

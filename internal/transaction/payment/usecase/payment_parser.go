@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"encoding/json"
 	"errors"
+	pkgModels "smlcloudplatform/internal/models"
 	transmodels "smlcloudplatform/internal/transaction/models"
 	"smlcloudplatform/internal/transaction/payment/models"
 )
@@ -21,21 +21,15 @@ func ParseTransactionToPayment(other transmodels.TransactionMessageQueue) (model
 	doc.IsCancel = other.IsCancel
 	doc.PayCashAmount = other.PayCashAmount
 
-	tempBranch := transmodels.JSONBTransactionBranch{}
+	doc.BranchCode = other.Branch.Code
 
-	jsonBranchData, err := json.Marshal(other.Branch)
+	branchNames := pkgModels.JSONB([]pkgModels.NameX{})
 
-	if err != nil {
-		return models.TransactionPayment{}, err
+	if other.Branch.Names != nil {
+		branchNames = pkgModels.JSONB(*other.Branch.Names)
 	}
 
-	err = tempBranch.Scan(jsonBranchData)
-
-	if err != nil {
-		return models.TransactionPayment{}, err
-	}
-
-	doc.Branch = tempBranch
+	doc.BranchNames = branchNames
 
 	tempTransFlag, err := transFlagToCalcFlag(other.TransFlag)
 
