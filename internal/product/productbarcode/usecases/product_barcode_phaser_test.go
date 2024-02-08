@@ -21,16 +21,6 @@ func init() {
 	}
 }
 func TestDeserializeJsonProductBarcode(t *testing.T) {
-
-	// give := models.ProductBarcodeDoc{
-	// 	ProductBarcodeData: models.ProductBarcodeData{
-	// 		ShopIdentity: commonModels.ShopIdentity{
-	// 			ShopID: shopID,
-	// 		},
-	// 		ProductBarcodeInfo: barcode,
-	// 	},
-	// }
-
 	assert.Equal(t, "2QoilMQkX9i6vtAE88ilEubnrhz", giveProductBarcodeDoc.ShopID)
 
 	phaser := usecases.ProductBarcodePhaser{}
@@ -39,4 +29,7 @@ func TestDeserializeJsonProductBarcode(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "2QoilMQkX9i6vtAE88ilEubnrhz", got.ShopID)
 	assert.Equal(t, "PLATE", got.UnitCode)
+	assert.Equal(t, "th", *got.UnitNames[0].Code)
+	assert.Equal(t, "จาน", *got.UnitNames[0].Name)
+
 }

@@ -263,7 +263,8 @@ type ProductBarcodePg struct {
 	models.PartitionIdentity `gorm:"embedded;"`
 	Barcode                  string  `json:"barcode" gorm:"column:barcode;primaryKey"`
 	Names                    JSONB   `json:"names"  gorm:"column:names;type:jsonb" `
-	UnitCode                 string  `json:"unitcode" gorm:"column:unitcode"`
+	UnitCode                 string  `json:"itemunitcode" gorm:"column:unitcode"`
+	UnitNames                JSONB   `json:"itemunitnames" gorm:"column:unitnames;type:jsonb"`
 	BalanceQty               float64 `json:"balanceqty" gorm:"column:balanceqty"`
 	MainBarcodeRef           string  `json:"mainbarcoderef" gorm:"column:mainbarcoderef"`
 	StandValue               float64 `json:"standvalue" gorm:"column:standvalue"`
