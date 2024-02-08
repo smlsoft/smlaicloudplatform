@@ -17,6 +17,15 @@ type SaleInvoiceReturnTransactionPG struct {
 	TotalPayTransfer float64                                 `json:"totalpaytransfer" gorm:"column:totalpaytransfer"`
 	TotalPayCredit   float64                                 `json:"totalpaycredit" gorm:"column:totalpaycredit"`
 	Items            *[]SaleInvoiceReturnTransactionDetailPG `json:"items" gorm:"items;foreignKey:shopid,docno"`
+
+	SaleCode                     string          `json:"salecode" bson:"salecode"`
+	SaleName                     string          `json:"salename" bson:"salename"`
+	BranchCode                   string          `json:"branchcode" bson:"branchcode"`
+	BranchNames                  pkgModels.JSONB `json:"branchnames" bson:"branchnames"`
+	DetailDiscountFormula        string          `json:"detaildiscountformula" bson:"detaildiscountformula"`
+	DetailTotalAmount            float64         `json:"detailtotalamount" bson:"detailtotalamount"`
+	TotalDiscountVatAmount       float64         `json:"totaldiscountvatamount" bson:"totaldiscountvatamount"`
+	TotalDiscountExceptVatAmount float64         `json:"totaldiscountexceptvatamount" bson:"totaldiscountexceptvatamount"`
 }
 
 type SaleInvoiceReturnTransactionDetailPG struct {

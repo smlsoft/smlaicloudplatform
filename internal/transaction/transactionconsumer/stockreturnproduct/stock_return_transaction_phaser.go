@@ -95,6 +95,8 @@ func (p *StockReturnTransactionPhaser) PhaseStockReturnProductTransactionDoc(doc
 			TransFlag:      58,
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
+			BranchCode:     doc.Branch.Code,
+			BranchNames:    *doc.Branch.Names,
 			TaxDocDate:     doc.Transaction.TaxDocDate,
 			TaxDocNo:       doc.Transaction.TaxDocNo,
 			VatType:        doc.Transaction.VatType,

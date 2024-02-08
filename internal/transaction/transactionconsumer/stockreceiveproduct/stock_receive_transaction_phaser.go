@@ -95,6 +95,8 @@ func (p StockReceiveTransactionPhaser) PhaseStockReceiveTransaction(doc stockRec
 			TransFlag:      60,
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
+			BranchCode:     doc.Branch.Code,
+			BranchNames:    *doc.Branch.Names,
 			TaxDocDate:     doc.Transaction.TaxDocDate,
 			TaxDocNo:       doc.Transaction.TaxDocNo,
 			VatType:        doc.Transaction.VatType,

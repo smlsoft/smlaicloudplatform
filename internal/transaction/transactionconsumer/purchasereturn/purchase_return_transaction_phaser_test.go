@@ -14,6 +14,11 @@ func PurchaseReturnTransactionStruct() models.PurchaseReturnTransactionPG {
 
 	codeTh := "th"
 	nameTh := "เจ้าหนี้ทั่วไป"
+
+	branchNames := []pkgModels.NameX{
+		*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+	}
+
 	want := models.PurchaseReturnTransactionPG{
 
 		TransactionPG: models.TransactionPG{
@@ -28,6 +33,8 @@ func PurchaseReturnTransactionStruct() models.PurchaseReturnTransactionPG {
 			DocRefType:     3,
 			DocRefNo:       "PO2305051637AAD9",
 			DocRefDate:     time.Date(2023, 5, 5, 9, 37, 25, 0, time.UTC),
+			BranchCode:     "branch01",
+			BranchNames:    branchNames,
 			TaxDocNo:       "TAXXXXX",
 			TaxDocDate:     time.Date(2023, 5, 18, 9, 37, 21, 0, time.UTC),
 			Description:    "remark",
@@ -103,6 +110,17 @@ func TestPurchaseReturnTransactionPhaser(t *testing.T) {
 		"docreftype": 3,
 		"docrefno": "PO2305051637AAD9",
 		"docrefdate": "2023-05-05T09:37:25.000Z",
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"taxdocno": "TAXXXXX",
 		"taxdocdate": "2023-05-18T09:37:21.000Z",
 		"description": "remark",
@@ -347,4 +365,9 @@ func TestPurchaseReturnTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalPayCash, want.TotalPayCash, "totalpaycash")
 	assert.Equal(t, get.TotalPayCredit, want.TotalPayCredit, "totalpaycredit")
 	assert.Equal(t, get.TotalPayTransfer, want.TotalPayTransfer, "totalpaytransfer")
+
+	// branch
+	assert.Equal(t, want.BranchCode, get.BranchCode, "branchcode")
+	assert.Equal(t, want.BranchNames, get.BranchNames, "branchnames")
+
 }

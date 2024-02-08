@@ -20,14 +20,18 @@ func PurchaseTransactionStruct() models.PurchaseTransactionPG {
 			ShopIdentity: pkgModels.ShopIdentity{
 				ShopID: "2PrIIqTWxoBXv16K310sNwfHmfY",
 			},
-			GuidFixed:      "2RYA2Yri2HRKDF5JFnKpwuGmydO",
-			TransFlag:      12,
-			DocNo:          "PU2023062200001",
-			DocDate:        time.Date(2023, 6, 22, 6, 46, 25, 0, time.UTC),
-			GuidRef:        "bba805ec-f6aa-4568-b644-63147cd6cbcf",
-			DocRefType:     5,
-			DocRefNo:       "REFNO",
-			DocRefDate:     time.Date(2023, 6, 22, 6, 46, 25, 0, time.UTC),
+			GuidFixed:  "2RYA2Yri2HRKDF5JFnKpwuGmydO",
+			TransFlag:  12,
+			DocNo:      "PU2023062200001",
+			DocDate:    time.Date(2023, 6, 22, 6, 46, 25, 0, time.UTC),
+			GuidRef:    "bba805ec-f6aa-4568-b644-63147cd6cbcf",
+			DocRefType: 5,
+			DocRefNo:   "REFNO",
+			DocRefDate: time.Date(2023, 6, 22, 6, 46, 25, 0, time.UTC),
+			BranchCode: "branch01",
+			BranchNames: []pkgModels.NameX{
+				*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+			},
 			TaxDocNo:       "TAXPU2023062200001",
 			TaxDocDate:     time.Date(2023, 6, 22, 6, 46, 25, 0, time.UTC),
 			Description:    "Purchase Remark",
@@ -103,6 +107,17 @@ func TestPurchaseTransactionPhaser(t *testing.T) {
 		"docreftype": 5,
 		"docrefno": "REFNO",
 		"docrefdate": "2023-06-22T06:46:25.000Z",
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"taxdocno": "TAXPU2023062200001",
 		"taxdocdate": "2023-06-22T06:46:25.000Z",
 		"description": "Purchase Remark",		
@@ -380,4 +395,8 @@ func TestPurchaseTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalPayCash, want.TotalPayCash, "totalpaycash")
 	assert.Equal(t, get.TotalPayCredit, want.TotalPayCredit, "totalpaycredit")
 	assert.Equal(t, get.TotalPayTransfer, want.TotalPayTransfer, "totalpaytransfer")
+
+	// branch
+	assert.Equal(t, want.BranchCode, get.BranchCode, "branchcode")
+	assert.Equal(t, want.BranchNames, get.BranchNames, "branchnames")
 }

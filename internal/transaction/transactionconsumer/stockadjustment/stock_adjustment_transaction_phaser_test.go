@@ -11,6 +11,11 @@ import (
 )
 
 func wantStockAdjustmentTransactionStruct() models.StockAdjustmentTransactionPG {
+
+	branchNames := []pkgModels.NameX{
+		*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+	}
+
 	want := models.StockAdjustmentTransactionPG{
 		TransactionPG: models.TransactionPG{
 			ShopIdentity: pkgModels.ShopIdentity{
@@ -24,6 +29,8 @@ func wantStockAdjustmentTransactionStruct() models.StockAdjustmentTransactionPG 
 			DocRefType:     0,
 			DocRefNo:       "",
 			DocRefDate:     time.Date(2023, 5, 18, 9, 45, 39, 0, time.UTC),
+			BranchCode:     "branch01",
+			BranchNames:    branchNames,
 			TaxDocNo:       "",
 			TaxDocDate:     time.Date(2023, 5, 18, 9, 45, 39, 0, time.UTC),
 			Description:    "",
@@ -88,6 +95,17 @@ func TestStockAdjustmentTransactionPhaser(t *testing.T) {
 		"docreftype": 0,
 		"docrefno": "",
 		"docrefdate": "2023-05-18T09:45:39.000Z",
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"taxdocdate": "2023-05-18T09:45:39.000Z",
 		"taxdocno": "",
 		"doctype": 0,
@@ -275,6 +293,10 @@ func TestStockAdjustmentTransactionPhaser(t *testing.T) {
 	assert.Equal(t, (*get.Items)[0].DocRef, (*want.Items)[0].DocRef, "item.docref")
 	assert.Equal(t, (*get.Items)[0].DocRefDateTime, (*want.Items)[0].DocRefDateTime, "item.docrefdatetime")
 	assert.Equal(t, (*get.Items)[0].VatCal, (*want.Items)[0].VatCal, "item.vatcal")
+
+	// branch
+	assert.Equal(t, want.BranchCode, get.BranchCode, "branchcode")
+	assert.Equal(t, want.BranchNames, get.BranchNames, "branchnames")
 
 	wantEqual := want.CompareTo(&want)
 	assert.Equal(t, wantEqual, true, "compare")

@@ -81,6 +81,10 @@ func (c *CreditorPaymentTransactionPhaser) PhaseCreditPaymentTransactionDoc(doc 
 		}
 	}
 
+	if doc.Branch.Names == nil {
+		doc.Branch.Names = &[]pkgModels.NameX{}
+	}
+
 	transaction := models.CreditorPaymentTransactionPG{
 		ShopIdentity: pkgModels.ShopIdentity{
 			ShopID: doc.ShopID,
@@ -88,6 +92,8 @@ func (c *CreditorPaymentTransactionPhaser) PhaseCreditPaymentTransactionDoc(doc 
 		GuidFixed:        doc.GuidFixed,
 		DocNo:            doc.DocNo,
 		DocDate:          doc.DocDatetime,
+		BranchCode:       doc.Branch.Code,
+		BranchNames:      pkgModels.JSONB(*doc.Branch.Names),
 		CreditorCode:     doc.CustCode,
 		CreditorNames:    *doc.CustNames,
 		Details:          &details,

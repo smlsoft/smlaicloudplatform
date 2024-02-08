@@ -23,6 +23,8 @@ type StockTransaction struct {
 	DocRefType               int8                      `json:"docreftype" gorm:"column:docreftype"`
 	DocRefNo                 string                    `json:"docrefno" gorm:"column:docrefno"`
 	DocRefDate               time.Time                 `json:"docrefdate" gorm:"column:docrefdate"`
+	BranchCode               string                    `json:"branchcode" gorm:"column:branchcode"`
+	BranchNames              models.JSONB              `json:"branchnames" gorm:"column:branchnames;type:jsonb"`
 	InquiryType              int                       `json:"inquirytype" gorm:"column:inquirytype"`
 	TransFlag                int8                      `json:"transflag" gorm:"column:transflag" `
 	VatType                  int8                      `json:"vattype" gorm:"column:vattype" `

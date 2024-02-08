@@ -12,6 +12,11 @@ import (
 )
 
 func wantDataCreditPayment() *models.CreditorPaymentTransactionPG {
+
+	brnachNames := pkgModels.JSONB{
+		*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+	}
+
 	want := models.CreditorPaymentTransactionPG{
 		ShopIdentity: pkgModels.ShopIdentity{
 			ShopID: "2IZS0jFeRXWPidSupyXN7zQIlaS",
@@ -19,6 +24,8 @@ func wantDataCreditPayment() *models.CreditorPaymentTransactionPG {
 		GuidFixed:        "2UIT0vYecL1mMA8NvvAvjnVqqwR",
 		DocNo:            "DE2023080200001",
 		DocDate:          time.Date(2023, 8, 2, 8, 38, 59, 0, time.UTC),
+		BranchCode:       "branch01",
+		BranchNames:      pkgModels.JSONB(brnachNames),
 		CreditorCode:     "AP002",
 		TotalAmount:      14400,
 		TotalPayCash:     14400,
@@ -50,6 +57,17 @@ func TestCreditPaymentTransactionPhaser(t *testing.T) {
 		"docno": "DE2023080200001",
 		"docdatetime": "2023-08-02T08:38:59.000Z",
 		"doctype": 0,
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"transflag": 51,
 		"custcode": "AP002",
 		"custnames": [
@@ -112,6 +130,8 @@ func TestCreditPaymentTransactionPhaser(t *testing.T) {
 	assert.Equal(t, want.TotalPayCash, got.TotalPayCash, "totalpaycash")
 	assert.Equal(t, want.TotalPayTransfer, got.TotalPayTransfer, "totalpaytransfer")
 	assert.Equal(t, want.TotalPayCredit, got.TotalPayCredit, "totalpaycredit")
+	assert.Equal(t, want.BranchCode, got.BranchCode, "branchcode")
+	assert.Equal(t, want.BranchNames, got.BranchNames, "branchnames")
 
 	assert.Equal(t, (*got.Details)[0].DocNo, (*want.Details)[0].DocNo, "item.docno")
 	assert.Equal(t, (*got.Details)[0].ShopID, (*want.Details)[0].ShopID, "item.shopid")

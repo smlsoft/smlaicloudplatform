@@ -12,6 +12,10 @@ import (
 
 func wantDataDebtorPayment() *models.DebtorPaymentTransactionPG {
 
+	branchNames := pkgModels.JSONB{
+		*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+	}
+
 	want := models.DebtorPaymentTransactionPG{
 		ShopIdentity: pkgModels.ShopIdentity{
 			ShopID: "2IZS0jFeRXWPidSupyXN7zQIlaS",
@@ -19,6 +23,8 @@ func wantDataDebtorPayment() *models.DebtorPaymentTransactionPG {
 		GuidFixed:        "2UIExOige65Ekkq6O2nj7F6BEez",
 		DocNo:            "EE2023062200001",
 		DocDate:          time.Date(2023, 6, 22, 6, 48, 15, 0, time.UTC),
+		BranchCode:       "branch01",
+		BranchNames:      pkgModels.JSONB(branchNames),
 		DebtorCode:       "AR001",
 		TotalAmount:      70,
 		TotalPayCash:     15,
@@ -50,6 +56,17 @@ func TestDebtorPaymentDocumentPhaser(t *testing.T) {
 		"docno": "EE2023062200001",
 		"docdatetime": "2023-06-22T06:48:15.000Z",
 		"doctype": 1,
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"transflag": 50,
 		"custcode": "AR001",
 		"custnames": [
