@@ -380,6 +380,7 @@ func main() {
 		// transactionconsumer.MigrationDatabase(ms, cfg)
 		productbarcode.MigrationProductBarcodeTable(ms, cfg)
 
+		// payment migration
 		payment.MigrationDatabase(ms, cfg)
 		paymentdetail.MigrationDatabase(ms, cfg)
 
