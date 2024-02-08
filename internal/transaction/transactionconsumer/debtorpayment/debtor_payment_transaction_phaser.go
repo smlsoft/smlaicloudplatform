@@ -82,6 +82,10 @@ func (p *DebtorPaymentTransactionPhaser) PhaseDebtorPaymentTransactionDoc(doc de
 		}
 	}
 
+	if doc.Branch.Names == nil {
+		doc.Branch.Names = &[]pkgModels.NameX{}
+	}
+
 	transaction := models.DebtorPaymentTransactionPG{
 		ShopIdentity: pkgModels.ShopIdentity{
 			ShopID: doc.ShopID,
@@ -89,6 +93,8 @@ func (p *DebtorPaymentTransactionPhaser) PhaseDebtorPaymentTransactionDoc(doc de
 		GuidFixed:        doc.GuidFixed,
 		DocNo:            doc.DocNo,
 		DocDate:          doc.DocDatetime,
+		BranchCode:       doc.Branch.Code,
+		BranchNames:      pkgModels.JSONB(*doc.Branch.Names),
 		DebtorCode:       doc.CustCode,
 		DebtorNames:      *doc.CustNames,
 		TotalAmount:      doc.TotalAmount,

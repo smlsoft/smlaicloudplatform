@@ -15,6 +15,8 @@ type DebtorTransactionPG struct {
 	GuidFixed                string          `json:"guidfixed" gorm:"column:guidfixed"`
 	DocNo                    string          `json:"docno" gorm:"column:docno;primaryKey"`
 	DocDate                  time.Time       `json:"docdate" gorm:"column:docdate"`
+	BranchCode               string          `json:"branchcode" gorm:"column:branchcode"`
+	BranchNames              models.JSONB    `json:"branchnames" gorm:"column:branchnames;type:jsonb"`
 	DebtorCode               string          `json:"creditorcode" gorm:"column:creditorcode"`
 	DebtorNames              pkgModels.JSONB `json:"debtornames" gorm:"column:debtornames"`
 	InquiryType              int             `json:"inquirytype" gorm:"column:inquirytype"`

@@ -95,6 +95,8 @@ func (p *StockTransferTransactionPhaser) PhaseStockTransferTransactonPGDoc(doc s
 			TransFlag:      int8(doc.TransFlag),
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
+			BranchCode:     doc.Branch.Code,
+			BranchNames:    *doc.Branch.Names,
 			TaxDocDate:     doc.Transaction.TaxDocDate,
 			TaxDocNo:       doc.Transaction.TaxDocNo,
 			VatType:        doc.Transaction.VatType,

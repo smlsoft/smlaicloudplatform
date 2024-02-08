@@ -17,6 +17,8 @@ type CreditorPaymentTransactionPG struct {
 	models.PartitionIdentity `gorm:"embedded;"`
 	DocNo                    string                                `json:"docno" gorm:"column:docno;primaryKey"`
 	DocDate                  time.Time                             `json:"docdate" gorm:"column:docdate"`
+	BranchCode               string                                `json:"branchcode" gorm:"column:branchcode"`
+	BranchNames              models.JSONB                          `json:"branchnames" gorm:"column:branchnames;type:jsonb"`
 	CreditorCode             string                                `json:"creditorcode" gorm:"column:creditorcode"`
 	CreditorNames            pkgModels.JSONB                       `json:"creditornames" gorm:"column:creditornames;type:jsonb"`
 	TotalAmount              float64                               `json:"totalamount" gorm:"column:totalamount"`

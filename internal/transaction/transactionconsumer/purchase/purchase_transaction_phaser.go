@@ -100,6 +100,8 @@ func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchas
 			TransFlag:      12,
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
+			BranchCode:     doc.Branch.Code,
+			BranchNames:    *doc.Branch.Names,
 			TaxDocNo:       doc.TaxDocNo,
 			TaxDocDate:     doc.TaxDocDate,
 			Description:    doc.Description,

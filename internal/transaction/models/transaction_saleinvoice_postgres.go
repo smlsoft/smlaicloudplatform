@@ -11,12 +11,22 @@ import (
 
 type SaleInvoiceTransactionPG struct {
 	TransactionPG    `gorm:"embedded;"`
-	DebtorCode       string                            `json:"creditorcode" gorm:"column:creditorcode"`
-	DebtorNames      pkgModels.JSONB                   `json:"creditornames" gorm:"column:creditornames;type:jsonb"`
-	TotalPayCash     float64                           `json:"totalpaycash" gorm:"column:totalpaycash"`
-	TotalPayTransfer float64                           `json:"totalpaytransfer" gorm:"column:totalpaytransfer"`
-	TotalPayCredit   float64                           `json:"totalpaycredit" gorm:"column:totalpaycredit"`
-	Items            *[]SaleInvoiceTransactionDetailPG `json:"items" gorm:"items;foreignKey:shopid,docno"`
+	DebtorCode       string          `json:"creditorcode" gorm:"column:creditorcode"`
+	DebtorNames      pkgModels.JSONB `json:"creditornames" gorm:"column:creditornames;type:jsonb"`
+	TotalPayCash     float64         `json:"totalpaycash" gorm:"column:totalpaycash"`
+	TotalPayTransfer float64         `json:"totalpaytransfer" gorm:"column:totalpaytransfer"`
+	TotalPayCredit   float64         `json:"totalpaycredit" gorm:"column:totalpaycredit"`
+
+	SaleCode                     string          `json:"salecode" bson:"salecode"`
+	SaleName                     string          `json:"salename" bson:"salename"`
+	BranchCode                   string          `json:"branchcode" bson:"branchcode"`
+	BranchNames                  pkgModels.JSONB `json:"branchnames" bson:"branchnames"`
+	DetailDiscountFormula        string          `json:"detaildiscountformula" bson:"detaildiscountformula"`
+	DetailTotalAmount            float64         `json:"detailtotalamount" bson:"detailtotalamount"`
+	TotalDiscountVatAmount       float64         `json:"totaldiscountvatamount" bson:"totaldiscountvatamount"`
+	TotalDiscountExceptVatAmount float64         `json:"totaldiscountexceptvatamount" bson:"totaldiscountexceptvatamount"`
+
+	Items *[]SaleInvoiceTransactionDetailPG `json:"items" gorm:"items;foreignKey:shopid,docno"`
 }
 
 type SaleInvoiceTransactionDetailPG struct {

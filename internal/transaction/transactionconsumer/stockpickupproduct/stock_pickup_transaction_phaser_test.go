@@ -12,6 +12,10 @@ import (
 
 func wantStockPickupTransferStruct() models.StockPickUpTransactionPG {
 
+	branchNames := []pkgModels.NameX{
+		*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+	}
+
 	want := models.StockPickUpTransactionPG{
 		TransactionPG: models.TransactionPG{
 			ShopIdentity: pkgModels.ShopIdentity{
@@ -25,6 +29,8 @@ func wantStockPickupTransferStruct() models.StockPickUpTransactionPG {
 			DocRefType:     0,
 			DocRefNo:       "",
 			DocRefDate:     time.Date(2023, 5, 18, 9, 49, 54, 0, time.UTC),
+			BranchCode:     "branch01",
+			BranchNames:    branchNames,
 			TaxDocNo:       "",
 			TaxDocDate:     time.Date(2023, 5, 18, 9, 49, 54, 0, time.UTC),
 			Description:    "",
@@ -88,6 +94,17 @@ func TestStockPickupTransactionDoc(t *testing.T) {
 		"docreftype": 0,
 		"docrefno": "",
 		"docrefdate": "2023-05-18T09:49:54.000Z",
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"taxdocdate": "2023-05-18T09:49:54.000Z",
 		"taxdocno": "",
 		"doctype": 0,
@@ -278,4 +295,8 @@ func TestStockPickupTransactionDoc(t *testing.T) {
 
 	wantEqual := want.CompareTo(&want)
 	assert.Equal(t, wantEqual, true, "compare")
+
+	// branch
+	assert.Equal(t, want.BranchCode, get.BranchCode, "branchcode")
+	assert.Equal(t, want.BranchNames, get.BranchNames, "branchnames")
 }

@@ -97,6 +97,7 @@ import (
 	"smlcloudplatform/internal/transaction/stockreceiveproduct"
 	"smlcloudplatform/internal/transaction/stockreturnproduct"
 	"smlcloudplatform/internal/transaction/stocktransfer"
+	"smlcloudplatform/internal/transaction/transactionconsumer"
 	"smlcloudplatform/internal/vfgl/accountgroup"
 	"smlcloudplatform/internal/vfgl/accountperiodmaster"
 	"smlcloudplatform/internal/vfgl/chartofaccount"
@@ -106,6 +107,7 @@ import (
 	"smlcloudplatform/internal/warehouse"
 
 	purchase_consumer "smlcloudplatform/internal/transaction/transactionconsumer/purchase"
+	saleinvoice_consumer "smlcloudplatform/internal/transaction/transactionconsumer/saleinvoice"
 
 	_ "net/http/pprof"
 
@@ -322,11 +324,16 @@ func main() {
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)
 
+	transactionconsumer.MigrationDatabase(ms, cfg)
+
 	payment.MigrationDatabase(ms, cfg)
 	paymentdetail.MigrationDatabase(ms, cfg)
 
 	purchase_consumer.MigrationDatabase(ms, cfg)
 	ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
+
+	saleinvoice_consumer.MigrationDatabase(ms, cfg)
+	ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))
 
 	consumeServices := []ConsumerRegister{}
 

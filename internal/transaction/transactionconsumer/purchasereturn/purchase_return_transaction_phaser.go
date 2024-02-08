@@ -113,6 +113,10 @@ func (p PurchaseReturnTransactionPhaser) PhasePurchaseReturnTransaction(doc *pur
 		}
 	}
 
+	if doc.Branch.Names == nil {
+		doc.Branch.Names = &[]pkgModels.NameX{}
+	}
+
 	transaction := models.PurchaseReturnTransactionPG{
 		CreditorCode:  doc.CustCode,
 		CreditorNames: *doc.CustNames,
@@ -128,6 +132,8 @@ func (p PurchaseReturnTransactionPhaser) PhasePurchaseReturnTransaction(doc *pur
 			DocRefType:     doc.DocRefType,
 			DocRefNo:       doc.Transaction.DocRefNo,
 			DocRefDate:     doc.Transaction.DocRefDate,
+			BranchCode:     doc.Branch.Code,
+			BranchNames:    *doc.Branch.Names,
 			TaxDocDate:     doc.Transaction.TaxDocDate,
 			TaxDocNo:       doc.Transaction.TaxDocNo,
 			Description:    doc.Description,

@@ -111,6 +111,8 @@ func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBal
 			TransFlag:      54,
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
+			BranchCode:     doc.Branch.Code,
+			BranchNames:    *doc.Branch.Names,
 			TaxDocDate:     doc.TaxDocDate,
 			TaxDocNo:       doc.TaxDocNo,
 			VatType:        doc.VatType,

@@ -21,6 +21,14 @@ func ParseTransactionToPayment(other transmodels.TransactionMessageQueue) (model
 	doc.IsCancel = other.IsCancel
 	doc.PayCashAmount = other.PayCashAmount
 
+	doc.CustCode = other.CustCode
+
+	if other.CustNames == nil {
+		other.CustNames = &[]pkgModels.NameX{}
+	}
+
+	doc.CustNames = *other.CustNames
+
 	doc.BranchCode = other.Branch.Code
 
 	branchNames := pkgModels.JSONB([]pkgModels.NameX{})

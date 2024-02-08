@@ -16,10 +16,14 @@ func wantStockReturnTransactionStruct() models.StockReturnProductTransactionPG {
 			ShopIdentity: pkgModels.ShopIdentity{
 				ShopID: "2PrIIqTWxoBXv16K310sNwfHmfY",
 			},
-			GuidFixed:      "2RjalZEcCV3BzRybaHGeqXhfw6C",
-			TransFlag:      58,
-			DocNo:          "IR2023062600001",
-			DocDate:        time.Date(2023, 6, 26, 7, 54, 41, 0, time.UTC),
+			GuidFixed:  "2RjalZEcCV3BzRybaHGeqXhfw6C",
+			TransFlag:  58,
+			DocNo:      "IR2023062600001",
+			DocDate:    time.Date(2023, 6, 26, 7, 54, 41, 0, time.UTC),
+			BranchCode: "branch01",
+			BranchNames: []pkgModels.NameX{
+				*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+			},
 			GuidRef:        "61360335-818d-4df5-acd4-98a8f4aab685",
 			DocRefType:     0,
 			DocRefNo:       "",
@@ -88,6 +92,17 @@ func TestStockReturnTransactionPhaser(t *testing.T) {
 		"docreftype": 0,
 		"docrefno": "",
 		"docrefdate": "2023-06-26T07:54:41.000Z",
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"taxdocdate": "2023-06-26T07:54:41.000Z",
 		"taxdocno": "",
 		"doctype": 0,
@@ -276,6 +291,10 @@ func TestStockReturnTransactionPhaser(t *testing.T) {
 	assert.Equal(t, (*get.Items)[0].DocRef, (*want.Items)[0].DocRef, "item.docref")
 	assert.Equal(t, (*get.Items)[0].DocRefDateTime, (*want.Items)[0].DocRefDateTime, "item.docrefdatetime")
 	assert.Equal(t, (*get.Items)[0].VatCal, (*want.Items)[0].VatCal, "item.vatcal")
+
+	// branch
+	assert.Equal(t, want.BranchCode, get.BranchCode, "branchcode")
+	assert.Equal(t, want.BranchNames, get.BranchNames, "branchnames")
 
 	wantEqual := want.CompareTo(&want)
 	assert.Equal(t, wantEqual, true, "compare")

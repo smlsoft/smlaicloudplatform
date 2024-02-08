@@ -15,6 +15,10 @@ func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
 	codeTh := "th"
 	nameTh := "ลูกค้าทั่วไป"
 
+	branchNames := []pkgModels.NameX{
+		*pkgModels.NewNameXWithCodeName("th", "สาขาที่ 1"),
+	}
+
 	give := models.SaleInvoiceTransactionPG{
 		TransactionPG: models.TransactionPG{
 			ShopIdentity: pkgModels.ShopIdentity{
@@ -28,6 +32,8 @@ func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
 			DocRefType:     4,
 			DocRefNo:       "REFNO",
 			DocRefDate:     time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC),
+			BranchCode:     "branch01",
+			BranchNames:    branchNames,
 			TaxDocNo:       "5cca85fe-6804-4813-bf0d-fdccb3551175",
 			TaxDocDate:     time.Date(2023, 7, 31, 7, 29, 28, 0, time.UTC),
 			Description:    "POS",
@@ -86,6 +92,10 @@ func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
 				IsDelete: false,
 			},
 		},
+		DetailDiscountFormula:        "detail discount formula 1",
+		DetailTotalAmount:            100,
+		TotalDiscountVatAmount:       100,
+		TotalDiscountExceptVatAmount: 100,
 	}
 
 	return give
@@ -105,6 +115,17 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 		"docrefno": "REFNO",
 		"docrefdate": "0001-01-01T00:00:00Z",
 		"doctype": 1,
+		"branch": {
+			"code": "branch01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"taxdocno": "5cca85fe-6804-4813-bf0d-fdccb3551175",
 		"taxdocdate": "2023-07-31T07:29:28.000Z",
 		"inquirytype": 1,
@@ -125,6 +146,12 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 		"membercode": "",
 		"description": "POS",
 		"cashiercode": "ADMIN09",
+		"salecode": "sale01",
+		"salename": "พนักงานขาย 1",
+		"detaildiscountformula": "detail discount formula 1",
+		"detailtotalamount": 100,
+		"totaldiscountvatamount": 100,
+		"totaldiscountexceptvatamount": 100,
 		"details": [
 			{
 				"linenumber": 1,
@@ -284,4 +311,14 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalPayCash, want.TotalPayCash, "totalpaycash")
 	assert.Equal(t, get.TotalPayCredit, want.TotalPayCredit, "totalpaycredit")
 	assert.Equal(t, get.TotalPayTransfer, want.TotalPayTransfer, "totalpaytransfer")
+
+	// branch
+	assert.Equal(t, want.BranchCode, get.BranchCode, "branch code")
+	assert.Equal(t, want.BranchNames, get.BranchNames, "branch names")
+
+	// discount
+	assert.Equal(t, want.DetailDiscountFormula, get.DetailDiscountFormula, "detail discount formula")
+	assert.Equal(t, want.DetailTotalAmount, get.DetailTotalAmount, "detail total amount")
+	assert.Equal(t, want.TotalDiscountVatAmount, get.TotalDiscountVatAmount, "total discount vat amount")
+	assert.Equal(t, want.TotalDiscountExceptVatAmount, get.TotalDiscountExceptVatAmount, "total discount except vat amount")
 }

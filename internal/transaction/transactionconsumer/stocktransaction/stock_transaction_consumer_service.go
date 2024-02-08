@@ -39,10 +39,8 @@ type StockTransactionConsumerService struct {
 func (svc *StockTransactionConsumerService) Upsert(shopID string, docNo string, doc models.StockTransaction) error {
 
 	findTrx, err := svc.transactionPGRepo.Get(shopID, docNo)
-	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return err
-		}
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return err
 	}
 
 	if findTrx == nil {
