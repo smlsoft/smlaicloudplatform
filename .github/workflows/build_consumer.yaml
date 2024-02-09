@@ -52,7 +52,7 @@ jobs:
           git config --global user.email "woranich@gmail.com"
           git config --global user.name "userplant"
           echo ${{ github.sha }}
-          sed -i "s|ghcr.io/smlsoft/smlcloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlcloudapi:sha-${GITHUB_SHA::7}|g" dedepos-consumer-dev/deployment.yaml
+          sed -i "s|ghcr.io/smlsoft/smlcloudconsumer:sha-.\{7\}|ghcr.io/smlsoft/smlcloudconsumer:sha-${GITHUB_SHA::7}|g" dedepos-consumer-dev/deployment.yaml
           git add -A
           git commit -am "Update dedepos-consumer-dev sha-${GITHUB_SHA::7}"
       - run: echo ${{ github }}
