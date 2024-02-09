@@ -44,6 +44,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 				WhNames:             *detail.WhNames,
 				LocationNames:       *detail.LocationNames,
 			},
+			ManufacturerGUID: detail.ManufacturerGUID,
 		}
 		details[i] = stockDetail
 	}
@@ -99,6 +100,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 		DetailTotalAmount:            doc.DetailTotalAmount,
 		TotalDiscountVatAmount:       doc.TotalDiscountVatAmount,
 		TotalDiscountExceptVatAmount: doc.TotalDiscountExceptVatAmount,
+		DetailTotalDiscount:          doc.DetailTotalDiscount,
 
 		DebtorCode:       doc.CustCode,
 		DebtorNames:      *doc.CustNames,

@@ -18,14 +18,15 @@ type SaleInvoiceReturnTransactionPG struct {
 	TotalPayCredit   float64                                 `json:"totalpaycredit" gorm:"column:totalpaycredit"`
 	Items            *[]SaleInvoiceReturnTransactionDetailPG `json:"items" gorm:"items;foreignKey:shopid,docno"`
 
-	SaleCode                     string          `json:"salecode" bson:"salecode"`
-	SaleName                     string          `json:"salename" bson:"salename"`
-	BranchCode                   string          `json:"branchcode" bson:"branchcode"`
-	BranchNames                  pkgModels.JSONB `json:"branchnames" bson:"branchnames"`
-	DetailDiscountFormula        string          `json:"detaildiscountformula" bson:"detaildiscountformula"`
-	DetailTotalAmount            float64         `json:"detailtotalamount" bson:"detailtotalamount"`
-	TotalDiscountVatAmount       float64         `json:"totaldiscountvatamount" bson:"totaldiscountvatamount"`
-	TotalDiscountExceptVatAmount float64         `json:"totaldiscountexceptvatamount" bson:"totaldiscountexceptvatamount"`
+	SaleCode                     string          `json:"salecode" gorm:"column:salecode"`
+	SaleName                     string          `json:"salename" gorm:"column:salename"`
+	BranchCode                   string          `json:"branchcode" gorm:"column:branchcode"`
+	BranchNames                  pkgModels.JSONB `json:"branchnames" gorm:"column:branchnames;type:jsonb"`
+	DetailDiscountFormula        string          `json:"detaildiscountformula" gorm:"column:detaildiscountformula"`
+	DetailTotalAmount            float64         `json:"detailtotalamount" gorm:"column:detailtotalamount"`
+	TotalDiscountVatAmount       float64         `json:"totaldiscountvatamount" gorm:"column:totaldiscountvatamount"`
+	TotalDiscountExceptVatAmount float64         `json:"totaldiscountexceptvatamount" gorm:"column:totaldiscountexceptvatamount"`
+	DetailTotalDiscount          float64         `json:"detailtotaldiscount" gorm:"column:detailtotaldiscount"`
 }
 
 type SaleInvoiceReturnTransactionDetailPG struct {

@@ -99,6 +99,7 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 		DetailTotalAmount:            doc.DetailTotalAmount,
 		TotalDiscountVatAmount:       doc.TotalDiscountVatAmount,
 		TotalDiscountExceptVatAmount: doc.TotalDiscountExceptVatAmount,
+		DetailTotalDiscount:          doc.DetailTotalDiscount,
 
 		DebtorCode:       doc.CustCode,
 		DebtorNames:      *doc.CustNames,
