@@ -98,6 +98,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			TotalAfterVat:  doc.TotalAfterVat,
 			TotalExceptVat: doc.TotalExceptVat,
 			TotalAmount:    doc.TotalAmount,
+			IsCancel:       doc.IsCancel,
 		},
 		IsPOS:                        doc.IsPOS,
 		SaleCode:                     doc.SaleCode,

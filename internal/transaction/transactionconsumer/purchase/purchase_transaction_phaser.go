@@ -117,6 +117,7 @@ func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchas
 			TotalExceptVat: doc.TotalExceptVat,
 			TotalAfterVat:  doc.TotalAfterVat,
 			TotalAmount:    doc.TotalAmount,
+			IsCancel:       doc.IsCancel,
 		},
 		TotalPayCash:     doc.PaymentDetail.CashAmount,
 		TotalPayCredit:   totalPayCreditAmount,

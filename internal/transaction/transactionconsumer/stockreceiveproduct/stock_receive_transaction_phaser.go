@@ -116,6 +116,7 @@ func (p StockReceiveTransactionPhaser) PhaseStockReceiveTransaction(doc stockRec
 			TotalAfterVat:  doc.Transaction.TotalAfterVat,
 			TotalExceptVat: doc.Transaction.TotalExceptVat,
 			TotalAmount:    doc.Transaction.TotalAmount,
+			IsCancel:       doc.IsCancel,
 		},
 		Items: &details,
 	}
