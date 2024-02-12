@@ -21,7 +21,7 @@ type TransactionPayment struct {
 	PayCashAmount float64      `json:"paycashamount" gorm:"column:paycashamount"`
 	CalcFlag      int8         `json:"calcflag" gorm:"column:calcflag"` // รับเงิน 1 , จ่ายเงิน -1
 	BranchCode    string       `json:"branchcode" gorm:"column:branchcode"`
-	BranchNames   models.JSONB `json:"branchname" gorm:"column:branchname"`
+	BranchNames   models.JSONB `json:"branchnames" gorm:"column:branchnames"`
 	CustCode      string       `json:"custcode" bson:"custcode"`
 	CustNames     models.JSONB `json:"custnames" bson:"custnames"`
 
