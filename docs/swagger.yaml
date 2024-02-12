@@ -775,6 +775,12 @@ definitions:
         type: string
       extrajson:
         type: string
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       inquirytype:
         type: integer
       ispos:
@@ -2974,6 +2980,9 @@ definitions:
       isforcustomer:
         description: สำหรับลูกค้าสามารถสั่งได้
         type: boolean
+      isforcustomerpreorder:
+        description: สำหรับลูกค้าสามารถสั่ง preorder
+        type: boolean
       isfordelivery:
         description: เดลิเวอรี่
         type: boolean
@@ -4157,6 +4166,12 @@ definitions:
         type: string
       extrajson:
         type: string
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       inquirytype:
         type: integer
       ispos:
@@ -7338,6 +7353,12 @@ definitions:
         type: string
       extrajson:
         type: string
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       inquirytype:
         type: integer
       ispos:
