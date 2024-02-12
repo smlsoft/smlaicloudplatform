@@ -39687,6 +39687,10 @@ const docTemplate = `{
         "models.ProductRestaurant": {
             "type": "object",
             "properties": {
+                "isforcustomer": {
+                    "description": "สำหรับลูกค้าสามารถสั่งได้",
+                    "type": "boolean"
+                },
                 "isfordelivery": {
                     "description": "เดลิเวอรี่",
                     "type": "boolean"
@@ -45094,10 +45098,11 @@ const docTemplate = `{
                 "lastaccessedat": {
                     "type": "string"
                 },
-                "name1": {
+                "name": {
                     "type": "string"
                 },
                 "names": {
+                    "description": "Name1          string         ` + "`" + `json:\"name1\" bson:\"name1\"` + "`" + `",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
