@@ -136,7 +136,9 @@ type Detail struct {
 	CalcFlag            int8            `json:"calcflag" bson:"calcflag"`
 	Barcode             string          `json:"barcode" bson:"barcode"`
 	ItemCode            string          `json:"itemcode" bson:"itemcode"`
+	ItemNames           *[]models.NameX `json:"itemnames" bson:"itemnames"`
 	UnitCode            string          `json:"unitcode" bson:"unitcode"`
+	UnitNames           *[]models.NameX `json:"unitnames" bson:"unitnames" `
 	ItemType            int8            `json:"itemtype" bson:"itemtype"`
 	ItemGuid            string          `json:"itemguid" bson:"itemguid"`
 	Qty                 float64         `json:"qty" bson:"qty"`
@@ -160,18 +162,18 @@ type Detail struct {
 	TaxType             int8            `json:"taxtype" bson:"taxtype"`
 	VatCal              int             `json:"vatcal" bson:"vatcal"`
 	WhCode              string          `json:"whcode" bson:"whcode"`
+	WhNames             *[]models.NameX `json:"whnames" bson:"whnames"`
 	ShelfCode           string          `json:"shelfcode" bson:"shelfcode"`
 	LocationCode        string          `json:"locationcode" bson:"locationcode"`
-	ToWhCode            string          `json:"towhcode" bson:"towhcode"`
-	ToLocationCode      string          `json:"tolocationcode" bson:"tolocationcode"`
-	ItemNames           *[]models.NameX `json:"itemnames" bson:"itemnames"`
-	UnitNames           *[]models.NameX `json:"unitnames" bson:"unitnames" `
-	WhNames             *[]models.NameX `json:"whnames" bson:"whnames"`
 	LocationNames       *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	ToWhCode            string          `json:"towhcode" bson:"towhcode"`
 	ToWhNames           *[]models.NameX `json:"towhnames" bson:"towhnames"`
+	ToLocationCode      string          `json:"tolocationcode" bson:"tolocationcode"`
 	ToLocationNames     *[]models.NameX `json:"tolocationnames" bson:"tolocationnames" `
 	SKU                 string          `json:"sku" bson:"sku"`
 	ExtraJson           string          `json:"extrajson" bson:"extrajson"`
+	GroupCode           string          `json:"groupcode" bson:"groupcode"`
+	GroupNames          *[]models.NameX `json:"groupnames" bson:"groupnames"`
 }
 
 type PaymentDetail struct {

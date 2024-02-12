@@ -59,7 +59,6 @@ func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBal
 				DocRef:              detail.DocRef,
 				DocRefDateTime:      detail.DocRefDatetime,
 				Barcode:             detail.Barcode,
-				UnitCode:            detail.UnitCode,
 				Qty:                 detail.Qty,
 				Price:               detail.Price,
 				PriceExcludeVat:     detail.PriceExcludeVat,
@@ -77,7 +76,14 @@ func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBal
 				ItemGuid:            detail.ItemGuid,
 				TotalValueVat:       detail.TotalValueVat,
 				Remark:              detail.Remark,
-				ItemNames:           *(detail.ItemNames),
+				UnitCode:            detail.UnitCode,
+				UnitNames:           *pkgModels.DefaultArrayNameX(detail.UnitNames),
+				ItemNames:           *pkgModels.DefaultArrayNameX(detail.ItemNames),
+				WhNames:             *pkgModels.DefaultArrayNameX(detail.WhNames),
+				LocationNames:       *pkgModels.DefaultArrayNameX(detail.LocationNames),
+				GroupCode:           detail.GroupCode,
+				GroupNames:          *pkgModels.DefaultArrayNameX(detail.GroupNames),
+				DocDate:             detail.DocDatetime,
 			},
 		}
 

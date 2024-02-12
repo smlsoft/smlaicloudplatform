@@ -49,6 +49,7 @@ func (p *StockPickUpTransactionPhaser) PhaseStockPickupTransactionDoc(doc stockP
 	details := make([]models.StockPickUpTransactionDetailPG, len(*doc.Transaction.Details))
 
 	for i, detail := range *doc.Transaction.Details {
+
 		stockDetail := models.StockPickUpTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
 				DocNo:               doc.DocNo,
@@ -57,7 +58,6 @@ func (p *StockPickUpTransactionPhaser) PhaseStockPickupTransactionDoc(doc stockP
 				DocRef:              detail.DocRef,
 				DocRefDateTime:      detail.DocRefDatetime,
 				Barcode:             detail.Barcode,
-				UnitCode:            detail.UnitCode,
 				Qty:                 detail.Qty,
 				Price:               detail.Price,
 				PriceExcludeVat:     detail.PriceExcludeVat,
@@ -75,10 +75,14 @@ func (p *StockPickUpTransactionPhaser) PhaseStockPickupTransactionDoc(doc stockP
 				ItemGuid:            detail.ItemGuid,
 				TotalValueVat:       detail.TotalValueVat,
 				Remark:              detail.Remark,
-				ItemNames:           *detail.ItemNames,
-				WhNames:             *detail.WhNames,
-				LocationNames:       *detail.LocationNames,
-				UnitNames:           *detail.UnitNames,
+				UnitCode:            detail.UnitCode,
+				UnitNames:           *pkgModels.DefaultArrayNameX(detail.UnitNames),
+				ItemNames:           *pkgModels.DefaultArrayNameX(detail.ItemNames),
+				WhNames:             *pkgModels.DefaultArrayNameX(detail.WhNames),
+				LocationNames:       *pkgModels.DefaultArrayNameX(detail.LocationNames),
+				GroupCode:           detail.GroupCode,
+				GroupNames:          *pkgModels.DefaultArrayNameX(detail.GroupNames),
+				DocDate:             detail.DocDatetime,
 			},
 		}
 		details[i] = stockDetail

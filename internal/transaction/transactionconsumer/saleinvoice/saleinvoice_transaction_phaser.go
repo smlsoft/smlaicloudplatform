@@ -15,6 +15,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 	details := make([]models.SaleInvoiceTransactionDetailPG, len(*doc.Details))
 
 	for i, detail := range *doc.Details {
+
 		stockDetail := models.SaleInvoiceTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
 				DocNo:               doc.DocNo,
@@ -22,7 +23,6 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 				LineNumber:          int8(detail.LineNumber),
 				DocRef:              detail.DocRef,
 				Barcode:             detail.Barcode,
-				UnitCode:            detail.UnitCode,
 				Qty:                 detail.Qty,
 				Price:               detail.Price,
 				PriceExcludeVat:     detail.PriceExcludeVat,
@@ -40,9 +40,14 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 				ItemGuid:            detail.ItemGuid,
 				TotalValueVat:       detail.TotalValueVat,
 				Remark:              detail.Remark,
-				ItemNames:           *detail.ItemNames,
-				WhNames:             *detail.WhNames,
-				LocationNames:       *detail.LocationNames,
+				UnitCode:            detail.UnitCode,
+				UnitNames:           *pkgModels.DefaultArrayNameX(detail.UnitNames),
+				ItemNames:           *pkgModels.DefaultArrayNameX(detail.ItemNames),
+				WhNames:             *pkgModels.DefaultArrayNameX(detail.WhNames),
+				LocationNames:       *pkgModels.DefaultArrayNameX(detail.LocationNames),
+				GroupCode:           detail.GroupCode,
+				GroupNames:          *pkgModels.DefaultArrayNameX(detail.GroupNames),
+				DocDate:             detail.DocDatetime,
 			},
 			ManufacturerGUID: detail.ManufacturerGUID,
 		}
@@ -94,6 +99,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			TotalExceptVat: doc.TotalExceptVat,
 			TotalAmount:    doc.TotalAmount,
 		},
+		IsPOS:                        doc.IsPOS,
 		SaleCode:                     doc.SaleCode,
 		SaleName:                     doc.SaleName,
 		DetailDiscountFormula:        doc.DetailDiscountFormula,
