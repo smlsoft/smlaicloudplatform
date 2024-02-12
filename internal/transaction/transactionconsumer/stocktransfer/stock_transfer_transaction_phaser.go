@@ -99,7 +99,7 @@ func (p *StockTransferTransactionPhaser) PhaseStockTransferTransactonPGDoc(doc s
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
 			BranchCode:     doc.Branch.Code,
-			BranchNames:    *doc.Branch.Names,
+			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 			TaxDocDate:     doc.Transaction.TaxDocDate,
 			TaxDocNo:       doc.Transaction.TaxDocNo,
 			VatType:        doc.Transaction.VatType,

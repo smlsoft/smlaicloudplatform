@@ -90,7 +90,7 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 			DocRefNo:       doc.Transaction.DocRefNo,
 			DocRefDate:     doc.Transaction.DocRefDate,
 			BranchCode:     doc.Branch.Code,
-			BranchNames:    *doc.Branch.Names,
+			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 			Description:    doc.Transaction.Description,
 			TotalValue:     doc.Transaction.TotalValue,
 			DiscountWord:   doc.Transaction.DiscountWord,
@@ -111,7 +111,7 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 		DetailTotalDiscount:          doc.DetailTotalDiscount,
 
 		DebtorCode:       doc.CustCode,
-		DebtorNames:      *doc.CustNames,
+		DebtorNames:      *pkgModels.DefaultArrayNameX(doc.CustNames),
 		TotalPayCash:     doc.Transaction.PaymentDetail.CashAmount,
 		TotalPayCredit:   totalPayCreditAmount,
 		TotalPayTransfer: totalPayTransfer,
