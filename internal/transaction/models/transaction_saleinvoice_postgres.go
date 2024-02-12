@@ -33,7 +33,8 @@ type SaleInvoiceTransactionPG struct {
 
 type SaleInvoiceTransactionDetailPG struct {
 	TransactionDetailPG `gorm:"embedded;"`
-	ManufacturerGUID    string `json:"manufacturerguid" gorm:"column:manufacturerguid"`
+	ManufacturerGUID    string          `json:"manufacturerguid" gorm:"column:manufacturerguid"`
+	ManufacturerNames   pkgModels.JSONB `json:"manufacturernames" gorm:"column:manufacturernames"`
 }
 
 // tableName

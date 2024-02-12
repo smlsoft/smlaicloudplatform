@@ -775,6 +775,12 @@ definitions:
         type: string
       extrajson:
         type: string
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       inquirytype:
         type: integer
       ispos:
@@ -796,6 +802,12 @@ definitions:
       locationcode:
         type: string
       locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      manufacturerguid:
+        type: string
+      manufacturernames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
@@ -2702,6 +2714,10 @@ definitions:
         type: number
       manufacturerguid:
         type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       maxdiscount:
         type: string
       names:
@@ -4154,6 +4170,12 @@ definitions:
         type: string
       extrajson:
         type: string
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       inquirytype:
         type: integer
       ispos:
@@ -4180,6 +4202,10 @@ definitions:
         type: array
       manufacturerguid:
         type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       multiunit:
         type: boolean
       price:
@@ -6600,9 +6626,10 @@ definitions:
         type: boolean
       lastaccessedat:
         type: string
-      name1:
+      name:
         type: string
       names:
+        description: Name1          string         `json:"name1" bson:"name1"`
         items:
           $ref: '#/definitions/models.NameX'
         type: array
@@ -6996,6 +7023,10 @@ definitions:
         type: number
       manufacturerguid:
         type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       maxdiscount:
         type: string
       names:
@@ -7334,6 +7365,12 @@ definitions:
         type: string
       extrajson:
         type: string
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       inquirytype:
         type: integer
       ispos:
@@ -7355,6 +7392,12 @@ definitions:
       locationcode:
         type: string
       locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      manufacturerguid:
+        type: string
+      manufacturernames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array

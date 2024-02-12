@@ -49,7 +49,8 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 				GroupNames:          *pkgModels.DefaultArrayNameX(detail.GroupNames),
 				DocDate:             detail.DocDatetime,
 			},
-			ManufacturerGUID: detail.ManufacturerGUID,
+			ManufacturerGUID:  detail.ManufacturerGUID,
+			ManufacturerNames: *pkgModels.DefaultArrayNameX(detail.ManufacturerNames),
 		}
 		details[i] = stockDetail
 	}

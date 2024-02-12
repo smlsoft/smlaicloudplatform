@@ -36434,6 +36434,15 @@ const docTemplate = `{
                 "extrajson": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "inquirytype": {
                     "type": "integer"
                 },
@@ -36465,6 +36474,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
@@ -39292,6 +39310,12 @@ const docTemplate = `{
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -41442,6 +41466,15 @@ const docTemplate = `{
                 "extrajson": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "inquirytype": {
                     "type": "integer"
                 },
@@ -41480,6 +41513,12 @@ const docTemplate = `{
                 },
                 "manufacturerguid": {
                     "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -45094,10 +45133,11 @@ const docTemplate = `{
                 "lastaccessedat": {
                     "type": "string"
                 },
-                "name1": {
+                "name": {
                     "type": "string"
                 },
                 "names": {
+                    "description": "Name1          string         ` + "`" + `json:\"name1\" bson:\"name1\"` + "`" + `",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
@@ -45690,6 +45730,12 @@ const docTemplate = `{
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -46194,6 +46240,15 @@ const docTemplate = `{
                 "extrajson": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "inquirytype": {
                     "type": "integer"
                 },
@@ -46225,6 +46280,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"

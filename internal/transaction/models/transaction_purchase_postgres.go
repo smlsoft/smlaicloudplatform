@@ -21,6 +21,8 @@ type PurchaseTransactionPG struct {
 
 type PurchaseTransactionDetailPG struct {
 	TransactionDetailPG `gorm:"embedded;"`
+	ManufacturerGUID    string          `json:"manufacturerguid" gorm:"column:manufacturerguid"`
+	ManufacturerNames   pkgModels.JSONB `json:"manufacturernames" gorm:"column:manufacturernames"`
 }
 
 func (PurchaseTransactionPG) TableName() string {

@@ -36429,6 +36429,15 @@
                 "extrajson": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "inquirytype": {
                     "type": "integer"
                 },
@@ -36460,6 +36469,15 @@
                     "type": "string"
                 },
                 "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
@@ -39287,6 +39305,12 @@
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -41437,6 +41461,15 @@
                 "extrajson": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "inquirytype": {
                     "type": "integer"
                 },
@@ -41475,6 +41508,12 @@
                 },
                 "manufacturerguid": {
                     "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -45089,10 +45128,11 @@
                 "lastaccessedat": {
                     "type": "string"
                 },
-                "name1": {
+                "name": {
                     "type": "string"
                 },
                 "names": {
+                    "description": "Name1          string         `json:\"name1\" bson:\"name1\"`",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
@@ -45685,6 +45725,12 @@
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -46189,6 +46235,15 @@
                 "extrajson": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "inquirytype": {
                     "type": "integer"
                 },
@@ -46220,6 +46275,15 @@
                     "type": "string"
                 },
                 "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
