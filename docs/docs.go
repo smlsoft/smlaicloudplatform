@@ -36434,6 +36434,15 @@ const docTemplate = `{
                 "extrajson": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "inquirytype": {
                     "type": "integer"
                 },
@@ -39691,6 +39700,10 @@ const docTemplate = `{
                     "description": "สำหรับลูกค้าสามารถสั่งได้",
                     "type": "boolean"
                 },
+                "isforcustomerpreorder": {
+                    "description": "สำหรับลูกค้าสามารถสั่ง preorder",
+                    "type": "boolean"
+                },
                 "isfordelivery": {
                     "description": "เดลิเวอรี่",
                     "type": "boolean"
@@ -41445,6 +41458,15 @@ const docTemplate = `{
                 },
                 "extrajson": {
                     "type": "string"
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "inquirytype": {
                     "type": "integer"
@@ -46198,6 +46220,15 @@ const docTemplate = `{
                 },
                 "extrajson": {
                     "type": "string"
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "inquirytype": {
                     "type": "integer"

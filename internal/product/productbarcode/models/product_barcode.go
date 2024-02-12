@@ -63,10 +63,11 @@ type ProductBarcodeBase struct {
 }
 
 type ProductRestaurant struct {
-	IsForRestaurant bool `json:"isforrestaurant" bson:"isforrestaurant"` // ทานที่ร้าน
-	IsForTakeAway   bool `json:"isfortakeaway" bson:"isfortakeaway"`     // สั่งกลับบ้าน
-	IsForDelivery   bool `json:"isfordelivery" bson:"isfordelivery"`     // เดลิเวอรี่
-	IsForCustomer   bool `json:"isforcustomer" bson:"isforcustomer"`     // สำหรับลูกค้าสามารถสั่งได้
+	IsForRestaurant       bool `json:"isforrestaurant" bson:"isforrestaurant"`             // ทานที่ร้าน
+	IsForTakeAway         bool `json:"isfortakeaway" bson:"isfortakeaway"`                 // สั่งกลับบ้าน
+	IsForDelivery         bool `json:"isfordelivery" bson:"isfordelivery"`                 // เดลิเวอรี่
+	IsForCustomer         bool `json:"isforcustomer" bson:"isforcustomer"`                 // สำหรับลูกค้าสามารถสั่งได้
+	IsForCustomerPreOrder bool `json:"isforcustomerpreorder" bson:"isforcustomerpreorder"` // สำหรับลูกค้าสามารถสั่ง preorder
 }
 
 type ProductDimension struct {
