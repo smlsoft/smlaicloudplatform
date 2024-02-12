@@ -67,6 +67,7 @@ func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchas
 					DocDate:             detail.DocDatetime,
 				},
 				ManufacturerGUID:  detail.ManufacturerGUID,
+				ManufacturerCode:  detail.ManufacturerCode,
 				ManufacturerNames: *pkgModels.DefaultArrayNameX(detail.ManufacturerNames),
 			}
 			details[i] = stockDetail

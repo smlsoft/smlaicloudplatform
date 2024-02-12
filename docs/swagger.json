@@ -36474,6 +36474,9 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -39302,6 +39305,9 @@
                 "itemunitsize": {
                     "type": "number"
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -41513,6 +41519,9 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "manufacturercode": {
+                    "type": "string"
                 },
                 "manufacturerguid": {
                     "type": "string"
@@ -45730,6 +45739,9 @@
                 "itemunitsize": {
                     "type": "number"
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -46287,6 +46299,9 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "manufacturercode": {
+                    "type": "string"
                 },
                 "manufacturerguid": {
                     "type": "string"

@@ -49,6 +49,7 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 				DocDate:             detail.DocDatetime,
 			},
 			ManufacturerGUID:  detail.ManufacturerGUID,
+			ManufacturerCode:  detail.ManufacturerCode,
 			ManufacturerNames: *pkgModels.DefaultArrayNameX(detail.ManufacturerNames),
 		}
 		details[i] = stockDetail

@@ -175,6 +175,7 @@ type Detail struct {
 	GroupCode           string          `json:"groupcode" bson:"groupcode"`
 	GroupNames          *[]models.NameX `json:"groupnames" bson:"groupnames"`
 	ManufacturerGUID    string          `json:"manufacturerguid" bson:"manufacturerguid"`
+	ManufacturerCode    string          `json:"manufacturercode" bson:"manufacturercode"`
 	ManufacturerNames   *[]models.NameX `json:"manufacturernames" bson:"manufacturernames"`
 }
 

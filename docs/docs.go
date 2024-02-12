@@ -36479,6 +36479,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -39307,6 +39310,9 @@ const docTemplate = `{
                 "itemunitsize": {
                     "type": "number"
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -41518,6 +41524,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "manufacturercode": {
+                    "type": "string"
                 },
                 "manufacturerguid": {
                     "type": "string"
@@ -45735,6 +45744,9 @@ const docTemplate = `{
                 "itemunitsize": {
                     "type": "number"
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -46292,6 +46304,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "manufacturercode": {
+                    "type": "string"
                 },
                 "manufacturerguid": {
                     "type": "string"

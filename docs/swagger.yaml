@@ -805,6 +805,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      manufacturercode:
+        type: string
       manufacturerguid:
         type: string
       manufacturernames:
@@ -2712,6 +2714,8 @@ definitions:
         type: array
       itemunitsize:
         type: number
+      manufacturercode:
+        type: string
       manufacturerguid:
         type: string
       manufacturernames:
@@ -4206,6 +4210,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      manufacturercode:
+        type: string
       manufacturerguid:
         type: string
       manufacturernames:
@@ -7027,6 +7033,8 @@ definitions:
         type: array
       itemunitsize:
         type: number
+      manufacturercode:
+        type: string
       manufacturerguid:
         type: string
       manufacturernames:
@@ -7401,6 +7409,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      manufacturercode:
+        type: string
       manufacturerguid:
         type: string
       manufacturernames:

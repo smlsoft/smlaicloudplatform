@@ -22,6 +22,7 @@ type PurchaseTransactionPG struct {
 type PurchaseTransactionDetailPG struct {
 	TransactionDetailPG `gorm:"embedded;"`
 	ManufacturerGUID    string          `json:"manufacturerguid" gorm:"column:manufacturerguid"`
+	ManufacturerCode    string          `json:"manufacturercode" gorm:"column:manufacturercode"`
 	ManufacturerNames   pkgModels.JSONB `json:"manufacturernames" gorm:"column:manufacturernames"`
 }
 

@@ -98,6 +98,7 @@ func (p PurchaseReturnTransactionPhaser) PhasePurchaseReturnTransaction(doc *pur
 				DocDate:             detail.DocDatetime,
 			},
 			ManufacturerGUID:  detail.ManufacturerGUID,
+			ManufacturerCode:  detail.ManufacturerCode,
 			ManufacturerNames: *pkgModels.DefaultArrayNameX(detail.ManufacturerNames),
 		}
 
