@@ -41,6 +41,7 @@ type ISaleInvoiceHttpService interface {
 
 const (
 	MODULE_NAME = "SI"
+	TRANS_FLAG  = 44
 )
 
 type SaleInvoiceHttpService struct {
@@ -166,32 +167,33 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.SaleInvoiceDoc{}
-	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
-	docData.SaleInvoice = doc
+	dataDoc := models.SaleInvoiceDoc{}
+	dataDoc.ShopID = shopID
+	dataDoc.GuidFixed = newGuidFixed
+	dataDoc.SaleInvoice = doc
 
-	docData.DocNo = docNo
+	dataDoc.TransFlag = TRANS_FLAG
+	dataDoc.DocNo = docNo
 	if isGenerateDocNo && doc.TaxDocNo == "" {
-		docData.TaxDocNo = docNo
+		dataDoc.TaxDocNo = docNo
 	}
 
-	err = svc.prepareSaleInvoiceDetail(ctx, shopID, docData.SaleInvoice.Details)
+	err = svc.prepareSaleInvoiceDetail(ctx, shopID, dataDoc.SaleInvoice.Details)
 	if err != nil {
 		return "", "", err
 	}
 
-	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+	dataDoc.CreatedBy = authUsername
+	dataDoc.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(ctx, docData)
+	_, err = svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", "", err
 	}
 
 	go func() {
-		svc.repoMq.Create(docData)
+		svc.repoMq.Create(dataDoc)
 		svc.saveMasterSync(shopID)
 
 		if isGenerateDocNo {
@@ -262,27 +264,28 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 		return errors.New("document not found")
 	}
 
-	docData := findDoc
-	docData.SaleInvoice = doc
+	dataDoc := findDoc
+	dataDoc.SaleInvoice = doc
 
-	err = svc.prepareSaleInvoiceDetail(ctx, shopID, docData.SaleInvoice.Details)
+	err = svc.prepareSaleInvoiceDetail(ctx, shopID, dataDoc.SaleInvoice.Details)
 
 	if err != nil {
 		return err
 	}
 
-	docData.DocNo = findDoc.DocNo
-	docData.UpdatedBy = authUsername
-	docData.UpdatedAt = time.Now()
+	dataDoc.DocNo = findDoc.DocNo
+	dataDoc.TransFlag = TRANS_FLAG
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(ctx, shopID, guid, docData)
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
 	go func() {
-		svc.repoMq.Update(docData)
+		svc.repoMq.Update(dataDoc)
 		svc.saveMasterSync(shopID)
 	}()
 
@@ -465,6 +468,7 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 			dataDoc.ShopID = shopID
 			dataDoc.SaleInvoice = doc
 
+			dataDoc.TransFlag = TRANS_FLAG
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
 			dataDoc.CreatedAt = currentTime
@@ -486,6 +490,7 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 		func(shopID string, authUsername string, data models.SaleInvoice, doc models.SaleInvoiceDoc) error {
 
 			doc.SaleInvoice = data
+			doc.TransFlag = TRANS_FLAG
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
