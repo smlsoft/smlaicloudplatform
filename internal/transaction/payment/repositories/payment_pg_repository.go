@@ -35,3 +35,16 @@ func (repo PaymentRepository) Create(doc models.TransactionPayment) error {
 	}
 	return nil
 }
+
+func (repo PaymentRepository) Update(shopID string, docNo string, doc models.TransactionPayment) error {
+
+	err := repo.pst.Update(&doc, map[string]interface{}{
+		"shopid": shopID,
+		"docno":  docNo,
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}

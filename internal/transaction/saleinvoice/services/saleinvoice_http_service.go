@@ -226,6 +226,8 @@ func (svc SaleInvoiceHttpService) prepareSaleInvoiceDetail(ctx context.Context, 
 			tempDetail.UnitCode = tempProduct.ItemUnitCode
 			tempDetail.UnitNames = tempProduct.ItemUnitNames
 			tempDetail.ManufacturerGUID = tempProduct.ManufacturerGUID
+			tempDetail.GroupCode = tempProduct.GroupCode
+			tempDetail.GroupNames = tempProduct.GroupNames
 
 			tempDetail.ItemCode = tempProduct.ItemCode
 			tempDetail.ItemNames = tempProduct.Names

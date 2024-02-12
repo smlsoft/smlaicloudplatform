@@ -22,7 +22,6 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 				LineNumber:          int8(detail.LineNumber),
 				DocRef:              detail.DocRef,
 				Barcode:             detail.Barcode,
-				UnitCode:            detail.UnitCode,
 				Qty:                 detail.Qty,
 				Price:               detail.Price,
 				PriceExcludeVat:     detail.PriceExcludeVat,
@@ -40,9 +39,14 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 				ItemGuid:            detail.ItemGuid,
 				TotalValueVat:       detail.TotalValueVat,
 				Remark:              detail.Remark,
-				ItemNames:           *detail.ItemNames,
-				WhNames:             *detail.WhNames,
-				LocationNames:       *detail.LocationNames,
+				UnitCode:            detail.UnitCode,
+				UnitNames:           *pkgModels.DefaultArrayNameX(detail.UnitNames),
+				ItemNames:           *pkgModels.DefaultArrayNameX(detail.ItemNames),
+				WhNames:             *pkgModels.DefaultArrayNameX(detail.WhNames),
+				LocationNames:       *pkgModels.DefaultArrayNameX(detail.LocationNames),
+				GroupCode:           detail.GroupCode,
+				GroupNames:          *pkgModels.DefaultArrayNameX(detail.GroupNames),
+				DocDate:             detail.DocDatetime,
 			},
 		}
 		details[i] = stockDetail
@@ -61,6 +65,10 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 		for _, transfer := range *doc.PaymentDetail.PaymentTransfers {
 			totalPayTransfer += transfer.Amount
 		}
+	}
+
+	if doc.Branch.Names == nil {
+		doc.Branch.Names = &[]pkgModels.NameX{}
 	}
 
 	stockTransaction := models.SaleInvoiceReturnTransactionPG{
@@ -93,6 +101,7 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 			TotalExceptVat: doc.Transaction.TotalExceptVat,
 			TotalAmount:    doc.Transaction.TotalAmount,
 		},
+		IsPOS:                        doc.IsPOS,
 		SaleCode:                     doc.SaleCode,
 		SaleName:                     doc.SaleName,
 		DetailDiscountFormula:        doc.DetailDiscountFormula,

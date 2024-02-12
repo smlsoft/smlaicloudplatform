@@ -17,6 +17,7 @@ type SaleInvoiceReturnTransactionPG struct {
 	TotalPayTransfer float64                                 `json:"totalpaytransfer" gorm:"column:totalpaytransfer"`
 	TotalPayCredit   float64                                 `json:"totalpaycredit" gorm:"column:totalpaycredit"`
 	Items            *[]SaleInvoiceReturnTransactionDetailPG `json:"items" gorm:"items;foreignKey:shopid,docno"`
+	IsPOS            bool                                    `json:"ispos" gorm:"column:ispos"`
 
 	SaleCode                     string          `json:"salecode" gorm:"column:salecode"`
 	SaleName                     string          `json:"salename" gorm:"column:salename"`

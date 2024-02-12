@@ -44,6 +44,13 @@ type NameNormal struct {
 	IsDelete bool    `json:"isdelete"`
 }
 
+func DefaultArrayNameX(names *[]NameX) *[]NameX {
+	if names == nil {
+		return &[]NameX{}
+	}
+	return names
+}
+
 func NewNameXWithCodeName(code, name string) *NameX {
 	return &NameX{Code: &code, Name: &name, IsAuto: false, IsDelete: false}
 }

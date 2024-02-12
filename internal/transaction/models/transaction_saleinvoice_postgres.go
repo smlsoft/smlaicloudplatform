@@ -16,6 +16,7 @@ type SaleInvoiceTransactionPG struct {
 	TotalPayCash     float64         `json:"totalpaycash" gorm:"column:totalpaycash"`
 	TotalPayTransfer float64         `json:"totalpaytransfer" gorm:"column:totalpaytransfer"`
 	TotalPayCredit   float64         `json:"totalpaycredit" gorm:"column:totalpaycredit"`
+	IsPOS            bool            `json:"ispos" gorm:"column:ispos"`
 
 	SaleCode                     string          `json:"salecode" gorm:"column:salecode"`
 	SaleName                     string          `json:"salename" gorm:"column:salename" `

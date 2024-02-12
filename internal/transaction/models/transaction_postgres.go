@@ -77,6 +77,9 @@ type TransactionDetailPG struct {
 	LocationCodeDestination  string       `json:"locationcodedestination" gorm:"column:locationcodedestination"`
 	LocationDestination      models.JSONB `json:"locationdestination" gorm:"column:locationdestination;type:jsonb"`
 	UnitNames                models.JSONB `json:"unitnames" gorm:"column:unitnames;type:jsonb"`
+	GroupCode                string       `json:"groupcode" gorm:"column:groupcode"`
+	GroupNames               models.JSONB `json:"groupnames" gorm:"column:groupnames;type:jsonb"`
+	DocDate                  time.Time    `json:"docdate" gorm:"column:docdate"`
 	// Barcode                  string  `json:"barcode" gorm:"column:barcode"`
 	// RefBarcode               string  `json:"refbarcode" gorm:"column:refbarcode"`
 	// UnitCode                 string  `json:"unitcode" gorm:"column:unitcode"`

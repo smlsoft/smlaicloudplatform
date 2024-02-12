@@ -80,6 +80,7 @@ func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
 				},
 			},
 		},
+		IsPOS:            true,
 		TotalPayCash:     500,
 		TotalPayCredit:   0,
 		TotalPayTransfer: 0,
@@ -96,6 +97,7 @@ func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
 		DetailTotalAmount:            100,
 		TotalDiscountVatAmount:       100,
 		TotalDiscountExceptVatAmount: 100,
+		DetailTotalDiscount:          100,
 	}
 
 	return give
@@ -152,6 +154,8 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 		"detailtotalamount": 100,
 		"totaldiscountvatamount": 100,
 		"totaldiscountexceptvatamount": 100,
+		"detailtotaldiscount": 100,
+		"ispos": true,
 		"details": [
 			{
 				"linenumber": 1,
@@ -321,4 +325,8 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 	assert.Equal(t, want.DetailTotalAmount, get.DetailTotalAmount, "detail total amount")
 	assert.Equal(t, want.TotalDiscountVatAmount, get.TotalDiscountVatAmount, "total discount vat amount")
 	assert.Equal(t, want.TotalDiscountExceptVatAmount, get.TotalDiscountExceptVatAmount, "total discount except vat amount")
+	assert.Equal(t, want.DetailTotalDiscount, get.DetailTotalDiscount, "detail total discount")
+
+	// ispos
+	assert.Equal(t, want.IsPOS, get.IsPOS, "ispos")
 }
