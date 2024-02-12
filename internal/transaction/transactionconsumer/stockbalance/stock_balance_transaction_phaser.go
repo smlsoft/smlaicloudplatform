@@ -118,7 +118,7 @@ func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBal
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
 			BranchCode:     doc.Branch.Code,
-			BranchNames:    *doc.Branch.Names,
+			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 			TaxDocDate:     doc.TaxDocDate,
 			TaxDocNo:       doc.TaxDocNo,
 			VatType:        doc.VatType,

@@ -86,15 +86,9 @@ func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchas
 		}
 	}
 
-	custNames := &[]pkgModels.NameX{}
-
-	if doc.CustNames != nil {
-		custNames = doc.CustNames
-	}
-
 	transaction := models.PurchaseTransactionPG{
 		CreditorCode:  doc.CustCode,
-		CreditorNames: *custNames,
+		CreditorNames: *pkgModels.DefaultArrayNameX(doc.CustNames),
 		TransactionPG: models.TransactionPG{
 			GuidFixed: doc.GuidFixed,
 			GuidRef:   doc.GuidRef,
@@ -105,7 +99,7 @@ func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchas
 			DocNo:          doc.DocNo,
 			DocDate:        doc.DocDatetime,
 			BranchCode:     doc.Branch.Code,
-			BranchNames:    *doc.Branch.Names,
+			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 			TaxDocNo:       doc.TaxDocNo,
 			TaxDocDate:     doc.TaxDocDate,
 			Description:    doc.Description,

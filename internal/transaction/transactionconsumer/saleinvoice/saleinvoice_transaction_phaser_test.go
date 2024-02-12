@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
@@ -329,4 +330,357 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 
 	// ispos
 	assert.Equal(t, want.IsPOS, get.IsPOS, "ispos")
+}
+
+func TestDataFromPOS(t *testing.T) {
+	rawData := `{
+		"docno": "002240212-0009",
+		"docdatetime": "2024-02-12T07:51:56.336Z",
+		"guidref": "",
+		"transflag": 0,
+		"docreftype": 0,
+		"docrefno": "",
+		"docrefdate": "2024-02-12T07:51:56.336Z",
+		"taxdocdate": "2024-02-12T07:51:56.336Z",
+		"taxdocno": "002240212-0009",
+		"doctype": 0,
+		"inquirytype": 1,
+		"vattype": 3,
+		"vatrate": 7,
+		"custcode": "",
+		"custnames": [
+		  {
+			"code": "th",
+			"name": "",
+			"isauto": false,
+			"isdelete": false
+		  }
+		],
+		"description": "POS",
+		"discountword": "",
+		"totaldiscount": 0,
+		"totalvalue": 599,
+		"totalexceptvat": 0,
+		"totalaftervat": 599,
+		"totalbeforevat": 599,
+		"totalvatvalue": 0,
+		"totalamount": 599,
+		"totalcost": 0,
+		"posid": "002",
+		"cashiercode": "001",
+		"salecode": "",
+		"salename": "",
+		"membercode": "",
+		"iscancel": false,
+		"ismanualamount": false,
+		"status": 0,
+		"paymentdetail": {
+		  "cashamounttext": "",
+		  "cashamount": 0,
+		  "paymentcreditcards": [],
+		  "paymenttransfers": []
+		},
+		"paymentdetailraw": "[]",
+		"paycashamount": 600,
+		"branch": {
+		  "guidfixed": "",
+		  "code": "",
+		  "names": null
+		},
+		"billtaxtype": 0,
+		"canceldatetime": "",
+		"cancelusercode": "",
+		"cancelusername": "",
+		"canceldescription": "",
+		"cancelreason": "",
+		"fullvataddress": "",
+		"fullvatbranchnumber": "",
+		"fullvatname": "",
+		"fullvatdocnumber": "",
+		"fullvattaxid": "",
+		"fullvatprint": false,
+		"isvatregister": false,
+		"printcopybilldatetime": [],
+		"tablenumber": "15",
+		"tableopendatetime": "2024-02-12T07:51:56.336Z",
+		"tableclosedatetime": "2024-02-12T07:51:56.336Z",
+		"mancount": 0,
+		"womancount": 0,
+		"childcount": 0,
+		"istableallacratemode": false,
+		"buffetcode": "",
+		"customertelephone": "",
+		"totalqty": 7,
+		"totaldiscountvatamount": 0,
+		"totaldiscountexceptvatamount": 0,
+		"cashiername": "พนักงานขาย 1",
+		"paycashchange": 1,
+		"sumqrcode": 0,
+		"sumcreditcard": 0,
+		"summoneytransfer": 0,
+		"sumcheque": 0,
+		"sumcoupon": 0,
+		"detaildiscountformula": "",
+		"detailtotalamount": 599,
+		"detailtotaldiscount": 0,
+		"roundamount": 0,
+		"totalamountafterdiscount": 599,
+		"detailtotalamountbeforediscount": 599,
+		"sumcredit": 0,
+		"details": [
+		  {
+			"manufacturerguid": "",
+			"inquirytype": 0,
+			"linenumber": 1,
+			"docdatetime": "2024-02-12T07:51:56.336Z",
+			"docref": "",
+			"docrefdatetime": "2024-02-12T07:51:56.336Z",
+			"calcflag": 0,
+			"barcode": "PSF0017",
+			"itemcode": "",
+			"itemnames": [
+			  {
+				"code": "th",
+				"name": "ตำโซลาว",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "en",
+				"name": "Solal Papays salad",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "ja",
+				"name": "",
+				"isauto": false,
+				"isdelete": false
+			  }
+			],
+			"unitcode": "DIH",
+			"unitnames": [
+			  {
+				"code": "th",
+				"name": "จาน",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "en",
+				"name": "Dish",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "ja",
+				"name": "",
+				"isauto": false,
+				"isdelete": false
+			  }
+			],
+			"itemtype": 0,
+			"itemguid": "2Pxa9joPa9U9kjwpD5W6DAqSOfy",
+			"qty": 1,
+			"totalqty": 1,
+			"price": 89,
+			"discount": "",
+			"discountamount": 0,
+			"totalvaluevat": 0,
+			"priceexcludevat": 0,
+			"sumamount": 89,
+			"sumamountexcludevat": 0,
+			"dividevalue": 1,
+			"standvalue": 1,
+			"vattype": 0,
+			"remark": "",
+			"multiunit": false,
+			"sumofcost": 0,
+			"averagecost": 0,
+			"laststatus": 0,
+			"ispos": 1,
+			"taxtype": 0,
+			"vatcal": 0,
+			"whcode": "00000",
+			"whnames": [
+			  {
+				"code": "th",
+				"name": "คลังกลาง",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "en",
+				"name": "CENTER",
+				"isauto": false,
+				"isdelete": false
+			  }
+			],
+			"shelfcode": "",
+			"locationcode": "",
+			"locationnames": [],
+			"towhcode": "",
+			"towhnames": [],
+			"tolocationcode": "",
+			"tolocationnames": [],
+			"sku": "",
+			"storeamount": 0,
+			"laststock": 0,
+			"returndatetime": "",
+			"returnnumber": "",
+			"returnwhcode": "",
+			"returnwhnames": [],
+			"returnlocationcode": "",
+			"returnlocationnames": [],
+			"remainstock": 0,
+			"balancestock": 0,
+			"averageprice": 0,
+			"returnstoreamount": 0,
+			"returnlaststock": 0,
+			"returntolaststock": 0,
+			"returnwhstoreamount": 0,
+			"returnstorewhamount": 0,
+			"sumofprice": 0,
+			"totalamountbeforediscount": 89,
+			"vatamount": 0,
+			"amountexceptvat": 0,
+			"amountafterdiscount": 89,
+			"costperunit": 0,
+			"amountexcludetax": 0,
+			"amounttax": 0,
+			"description": ""
+		  },
+		  {
+			"manufacturerguid": "",
+			"inquirytype": 0,
+			"linenumber": 2,
+			"docdatetime": "2024-02-12T07:51:56.336Z",
+			"docref": "",
+			"docrefdatetime": "2024-02-12T07:51:56.336Z",
+			"calcflag": 0,
+			"barcode": "PSC0015",
+			"itemcode": "",
+			"itemnames": [
+			  {
+				"code": "th",
+				"name": "ปลาดอรี",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "en",
+				"name": "Dory fish",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "ja",
+				"name": "",
+				"isauto": false,
+				"isdelete": false
+			  }
+			],
+			"unitcode": "KGM",
+			"unitnames": [
+			  {
+				"code": "th",
+				"name": "กิโลกรัม",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "en",
+				"name": "Kilogram",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "ja",
+				"name": "",
+				"isauto": false,
+				"isdelete": false
+			  }
+			],
+			"itemtype": 0,
+			"itemguid": "ztdahox00x0HofwplDPXykoCaq9",
+			"qty": 1,
+			"totalqty": 1,
+			"price": 169,
+			"discount": "",
+			"discountamount": 0,
+			"totalvaluevat": 0,
+			"priceexcludevat": 0,
+			"sumamount": 169,
+			"sumamountexcludevat": 0,
+			"dividevalue": 1,
+			"standvalue": 1,
+			"vattype": 0,
+			"remark": "",
+			"multiunit": false,
+			"sumofcost": 0,
+			"averagecost": 0,
+			"laststatus": 0,
+			"ispos": 1,
+			"taxtype": 0,
+			"vatcal": 0,
+			"whcode": "00000",
+			"whnames": [
+			  {
+				"code": "th",
+				"name": "คลังกลาง",
+				"isauto": false,
+				"isdelete": false
+			  },
+			  {
+				"code": "en",
+				"name": "CENTER",
+				"isauto": false,
+				"isdelete": false
+			  }
+			],
+			"shelfcode": "",
+			"locationcode": "",
+			"locationnames": [],
+			"towhcode": "",
+			"towhnames": [],
+			"tolocationcode": "",
+			"tolocationnames": [],
+			"sku": "",
+			"storeamount": 0,
+			"laststock": 0,
+			"returndatetime": "",
+			"returnnumber": "",
+			"returnwhcode": "",
+			"returnwhnames": [],
+			"returnlocationcode": "",
+			"returnlocationnames": [],
+			"remainstock": 0,
+			"balancestock": 0,
+			"averageprice": 0,
+			"returnstoreamount": 0,
+			"returnlaststock": 0,
+			"returntolaststock": 0,
+			"returnwhstoreamount": 0,
+			"returnstorewhamount": 0,
+			"sumofprice": 0,
+			"totalamountbeforediscount": 169,
+			"vatamount": 0,
+			"amountexceptvat": 0,
+			"amountafterdiscount": 169,
+			"costperunit": 0,
+			"amountexcludetax": 0,
+			"amounttax": 0,
+			"description": ""
+		  }
+		]
+	  }
+	  `
+
+	phaser := saleinvoice.SalesInvoiceTransactionPhaser{}
+
+	get, err := phaser.PhaseSingleDoc(rawData)
+
+	require.Nil(t, err)
+
+	assert.Equal(t, "002240212-0009", get.DocNo, "doc no")
 }

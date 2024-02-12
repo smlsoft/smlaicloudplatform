@@ -88,7 +88,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			DocRefNo:       doc.DocRefNo,
 			DocRefDate:     doc.DocRefDate,
 			BranchCode:     doc.Branch.Code,
-			BranchNames:    *doc.Branch.Names,
+			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 			Description:    doc.Description,
 			TotalValue:     doc.TotalValue,
 			DiscountWord:   doc.DiscountWord,
@@ -109,7 +109,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 		DetailTotalDiscount:          doc.DetailTotalDiscount,
 
 		DebtorCode:       doc.CustCode,
-		DebtorNames:      *doc.CustNames,
+		DebtorNames:      *pkgModels.DefaultArrayNameX(doc.CustNames),
 		TotalPayCash:     doc.PaymentDetail.CashAmount,
 		TotalPayCredit:   totalPayCreditAmount,
 		TotalPayTransfer: totalPayTransfer,
