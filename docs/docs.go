@@ -36479,6 +36479,15 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "multiunit": {
                     "type": "boolean"
                 },
@@ -39301,6 +39310,12 @@ const docTemplate = `{
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -41506,6 +41521,12 @@ const docTemplate = `{
                 },
                 "manufacturerguid": {
                     "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -45717,6 +45738,12 @@ const docTemplate = `{
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -46261,6 +46288,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"

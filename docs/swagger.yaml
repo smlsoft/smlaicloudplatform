@@ -805,6 +805,12 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      manufacturerguid:
+        type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       multiunit:
         type: boolean
       price:
@@ -2708,6 +2714,10 @@ definitions:
         type: number
       manufacturerguid:
         type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       maxdiscount:
         type: string
       names:
@@ -4198,6 +4208,10 @@ definitions:
         type: array
       manufacturerguid:
         type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       multiunit:
         type: boolean
       price:
@@ -7015,6 +7029,10 @@ definitions:
         type: number
       manufacturerguid:
         type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       maxdiscount:
         type: string
       names:
@@ -7380,6 +7398,12 @@ definitions:
       locationcode:
         type: string
       locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      manufacturerguid:
+        type: string
+      manufacturernames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array

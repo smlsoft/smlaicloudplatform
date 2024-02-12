@@ -36474,6 +36474,15 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "multiunit": {
                     "type": "boolean"
                 },
@@ -39296,6 +39305,12 @@
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -41501,6 +41516,12 @@
                 },
                 "manufacturerguid": {
                     "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -45712,6 +45733,12 @@
                 "manufacturerguid": {
                     "type": "string"
                 },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -46256,6 +46283,15 @@
                     "type": "string"
                 },
                 "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"

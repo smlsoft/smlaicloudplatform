@@ -174,6 +174,8 @@ type Detail struct {
 	ExtraJson           string          `json:"extrajson" bson:"extrajson"`
 	GroupCode           string          `json:"groupcode" bson:"groupcode"`
 	GroupNames          *[]models.NameX `json:"groupnames" bson:"groupnames"`
+	ManufacturerGUID    string          `json:"manufacturerguid" bson:"manufacturerguid"`
+	ManufacturerNames   *[]models.NameX `json:"manufacturernames" bson:"manufacturernames"`
 }
 
 type PaymentDetail struct {
