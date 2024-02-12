@@ -135,6 +135,7 @@ func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBal
 			TotalAfterVat:  doc.TotalAfterVat,
 			TotalExceptVat: doc.TotalExceptVat,
 			TotalAmount:    doc.TotalAmount,
+			IsCancel:       doc.IsCancel,
 		},
 		Items: &details,
 	}

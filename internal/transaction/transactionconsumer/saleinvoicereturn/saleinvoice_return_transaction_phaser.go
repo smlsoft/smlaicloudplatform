@@ -100,6 +100,7 @@ func (p *SaleInvoiceReturnTransactionPhaser) PhaseSaleInvoiceReturnDoc(doc saleI
 			TotalAfterVat:  doc.Transaction.TotalAfterVat,
 			TotalExceptVat: doc.Transaction.TotalExceptVat,
 			TotalAmount:    doc.Transaction.TotalAmount,
+			IsCancel:       doc.IsCancel,
 		},
 		IsPOS:                        doc.IsPOS,
 		SaleCode:                     doc.SaleCode,

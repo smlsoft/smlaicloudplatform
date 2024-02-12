@@ -114,6 +114,7 @@ func (p StockAdjustmentTransactionPhaser) PhaseStockAdjustmentTransactionPGDoc(d
 			TotalAfterVat:  doc.Transaction.TotalAfterVat,
 			TotalExceptVat: doc.Transaction.TotalExceptVat,
 			TotalAmount:    doc.Transaction.TotalAmount,
+			IsCancel:       doc.IsCancel,
 		},
 		Items: &details,
 	}

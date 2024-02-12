@@ -56,6 +56,7 @@ func ParseTransactionToPayment(other transmodels.TransactionMessageQueue) (model
 	doc.TotalAmount = other.TotalAmount
 	doc.RoundAmount = other.RoundAmount
 	doc.SumCredit = other.SumCredit
+	doc.IsCancel = other.IsCancel
 
 	return doc, nil
 }
