@@ -6,7 +6,8 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
-	trancache "smlcloudplatform/internal/transaction/repositories"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
+	trans_cache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockreturnproduct/models"
 	"smlcloudplatform/internal/transaction/stockreturnproduct/repositories"
 	"smlcloudplatform/internal/transaction/stockreturnproduct/services"
@@ -20,7 +21,7 @@ type IStockReturnProductHttp interface{}
 type StockReturnProductHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc services.IStockReturnProductHttpService
+	svc services.IStockReturnProductService
 }
 
 func NewStockReturnProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockReturnProductHttp {
@@ -31,9 +32,11 @@ func NewStockReturnProductHttp(ms *microservice.Microservice, cfg config.IConfig
 	repo := repositories.NewStockReturnProductRepository(pst)
 	repoMq := repositories.NewStockReturnProductMessageQueueRepository(producer)
 
-	transRepo := trancache.NewCacheRepository(cache)
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
+	transCacheRepo := trans_cache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockReturnProductHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewStockReturnProductService(repo, transCacheRepo, productBarcodeRepo, repoMq, masterSyncCacheRepo, services.StockReturnProductParser{})
 
 	return StockReturnProductHttp{
 		ms:  ms,

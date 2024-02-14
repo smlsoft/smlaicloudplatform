@@ -6,7 +6,8 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
-	trancache "smlcloudplatform/internal/transaction/repositories"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
+	trans_cache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockpickupproduct/models"
 	"smlcloudplatform/internal/transaction/stockpickupproduct/repositories"
 	"smlcloudplatform/internal/transaction/stockpickupproduct/services"
@@ -20,7 +21,7 @@ type IStockPickupProductHttp interface{}
 type StockPickupProductHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc services.IStockPickupProductHttpService
+	svc services.IStockPickupProductService
 }
 
 func NewStockPickupProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockPickupProductHttp {
@@ -31,9 +32,11 @@ func NewStockPickupProductHttp(ms *microservice.Microservice, cfg config.IConfig
 	repo := repositories.NewStockPickupProductRepository(pst)
 	repoMq := repositories.NewStockPickupProductMessageQueueRepository(producer)
 
-	transRepo := trancache.NewCacheRepository(cache)
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
+	transCacheRepo := trans_cache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockPickupProductHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewStockPickupProductService(repo, transCacheRepo, productBarcodeRepo, repoMq, masterSyncCacheRepo, services.StockPickupProductParser{})
 
 	return StockPickupProductHttp{
 		ms:  ms,

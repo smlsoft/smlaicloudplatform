@@ -6,7 +6,10 @@ import (
 	"fmt"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/services"
+	trans_models "smlcloudplatform/internal/transaction/models"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stocktransfer/models"
 	"smlcloudplatform/internal/transaction/stocktransfer/repositories"
@@ -21,7 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type IStockTransferHttpService interface {
+type IStockTransferService interface {
 	CreateStockTransfer(shopID string, authUsername string, doc models.StockTransfer) (string, string, error)
 	UpdateStockTransfer(shopID string, guid string, authUsername string, doc models.StockTransfer) error
 	DeleteStockTransfer(shopID string, guid string, authUsername string) error
@@ -35,36 +38,46 @@ type IStockTransferHttpService interface {
 	GetModuleName() string
 }
 
+type IStockTransferParser interface {
+	ParseProductBarcode(detail trans_models.Detail, productBarcodeInfo productbarcode_models.ProductBarcodeInfo) trans_models.Detail
+}
+
 const (
 	MODULE_NAME = "TF"
 )
 
-type StockTransferHttpService struct {
-	repoMq           repositories.IStockTransferMessageQueueRepository
-	repo             repositories.IStockTransferRepository
-	repoCache        trancache.ICacheRepository
-	cacheExpireDocNo time.Duration
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+type StockTransferService struct {
+	repoMq             repositories.IStockTransferMessageQueueRepository
+	repo               repositories.IStockTransferRepository
+	repoCache          trancache.ICacheRepository
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
+	cacheExpireDocNo   time.Duration
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockTransferActivity, models.StockTransferDeleteActivity]
+	parser         IStockTransferParser
 	contextTimeout time.Duration
 }
 
-func NewStockTransferHttpService(
+func NewStockTransferService(
 	repo repositories.IStockTransferRepository,
 	repoCache trancache.ICacheRepository,
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository,
 	repoMq repositories.IStockTransferMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
-) *StockTransferHttpService {
+	parser IStockTransferParser,
+) *StockTransferService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
-	insSvc := &StockTransferHttpService{
-		repoMq:           repoMq,
-		repo:             repo,
-		repoCache:        repoCache,
-		syncCacheRepo:    syncCacheRepo,
-		cacheExpireDocNo: time.Hour * 24,
-		contextTimeout:   contextTimeout,
+	insSvc := &StockTransferService{
+		repoMq:             repoMq,
+		repo:               repo,
+		repoCache:          repoCache,
+		productbarcodeRepo: productbarcodeRepo,
+		syncCacheRepo:      syncCacheRepo,
+		parser:             parser,
+		cacheExpireDocNo:   time.Hour * 24,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockTransferActivity, models.StockTransferDeleteActivity](repo)
@@ -72,16 +85,16 @@ func NewStockTransferHttpService(
 	return insSvc
 }
 
-func (svc StockTransferHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+func (svc StockTransferService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc StockTransferHttpService) getDocNoPrefix(docDate time.Time) string {
+func (svc StockTransferService) getDocNoPrefix(docDate time.Time) string {
 	docDateStr := docDate.Format("20060102")
 	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
 }
 
-func (svc StockTransferHttpService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
+func (svc StockTransferService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
 	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
 
 	if prevoiusDocNumber == 0 || err != nil {
@@ -118,7 +131,7 @@ func (svc StockTransferHttpService) generateNewDocNo(ctx context.Context, shopID
 	return newDocNo, newDocNumber, nil
 }
 
-func (svc StockTransferHttpService) CreateStockTransfer(shopID string, authUsername string, doc models.StockTransfer) (string, string, error) {
+func (svc StockTransferService) CreateStockTransfer(shopID string, authUsername string, doc models.StockTransfer) (string, string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -134,23 +147,31 @@ func (svc StockTransferHttpService) CreateStockTransfer(shopID string, authUsern
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.StockTransferDoc{}
-	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
-	docData.StockTransfer = doc
+	dataDoc := models.StockTransferDoc{}
+	dataDoc.ShopID = shopID
+	dataDoc.GuidFixed = newGuidFixed
+	dataDoc.StockTransfer = doc
 
-	docData.DocNo = newDocNo
-	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return "", "", err
+	}
 
-	_, err = svc.repo.Create(ctx, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = newDocNo
+	dataDoc.CreatedBy = authUsername
+	dataDoc.CreatedAt = time.Now()
+
+	_, err = svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", "", err
 	}
 
 	go func() {
-		svc.repoMq.Create(docData)
+		svc.repoMq.Create(dataDoc)
 		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 		svc.saveMasterSync(shopID)
 	}()
@@ -158,7 +179,35 @@ func (svc StockTransferHttpService) CreateStockTransfer(shopID string, authUsern
 	return newGuidFixed, newDocNo, nil
 }
 
-func (svc StockTransferHttpService) UpdateStockTransfer(shopID string, guid string, authUsername string, doc models.StockTransfer) error {
+func (svc StockTransferService) GetDetailProductBarcodes(ctx context.Context, shopID string, details []trans_models.Detail) ([]productbarcode_models.ProductBarcodeInfo, error) {
+	var tempBarcodes []string
+	for _, doc := range details {
+		tempBarcodes = append(tempBarcodes, doc.Barcode)
+	}
+	return svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, tempBarcodes)
+}
+
+func (svc StockTransferService) PrepareDetail(details []trans_models.Detail, productBarcodes []productbarcode_models.ProductBarcodeInfo) []trans_models.Detail {
+
+	productBarcodeDict := map[string]productbarcode_models.ProductBarcodeInfo{}
+	for _, doc := range productBarcodes {
+		productBarcodeDict[doc.Barcode] = doc
+	}
+
+	for i := 0; i < len(details); i++ {
+		tempDetail := (details)[i]
+		tempProduct := productBarcodeDict[tempDetail.Barcode]
+		if _, ok := productBarcodeDict[tempDetail.Barcode]; ok {
+			tempDetail = svc.parser.ParseProductBarcode(tempDetail, tempProduct)
+		}
+
+		(details)[i] = tempDetail
+	}
+
+	return details
+}
+
+func (svc StockTransferService) UpdateStockTransfer(shopID string, guid string, authUsername string, doc models.StockTransfer) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -183,28 +232,36 @@ func (svc StockTransferHttpService) UpdateStockTransfer(shopID string, guid stri
 		return errors.New("docno and trans flag is exists")
 	}
 
-	docData := findDoc
-	docData.StockTransfer = doc
+	dataDoc := findDoc
+	dataDoc.StockTransfer = doc
 
-	docData.DocNo = findDoc.DocNo
-	docData.UpdatedBy = authUsername
-	docData.UpdatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return err
+	}
 
-	err = svc.repo.Update(ctx, shopID, guid, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = findDoc.DocNo
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
 	func() {
-		svc.repoMq.Update(docData)
+		svc.repoMq.Update(dataDoc)
 		svc.saveMasterSync(shopID)
 	}()
 
 	return nil
 }
 
-func (svc StockTransferHttpService) DeleteStockTransfer(shopID string, guid string, authUsername string) error {
+func (svc StockTransferService) DeleteStockTransfer(shopID string, guid string, authUsername string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -232,7 +289,7 @@ func (svc StockTransferHttpService) DeleteStockTransfer(shopID string, guid stri
 	return nil
 }
 
-func (svc StockTransferHttpService) DeleteStockTransferByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc StockTransferService) DeleteStockTransferByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -255,7 +312,7 @@ func (svc StockTransferHttpService) DeleteStockTransferByGUIDs(shopID string, au
 	return nil
 }
 
-func (svc StockTransferHttpService) InfoStockTransfer(shopID string, guid string) (models.StockTransferInfo, error) {
+func (svc StockTransferService) InfoStockTransfer(shopID string, guid string) (models.StockTransferInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -273,7 +330,7 @@ func (svc StockTransferHttpService) InfoStockTransfer(shopID string, guid string
 	return findDoc.StockTransferInfo, nil
 }
 
-func (svc StockTransferHttpService) InfoStockTransferByCode(shopID string, code string) (models.StockTransferInfo, error) {
+func (svc StockTransferService) InfoStockTransferByCode(shopID string, code string) (models.StockTransferInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -291,7 +348,7 @@ func (svc StockTransferHttpService) InfoStockTransferByCode(shopID string, code 
 	return findDoc.StockTransferInfo, nil
 }
 
-func (svc StockTransferHttpService) SearchStockTransfer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error) {
+func (svc StockTransferService) SearchStockTransfer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -309,7 +366,7 @@ func (svc StockTransferHttpService) SearchStockTransfer(shopID string, filters m
 	return docList, pagination, nil
 }
 
-func (svc StockTransferHttpService) SearchStockTransferStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferInfo, int, error) {
+func (svc StockTransferService) SearchStockTransferStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -329,7 +386,7 @@ func (svc StockTransferHttpService) SearchStockTransferStep(shopID string, langC
 	return docList, total, nil
 }
 
-func (svc StockTransferHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.StockTransfer) (common.BulkImport, error) {
+func (svc StockTransferService) SaveInBatch(shopID string, authUsername string, dataList []models.StockTransfer) (common.BulkImport, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -440,11 +497,11 @@ func (svc StockTransferHttpService) SaveInBatch(shopID string, authUsername stri
 	}, nil
 }
 
-func (svc StockTransferHttpService) getDocIDKey(doc models.StockTransfer) string {
+func (svc StockTransferService) getDocIDKey(doc models.StockTransfer) string {
 	return doc.DocNo
 }
 
-func (svc StockTransferHttpService) saveMasterSync(shopID string) {
+func (svc StockTransferService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -454,6 +511,6 @@ func (svc StockTransferHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc StockTransferHttpService) GetModuleName() string {
+func (svc StockTransferService) GetModuleName() string {
 	return "stockTransfer"
 }

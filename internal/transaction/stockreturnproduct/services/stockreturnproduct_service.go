@@ -6,7 +6,10 @@ import (
 	"fmt"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/services"
+	trans_models "smlcloudplatform/internal/transaction/models"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockreturnproduct/models"
 	"smlcloudplatform/internal/transaction/stockreturnproduct/repositories"
@@ -21,7 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type IStockReturnProductHttpService interface {
+type IStockReturnProductService interface {
 	CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, string, error)
 	UpdateStockReturnProduct(shopID string, guid string, authUsername string, doc models.StockReturnProduct) error
 	DeleteStockReturnProduct(shopID string, guid string, authUsername string) error
@@ -35,36 +38,46 @@ type IStockReturnProductHttpService interface {
 	GetModuleName() string
 }
 
+type IStockReturnProductParser interface {
+	ParseProductBarcode(detail trans_models.Detail, productBarcodeInfo productbarcode_models.ProductBarcodeInfo) trans_models.Detail
+}
+
 const (
 	MODULE_NAME = "IR"
 )
 
-type StockReturnProductHttpService struct {
-	repoMq           repositories.IStockReturnProductMessageQueueRepository
-	repo             repositories.IStockReturnProductRepository
-	repoCache        trancache.ICacheRepository
-	cacheExpireDocNo time.Duration
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+type StockReturnProductService struct {
+	repoMq             repositories.IStockReturnProductMessageQueueRepository
+	repo               repositories.IStockReturnProductRepository
+	repoCache          trancache.ICacheRepository
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
+	cacheExpireDocNo   time.Duration
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockReturnProductActivity, models.StockReturnProductDeleteActivity]
+	parser         IStockReturnProductParser
 	contextTimeout time.Duration
 }
 
-func NewStockReturnProductHttpService(
+func NewStockReturnProductService(
 	repo repositories.IStockReturnProductRepository,
 	repoCache trancache.ICacheRepository,
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository,
 	repoMq repositories.IStockReturnProductMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
-) *StockReturnProductHttpService {
+	parser IStockReturnProductParser,
+) *StockReturnProductService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
-	insSvc := &StockReturnProductHttpService{
-		repoMq:           repoMq,
-		repo:             repo,
-		repoCache:        repoCache,
-		syncCacheRepo:    syncCacheRepo,
-		cacheExpireDocNo: time.Hour * 24,
-		contextTimeout:   contextTimeout,
+	insSvc := &StockReturnProductService{
+		repoMq:             repoMq,
+		repo:               repo,
+		repoCache:          repoCache,
+		productbarcodeRepo: productbarcodeRepo,
+		syncCacheRepo:      syncCacheRepo,
+		parser:             parser,
+		cacheExpireDocNo:   time.Hour * 24,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockReturnProductActivity, models.StockReturnProductDeleteActivity](repo)
@@ -72,16 +85,16 @@ func NewStockReturnProductHttpService(
 	return insSvc
 }
 
-func (svc StockReturnProductHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+func (svc StockReturnProductService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc StockReturnProductHttpService) getDocNoPrefix(docDate time.Time) string {
+func (svc StockReturnProductService) getDocNoPrefix(docDate time.Time) string {
 	docDateStr := docDate.Format("20060102")
 	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
 }
 
-func (svc StockReturnProductHttpService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
+func (svc StockReturnProductService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
 	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
 
 	if prevoiusDocNumber == 0 || err != nil {
@@ -118,7 +131,7 @@ func (svc StockReturnProductHttpService) generateNewDocNo(ctx context.Context, s
 	return newDocNo, newDocNumber, nil
 }
 
-func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, string, error) {
+func (svc StockReturnProductService) CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -134,16 +147,24 @@ func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string,
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.StockReturnProductDoc{}
-	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
-	docData.StockReturnProduct = doc
+	dataDoc := models.StockReturnProductDoc{}
+	dataDoc.ShopID = shopID
+	dataDoc.GuidFixed = newGuidFixed
+	dataDoc.StockReturnProduct = doc
 
-	docData.DocNo = newDocNo
-	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return "", "", err
+	}
 
-	_, err = svc.repo.Create(ctx, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = newDocNo
+	dataDoc.CreatedBy = authUsername
+	dataDoc.CreatedAt = time.Now()
+
+	_, err = svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", "", err
@@ -152,7 +173,7 @@ func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string,
 	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
 	go func() {
-		svc.repoMq.Create(docData)
+		svc.repoMq.Create(dataDoc)
 		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 		svc.saveMasterSync(shopID)
 	}()
@@ -160,7 +181,35 @@ func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string,
 	return newGuidFixed, newDocNo, nil
 }
 
-func (svc StockReturnProductHttpService) UpdateStockReturnProduct(shopID string, guid string, authUsername string, doc models.StockReturnProduct) error {
+func (svc StockReturnProductService) GetDetailProductBarcodes(ctx context.Context, shopID string, details []trans_models.Detail) ([]productbarcode_models.ProductBarcodeInfo, error) {
+	var tempBarcodes []string
+	for _, doc := range details {
+		tempBarcodes = append(tempBarcodes, doc.Barcode)
+	}
+	return svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, tempBarcodes)
+}
+
+func (svc StockReturnProductService) PrepareDetail(details []trans_models.Detail, productBarcodes []productbarcode_models.ProductBarcodeInfo) []trans_models.Detail {
+
+	productBarcodeDict := map[string]productbarcode_models.ProductBarcodeInfo{}
+	for _, doc := range productBarcodes {
+		productBarcodeDict[doc.Barcode] = doc
+	}
+
+	for i := 0; i < len(details); i++ {
+		tempDetail := (details)[i]
+		tempProduct := productBarcodeDict[tempDetail.Barcode]
+		if _, ok := productBarcodeDict[tempDetail.Barcode]; ok {
+			tempDetail = svc.parser.ParseProductBarcode(tempDetail, tempProduct)
+		}
+
+		(details)[i] = tempDetail
+	}
+
+	return details
+}
+
+func (svc StockReturnProductService) UpdateStockReturnProduct(shopID string, guid string, authUsername string, doc models.StockReturnProduct) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -175,28 +224,36 @@ func (svc StockReturnProductHttpService) UpdateStockReturnProduct(shopID string,
 		return errors.New("document not found")
 	}
 
-	docData := findDoc
-	docData.StockReturnProduct = doc
+	dataDoc := findDoc
+	dataDoc.StockReturnProduct = doc
 
-	docData.DocNo = findDoc.DocNo
-	docData.UpdatedBy = authUsername
-	docData.UpdatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return err
+	}
 
-	err = svc.repo.Update(ctx, shopID, guid, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = findDoc.DocNo
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
 	func() {
-		svc.repoMq.Update(docData)
+		svc.repoMq.Update(dataDoc)
 		svc.saveMasterSync(shopID)
 	}()
 
 	return nil
 }
 
-func (svc StockReturnProductHttpService) DeleteStockReturnProduct(shopID string, guid string, authUsername string) error {
+func (svc StockReturnProductService) DeleteStockReturnProduct(shopID string, guid string, authUsername string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -224,7 +281,7 @@ func (svc StockReturnProductHttpService) DeleteStockReturnProduct(shopID string,
 	return nil
 }
 
-func (svc StockReturnProductHttpService) DeleteStockReturnProductByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc StockReturnProductService) DeleteStockReturnProductByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -247,7 +304,7 @@ func (svc StockReturnProductHttpService) DeleteStockReturnProductByGUIDs(shopID 
 	return nil
 }
 
-func (svc StockReturnProductHttpService) InfoStockReturnProduct(shopID string, guid string) (models.StockReturnProductInfo, error) {
+func (svc StockReturnProductService) InfoStockReturnProduct(shopID string, guid string) (models.StockReturnProductInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -265,7 +322,7 @@ func (svc StockReturnProductHttpService) InfoStockReturnProduct(shopID string, g
 	return findDoc.StockReturnProductInfo, nil
 }
 
-func (svc StockReturnProductHttpService) InfoStockReturnProductByCode(shopID string, code string) (models.StockReturnProductInfo, error) {
+func (svc StockReturnProductService) InfoStockReturnProductByCode(shopID string, code string) (models.StockReturnProductInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -283,7 +340,7 @@ func (svc StockReturnProductHttpService) InfoStockReturnProductByCode(shopID str
 	return findDoc.StockReturnProductInfo, nil
 }
 
-func (svc StockReturnProductHttpService) SearchStockReturnProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error) {
+func (svc StockReturnProductService) SearchStockReturnProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -301,7 +358,7 @@ func (svc StockReturnProductHttpService) SearchStockReturnProduct(shopID string,
 	return docList, pagination, nil
 }
 
-func (svc StockReturnProductHttpService) SearchStockReturnProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error) {
+func (svc StockReturnProductService) SearchStockReturnProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -321,7 +378,7 @@ func (svc StockReturnProductHttpService) SearchStockReturnProductStep(shopID str
 	return docList, total, nil
 }
 
-func (svc StockReturnProductHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.StockReturnProduct) (common.BulkImport, error) {
+func (svc StockReturnProductService) SaveInBatch(shopID string, authUsername string, dataList []models.StockReturnProduct) (common.BulkImport, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -432,11 +489,11 @@ func (svc StockReturnProductHttpService) SaveInBatch(shopID string, authUsername
 	}, nil
 }
 
-func (svc StockReturnProductHttpService) getDocIDKey(doc models.StockReturnProduct) string {
+func (svc StockReturnProductService) getDocIDKey(doc models.StockReturnProduct) string {
 	return doc.DocNo
 }
 
-func (svc StockReturnProductHttpService) saveMasterSync(shopID string) {
+func (svc StockReturnProductService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -446,6 +503,6 @@ func (svc StockReturnProductHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc StockReturnProductHttpService) GetModuleName() string {
+func (svc StockReturnProductService) GetModuleName() string {
 	return "stockReturnProduct"
 }

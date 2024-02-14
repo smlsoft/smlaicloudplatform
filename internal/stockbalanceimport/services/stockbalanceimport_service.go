@@ -42,7 +42,7 @@ type StockBalanceImportService struct {
 	chRepo                    repositories.IStockBalanceImportClickHouseRepository
 	productBarcodeRepo        productbarcode_repo.IProductBarcodeRepository
 	stockBalanceService       stockbalance_services.IStockBalanceHttpService
-	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailHttpService
+	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailService
 	generateID                func(int) string
 	generateGUID              func() string
 	timeNow                   func() time.Time
@@ -52,7 +52,7 @@ func NewStockBalanceImportService(
 	chRepo repositories.IStockBalanceImportClickHouseRepository,
 	productBarcodeRepo productbarcode_repo.IProductBarcodeRepository,
 	stockBalanceService stockbalance_services.IStockBalanceHttpService,
-	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailHttpService,
+	stockBalanceDetailService stockbalancedetail_services.IStockBalanceDetailService,
 	generateID func(int) string,
 	generateGUID func() string,
 	timeNow func() time.Time,

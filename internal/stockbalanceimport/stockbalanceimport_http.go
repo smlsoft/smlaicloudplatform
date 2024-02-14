@@ -41,17 +41,25 @@ func NewStockBalanceImportHttp(ms *microservice.Microservice, cfg config.IConfig
 	repo := stockbalance_repositories.NewStockBalanceRepository(pst)
 	repoMq := stockbalance_repositories.NewStockBalanceMessageQueueRepository(producer)
 
-	transRepo := trancache.NewCacheRepository(cache)
+	transCacheRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	stockbalanceDetailRepo := stockbalancedetail_repositories.NewStockBalanceDetailRepository(pst)
 	stockbalanceDetailMqRepo := stockbalancedetail_repositories.NewStockBalanceDetailMessageQueueRepository(producer)
 
-	stockBalanceDetailSvc := stockbalancedetail_serrvices.NewStockBalanceDetailHttpService(stockbalanceDetailRepo, transRepo, stockbalanceDetailMqRepo, masterSyncCacheRepo)
-	stockBalanceSvc := stockbalance_serrvices.NewStockBalanceHttpService(stockBalanceDetailSvc, repo, transRepo, repoMq, masterSyncCacheRepo)
+	productBarcodeRepo := productbarcode_repo.NewProductBarcodeRepository(pst, cache)
+
+	stockBalanceDetailSvc := stockbalancedetail_serrvices.NewStockBalanceDetailService(
+		stockbalanceDetailRepo,
+		transCacheRepo,
+		productBarcodeRepo,
+		stockbalanceDetailMqRepo,
+		masterSyncCacheRepo,
+		stockbalancedetail_serrvices.StockBalanceDetailParser{},
+	)
+
+	stockBalanceSvc := stockbalance_serrvices.NewStockBalanceHttpService(stockBalanceDetailSvc, repo, transCacheRepo, repoMq, masterSyncCacheRepo)
 
 	chRepo := repositories.NewStockBalanceImportClickHouseRepository(pstClickHouse)
-
-	productBarcodeRepo := productbarcode_repo.NewProductBarcodeRepository(pst, cache)
 
 	svc := services.NewStockBalanceImportService(chRepo, productBarcodeRepo, stockBalanceSvc, stockBalanceDetailSvc, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
 

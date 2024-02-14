@@ -9,7 +9,8 @@ import (
 	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
 	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/services"
-	trancache "smlcloudplatform/internal/transaction/repositories"
+	trans_models "smlcloudplatform/internal/transaction/models"
+	trans_cache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/saleinvoice/models"
 	"smlcloudplatform/internal/transaction/saleinvoice/repositories"
 	"smlcloudplatform/internal/utils"
@@ -23,7 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type ISaleInvoiceHttpService interface {
+type ISaleInvoiceService interface {
 	CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, string, error)
 	UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error
 	DeleteSaleInvoice(shopID string, guid string, authUsername string) error
@@ -44,33 +45,47 @@ const (
 	TRANS_FLAG  = 44
 )
 
-type SaleInvoiceHttpService struct {
+type ISaleInvocieParser interface {
+	ParseProductBarcode(detail trans_models.Detail, productBarcodeInfo productbarcode_models.ProductBarcodeInfo) trans_models.Detail
+}
+
+type ISaleInvoiceExport interface {
+	ParseCSV(languageCode string, data models.SaleInvoiceInfo) [][]string
+}
+
+type SaleInvoiceService struct {
 	repoMq             repositories.ISaleInvoiceMessageQueueRepository
 	repo               repositories.ISaleInvoiceRepository
-	repoCache          trancache.ICacheRepository
+	repoCache          trans_cache.ICacheRepository
 	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
 	cacheExpireDocNo   time.Duration
 	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity]
+	parser         ISaleInvocieParser
+	exporter       ISaleInvoiceExport
 	contextTimeout time.Duration
 }
 
-func NewSaleInvoiceHttpService(
+func NewSaleInvoiceService(
 	repo repositories.ISaleInvoiceRepository,
+	repoCache trans_cache.ICacheRepository,
 	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository,
-	repoCache trancache.ICacheRepository,
 	repoMq repositories.ISaleInvoiceMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
-) *SaleInvoiceHttpService {
+	parser ISaleInvocieParser,
+	exporter ISaleInvoiceExport,
+) *SaleInvoiceService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
-	insSvc := &SaleInvoiceHttpService{
+	insSvc := &SaleInvoiceService{
 		repo:               repo,
-		productbarcodeRepo: productbarcodeRepo,
 		repoMq:             repoMq,
 		repoCache:          repoCache,
+		productbarcodeRepo: productbarcodeRepo,
 		syncCacheRepo:      syncCacheRepo,
+		parser:             parser,
+		exporter:           exporter,
 		cacheExpireDocNo:   time.Hour * 24,
 		contextTimeout:     contextTimeout,
 	}
@@ -80,16 +95,16 @@ func NewSaleInvoiceHttpService(
 	return insSvc
 }
 
-func (svc SaleInvoiceHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+func (svc SaleInvoiceService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc SaleInvoiceHttpService) getDocNoPrefix(docDate time.Time) string {
+func (svc SaleInvoiceService) getDocNoPrefix(docDate time.Time) string {
 	docDateStr := docDate.Format("20060102")
 	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
 }
 
-func (svc SaleInvoiceHttpService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
+func (svc SaleInvoiceService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
 	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
 
 	if prevoiusDocNumber == 0 || err != nil {
@@ -126,7 +141,7 @@ func (svc SaleInvoiceHttpService) generateNewDocNo(ctx context.Context, shopID, 
 	return newDocNo, newDocNumber, nil
 }
 
-func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, string, error) {
+func (svc SaleInvoiceService) CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -178,10 +193,13 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 		dataDoc.TaxDocNo = docNo
 	}
 
-	err = svc.prepareSaleInvoiceDetail(ctx, shopID, dataDoc.SaleInvoice.Details)
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
 	if err != nil {
 		return "", "", err
 	}
+
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
 
 	dataDoc.CreatedBy = authUsername
 	dataDoc.CreatedAt = time.Now()
@@ -204,54 +222,35 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 	return newGuidFixed, docNo, nil
 }
 
-func (svc SaleInvoiceHttpService) prepareSaleInvoiceDetail(ctx context.Context, shopID string, details *[]models.SaleInvoiceDetail) error {
+func (svc SaleInvoiceService) GetDetailProductBarcodes(ctx context.Context, shopID string, details []trans_models.Detail) ([]productbarcode_models.ProductBarcodeInfo, error) {
 	var tempBarcodes []string
-	for _, doc := range *details {
+	for _, doc := range details {
 		tempBarcodes = append(tempBarcodes, doc.Barcode)
 	}
+	return svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, tempBarcodes)
+}
 
-	productBarcodes, err := svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, tempBarcodes)
-	if err != nil {
-		return err
-	}
+func (svc SaleInvoiceService) PrepareDetail(details []trans_models.Detail, productBarcodes []productbarcode_models.ProductBarcodeInfo) []trans_models.Detail {
 
 	productBarcodeDict := map[string]productbarcode_models.ProductBarcodeInfo{}
 	for _, doc := range productBarcodes {
 		productBarcodeDict[doc.Barcode] = doc
 	}
 
-	for i := 0; i < len(*details); i++ {
-		tempDetail := (*details)[i]
+	for i := 0; i < len(details); i++ {
+		tempDetail := (details)[i]
 		tempProduct := productBarcodeDict[tempDetail.Barcode]
 		if _, ok := productBarcodeDict[tempDetail.Barcode]; ok {
-			tempDetail.ItemGuid = tempProduct.GuidFixed
-			tempDetail.UnitCode = tempProduct.ItemUnitCode
-			tempDetail.UnitNames = tempProduct.ItemUnitNames
-			tempDetail.ManufacturerGUID = tempProduct.ManufacturerGUID
-			tempDetail.ManufacturerCode = tempProduct.ManufacturerCode
-			tempDetail.ManufacturerNames = tempProduct.ManufacturerNames
-			tempDetail.GroupCode = tempProduct.GroupCode
-			tempDetail.GroupNames = tempProduct.GroupNames
-
-			tempDetail.ItemCode = tempProduct.ItemCode
-			tempDetail.ItemNames = tempProduct.Names
-			tempDetail.ItemType = tempProduct.ItemType
-			tempDetail.TaxType = tempProduct.TaxType
-			tempDetail.VatType = tempProduct.VatType
-			tempDetail.Discount = tempProduct.Discount
-
-			tempDetail.DivideValue = tempProduct.DivideValue
-			tempDetail.StandValue = tempProduct.StandValue
-			tempDetail.VatCal = tempProduct.VatCal
+			tempDetail = svc.parser.ParseProductBarcode(tempDetail, tempProduct)
 		}
 
-		(*details)[i] = tempDetail
+		(details)[i] = tempDetail
 	}
 
-	return nil
+	return details
 }
 
-func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error {
+func (svc SaleInvoiceService) UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -269,11 +268,13 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 	dataDoc := findDoc
 	dataDoc.SaleInvoice = doc
 
-	err = svc.prepareSaleInvoiceDetail(ctx, shopID, dataDoc.SaleInvoice.Details)
-
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
 	if err != nil {
 		return err
 	}
+
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
 
 	dataDoc.DocNo = findDoc.DocNo
 	dataDoc.TransFlag = TRANS_FLAG
@@ -294,7 +295,7 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) DeleteSaleInvoice(shopID string, guid string, authUsername string) error {
+func (svc SaleInvoiceService) DeleteSaleInvoice(shopID string, guid string, authUsername string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -322,7 +323,7 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoice(shopID string, guid string, 
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc SaleInvoiceService) DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -345,7 +346,7 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUs
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error) {
+func (svc SaleInvoiceService) GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error) {
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
@@ -358,7 +359,7 @@ func (svc SaleInvoiceHttpService) GetLastPOSDocNo(shopID, posID, maxDocNo string
 	return lastDocNo, nil
 }
 
-func (svc SaleInvoiceHttpService) InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error) {
+func (svc SaleInvoiceService) InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -376,7 +377,7 @@ func (svc SaleInvoiceHttpService) InfoSaleInvoice(shopID string, guid string) (m
 	return findDoc.SaleInvoiceInfo, nil
 }
 
-func (svc SaleInvoiceHttpService) InfoSaleInvoiceByCode(shopID string, code string) (models.SaleInvoiceInfo, error) {
+func (svc SaleInvoiceService) InfoSaleInvoiceByCode(shopID string, code string) (models.SaleInvoiceInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -394,7 +395,7 @@ func (svc SaleInvoiceHttpService) InfoSaleInvoiceByCode(shopID string, code stri
 	return findDoc.SaleInvoiceInfo, nil
 }
 
-func (svc SaleInvoiceHttpService) SearchSaleInvoice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error) {
+func (svc SaleInvoiceService) SearchSaleInvoice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -412,7 +413,7 @@ func (svc SaleInvoiceHttpService) SearchSaleInvoice(shopID string, filters map[s
 	return docList, pagination, nil
 }
 
-func (svc SaleInvoiceHttpService) SearchSaleInvoiceStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error) {
+func (svc SaleInvoiceService) SearchSaleInvoiceStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -432,7 +433,7 @@ func (svc SaleInvoiceHttpService) SearchSaleInvoiceStep(shopID string, langCode 
 	return docList, total, nil
 }
 
-func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error) {
+func (svc SaleInvoiceService) SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -545,11 +546,11 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 	}, nil
 }
 
-func (svc SaleInvoiceHttpService) getDocIDKey(doc models.SaleInvoice) string {
+func (svc SaleInvoiceService) getDocIDKey(doc models.SaleInvoice) string {
 	return doc.DocNo
 }
 
-func (svc SaleInvoiceHttpService) saveMasterSync(shopID string) {
+func (svc SaleInvoiceService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -559,11 +560,11 @@ func (svc SaleInvoiceHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc SaleInvoiceHttpService) GetModuleName() string {
+func (svc SaleInvoiceService) GetModuleName() string {
 	return "saleInvoice"
 }
 
-func (svc SaleInvoiceHttpService) Export(shopID string, languageCode string, languageHeader map[string]string) ([][]string, error) {
+func (svc SaleInvoiceService) Export(shopID string, languageCode string, languageHeader map[string]string) ([][]string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -601,51 +602,9 @@ func (svc SaleInvoiceHttpService) Export(shopID string, languageCode string, lan
 	results = append(results, headerRow)
 
 	for _, doc := range docs {
-		tempResults := prepareDataToCSV(languageCode, doc)
+		tempResults := svc.exporter.ParseCSV(languageCode, doc)
 		results = append(results, tempResults...)
 	}
 
 	return results, nil
-}
-
-func prepareDataToCSV(languageCode string, data models.SaleInvoiceInfo) [][]string {
-
-	results := [][]string{}
-
-	if data.Details == nil {
-		return results
-	}
-
-	for _, value := range *data.Details {
-		langCode := languageCode
-
-		productName := getName(value.ItemNames, langCode)
-		unitName := getName(value.UnitNames, langCode)
-
-		qty := fmt.Sprintf("%.2f", value.Qty)
-		price := fmt.Sprintf("%.2f", value.Price)
-		discountAmount := fmt.Sprintf("%.2f", value.DiscountAmount)
-		sumAmount := fmt.Sprintf("%.2f", value.SumAmount)
-
-		dateLayout := "2006-01-02"
-		docDate := data.DocDatetime.Format(dateLayout)
-
-		results = append(results, []string{docDate, data.DocNo, value.Barcode, productName, value.UnitCode, unitName, qty, price, discountAmount, sumAmount})
-	}
-
-	return results
-}
-
-func getName(names *[]common.NameX, langCode string) string {
-	if names == nil {
-		return ""
-	}
-
-	for _, name := range *names {
-		if *name.Code == langCode {
-			return *name.Name
-		}
-	}
-
-	return ""
 }

@@ -6,7 +6,10 @@ import (
 	"fmt"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/services"
+	trans_models "smlcloudplatform/internal/transaction/models"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockadjustment/models"
 	"smlcloudplatform/internal/transaction/stockadjustment/repositories"
@@ -21,7 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type IStockAdjustmentHttpService interface {
+type IStockAdjustmentService interface {
 	CreateStockAdjustment(shopID string, authUsername string, doc models.StockAdjustment) (string, string, error)
 	UpdateStockAdjustment(shopID string, guid string, authUsername string, doc models.StockAdjustment) error
 	DeleteStockAdjustment(shopID string, guid string, authUsername string) error
@@ -35,36 +38,46 @@ type IStockAdjustmentHttpService interface {
 	GetModuleName() string
 }
 
+type IStockAdjustmenParser interface {
+	ParseProductBarcode(detail trans_models.Detail, productBarcodeInfo productbarcode_models.ProductBarcodeInfo) trans_models.Detail
+}
+
 const (
 	MODULE_NAME = "AJ"
 )
 
-type StockAdjustmentHttpService struct {
-	repoMq           repositories.IStockAdjustmentMessageQueueRepository
-	repo             repositories.IStockAdjustmentRepository
-	repoCache        trancache.ICacheRepository
-	cacheExpireDocNo time.Duration
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+type StockAdjustmentService struct {
+	repoMq             repositories.IStockAdjustmentMessageQueueRepository
+	repo               repositories.IStockAdjustmentRepository
+	repoCache          trancache.ICacheRepository
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
+	cacheExpireDocNo   time.Duration
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockAdjustmentActivity, models.StockAdjustmentDeleteActivity]
+	parser         IStockAdjustmenParser
 	contextTimeout time.Duration
 }
 
-func NewStockAdjustmentHttpService(
+func NewStockAdjustmentService(
 	repo repositories.IStockAdjustmentRepository,
 	repoCache trancache.ICacheRepository,
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository,
 	repoMq repositories.IStockAdjustmentMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
-) *StockAdjustmentHttpService {
+	parser IStockAdjustmenParser,
+) *StockAdjustmentService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
-	insSvc := &StockAdjustmentHttpService{
-		repo:             repo,
-		repoMq:           repoMq,
-		repoCache:        repoCache,
-		syncCacheRepo:    syncCacheRepo,
-		cacheExpireDocNo: time.Hour * 24,
-		contextTimeout:   contextTimeout,
+	insSvc := &StockAdjustmentService{
+		repo:               repo,
+		repoMq:             repoMq,
+		repoCache:          repoCache,
+		productbarcodeRepo: productbarcodeRepo,
+		syncCacheRepo:      syncCacheRepo,
+		parser:             parser,
+		cacheExpireDocNo:   time.Hour * 24,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockAdjustmentActivity, models.StockAdjustmentDeleteActivity](repo)
@@ -72,16 +85,16 @@ func NewStockAdjustmentHttpService(
 	return insSvc
 }
 
-func (svc StockAdjustmentHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+func (svc StockAdjustmentService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc StockAdjustmentHttpService) getDocNoPrefix(docDate time.Time) string {
+func (svc StockAdjustmentService) getDocNoPrefix(docDate time.Time) string {
 	docDateStr := docDate.Format("20060102")
 	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
 }
 
-func (svc StockAdjustmentHttpService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
+func (svc StockAdjustmentService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
 	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
 
 	if prevoiusDocNumber == 0 || err != nil {
@@ -118,7 +131,7 @@ func (svc StockAdjustmentHttpService) generateNewDocNo(ctx context.Context, shop
 	return newDocNo, newDocNumber, nil
 }
 
-func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authUsername string, doc models.StockAdjustment) (string, string, error) {
+func (svc StockAdjustmentService) CreateStockAdjustment(shopID string, authUsername string, doc models.StockAdjustment) (string, string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -134,16 +147,24 @@ func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authU
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.StockAdjustmentDoc{}
-	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
-	docData.StockAdjustment = doc
+	dataDoc := models.StockAdjustmentDoc{}
+	dataDoc.ShopID = shopID
+	dataDoc.GuidFixed = newGuidFixed
+	dataDoc.StockAdjustment = doc
 
-	docData.DocNo = newDocNo
-	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return "", "", err
+	}
 
-	_, err = svc.repo.Create(ctx, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = newDocNo
+	dataDoc.CreatedBy = authUsername
+	dataDoc.CreatedAt = time.Now()
+
+	_, err = svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", "", err
@@ -152,7 +173,7 @@ func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authU
 	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
 	go func() {
-		svc.repoMq.Create(docData)
+		svc.repoMq.Create(dataDoc)
 		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 		svc.saveMasterSync(shopID)
 	}()
@@ -160,7 +181,35 @@ func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authU
 	return newGuidFixed, newDocNo, nil
 }
 
-func (svc StockAdjustmentHttpService) UpdateStockAdjustment(shopID string, guid string, authUsername string, doc models.StockAdjustment) error {
+func (svc StockAdjustmentService) GetDetailProductBarcodes(ctx context.Context, shopID string, details []trans_models.Detail) ([]productbarcode_models.ProductBarcodeInfo, error) {
+	var tempBarcodes []string
+	for _, doc := range details {
+		tempBarcodes = append(tempBarcodes, doc.Barcode)
+	}
+	return svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, tempBarcodes)
+}
+
+func (svc StockAdjustmentService) PrepareDetail(details []trans_models.Detail, productBarcodes []productbarcode_models.ProductBarcodeInfo) []trans_models.Detail {
+
+	productBarcodeDict := map[string]productbarcode_models.ProductBarcodeInfo{}
+	for _, doc := range productBarcodes {
+		productBarcodeDict[doc.Barcode] = doc
+	}
+
+	for i := 0; i < len(details); i++ {
+		tempDetail := (details)[i]
+		tempProduct := productBarcodeDict[tempDetail.Barcode]
+		if _, ok := productBarcodeDict[tempDetail.Barcode]; ok {
+			tempDetail = svc.parser.ParseProductBarcode(tempDetail, tempProduct)
+		}
+
+		(details)[i] = tempDetail
+	}
+
+	return details
+}
+
+func (svc StockAdjustmentService) UpdateStockAdjustment(shopID string, guid string, authUsername string, doc models.StockAdjustment) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -175,28 +224,36 @@ func (svc StockAdjustmentHttpService) UpdateStockAdjustment(shopID string, guid 
 		return errors.New("document not found")
 	}
 
-	docData := findDoc
-	docData.StockAdjustment = doc
+	dataDoc := findDoc
+	dataDoc.StockAdjustment = doc
 
-	docData.DocNo = findDoc.DocNo
-	docData.UpdatedBy = authUsername
-	docData.UpdatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return err
+	}
 
-	err = svc.repo.Update(ctx, shopID, guid, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = findDoc.DocNo
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
 	func() {
-		svc.repoMq.Update(docData)
+		svc.repoMq.Update(dataDoc)
 		svc.saveMasterSync(shopID)
 	}()
 
 	return nil
 }
 
-func (svc StockAdjustmentHttpService) DeleteStockAdjustment(shopID string, guid string, authUsername string) error {
+func (svc StockAdjustmentService) DeleteStockAdjustment(shopID string, guid string, authUsername string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -224,7 +281,7 @@ func (svc StockAdjustmentHttpService) DeleteStockAdjustment(shopID string, guid 
 	return nil
 }
 
-func (svc StockAdjustmentHttpService) DeleteStockAdjustmentByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc StockAdjustmentService) DeleteStockAdjustmentByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -247,7 +304,7 @@ func (svc StockAdjustmentHttpService) DeleteStockAdjustmentByGUIDs(shopID string
 	return nil
 }
 
-func (svc StockAdjustmentHttpService) InfoStockAdjustment(shopID string, guid string) (models.StockAdjustmentInfo, error) {
+func (svc StockAdjustmentService) InfoStockAdjustment(shopID string, guid string) (models.StockAdjustmentInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -265,7 +322,7 @@ func (svc StockAdjustmentHttpService) InfoStockAdjustment(shopID string, guid st
 	return findDoc.StockAdjustmentInfo, nil
 }
 
-func (svc StockAdjustmentHttpService) InfoStockAdjustmentByCode(shopID string, code string) (models.StockAdjustmentInfo, error) {
+func (svc StockAdjustmentService) InfoStockAdjustmentByCode(shopID string, code string) (models.StockAdjustmentInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -283,7 +340,7 @@ func (svc StockAdjustmentHttpService) InfoStockAdjustmentByCode(shopID string, c
 	return findDoc.StockAdjustmentInfo, nil
 }
 
-func (svc StockAdjustmentHttpService) SearchStockAdjustment(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
+func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -301,7 +358,7 @@ func (svc StockAdjustmentHttpService) SearchStockAdjustment(shopID string, filte
 	return docList, pagination, nil
 }
 
-func (svc StockAdjustmentHttpService) SearchStockAdjustmentStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockAdjustmentInfo, int, error) {
+func (svc StockAdjustmentService) SearchStockAdjustmentStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockAdjustmentInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -321,7 +378,7 @@ func (svc StockAdjustmentHttpService) SearchStockAdjustmentStep(shopID string, l
 	return docList, total, nil
 }
 
-func (svc StockAdjustmentHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.StockAdjustment) (common.BulkImport, error) {
+func (svc StockAdjustmentService) SaveInBatch(shopID string, authUsername string, dataList []models.StockAdjustment) (common.BulkImport, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -432,11 +489,11 @@ func (svc StockAdjustmentHttpService) SaveInBatch(shopID string, authUsername st
 	}, nil
 }
 
-func (svc StockAdjustmentHttpService) getDocIDKey(doc models.StockAdjustment) string {
+func (svc StockAdjustmentService) getDocIDKey(doc models.StockAdjustment) string {
 	return doc.DocNo
 }
 
-func (svc StockAdjustmentHttpService) saveMasterSync(shopID string) {
+func (svc StockAdjustmentService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -446,6 +503,6 @@ func (svc StockAdjustmentHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc StockAdjustmentHttpService) GetModuleName() string {
+func (svc StockAdjustmentService) GetModuleName() string {
 	return "stockAdjustment"
 }

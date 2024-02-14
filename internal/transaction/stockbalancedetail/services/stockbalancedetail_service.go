@@ -5,7 +5,10 @@ import (
 	"errors"
 	"fmt"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
+	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/services"
+	trans_models "smlcloudplatform/internal/transaction/models"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockbalancedetail/models"
 	"smlcloudplatform/internal/transaction/stockbalancedetail/repositories"
@@ -17,7 +20,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type IStockBalanceDetailHttpService interface {
+type IStockBalanceDetailService interface {
 	CreateStockBalanceDetail(shopID string, authUsername string, doc []models.StockBalanceDetail) error
 	UpdateStockBalanceDetail(shopID string, guid string, authUsername string, doc models.StockBalanceDetail) error
 	DeleteStockBalanceDetail(shopID string, guid string, authUsername string) error
@@ -31,26 +34,34 @@ type IStockBalanceDetailHttpService interface {
 	GetModuleName() string
 }
 
-type StockBalanceDetailHttpService struct {
-	repoMq           repositories.IStockBalanceDetailMessageQueueRepository
-	repo             repositories.IStockBalanceDetailRepository
-	repoCache        trancache.ICacheRepository
-	cacheExpireDocNo time.Duration
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+type IStockBalanceDetailParser interface {
+	ParseProductBarcode(detail trans_models.Detail, productBarcodeInfo productbarcode_models.ProductBarcodeInfo) trans_models.Detail
+}
+
+type StockBalanceDetailService struct {
+	repoMq             repositories.IStockBalanceDetailMessageQueueRepository
+	repo               repositories.IStockBalanceDetailRepository
+	repoCache          trancache.ICacheRepository
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
+	cacheExpireDocNo   time.Duration
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockBalanceDetailActivity, models.StockBalanceDetailDeleteActivity]
+	parser         IStockBalanceDetailParser
 	contextTimeout time.Duration
 }
 
-func NewStockBalanceDetailHttpService(
+func NewStockBalanceDetailService(
 	repo repositories.IStockBalanceDetailRepository,
 	repoCache trancache.ICacheRepository,
+	productBarcodeRepo productbarcode_repositories.IProductBarcodeRepository,
 	repoMq repositories.IStockBalanceDetailMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
-) *StockBalanceDetailHttpService {
+	parser IStockBalanceDetailParser,
+) *StockBalanceDetailService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
-	insSvc := &StockBalanceDetailHttpService{
+	insSvc := &StockBalanceDetailService{
 		repoMq:           repoMq,
 		repo:             repo,
 		repoCache:        repoCache,
@@ -64,11 +75,11 @@ func NewStockBalanceDetailHttpService(
 	return insSvc
 }
 
-func (svc StockBalanceDetailHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+func (svc StockBalanceDetailService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc StockBalanceDetailHttpService) CreateStockBalanceDetail(shopID string, authUsername string, docs []models.StockBalanceDetail) error {
+func (svc StockBalanceDetailService) CreateStockBalanceDetail(shopID string, authUsername string, docs []models.StockBalanceDetail) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -78,15 +89,22 @@ func (svc StockBalanceDetailHttpService) CreateStockBalanceDetail(shopID string,
 	for _, doc := range docs {
 		newGuidFixed := utils.NewGUID()
 
-		docData := models.StockBalanceDetailDoc{}
-		docData.ShopID = shopID
-		docData.GuidFixed = newGuidFixed
-		docData.StockBalanceDetail = doc
+		dataDoc := models.StockBalanceDetailDoc{}
+		dataDoc.ShopID = shopID
+		dataDoc.GuidFixed = newGuidFixed
+		dataDoc.StockBalanceDetail = doc
 
-		docData.CreatedBy = authUsername
-		docData.CreatedAt = time.Now()
+		dataDoc.CreatedBy = authUsername
+		dataDoc.CreatedAt = time.Now()
 
-		prepareDocs = append(prepareDocs, docData)
+		productBarcode, err := svc.GetDetailProductBarcode(ctx, shopID, doc.Barcode)
+		if err != nil {
+			return err
+		}
+
+		dataDoc.Detail = svc.PrepareDetail(doc.Detail, productBarcode)
+
+		prepareDocs = append(prepareDocs, dataDoc)
 	}
 
 	err := svc.repo.CreateInBatch(ctx, prepareDocs)
@@ -103,7 +121,28 @@ func (svc StockBalanceDetailHttpService) CreateStockBalanceDetail(shopID string,
 	return nil
 }
 
-func (svc StockBalanceDetailHttpService) UpdateStockBalanceDetail(shopID string, guid string, authUsername string, doc models.StockBalanceDetail) error {
+func (svc StockBalanceDetailService) GetDetailProductBarcode(ctx context.Context, shopID string, barcode string) (productbarcode_models.ProductBarcodeInfo, error) {
+	results, err := svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, []string{barcode})
+
+	if err != nil {
+		return productbarcode_models.ProductBarcodeInfo{}, err
+	}
+
+	if len(results) < 1 {
+		return productbarcode_models.ProductBarcodeInfo{}, errors.New("product barcode not found")
+	}
+
+	return results[0], nil
+}
+
+func (svc StockBalanceDetailService) PrepareDetail(detail trans_models.Detail, productBarcode productbarcode_models.ProductBarcodeInfo) trans_models.Detail {
+
+	resultDetail := svc.parser.ParseProductBarcode(detail, productBarcode)
+
+	return resultDetail
+}
+
+func (svc StockBalanceDetailService) UpdateStockBalanceDetail(shopID string, guid string, authUsername string, doc models.StockBalanceDetail) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -118,28 +157,28 @@ func (svc StockBalanceDetailHttpService) UpdateStockBalanceDetail(shopID string,
 		return errors.New("document not found")
 	}
 
-	docData := findDoc
-	docData.StockBalanceDetail = doc
+	dataDoc := findDoc
+	dataDoc.StockBalanceDetail = doc
 
-	docData.DocNo = findDoc.DocNo
-	docData.UpdatedBy = authUsername
-	docData.UpdatedAt = time.Now()
+	dataDoc.DocNo = findDoc.DocNo
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(ctx, shopID, guid, docData)
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
 	func() {
-		svc.repoMq.Update(docData)
+		svc.repoMq.Update(dataDoc)
 		svc.saveMasterSync(shopID)
 	}()
 
 	return nil
 }
 
-func (svc StockBalanceDetailHttpService) DeleteStockBalanceDetail(shopID string, guid string, authUsername string) error {
+func (svc StockBalanceDetailService) DeleteStockBalanceDetail(shopID string, guid string, authUsername string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -167,7 +206,7 @@ func (svc StockBalanceDetailHttpService) DeleteStockBalanceDetail(shopID string,
 	return nil
 }
 
-func (svc StockBalanceDetailHttpService) DeleteStockBalanceDetailByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc StockBalanceDetailService) DeleteStockBalanceDetailByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -195,7 +234,7 @@ func (svc StockBalanceDetailHttpService) DeleteStockBalanceDetailByGUIDs(shopID 
 	return nil
 }
 
-func (svc StockBalanceDetailHttpService) DeleteStockBalanceDetailByDocNo(shopID string, authUsername string, docNo string) error {
+func (svc StockBalanceDetailService) DeleteStockBalanceDetailByDocNo(shopID string, authUsername string, docNo string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -222,7 +261,7 @@ func (svc StockBalanceDetailHttpService) DeleteStockBalanceDetailByDocNo(shopID 
 	return nil
 }
 
-func (svc StockBalanceDetailHttpService) InfoStockBalanceDetail(shopID string, guid string) (models.StockBalanceDetailInfo, error) {
+func (svc StockBalanceDetailService) InfoStockBalanceDetail(shopID string, guid string) (models.StockBalanceDetailInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -240,7 +279,7 @@ func (svc StockBalanceDetailHttpService) InfoStockBalanceDetail(shopID string, g
 	return findDoc.StockBalanceDetailInfo, nil
 }
 
-func (svc StockBalanceDetailHttpService) InfoStockBalanceDetailByCode(shopID string, code string) (models.StockBalanceDetailInfo, error) {
+func (svc StockBalanceDetailService) InfoStockBalanceDetailByCode(shopID string, code string) (models.StockBalanceDetailInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -258,7 +297,7 @@ func (svc StockBalanceDetailHttpService) InfoStockBalanceDetailByCode(shopID str
 	return findDoc.StockBalanceDetailInfo, nil
 }
 
-func (svc StockBalanceDetailHttpService) SearchStockBalanceDetail(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockBalanceDetailInfo, mongopagination.PaginationData, error) {
+func (svc StockBalanceDetailService) SearchStockBalanceDetail(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockBalanceDetailInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -276,7 +315,7 @@ func (svc StockBalanceDetailHttpService) SearchStockBalanceDetail(shopID string,
 	return docList, pagination, nil
 }
 
-func (svc StockBalanceDetailHttpService) SearchStockBalanceDetailStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockBalanceDetailInfo, int, error) {
+func (svc StockBalanceDetailService) SearchStockBalanceDetailStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockBalanceDetailInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -296,7 +335,7 @@ func (svc StockBalanceDetailHttpService) SearchStockBalanceDetailStep(shopID str
 	return docList, total, nil
 }
 
-func (svc StockBalanceDetailHttpService) saveMasterSync(shopID string) {
+func (svc StockBalanceDetailService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -306,6 +345,6 @@ func (svc StockBalanceDetailHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc StockBalanceDetailHttpService) GetModuleName() string {
+func (svc StockBalanceDetailService) GetModuleName() string {
 	return "stockBalanceDetail"
 }

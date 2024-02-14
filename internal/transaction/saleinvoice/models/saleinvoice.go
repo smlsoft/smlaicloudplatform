@@ -10,10 +10,9 @@ import (
 const saleinvoiceCollectionName = "transactionSaleInvoice"
 
 type SaleInvoice struct {
-	models.PartitionIdentity      `bson:"inline"`
-	transmodels.TransactionHeader `bson:"inline"`
-	Details                       *[]SaleInvoiceDetail `json:"details" bson:"details"`
-	IsPOS                         bool                 `json:"ispos" bson:"ispos"`
+	models.PartitionIdentity `bson:"inline"`
+	transmodels.Transaction  `bson:"inline"`
+	IsPOS                    bool `json:"ispos" bson:"ispos"`
 
 	CouponNo          string  `json:"couponno" bson:"couponno"`
 	CouponAmount      float64 `json:"couponamount" bson:"couponamount"`
@@ -34,10 +33,9 @@ type SaleInvoice struct {
 	TakeAway          int8    `json:"takeaway" bson:"takeaway"`
 }
 
-type SaleInvoiceDetail struct {
-	ManufacturerGUID   string `json:"manufacturerguid" bson:"manufacturerguid"`
-	transmodels.Detail `bson:"inline"`
-}
+// type SaleInvoiceDetail struct {
+// 	transmodels.Detail `bson:"inline"`
+// }
 
 type SaleInvoiceInfo struct {
 	models.DocIdentity `bson:"inline"`

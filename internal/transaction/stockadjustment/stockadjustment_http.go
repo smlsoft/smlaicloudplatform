@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockadjustment/models"
 	"smlcloudplatform/internal/transaction/stockadjustment/repositories"
@@ -20,7 +21,7 @@ type IStockAdjustmentHttp interface{}
 type StockAdjustmentHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc services.IStockAdjustmentHttpService
+	svc services.IStockAdjustmentService
 }
 
 func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg config.IConfig) StockAdjustmentHttp {
@@ -31,9 +32,11 @@ func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg config.IConfig) S
 	repo := repositories.NewStockAdjustmentRepository(pst)
 	repoMq := repositories.NewStockAdjustmentMessageQueueRepository(producer)
 
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockAdjustmentHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewStockAdjustmentService(repo, transRepo, productBarcodeRepo, repoMq, masterSyncCacheRepo, services.StockAdjustmenParser{})
 
 	return StockAdjustmentHttp{
 		ms:  ms,

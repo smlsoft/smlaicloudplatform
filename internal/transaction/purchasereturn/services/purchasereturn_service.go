@@ -6,7 +6,10 @@ import (
 	"fmt"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/services"
+	trans_models "smlcloudplatform/internal/transaction/models"
 	"smlcloudplatform/internal/transaction/purchasereturn/models"
 	"smlcloudplatform/internal/transaction/purchasereturn/repositories"
 	trancache "smlcloudplatform/internal/transaction/repositories"
@@ -21,7 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type IPurchaseReturnHttpService interface {
+type IPurchaseReturnService interface {
 	CreatePurchaseReturn(shopID string, authUsername string, doc models.PurchaseReturn) (string, string, error)
 	UpdatePurchaseReturn(shopID string, guid string, authUsername string, doc models.PurchaseReturn) error
 	DeletePurchaseReturn(shopID string, guid string, authUsername string) error
@@ -35,31 +38,46 @@ type IPurchaseReturnHttpService interface {
 	GetModuleName() string
 }
 
+type IPurchaseReturnParser interface {
+	ParseProductBarcode(detail trans_models.Detail, productBarcodeInfo productbarcode_models.ProductBarcodeInfo) trans_models.Detail
+}
+
 const (
 	MODULE_NAME = "PT"
 )
 
-type PurchaseReturnHttpService struct {
-	repoMq           repositories.IPurchaseReturnMessageQueueRepository
-	repo             repositories.IPurchaseReturnRepository
-	repoCache        trancache.ICacheRepository
-	cacheExpireDocNo time.Duration
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+type PurchaseReturnService struct {
+	repoMq             repositories.IPurchaseReturnMessageQueueRepository
+	repo               repositories.IPurchaseReturnRepository
+	repoCache          trancache.ICacheRepository
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
+	cacheExpireDocNo   time.Duration
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.PurchaseReturnActivity, models.PurchaseReturnDeleteActivity]
+	parser         IPurchaseReturnParser
 	contextTimeout time.Duration
 }
 
-func NewPurchaseReturnHttpService(repo repositories.IPurchaseReturnRepository, repoCache trancache.ICacheRepository, repoMq repositories.IPurchaseReturnMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PurchaseReturnHttpService {
+func NewPurchaseReturnService(
+	repo repositories.IPurchaseReturnRepository,
+	repoCache trancache.ICacheRepository,
+	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository,
+	repoMq repositories.IPurchaseReturnMessageQueueRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+	parser IPurchaseReturnParser,
+) *PurchaseReturnService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
-	insSvc := &PurchaseReturnHttpService{
-		repo:             repo,
-		repoMq:           repoMq,
-		repoCache:        repoCache,
-		syncCacheRepo:    syncCacheRepo,
-		cacheExpireDocNo: time.Hour * 24,
-		contextTimeout:   contextTimeout,
+	insSvc := &PurchaseReturnService{
+		repo:               repo,
+		repoMq:             repoMq,
+		repoCache:          repoCache,
+		productbarcodeRepo: productbarcodeRepo,
+		syncCacheRepo:      syncCacheRepo,
+		parser:             parser,
+		cacheExpireDocNo:   time.Hour * 24,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.PurchaseReturnActivity, models.PurchaseReturnDeleteActivity](repo)
@@ -67,16 +85,16 @@ func NewPurchaseReturnHttpService(repo repositories.IPurchaseReturnRepository, r
 	return insSvc
 }
 
-func (svc PurchaseReturnHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+func (svc PurchaseReturnService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc PurchaseReturnHttpService) getDocNoPrefix(docDate time.Time) string {
+func (svc PurchaseReturnService) getDocNoPrefix(docDate time.Time) string {
 	docDateStr := docDate.Format("20060102")
 	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
 }
 
-func (svc PurchaseReturnHttpService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
+func (svc PurchaseReturnService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
 	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
 
 	if prevoiusDocNumber == 0 || err != nil {
@@ -113,7 +131,7 @@ func (svc PurchaseReturnHttpService) generateNewDocNo(ctx context.Context, shopI
 	return newDocNo, newDocNumber, nil
 }
 
-func (svc PurchaseReturnHttpService) CreatePurchaseReturn(shopID string, authUsername string, doc models.PurchaseReturn) (string, string, error) {
+func (svc PurchaseReturnService) CreatePurchaseReturn(shopID string, authUsername string, doc models.PurchaseReturn) (string, string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -129,23 +147,31 @@ func (svc PurchaseReturnHttpService) CreatePurchaseReturn(shopID string, authUse
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.PurchaseReturnDoc{}
-	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
-	docData.PurchaseReturn = doc
+	dataDoc := models.PurchaseReturnDoc{}
+	dataDoc.ShopID = shopID
+	dataDoc.GuidFixed = newGuidFixed
+	dataDoc.PurchaseReturn = doc
 
-	docData.DocNo = newDocNo
-	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return "", "", err
+	}
 
-	_, err = svc.repo.Create(ctx, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = newDocNo
+	dataDoc.CreatedBy = authUsername
+	dataDoc.CreatedAt = time.Now()
+
+	_, err = svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", "", err
 	}
 
 	go func() {
-		svc.repoMq.Create(docData)
+		svc.repoMq.Create(dataDoc)
 		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 		svc.saveMasterSync(shopID)
 	}()
@@ -153,7 +179,35 @@ func (svc PurchaseReturnHttpService) CreatePurchaseReturn(shopID string, authUse
 	return newGuidFixed, newDocNo, nil
 }
 
-func (svc PurchaseReturnHttpService) UpdatePurchaseReturn(shopID string, guid string, authUsername string, doc models.PurchaseReturn) error {
+func (svc PurchaseReturnService) GetDetailProductBarcodes(ctx context.Context, shopID string, details []trans_models.Detail) ([]productbarcode_models.ProductBarcodeInfo, error) {
+	var tempBarcodes []string
+	for _, doc := range details {
+		tempBarcodes = append(tempBarcodes, doc.Barcode)
+	}
+	return svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, tempBarcodes)
+}
+
+func (svc PurchaseReturnService) PrepareDetail(details []trans_models.Detail, productBarcodes []productbarcode_models.ProductBarcodeInfo) []trans_models.Detail {
+
+	productBarcodeDict := map[string]productbarcode_models.ProductBarcodeInfo{}
+	for _, doc := range productBarcodes {
+		productBarcodeDict[doc.Barcode] = doc
+	}
+
+	for i := 0; i < len(details); i++ {
+		tempDetail := (details)[i]
+		tempProduct := productBarcodeDict[tempDetail.Barcode]
+		if _, ok := productBarcodeDict[tempDetail.Barcode]; ok {
+			tempDetail = svc.parser.ParseProductBarcode(tempDetail, tempProduct)
+		}
+
+		(details)[i] = tempDetail
+	}
+
+	return details
+}
+
+func (svc PurchaseReturnService) UpdatePurchaseReturn(shopID string, guid string, authUsername string, doc models.PurchaseReturn) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -168,28 +222,36 @@ func (svc PurchaseReturnHttpService) UpdatePurchaseReturn(shopID string, guid st
 		return errors.New("document not found")
 	}
 
-	docData := findDoc
-	docData.PurchaseReturn = doc
+	dataDoc := findDoc
+	dataDoc.PurchaseReturn = doc
 
-	docData.DocNo = findDoc.DocNo
-	docData.UpdatedBy = authUsername
-	docData.UpdatedAt = time.Now()
+	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+	if err != nil {
+		return err
+	}
 
-	err = svc.repo.Update(ctx, shopID, guid, docData)
+	details := svc.PrepareDetail(*doc.Details, productBarcodes)
+	dataDoc.Details = &details
+
+	dataDoc.DocNo = findDoc.DocNo
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
 	func() {
-		svc.repoMq.Update(docData)
+		svc.repoMq.Update(dataDoc)
 		svc.saveMasterSync(shopID)
 	}()
 
 	return nil
 }
 
-func (svc PurchaseReturnHttpService) DeletePurchaseReturn(shopID string, guid string, authUsername string) error {
+func (svc PurchaseReturnService) DeletePurchaseReturn(shopID string, guid string, authUsername string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -217,7 +279,7 @@ func (svc PurchaseReturnHttpService) DeletePurchaseReturn(shopID string, guid st
 	return nil
 }
 
-func (svc PurchaseReturnHttpService) DeletePurchaseReturnByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc PurchaseReturnService) DeletePurchaseReturnByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -240,7 +302,7 @@ func (svc PurchaseReturnHttpService) DeletePurchaseReturnByGUIDs(shopID string, 
 	return nil
 }
 
-func (svc PurchaseReturnHttpService) InfoPurchaseReturn(shopID string, guid string) (models.PurchaseReturnInfo, error) {
+func (svc PurchaseReturnService) InfoPurchaseReturn(shopID string, guid string) (models.PurchaseReturnInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -258,7 +320,7 @@ func (svc PurchaseReturnHttpService) InfoPurchaseReturn(shopID string, guid stri
 	return findDoc.PurchaseReturnInfo, nil
 }
 
-func (svc PurchaseReturnHttpService) InfoPurchaseReturnByCode(shopID string, code string) (models.PurchaseReturnInfo, error) {
+func (svc PurchaseReturnService) InfoPurchaseReturnByCode(shopID string, code string) (models.PurchaseReturnInfo, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -276,7 +338,7 @@ func (svc PurchaseReturnHttpService) InfoPurchaseReturnByCode(shopID string, cod
 	return findDoc.PurchaseReturnInfo, nil
 }
 
-func (svc PurchaseReturnHttpService) SearchPurchaseReturn(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseReturnInfo, mongopagination.PaginationData, error) {
+func (svc PurchaseReturnService) SearchPurchaseReturn(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseReturnInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -294,7 +356,7 @@ func (svc PurchaseReturnHttpService) SearchPurchaseReturn(shopID string, filters
 	return docList, pagination, nil
 }
 
-func (svc PurchaseReturnHttpService) SearchPurchaseReturnStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseReturnInfo, int, error) {
+func (svc PurchaseReturnService) SearchPurchaseReturnStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseReturnInfo, int, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -314,7 +376,7 @@ func (svc PurchaseReturnHttpService) SearchPurchaseReturnStep(shopID string, lan
 	return docList, total, nil
 }
 
-func (svc PurchaseReturnHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.PurchaseReturn) (common.BulkImport, error) {
+func (svc PurchaseReturnService) SaveInBatch(shopID string, authUsername string, dataList []models.PurchaseReturn) (common.BulkImport, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -425,11 +487,11 @@ func (svc PurchaseReturnHttpService) SaveInBatch(shopID string, authUsername str
 	}, nil
 }
 
-func (svc PurchaseReturnHttpService) getDocIDKey(doc models.PurchaseReturn) string {
+func (svc PurchaseReturnService) getDocIDKey(doc models.PurchaseReturn) string {
 	return doc.DocNo
 }
 
-func (svc PurchaseReturnHttpService) saveMasterSync(shopID string) {
+func (svc PurchaseReturnService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -439,6 +501,6 @@ func (svc PurchaseReturnHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc PurchaseReturnHttpService) GetModuleName() string {
+func (svc PurchaseReturnService) GetModuleName() string {
 	return "purchaseReturn"
 }

@@ -6,7 +6,8 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
-	trancache "smlcloudplatform/internal/transaction/repositories"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
+	trans_cache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stocktransfer/models"
 	"smlcloudplatform/internal/transaction/stocktransfer/repositories"
 	"smlcloudplatform/internal/transaction/stocktransfer/services"
@@ -20,7 +21,7 @@ type IStockTransferHttp interface{}
 type StockTransferHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc services.IStockTransferHttpService
+	svc services.IStockTransferService
 }
 
 func NewStockTransferHttp(ms *microservice.Microservice, cfg config.IConfig) StockTransferHttp {
@@ -31,9 +32,11 @@ func NewStockTransferHttp(ms *microservice.Microservice, cfg config.IConfig) Sto
 	repo := repositories.NewStockTransferRepository(pst)
 	repoMq := repositories.NewStockTransferMessageQueueRepository(producer)
 
-	transRepo := trancache.NewCacheRepository(cache)
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
+	transCacheRepo := trans_cache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockTransferHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewStockTransferService(repo, transCacheRepo, productBarcodeRepo, repoMq, masterSyncCacheRepo, services.StockTransferParser{})
 
 	return StockTransferHttp{
 		ms:  ms,

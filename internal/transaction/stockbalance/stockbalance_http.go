@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockbalance/models"
 	"smlcloudplatform/internal/transaction/stockbalance/repositories"
@@ -34,14 +35,23 @@ func NewStockBalanceHttp(ms *microservice.Microservice, cfg config.IConfig) Stoc
 	repoMq := repositories.NewStockBalanceMessageQueueRepository(producer)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	transRepo := trancache.NewCacheRepository(cache)
+	transCacheRepo := trancache.NewCacheRepository(cache)
+
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
 
 	repoStockBalanceDetail := stockbalancedetail_repositories.NewStockBalanceDetailRepository(pst)
 	repoMqStockBalanceDetail := stockbalancedetail_repositories.NewStockBalanceDetailMessageQueueRepository(producer)
 
-	svcStockBalanceDetail := stockbalancedetail_services.NewStockBalanceDetailHttpService(repoStockBalanceDetail, transRepo, repoMqStockBalanceDetail, masterSyncCacheRepo)
+	svcStockBalanceDetail := stockbalancedetail_services.NewStockBalanceDetailService(
+		repoStockBalanceDetail,
+		transCacheRepo,
+		productBarcodeRepo,
+		repoMqStockBalanceDetail,
+		masterSyncCacheRepo,
+		stockbalancedetail_services.StockBalanceDetailParser{},
+	)
 
-	svc := services.NewStockBalanceHttpService(svcStockBalanceDetail, repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewStockBalanceHttpService(svcStockBalanceDetail, repo, transCacheRepo, repoMq, masterSyncCacheRepo)
 
 	return StockBalanceHttp{
 		ms:  ms,

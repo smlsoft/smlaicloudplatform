@@ -6,7 +6,9 @@ import (
 	"fmt"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
 	"smlcloudplatform/internal/services"
+	trans_models "smlcloudplatform/internal/transaction/models"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/stockbalance/models"
 	"smlcloudplatform/internal/transaction/stockbalance/repositories"
@@ -38,12 +40,16 @@ type IStockBalanceHttpService interface {
 	ProduceCreateStockBalance(shopID string, doc models.StockBalanceMessage) error
 }
 
+type IStockBalanceParser interface {
+	ParseProductBarcode(detail trans_models.Detail, productBarcodeInfo productbarcode_models.ProductBarcodeInfo) trans_models.Detail
+}
+
 const (
 	MODULE_NAME = "IB"
 )
 
 type StockBalanceHttpService struct {
-	svcStockBalanceDetail stockbalancedetail_services.IStockBalanceDetailHttpService
+	svcStockBalanceDetail stockbalancedetail_services.IStockBalanceDetailService
 	repoMq                repositories.IStockBalanceMessageQueueRepository
 	repo                  repositories.IStockBalanceRepository
 	repoCache             trancache.ICacheRepository
@@ -54,7 +60,7 @@ type StockBalanceHttpService struct {
 }
 
 func NewStockBalanceHttpService(
-	svcStockBalanceDetail stockbalancedetail_services.IStockBalanceDetailHttpService,
+	svcStockBalanceDetail stockbalancedetail_services.IStockBalanceDetailService,
 	repo repositories.IStockBalanceRepository,
 	repoCache trancache.ICacheRepository,
 	repoMq repositories.IStockBalanceMessageQueueRepository,

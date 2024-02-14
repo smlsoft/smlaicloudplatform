@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	trancache "smlcloudplatform/internal/transaction/repositories"
 	"smlcloudplatform/internal/transaction/saleinvoicereturn/models"
 	"smlcloudplatform/internal/transaction/saleinvoicereturn/repositories"
@@ -20,7 +21,7 @@ type ISaleInvoiceReturnHttp interface{}
 type SaleInvoiceReturnHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc services.ISaleInvoiceReturnHttpService
+	svc services.ISaleInvoiceReturnService
 }
 
 func NewSaleInvoiceReturnHttp(ms *microservice.Microservice, cfg config.IConfig) SaleInvoiceReturnHttp {
@@ -31,9 +32,11 @@ func NewSaleInvoiceReturnHttp(ms *microservice.Microservice, cfg config.IConfig)
 	repo := repositories.NewSaleInvoiceReturnRepository(pst)
 	repoMq := repositories.NewSaleInvoiceReturnMessageQueueRepository(producer)
 
-	transRepo := trancache.NewCacheRepository(cache)
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
+	transCacheRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceReturnHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewSaleInvoiceReturnService(repo, transCacheRepo, productBarcodeRepo, repoMq, masterSyncCacheRepo, services.SaleInvocieReturnParser{})
 
 	return SaleInvoiceReturnHttp{
 		ms:  ms,

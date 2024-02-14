@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/transaction/purchasereturn/models"
 	"smlcloudplatform/internal/transaction/purchasereturn/repositories"
 	"smlcloudplatform/internal/transaction/purchasereturn/services"
@@ -20,7 +21,7 @@ type IPurchaseReturnHttp interface{}
 type PurchaseReturnHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc services.IPurchaseReturnHttpService
+	svc services.IPurchaseReturnService
 }
 
 func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg config.IConfig) PurchaseReturnHttp {
@@ -31,9 +32,11 @@ func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg config.IConfig) Pu
 	repo := repositories.NewPurchaseReturnRepository(pst)
 	repoMq := repositories.NewPurchaseReturnMessageQueueRepository(producer)
 
-	transRepo := trancache.NewCacheRepository(cache)
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
+	transCacheRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPurchaseReturnHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
+	svc := services.NewPurchaseReturnService(repo, transCacheRepo, productBarcodeRepo, repoMq, masterSyncCacheRepo, services.PurchaseReturnParser{})
 
 	return PurchaseReturnHttp{
 		ms:  ms,
