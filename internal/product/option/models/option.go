@@ -12,7 +12,7 @@ const inventoryOptionCollectionName string = "inventoryOptions"
 type Option struct {
 	Code           string `json:"code" bson:"code" gorm:"code;primaryKey"`
 	XOrder         int8   `json:"xorder" bson:"xorder" gorm:"xorder"`
-	Required       bool   `json:"required" bson:"required" gorm:"required,type:bool,default:false"`
+	Required       bool   `json:"required" bson:"required" gorm:"required,type:bool;default:false"`
 	ChoiceType     int8   `json:"choicetype" bson:"choicetype,omitempty" gorm:"choicetype,omitempty"`
 	MaxSelect      int8   `json:"maxselect" bson:"maxselect,omitempty" gorm:"maxselect,omitempty"`
 	models.Name    `bson:"inline"`
@@ -42,8 +42,8 @@ type Choice struct {
 	models.Name `bson:"inline"`
 	Names       *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	ItemUnit    string          `json:"itemunit,omitempty" bson:"itemunit" gorm:"itemunit,omitempty"`
-	Selected    bool            `json:"selected" bson:"selected" gorm:"selected,type:bool,default:false"`
-	Default     bool            `json:"default" bson:"default" gorm:"default,type:bool,default:false"`
+	Selected    bool            `json:"selected" bson:"selected" gorm:"selected,type:bool;default:false"`
+	Default     bool            `json:"default" bson:"default" gorm:"default,type:bool;default:false"`
 
 	IncudeOptions []IncudeChoice `json:"choicedetails,omitempty" bson:"choicedetails,omitempty"`
 }
