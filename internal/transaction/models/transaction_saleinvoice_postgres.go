@@ -13,20 +13,20 @@ type SaleInvoiceTransactionPG struct {
 	TransactionPG    `gorm:"embedded;"`
 	DebtorCode       string          `json:"creditorcode" gorm:"column:creditorcode"`
 	DebtorNames      pkgModels.JSONB `json:"creditornames" gorm:"column:creditornames;type:jsonb"`
-	TotalPayCash     float64         `json:"totalpaycash" gorm:"column:totalpaycash,default:0"`
-	TotalPayTransfer float64         `json:"totalpaytransfer" gorm:"column:totalpaytransfer,default:0"`
-	TotalPayCredit   float64         `json:"totalpaycredit" gorm:"column:totalpaycredit,default:0"`
-	IsPOS            bool            `json:"ispos" gorm:"column:ispos"`
+	TotalPayCash     float64         `json:"totalpaycash" gorm:"column:totalpaycash;default:0"`
+	TotalPayTransfer float64         `json:"totalpaytransfer" gorm:"column:totalpaytransfer;default:0"`
+	TotalPayCredit   float64         `json:"totalpaycredit" gorm:"column:totalpaycredit;default:0"`
+	IsPOS            bool            `json:"ispos" gorm:"column:ispos;default:0"`
 
 	SaleCode                     string          `json:"salecode" gorm:"column:salecode"`
 	SaleName                     string          `json:"salename" gorm:"column:salename" `
 	BranchCode                   string          `json:"branchcode" gorm:"column:branchcode" `
 	BranchNames                  pkgModels.JSONB `json:"branchnames" gorm:"column:branchnames;type:jsonb"`
 	DetailDiscountFormula        string          `json:"detaildiscountformula" gorm:"column:detaildiscountformula"`
-	DetailTotalAmount            float64         `json:"detailtotalamount" gorm:"column:detailtotalamount,default:0"`
-	TotalDiscountVatAmount       float64         `json:"totaldiscountvatamount" gorm:"column:totaldiscountvatamount,default:0"`
-	TotalDiscountExceptVatAmount float64         `json:"totaldiscountexceptvatamount" gorm:"column:totaldiscountexceptvatamount,default:0"`
-	DetailTotalDiscount          float64         `json:"detailtotaldiscount" gorm:"column:detailtotaldiscount,default:0"`
+	DetailTotalAmount            float64         `json:"detailtotalamount" gorm:"column:detailtotalamount;default:0"`
+	TotalDiscountVatAmount       float64         `json:"totaldiscountvatamount" gorm:"column:totaldiscountvatamount;default:0"`
+	TotalDiscountExceptVatAmount float64         `json:"totaldiscountexceptvatamount" gorm:"column:totaldiscountexceptvatamount;default:0"`
+	DetailTotalDiscount          float64         `json:"detailtotaldiscount" gorm:"column:detailtotaldiscount;default:0"`
 
 	Items *[]SaleInvoiceTransactionDetailPG `json:"items" gorm:"items;foreignKey:shopid,docno"`
 }
