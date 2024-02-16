@@ -66,6 +66,7 @@ import (
 	"smlcloudplatform/internal/smsreceive/smstransaction"
 	"smlcloudplatform/internal/stockbalanceimport"
 	"smlcloudplatform/internal/stockprocess"
+	"smlcloudplatform/internal/systemadmin"
 	"smlcloudplatform/internal/task"
 	"smlcloudplatform/internal/transaction/documentformate"
 	"smlcloudplatform/internal/transaction/paid"
@@ -350,10 +351,40 @@ func main() {
 			// master
 			masterexpense.NewMasterExpenseHttp(ms, cfg),
 			masterincome.NewMasterIncomeHttp(ms, cfg),
+
+			// system admin
+			systemadmin.NewSystemAdmin(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)
 
+	}
+
+	if devApiMode == "3" {
+		// migration db only
+		journal.MigrationJournalTable(ms, cfg)
+		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
+		productbarcode.MigrationProductBarcodeTable(ms, cfg)
+		// transactionconsumer.MigrationDatabase(ms, cfg)
+		// payment migration
+		payment.MigrationDatabase(ms, cfg)
+		paymentdetail.MigrationDatabase(ms, cfg)
+		pay_consumer.MigrationDatabase(ms, cfg)
+		paid_consumer.MigrationDatabase(ms, cfg)
+		transactionconsumer.MigrationDatabase(ms, cfg)
+		purchase_consumer.MigrationDatabase(ms, cfg)
+		purchasereturn_consumer.MigrationDatabase(ms, cfg)
+		saleinvoice_consumer.MigrationDatabase(ms, cfg)
+		saleinvoicereutrn_consumer.MigrationDatabase(ms, cfg)
+		stockreceiveproduct_consumer.MigrationDatabase(ms, cfg)
+		stockpickupproduct_consumer.MigrationDatabase(ms, cfg)
+		stockreturnproduct_consumer.MigrationDatabase(ms, cfg)
+		stockadjustment_consumer.MigrationDatabase(ms, cfg)
+		stocktranferproduct_consumer.MigrationDatabase(ms, cfg)
+		creditorpayment_consumer.MigrationDatabase(ms, cfg)
+		debtorpayment_consumer.MigrationDatabase(ms, cfg)
+
+		return
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
@@ -365,65 +396,29 @@ func main() {
 			consumerGroupName = "03"
 		}
 
-		journal.MigrationJournalTable(ms, cfg)
 		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)
 		journal.StartJournalComsumeUpdated(ms, cfg, consumerGroupName)
 		journal.StartJournalComsumeDeleted(ms, cfg, consumerGroupName)
 		journal.StartJournalComsumeBlukCreated(ms, cfg, consumerGroupName)
 
-		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
 		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerUpdated(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
-		// transactionconsumer.MigrationDatabase(ms, cfg)
-		productbarcode.MigrationProductBarcodeTable(ms, cfg)
-
-		// payment migration
-		payment.MigrationDatabase(ms, cfg)
-		paymentdetail.MigrationDatabase(ms, cfg)
-
-		pay_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(pay_consumer.InitPayTransactionConsumer(ms, cfg))
-
-		paid_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(paid_consumer.InitPaidTransactionConsumer(ms, cfg))
-
-		transactionconsumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(stockprocess.NewStockProcessConsumer(ms, cfg))
-
-		purchase_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
-
-		purchasereturn_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(purchasereturn_consumer.InitPurchaseReturnTransactionConsumer(ms, cfg))
-
-		saleinvoice_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))
-
-		saleinvoicereutrn_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(saleinvoicereutrn_consumer.InitSaleInvoiceReturnTransactionConsumer(ms, cfg))
-
-		stockreceiveproduct_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(stockreceiveproduct_consumer.InitStockReceiveTransactionConsumer(ms, cfg))
-
-		stockpickupproduct_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(stockpickupproduct_consumer.InitStockReceiveTransactionConsumer(ms, cfg))
-
-		stockreturnproduct_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(stockreturnproduct_consumer.InitStockReturnTransactionConsumer(ms, cfg))
-
-		stockadjustment_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(stockadjustment_consumer.InitStockAdjustmentTransactionConsumer(ms, cfg))
-
-		stocktranferproduct_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(stocktranferproduct_consumer.InitStockTransferTransactionConsumer(ms, cfg))
-
-		creditorpayment_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(creditorpayment_consumer.InitCreditorPaymentTransactionConsumer(ms, cfg))
-
-		debtorpayment_consumer.MigrationDatabase(ms, cfg)
 		ms.RegisterConsumer(debtorpayment_consumer.InitDebtorPaymentTransactionConsumer(ms, cfg))
 
 		consumerServices := []ConsumerRegister{
@@ -433,8 +428,8 @@ func main() {
 
 		serviceStartConsumer(ms, consumerServices...)
 	}
-	ms.RegisterHttp(migrationAPI.NewMigrationAPI(ms, cfg))
 
+	ms.RegisterHttp(migrationAPI.NewMigrationAPI(ms, cfg))
 	ms.Start()
 }
 

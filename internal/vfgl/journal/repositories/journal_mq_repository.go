@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"context"
-	common "smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/internal/vfgl/journal/config"
 	"smlcloudplatform/internal/vfgl/journal/models"
@@ -10,10 +8,10 @@ import (
 )
 
 type IJournalMqRepository interface {
-	Create(ctx context.Context, doc models.JournalDoc) error
+	Create(doc models.JournalDoc) error
 	Update(doc models.JournalDoc) error
-	Delete(doc common.Identity) error
-	CreateInBatch(ctx context.Context, docList []models.JournalDoc) error
+	Delete(doc models.JournalDoc) error
+	CreateInBatch(docList []models.JournalDoc) error
 }
 
 type JournalMqRepository struct {

@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	common "smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/internal/vfgl/chartofaccount/config"
 	"smlcloudplatform/internal/vfgl/chartofaccount/models"
@@ -11,7 +10,7 @@ import (
 type IChartOfAccountMQRepository interface {
 	Create(doc models.ChartOfAccountDoc) error
 	Update(doc models.ChartOfAccountDoc) error
-	Delete(doc common.Identity) error
+	Delete(doc models.ChartOfAccountDoc) error
 	CreateInBatch(docList []models.ChartOfAccountDoc) error
 }
 

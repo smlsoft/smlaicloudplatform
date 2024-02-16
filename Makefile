@@ -69,22 +69,29 @@ run_m1_local_alldev:
 	swag init
 	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
-run_m1_stagging_alldev:
-	swag init
-	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
-
 run_m1_local_comsumerdev:
 	DEV_API_MODE=1 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
+
+run_m1_local_migrationdb:
+	DEV_API_MODE=3 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
 run_m1_dev_consumer:
 	DEV_API_MODE=1 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
-run_m1_stagging_consumer:
-	DEV_API_MODE=1 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
-
 run_m1_stagging_appdev:
 	swag init
 	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
+
+run_m1_stagging_consumer:
+	DEV_API_MODE=1 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
+
+run_m1_stagging_alldev:
+	swag init
+	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
+
+run_m1_stagging_migrationdb:
+	swag init
+	DEV_API_MODE=3 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
 
 docker_m1_build_api_dev:
 	swag init

@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type ApiResponse struct {
 	Success    bool        `json:"success"`
 	Message    string      `json:"message,omitempty"`
@@ -44,4 +46,11 @@ type BulkInsertResponse struct {
 	Updated    []string `json:"updated"`
 	Failed     []string `json:"updateFailed"`
 	Duplicated []string `json:"payloadDuplicate"`
+}
+
+type RestErrorResponse struct {
+	ErrStatus  int         `json:"status,omitempty"`
+	ErrError   string      `json:"error,omitempty"`
+	ErrMessage interface{} `json:"message,omitempty"`
+	Timestamp  time.Time   `json:"timestamp,omitempty"`
 }

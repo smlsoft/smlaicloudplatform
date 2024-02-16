@@ -4017,7 +4017,7 @@ definitions:
         type: string
       details:
         items:
-          $ref: '#/definitions/models.SaleInvoiceDetail'
+          $ref: '#/definitions/models.Detail'
         type: array
       detailtotalamount:
         type: number
@@ -4157,123 +4157,6 @@ definitions:
         type: integer
       womancount:
         type: integer
-    type: object
-  models.SaleInvoiceDetail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      docref:
-        type: string
-      docrefdatetime:
-        type: string
-      extrajson:
-        type: string
-      groupcode:
-        type: string
-      groupnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      manufacturercode:
-        type: string
-      manufacturerguid:
-        type: string
-      manufacturernames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      sku:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
     type: object
   models.SaleInvoiceReturn:
     properties:
