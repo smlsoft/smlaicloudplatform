@@ -2,24 +2,30 @@ package saleinvoice
 
 import (
 	"context"
+	"smlcloudplatform/internal/repositories"
 	saleInvoiceModels "smlcloudplatform/internal/transaction/saleinvoice/models"
 	"smlcloudplatform/pkg/microservice"
+	msModels "smlcloudplatform/pkg/microservice/models"
 
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ISaleInvoiceTransactionAdminRepository interface {
 	FindSaleInvoiceByShopID(ctx context.Context, shopID string) ([]saleInvoiceModels.SaleInvoiceDoc, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]saleInvoiceModels.SaleInvoiceDoc, mongopagination.PaginationData, error)
 	FindSaleInvoiceDeleteByShopID(ctx context.Context, shopID string) ([]saleInvoiceModels.SaleInvoiceDoc, error)
 }
 
 type SaleInvoiceTransactionAdminRepository struct {
 	pst microservice.IPersisterMongo
+	repositories.SearchRepository[saleInvoiceModels.SaleInvoiceDoc]
 }
 
 func NewSaleInvoiceTransactionAdminRepository(pst microservice.IPersisterMongo) ISaleInvoiceTransactionAdminRepository {
 	return &SaleInvoiceTransactionAdminRepository{
-		pst: pst,
+		pst:              pst,
+		SearchRepository: repositories.NewSearchRepository[saleInvoiceModels.SaleInvoiceDoc](pst),
 	}
 }
 
@@ -37,6 +43,17 @@ func (r SaleInvoiceTransactionAdminRepository) FindSaleInvoiceByShopID(ctx conte
 	}
 
 	return docList, nil
+}
+
+func (r SaleInvoiceTransactionAdminRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]saleInvoiceModels.SaleInvoiceDoc, mongopagination.PaginationData, error) {
+
+	results, pagination, err := r.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
+
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
 }
 
 func (r SaleInvoiceTransactionAdminRepository) FindSaleInvoiceDeleteByShopID(ctx context.Context, shopID string) ([]saleInvoiceModels.SaleInvoiceDoc, error) {
