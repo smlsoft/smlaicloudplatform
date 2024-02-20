@@ -124,6 +124,17 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 		"iscancel": false,
 		"description": "CN",
 		"ismanualamount": false,
+		"branch": {
+			"code": "b01",
+			"names": [
+				{
+					"code": "th",
+					"name": "สาขาที่ 1",
+					"isauto": false,
+					"isdelete": false
+				}
+			]
+		},
 		"custcode": "AR002",
 		"custnames": [
 			{
@@ -367,4 +378,8 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalPayCash, want.TotalPayCash, "totalpaycash")
 	assert.Equal(t, get.TotalPayCredit, want.TotalPayCredit, "totalpaycredit")
 	assert.Equal(t, get.TotalPayTransfer, want.TotalPayTransfer, "totalpaytransfer")
+
+	// branch
+	assert.Equal(t, "b01", get.BranchCode, "branchc code")
+	assert.Equal(t, "สาขาที่ 1", *(get.BranchNames[0].Name), "branch name")
 }

@@ -384,8 +384,13 @@ func TestDataFromPOS(t *testing.T) {
 		"paycashamount": 600,
 		"branch": {
 		  "guidfixed": "",
-		  "code": "",
-		  "names": null
+		  "code": "b01",
+		  "names": [
+			{
+				"code": "th",
+				"name": "สาขาที่ 1"
+			}
+		  ]
 		},
 		"billtaxtype": 0,
 		"canceldatetime": "",
@@ -683,4 +688,6 @@ func TestDataFromPOS(t *testing.T) {
 	require.Nil(t, err)
 
 	assert.Equal(t, "002240212-0009", get.DocNo, "doc no")
+	assert.Equal(t, "b01", get.BranchCode, "branch code")
+	assert.Equal(t, "สาขาที่ 1", *(get.BranchNames[0].Name), "branch name")
 }
