@@ -89,8 +89,6 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			DocRefType:     doc.DocRefType,
 			DocRefNo:       doc.DocRefNo,
 			DocRefDate:     doc.DocRefDate,
-			BranchCode:     doc.Branch.Code,
-			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 			Description:    doc.Description,
 			TotalValue:     doc.TotalValue,
 			DiscountWord:   doc.DiscountWord,
@@ -101,6 +99,8 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			TotalExceptVat: doc.TotalExceptVat,
 			TotalAmount:    doc.TotalAmount,
 			IsCancel:       doc.IsCancel,
+			BranchCode:     doc.Branch.Code,
+			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 		},
 		IsPOS:                        doc.IsPOS,
 		SaleCode:                     doc.SaleCode,
@@ -118,6 +118,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 		TotalPayTransfer: totalPayTransfer,
 		Items:            &details,
 	}
+
 	return &stockTransaction, nil
 }
 
