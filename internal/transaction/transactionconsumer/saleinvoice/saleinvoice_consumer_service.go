@@ -22,15 +22,20 @@ func NewSaleInvoiceTransactionConsumerService(repo ISaleInvoiceTransactionPGRepo
 }
 
 func (s *SaleInvoiceTransactionConsumerService) Upsert(shopID string, docNo string, doc models.SaleInvoiceTransactionPG) error {
-	findDoc, err := s.repo.Get(shopID, docNo)
-	if err != nil {
+	foundDocument, err := s.repo.Get(shopID, docNo)
+
+	if err != nil && err.Error() != "record not found" {
+		return err
+	}
+
+	if foundDocument == nil {
 		err = s.repo.Create(doc)
 		if err != nil {
 			return err
 		}
 	} else {
 
-		isEqual := findDoc.CompareTo(&doc)
+		isEqual := foundDocument.CompareTo(&doc)
 
 		if !isEqual {
 			err = s.repo.Update(shopID, docNo, doc)

@@ -211,7 +211,10 @@ func (svc SaleInvoiceService) CreateSaleInvoice(shopID string, authUsername stri
 	}
 
 	go func() {
-		svc.repoMq.Create(dataDoc)
+		err := svc.repoMq.Create(dataDoc)
+		if err != nil {
+			fmt.Printf("create mq error :: %s", err.Error())
+		}
 		svc.saveMasterSync(shopID)
 
 		if isGenerateDocNo {
@@ -288,7 +291,10 @@ func (svc SaleInvoiceService) UpdateSaleInvoice(shopID string, guid string, auth
 	}
 
 	go func() {
-		svc.repoMq.Update(dataDoc)
+		err := svc.repoMq.Update(dataDoc)
+		if err != nil {
+			fmt.Printf("create mq error :: %s", err.Error())
+		}
 		svc.saveMasterSync(shopID)
 	}()
 

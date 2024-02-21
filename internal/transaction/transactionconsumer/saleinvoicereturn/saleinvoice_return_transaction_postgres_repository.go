@@ -29,6 +29,27 @@ func NewSaleInvoiceReturnTransactionPGRepository(pst microservice.IPersister) IS
 	return repo
 }
 
+func (repo SaleInvoiceReturnTransactionPGRepository) Create(doc models.SaleInvoiceReturnTransactionPG) error {
+	err := repo.pst.Create(&doc)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo SaleInvoiceReturnTransactionPGRepository) Update(shopID string, docNo string, doc models.SaleInvoiceReturnTransactionPG) error {
+
+	err := repo.pst.Update(&doc, map[string]interface{}{
+		"shopid": shopID,
+		"docno":  docNo,
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (repo *SaleInvoiceReturnTransactionPGRepository) DeleteData(shopID string, docNo string, doc models.SaleInvoiceReturnTransactionPG) error {
 
 	var details *[]models.SaleInvoiceReturnTransactionDetailPG
