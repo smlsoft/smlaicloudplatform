@@ -29,6 +29,27 @@ func NewStockReceiveTransactionPGRepository(pst microservice.IPersister) IStockR
 	return repo
 }
 
+func (repo StockReceiveTransactionPGRepository) Create(doc models.StockBalanceTransactionPG) error {
+	err := repo.pst.Create(&doc)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo StockReceiveTransactionPGRepository) Update(shopID string, docNo string, doc models.StockBalanceTransactionPG) error {
+
+	err := repo.pst.Update(&doc, map[string]interface{}{
+		"shopid": shopID,
+		"docno":  docNo,
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (repo *StockReceiveTransactionPGRepository) DeleteData(shopID string, docNo string, doc models.StockBalanceTransactionPG) error {
 
 	var details *[]models.StockBalanceTransactionDetailPG

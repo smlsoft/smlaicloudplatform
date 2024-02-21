@@ -157,6 +157,7 @@ func (t *SaleInvoiceTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservic
 }
 
 func (t *SaleInvoiceTransactionConsumer) ConsumeOnDelete(ctx microservice.IContext) error {
+
 	msg := ctx.ReadInput()
 
 	trx, err := t.trxPhaser.PhaseSingleDoc(msg)

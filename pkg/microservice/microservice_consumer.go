@@ -98,5 +98,12 @@ func (ms *Microservice) ConsumeFromBegining(servers string, topic string, readTi
 }
 
 func (ms *Microservice) RegisterConsumer(consumer IMicroserviceConsumer) {
+	defer ms.consumerRecover()
 	consumer.RegisterConsumer(ms)
+}
+
+func (ms *Microservice) consumerRecover() {
+	if r := recover(); r != nil {
+		ms.Logger.Errorf("Recovered from panic: %v", r)
+	}
 }
