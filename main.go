@@ -37,6 +37,7 @@ import (
 	pos_media "smlcloudplatform/internal/pos/media"
 	pos_setting "smlcloudplatform/internal/pos/setting"
 	"smlcloudplatform/internal/pos/shift"
+	"smlcloudplatform/internal/pos/temp"
 	"smlcloudplatform/internal/product/color"
 	"smlcloudplatform/internal/product/eorder"
 	"smlcloudplatform/internal/product/option"
@@ -354,6 +355,8 @@ func main() {
 
 			// system admin
 			systemadmin.NewSystemAdmin(ms, cfg),
+
+			temp.NewPOSTempHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)

@@ -71,6 +71,7 @@ import (
 	"smlcloudplatform/internal/pos/media"
 	pos_setting "smlcloudplatform/internal/pos/setting"
 	"smlcloudplatform/internal/pos/shift"
+	"smlcloudplatform/internal/pos/temp"
 	"smlcloudplatform/internal/shop/employee"
 	"smlcloudplatform/internal/shopdesign/zonedesign"
 	"smlcloudplatform/internal/smsreceive/smspatterns"
@@ -82,8 +83,6 @@ import (
 	"smlcloudplatform/internal/transaction/documentformate"
 	"smlcloudplatform/internal/transaction/paid"
 	"smlcloudplatform/internal/transaction/pay"
-	"smlcloudplatform/internal/transaction/payment"
-	"smlcloudplatform/internal/transaction/paymentdetail"
 	"smlcloudplatform/internal/transaction/purchase"
 	"smlcloudplatform/internal/transaction/purchaseorder"
 	"smlcloudplatform/internal/transaction/purchasereturn"
@@ -97,7 +96,6 @@ import (
 	"smlcloudplatform/internal/transaction/stockreceiveproduct"
 	"smlcloudplatform/internal/transaction/stockreturnproduct"
 	"smlcloudplatform/internal/transaction/stocktransfer"
-	"smlcloudplatform/internal/transaction/transactionconsumer"
 	"smlcloudplatform/internal/vfgl/accountgroup"
 	"smlcloudplatform/internal/vfgl/accountperiodmaster"
 	"smlcloudplatform/internal/vfgl/chartofaccount"
@@ -312,6 +310,8 @@ func main() {
 		// master
 		masterexpense.NewMasterExpenseHttp(ms, cfg),
 		masterincome.NewMasterIncomeHttp(ms, cfg),
+
+		temp.NewPOSTempHttp(ms, cfg),
 	}
 
 	azureFileBlob := microservice.NewPersisterAzureBlob()
@@ -324,15 +324,15 @@ func main() {
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)
 
-	transactionconsumer.MigrationDatabase(ms, cfg)
+	// transactionconsumer.MigrationDatabase(ms, cfg)
 
-	payment.MigrationDatabase(ms, cfg)
-	paymentdetail.MigrationDatabase(ms, cfg)
+	// payment.MigrationDatabase(ms, cfg)
+	// paymentdetail.MigrationDatabase(ms, cfg)
 
-	purchase_consumer.MigrationDatabase(ms, cfg)
+	// purchase_consumer.MigrationDatabase(ms, cfg)
 	ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
 
-	saleinvoice_consumer.MigrationDatabase(ms, cfg)
+	// saleinvoice_consumer.MigrationDatabase(ms, cfg)
 	ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))
 
 	consumeServices := []ConsumerRegister{}
