@@ -1,14 +1,13 @@
 package services
 
 import (
-	"encoding/json"
 	"smlcloudplatform/internal/pos/temp/repositories"
 	"time"
 )
 
 type IPOSTempService interface {
 	SaveTemp(shopID string, branchCode string, doc string) error
-	InfoTemp(shopID string, branchCode string) (map[string]interface{}, error)
+	InfoTemp(shopID string, branchCode string) (string, error)
 	DeleteTemp(shopID string, branchCode string) error
 }
 
@@ -33,24 +32,11 @@ func (svc POSTempService) SaveTemp(shopID string, branchCode string, doc string)
 	return nil
 }
 
-func (svc POSTempService) InfoTemp(shopID string, branchCode string) (map[string]interface{}, error) {
+func (svc POSTempService) InfoTemp(shopID string, branchCode string) (string, error) {
 
-	rawResult, err := svc.repo.Get(shopID, branchCode)
+	result, err := svc.repo.Get(shopID, branchCode)
 	if err != nil {
-		return map[string]interface{}{}, err
-	}
-
-	var jsonStringDecoded string
-	err = json.Unmarshal([]byte(rawResult), &jsonStringDecoded)
-	if err != nil {
-		return map[string]interface{}{}, err
-	}
-
-	result := map[string]interface{}{}
-
-	err = json.Unmarshal([]byte(jsonStringDecoded), &result)
-	if err != nil {
-		return map[string]interface{}{}, err
+		return "", err
 	}
 
 	return result, nil
