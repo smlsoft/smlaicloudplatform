@@ -707,18 +707,26 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 
 			tempBarcodes := []models.BarcodeRequest{}
 
-			for _, docBarcode := range *dataReq.RefBarcodes {
-				tempBarcodes = append(tempBarcodes, models.BarcodeRequest{
-					Barcode:     docBarcode.Barcode,
-					Condition:   docBarcode.Condition,
-					StandValue:  docBarcode.StandValue,
-					DivideValue: docBarcode.DivideValue,
-				})
+			if dataReq.RefBarcodes != nil {
+				for _, docBarcode := range *dataReq.RefBarcodes {
+					tempBarcodes = append(tempBarcodes, models.BarcodeRequest{
+						Barcode:     docBarcode.Barcode,
+						Condition:   docBarcode.Condition,
+						StandValue:  docBarcode.StandValue,
+						DivideValue: docBarcode.DivideValue,
+					})
+				}
 			}
+
 			docReq.RefBarcodes = tempBarcodes
 
-			docReq.BusinessTypes = *dataReq.BusinessTypes
-			docReq.IgnoreBranches = *dataReq.IgnoreBranches
+			if dataReq.BusinessTypes != nil {
+				docReq.BusinessTypes = *dataReq.BusinessTypes
+			}
+
+			if dataReq.IgnoreBranches != nil {
+				docReq.IgnoreBranches = *dataReq.IgnoreBranches
+			}
 
 			svc.UpdateProductBarcode(shopID, doc.GuidFixed, authUsername, docReq)
 
