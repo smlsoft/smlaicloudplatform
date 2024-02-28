@@ -262,3 +262,25 @@ func (repo CrudRepository[T]) FindOneFilter(ctx context.Context, shopID string, 
 
 	return *doc, nil
 }
+
+func (repo CrudRepository[T]) FindFilter(ctx context.Context, shopID string, filters map[string]interface{}) ([]T, error) {
+
+	doc := new([]T)
+
+	findFilters := bson.M{}
+
+	for col, val := range filters {
+		findFilters[col] = val
+	}
+
+	findFilters["shopid"] = shopID
+	findFilters["deletedat"] = bson.M{"$exists": false}
+
+	err := repo.pst.Find(ctx, new(T), findFilters, doc)
+
+	if err != nil {
+		return *new([]T), err
+	}
+
+	return *doc, nil
+}

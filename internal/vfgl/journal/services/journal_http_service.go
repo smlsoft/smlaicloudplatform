@@ -188,13 +188,13 @@ func (svc JournalHttpService) DeleteJournalByBatchID(shopID string, authUsername
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindOne(ctx, shopID, bson.M{"batchid": batchID})
+	findDocs, err := svc.repo.FindFilter(ctx, shopID, bson.M{"batchid": batchID})
 
 	if err != nil {
 		return err
 	}
 
-	if findDoc.ID == primitive.NilObjectID {
+	if len(findDocs) == 0 {
 		return errors.New("document not found")
 	}
 
@@ -202,7 +202,8 @@ func (svc JournalHttpService) DeleteJournalByBatchID(shopID string, authUsername
 	if err != nil {
 		return err
 	}
-	svc.mqRepo.Delete(findDoc)
+
+	err = svc.mqRepo.DeleteInBatch(findDocs)
 
 	if err != nil {
 		return err

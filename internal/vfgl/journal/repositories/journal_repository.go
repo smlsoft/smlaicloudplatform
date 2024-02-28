@@ -23,6 +23,7 @@ type IJournalRepository interface {
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.JournalDoc, error)
 	FindOne(ctx context.Context, shopID string, filters interface{}) (models.JournalDoc, error)
+	FindFilter(ctx context.Context, shopID string, filters map[string]interface{}) ([]models.JournalDoc, error)
 	IsAccountCodeUsed(ctx context.Context, shopID string, accountCode string) (bool, error)
 	FindGUIDEmptyAll() []models.JournalDoc
 	UpdateGuidEmpty(ctx context.Context, id string, guidfixed string) error
