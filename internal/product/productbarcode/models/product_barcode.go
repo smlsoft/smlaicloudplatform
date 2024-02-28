@@ -62,6 +62,9 @@ type ProductBarcodeBase struct {
 	Dimensions                []ProductDimension  `json:"dimensions" bson:"dimensions"`
 	IsDiscountPointOfPurchase bool                `json:"isdiscountpointofpurchase" bson:"isdiscountpointofpurchase"`
 	Restaurant                ProductRestaurant   `json:"restaurant" bson:"restaurant"`
+	IsAlert                   bool                `json:"isalert" bson:"isalert"`
+	AlertDescription          string              `json:"alertdescription" bson:"alertdescription" validate:"max=1500"`
+	Description               string              `json:"description" bson:"description" validate:"max=1500"`
 }
 
 type ProductRestaurant struct {
