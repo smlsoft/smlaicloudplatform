@@ -33,6 +33,7 @@ func NewJournalTransactionAdminHttp(ms *microservice.Microservice, cfg config.IC
 
 func (s *JournalTransactionAdminHttp) RegisterHttp(ms *microservice.Microservice, prefix string) {
 	ms.POST(prefix+"/transactionadmin/journal/resynctransaction", s.ReSyncJournalTransaction)
+	ms.POST(prefix+"/transactionadmin/journal/resyncdeletetransaction", s.ReSyncJournalDeleteTransaction)
 }
 
 func (s *JournalTransactionAdminHttp) ReSyncJournalTransaction(ctx microservice.IContext) error {

@@ -2643,6 +2643,9 @@ definitions:
     type: object
   models.ProductBarcodeRequest:
     properties:
+      alertdescription:
+        maxLength: 1500
+        type: string
       barcode:
         minLength: 1
         type: string
@@ -2660,6 +2663,9 @@ definitions:
         type: string
       condition:
         type: boolean
+      description:
+        maxLength: 1500
+        type: string
       dimensions:
         items:
           $ref: '#/definitions/models.ProductDimension'
@@ -2687,6 +2693,8 @@ definitions:
       imageuri:
         type: string
       isalacarte:
+        type: boolean
+      isalert:
         type: boolean
       isdiscountpointofpurchase:
         type: boolean
@@ -6845,6 +6853,9 @@ definitions:
     type: object
   smlcloudplatform_internal_product_productbarcode_models.ProductBarcode:
     properties:
+      alertdescription:
+        maxLength: 1500
+        type: string
       barcode:
         minLength: 1
         type: string
@@ -6862,6 +6873,9 @@ definitions:
         type: string
       condition:
         type: boolean
+      description:
+        maxLength: 1500
+        type: string
       dimensions:
         items:
           $ref: '#/definitions/models.ProductDimension'
@@ -6889,6 +6903,8 @@ definitions:
       imageuri:
         type: string
       isalacarte:
+        type: boolean
+      isalert:
         type: boolean
       isdiscountpointofpurchase:
         type: boolean
@@ -16035,6 +16051,65 @@ paths:
       - AccessToken: []
       tags:
       - Shift
+  /pos/temp:
+    delete:
+      consumes:
+      - application/json
+      description: Delete POSTemp
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - POSTemp
+    get:
+      consumes:
+      - application/json
+      description: Get POSTemp
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - POSTemp
+    post:
+      consumes:
+      - application/json
+      description: Create POSTemp
+      parameters:
+      - description: pos temp data
+        in: body
+        name: POSTemp
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - POSTemp
   /product-section/branch:
     delete:
       consumes:
