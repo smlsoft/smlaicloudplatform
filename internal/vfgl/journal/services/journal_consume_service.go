@@ -9,10 +9,10 @@ import (
 )
 
 type IJournalConsumeService interface {
-	Create(doc models.JournalDoc) error
-	Update(shopID string, docNo string, doc models.JournalDoc) error
+	// Create(doc models.JournalDoc) error
+	// Update(shopID string, docNo string, doc models.JournalDoc) error
+	// SaveInBatch(docList []models.JournalDoc) error
 	Delete(shopID string, guid string) error
-	SaveInBatch(docList []models.JournalDoc) error
 	UpSert(shopID string, docNo string, doc models.JournalDoc) (*models.JournalPg, error)
 }
 
@@ -20,8 +20,8 @@ type JournalConsumeService struct {
 	repo repositories.IJournalPgRepository
 }
 
-func NewJournalConsumeService(repo repositories.IJournalPgRepository) JournalConsumeService {
-	return JournalConsumeService{
+func NewJournalConsumeService(repo repositories.IJournalPgRepository) IJournalConsumeService {
+	return &JournalConsumeService{
 		repo: repo,
 	}
 }

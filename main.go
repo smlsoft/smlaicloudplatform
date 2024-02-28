@@ -399,10 +399,11 @@ func main() {
 			consumerGroupName = "03"
 		}
 
-		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)
-		journal.StartJournalComsumeUpdated(ms, cfg, consumerGroupName)
-		journal.StartJournalComsumeDeleted(ms, cfg, consumerGroupName)
-		journal.StartJournalComsumeBlukCreated(ms, cfg, consumerGroupName)
+		// journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)
+		// journal.StartJournalComsumeUpdated(ms, cfg, consumerGroupName)
+		// journal.StartJournalComsumeDeleted(ms, cfg, consumerGroupName)
+		// journal.StartJournalComsumeBlukCreated(ms, cfg, consumerGroupName)
+		ms.RegisterConsumer(journal.InitJournalTransactionConsumer(ms, cfg))
 
 		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerUpdated(ms, cfg, consumerGroupName)

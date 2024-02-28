@@ -4,12 +4,14 @@ import (
 	"context"
 	journalModels "smlcloudplatform/internal/vfgl/journal/models"
 	"smlcloudplatform/pkg/microservice"
+	msModels "smlcloudplatform/pkg/microservice/models"
 
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IJournalTransactionAdminRepository interface {
-	FindJournalTransactionDocByShopID(ctx context.Context, shopID string) ([]journalModels.JournalDoc, error)
+	FindJournalTransactionDocByShopID(ctx context.Context, shopID string, isDeleted bool, pageable msModels.Pageable) ([]journalModels.JournalDoc, mongopagination.PaginationData, error)
 }
 
 type JournalTransactionAdminRepository struct {
@@ -22,14 +24,19 @@ func NewJournalTransactionAdminRepository(pst microservice.IPersisterMongo) IJou
 	}
 }
 
-func (r JournalTransactionAdminRepository) FindJournalTransactionDocByShopID(ctx context.Context, shopID string) ([]journalModels.JournalDoc, error) {
+func (r JournalTransactionAdminRepository) FindJournalTransactionDocByShopID(ctx context.Context, shopID string, isDeleted bool, pageable msModels.Pageable) ([]journalModels.JournalDoc, mongopagination.PaginationData, error) {
 
 	docList := []journalModels.JournalDoc{}
 
-	err := r.pst.Find(ctx, &journalModels.JournalDoc{}, bson.M{"shopid": shopID}, &docList)
-	if err != nil {
-		return nil, err
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": isDeleted},
 	}
 
-	return docList, nil
+	pagination, err := r.pst.FindPage(ctx, &journalModels.JournalDoc{}, queryFilters, pageable, &docList)
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
 }

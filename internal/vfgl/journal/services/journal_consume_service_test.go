@@ -126,7 +126,7 @@ func TestJournalConsumeServiceCreated(t *testing.T) {
 	mockRepo.On("Create", get).Return(nil)
 
 	journalService := services.NewJournalConsumeService(mockRepo)
-	_, err := journalService.Create(give)
+	_, err := journalService.UpSert(give.ShopID, give.DocNo, give)
 	assert.Nil(t, err, "Error should be nil")
 }
 
@@ -154,7 +154,7 @@ func TestJournalConsumeServiceUpdate(t *testing.T) {
 	mockRepo.On("Update", "SHOPID", "0001", get).Return(nil)
 
 	journalService := services.NewJournalConsumeService(mockRepo)
-	err := journalService.Update("SHOPID", "0001", give)
+	_, err := journalService.UpSert("SHOPID", "0001", give)
 	assert.Nil(t, err, "Error should be nil")
 }
 
