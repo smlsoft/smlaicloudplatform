@@ -4,11 +4,13 @@ import (
 	"context"
 	journalRepositories "smlcloudplatform/internal/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/microservice"
+	msModels "smlcloudplatform/pkg/microservice/models"
 	"time"
 )
 
 type IJournalTransactionAdminService interface {
 	ReSyncJournalTransactionDoc(shopID string) error
+	ReSyncJournalDeleteTransactionDoc(shopID string) error
 }
 
 type JournalTransactionAdminService struct {
@@ -31,17 +33,74 @@ func NewJournalTransactionAdminService(pst microservice.IPersisterMongo, kfProdu
 
 func (s *JournalTransactionAdminService) ReSyncJournalTransactionDoc(shopID string) error {
 
-	ctx, cancel := context.WithTimeout(context.Background(), s.timeoutDuration)
-	defer cancel()
-
-	docs, err := s.mongoRepo.FindJournalTransactionDocByShopID(ctx, shopID)
-	if err != nil {
-		return err
+	pageRequest := msModels.Pageable{
+		Limit: 20,
+		Page:  1,
+		Sorts: []msModels.KeyInt{
+			{
+				Key:   "guidfixed",
+				Value: -1,
+			},
+		},
 	}
 
-	err = s.kafkaRepo.CreateInBatch(docs)
-	if err != nil {
-		return err
+	for {
+		ctx, cancel := context.WithTimeout(context.Background(), s.timeoutDuration)
+		defer cancel()
+
+		docs, pages, err := s.mongoRepo.FindJournalTransactionDocByShopID(ctx, shopID, false, pageRequest)
+		if err != nil {
+			return err
+		}
+
+		err = s.kafkaRepo.CreateInBatch(docs)
+		if err != nil {
+			return err
+		}
+
+		if pages.TotalPage > int64(pageRequest.Page) {
+			pageRequest.Page++
+		} else {
+			break
+		}
+
+	}
+
+	return nil
+}
+
+func (s *JournalTransactionAdminService) ReSyncJournalDeleteTransactionDoc(shopID string) error {
+	pageRequest := msModels.Pageable{
+		Limit: 20,
+		Page:  1,
+		Sorts: []msModels.KeyInt{
+			{
+				Key:   "guidfixed",
+				Value: -1,
+			},
+		},
+	}
+
+	for {
+		ctx, cancel := context.WithTimeout(context.Background(), s.timeoutDuration)
+		defer cancel()
+
+		docs, pages, err := s.mongoRepo.FindJournalTransactionDocByShopID(ctx, shopID, true, pageRequest)
+		if err != nil {
+			return err
+		}
+
+		err = s.kafkaRepo.DeleteInBatch(docs)
+		if err != nil {
+			return err
+		}
+
+		if pages.TotalPage > int64(pageRequest.Page) {
+			pageRequest.Page++
+		} else {
+			break
+		}
+
 	}
 
 	return nil

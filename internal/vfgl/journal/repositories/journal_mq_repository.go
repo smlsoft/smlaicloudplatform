@@ -12,6 +12,7 @@ type IJournalMqRepository interface {
 	Update(doc models.JournalDoc) error
 	Delete(doc models.JournalDoc) error
 	CreateInBatch(docList []models.JournalDoc) error
+	DeleteInBatch(docList []models.JournalDoc) error
 }
 
 type JournalMqRepository struct {

@@ -12,6 +12,7 @@ import (
 type IJournalTransactionAdminHttp interface {
 	RegisterHttp(ms *microservice.Microservice, prefix string)
 	ReSyncJournalTransaction(ms microservice.IContext) error
+	ReSyncJournalDeleteTransaction(ms microservice.IContext) error
 }
 
 type JournalTransactionAdminHttp struct {
@@ -50,6 +51,36 @@ func (s *JournalTransactionAdminHttp) ReSyncJournalTransaction(ctx microservice.
 	}
 
 	err = s.svc.ReSyncJournalTransactionDoc(req.ShopID)
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ResponseSuccess{
+		Success: true,
+	})
+	return nil
+}
+
+func (h *JournalTransactionAdminHttp) ReSyncJournalDeleteTransaction(ctx microservice.IContext) error {
+
+	input := ctx.ReadInput()
+	var req adminModels.RequestReSyncTenant
+
+	err := json.Unmarshal([]byte(input), &req)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	err = h.svc.ReSyncJournalDeleteTransactionDoc(req.ShopID)
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, common.ApiResponse{
 			Success: false,
