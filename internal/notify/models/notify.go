@@ -21,6 +21,7 @@ type NotifyBranchEvent struct {
 	IsSaveBill       bool         `json:"issavebill" bson:"issavebill"`
 	IsOutOfStock     bool         `json:"isoutofstock" bson:"isoutofstock"`
 	IsNearOutOfStock bool         `json:"isnearoutofstock" bson:"isnearoutofstock"`
+	IsPreorder       bool         `json:"ispreorder" bson:"ispreorder"`
 }
 
 type NotifyBranch struct {

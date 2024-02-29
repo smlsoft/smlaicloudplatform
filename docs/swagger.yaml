@@ -1883,6 +1883,8 @@ definitions:
         type: boolean
       isoutofstock:
         type: boolean
+      ispreorder:
+        type: boolean
       issavebill:
         type: boolean
     type: object

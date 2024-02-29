@@ -38569,6 +38569,9 @@ const docTemplate = `{
                 "isoutofstock": {
                     "type": "boolean"
                 },
+                "ispreorder": {
+                    "type": "boolean"
+                },
                 "issavebill": {
                     "type": "boolean"
                 }
