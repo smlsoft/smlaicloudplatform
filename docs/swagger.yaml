@@ -10519,7 +10519,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Upsert FileStatus
+      description: Create FileStatus
       parameters:
       - description: FileStatus
         in: body
@@ -10579,6 +10579,35 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
+    put:
+      consumes:
+      - application/json
+      description: Update FileStatus
+      parameters:
+      - description: FileStatus ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: FileStatus
+        in: body
+        name: FileStatus
+        required: true
+        schema:
+          $ref: '#/definitions/models.FileStatus'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:

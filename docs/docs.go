@@ -4937,7 +4937,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Upsert FileStatus",
+                "description": "Create FileStatus",
                 "consumes": [
                     "application/json"
                 ],
@@ -5178,6 +5178,52 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update FileStatus",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileStatus ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "FileStatus",
+                        "name": "FileStatus",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FileStatus"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {

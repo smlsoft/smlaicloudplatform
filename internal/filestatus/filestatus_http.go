@@ -39,7 +39,8 @@ func (h FileStatusHttp) RegisterHttp() {
 
 	h.ms.GET("/file-status", h.SearchFileStatusPage)
 	h.ms.GET("/file-status/list", h.SearchFileStatusStep)
-	h.ms.POST("/file-status", h.UpsertFileStatus)
+	h.ms.POST("/file-status", h.CreateFileStatus)
+	h.ms.PUT("/file-status/:id", h.UpdateFileStatus)
 	h.ms.GET("/file-status/:id", h.InfoFileStatus)
 	h.ms.GET("/file-status/code/:code", h.InfoFileStatusByCode)
 	h.ms.DELETE("/file-status/:id", h.DeleteFileStatus)
@@ -47,8 +48,8 @@ func (h FileStatusHttp) RegisterHttp() {
 	h.ms.DELETE("/file-status", h.DeleteFileStatusByGUIDs)
 }
 
-// Upsert FileStatus godoc
-// @Description Upsert FileStatus
+// Create FileStatus godoc
+// @Description Create FileStatus
 // @Tags		FileStatus
 // @Param		FileStatus  body      models.FileStatus  true  "FileStatus"
 // @Accept 		json
@@ -56,7 +57,7 @@ func (h FileStatusHttp) RegisterHttp() {
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /file-status [post]
-func (h FileStatusHttp) UpsertFileStatus(ctx microservice.IContext) error {
+func (h FileStatusHttp) CreateFileStatus(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
@@ -74,7 +75,7 @@ func (h FileStatusHttp) UpsertFileStatus(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.UpsertFileStatus(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateFileStatus(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -85,6 +86,52 @@ func (h FileStatusHttp) UpsertFileStatus(ctx microservice.IContext) error {
 		Success: true,
 		ID:      idx,
 	})
+	return nil
+}
+
+// Update FileStatus godoc
+// @Description Update FileStatus
+// @Tags		FileStatus
+// @Param		id  path      string  true  "FileStatus ID"
+// @Param		FileStatus  body      models.FileStatus  true  "FileStatus"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /file-status/{id} [put]
+func (h FileStatusHttp) UpdateFileStatus(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
+
+	docReq := &models.FileStatus{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateFileStatus(shopID, id, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
 	return nil
 }
 

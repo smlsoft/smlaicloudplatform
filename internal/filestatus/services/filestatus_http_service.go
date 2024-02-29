@@ -15,7 +15,8 @@ import (
 )
 
 type IFileStatusHttpService interface {
-	UpsertFileStatus(shopID string, authUsername string, doc models.FileStatus) (string, error)
+	CreateFileStatus(shopID string, authUsername string, doc models.FileStatus) (string, error)
+	UpdateFileStatus(shopID string, guid string, authUsername string, doc models.FileStatus) error
 	DeleteFileStatus(shopID string, guid string, authUsername string) error
 	DeleteFileStatusByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	DeleteFileStatusByMenu(shopID string, authUsername string, menu string) error
@@ -51,7 +52,8 @@ func (svc FileStatusHttpService) getContextTimeout() (context.Context, context.C
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc FileStatusHttpService) UpsertFileStatus(shopID string, authUsername string, doc models.FileStatus) (string, error) {
+func (svc FileStatusHttpService) CreateFileStatus(shopID string, authUsername string, doc models.FileStatus) (string, error) {
+
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
@@ -61,17 +63,9 @@ func (svc FileStatusHttpService) UpsertFileStatus(shopID string, authUsername st
 		return "", err
 	}
 
-	doc.Username = authUsername
-
-	if len(findDoc.GuidFixed) <= 0 {
-		return svc.createFileStatus(ctx, shopID, authUsername, doc)
-	} else {
-		err = svc.updateFileStatus(ctx, shopID, authUsername, findDoc, doc)
-		return findDoc.GuidFixed, err
+	if len(findDoc.GuidFixed) > 0 {
+		return "", errors.New("code is exists")
 	}
-}
-
-func (svc FileStatusHttpService) createFileStatus(ctx context.Context, shopID string, authUsername string, doc models.FileStatus) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
@@ -80,10 +74,11 @@ func (svc FileStatusHttpService) createFileStatus(ctx context.Context, shopID st
 	docData.GuidFixed = newGuidFixed
 	docData.FileStatus = doc
 
+	docData.Username = authUsername
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(ctx, docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -92,16 +87,30 @@ func (svc FileStatusHttpService) createFileStatus(ctx context.Context, shopID st
 	return newGuidFixed, nil
 }
 
-func (svc FileStatusHttpService) updateFileStatus(ctx context.Context, shopID string, authUsername string, curDoc models.FileStatusDoc, doc models.FileStatus) error {
+func (svc FileStatusHttpService) UpdateFileStatus(shopID string, guid string, authUsername string, doc models.FileStatus) error {
 
-	dataDoc := curDoc
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindOne(ctx, shopID, bson.M{"guidfixed": guid})
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	dataDoc := findDoc
 	dataDoc.FileStatus = doc
 
-	dataDoc.Menu = curDoc.Menu
+	dataDoc.Menu = findDoc.Menu
+	dataDoc.Username = findDoc.Username
 	dataDoc.UpdatedBy = authUsername
 	dataDoc.UpdatedAt = time.Now()
 
-	err := svc.repo.Update(ctx, shopID, curDoc.GuidFixed, dataDoc)
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
