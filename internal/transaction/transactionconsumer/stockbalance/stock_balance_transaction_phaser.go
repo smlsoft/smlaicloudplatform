@@ -53,6 +53,7 @@ func (p StockBalanceTransactionPhaser) PhaseStockBalanceTransaction(doc stockBal
 
 		stockDetail := models.StockBalanceTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
+				GuidFixed:           doc.GuidFixed,
 				DocNo:               doc.DocNo,
 				ShopID:              doc.ShopID,
 				LineNumber:          int8(detail.LineNumber),

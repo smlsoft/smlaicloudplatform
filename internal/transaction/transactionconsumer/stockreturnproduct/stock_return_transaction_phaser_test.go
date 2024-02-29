@@ -46,6 +46,7 @@ func wantStockReturnTransactionStruct() models.StockReturnProductTransactionPG {
 		Items: &[]models.StockReturnProductTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2RjalZEcCV3BzRybaHGeqXhfw6C",
 					DocRef:              "PO23051516490133",
 					DocRefDateTime:      time.Date(2023, 5, 15, 9, 49, 58, 0, time.UTC),
 					DocNo:               "IR2023062600001",
@@ -268,6 +269,7 @@ func TestStockReturnTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalAmount, want.TotalAmount, "totalamount")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")

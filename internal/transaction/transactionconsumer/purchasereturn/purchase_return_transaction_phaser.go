@@ -64,6 +64,7 @@ func (p PurchaseReturnTransactionPhaser) PhasePurchaseReturnTransaction(doc *pur
 
 		transactionDetail := models.PurchaseReturnTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
+				GuidFixed:           doc.GuidFixed,
 				DocNo:               doc.DocNo,
 				ShopID:              doc.ShopID,
 				LineNumber:          int8(detail.LineNumber),

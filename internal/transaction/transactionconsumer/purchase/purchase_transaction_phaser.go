@@ -34,6 +34,7 @@ func (p *PurchaseTransactionPhaser) PhaseStockTransactionPurchaseDoc(doc purchas
 		for i, detail := range *doc.PurchaseData.Purchase.Details {
 			stockDetail := models.PurchaseTransactionDetailPG{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           doc.GuidFixed,
 					DocRef:              detail.DocRef,
 					DocRefDateTime:      detail.DocRefDatetime,
 					DocNo:               doc.DocNo,

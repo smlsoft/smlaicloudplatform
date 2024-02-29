@@ -49,6 +49,7 @@ func wantStockAdjustmentTransactionStruct() models.StockAdjustmentTransactionPG 
 		Items: &[]models.StockAdjustmentTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2PxeTSlssQvMZS8MViihtgYOC0w",
 					DocRef:              "",
 					DocRefDateTime:      time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC),
 					DocNo:               "PO2305111645E3FE",
@@ -270,6 +271,7 @@ func TestStockAdjustmentTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalAmount, want.TotalAmount, "totalamount")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")

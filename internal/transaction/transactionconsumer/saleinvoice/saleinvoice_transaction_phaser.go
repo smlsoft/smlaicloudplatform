@@ -18,6 +18,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 
 		stockDetail := models.SaleInvoiceTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
+				GuidFixed:           doc.GuidFixed,
 				DocNo:               doc.DocNo,
 				ShopID:              doc.ShopID,
 				LineNumber:          int8(detail.LineNumber),

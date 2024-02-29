@@ -53,6 +53,7 @@ func PurchaseReturnTransactionStruct() models.PurchaseReturnTransactionPG {
 		Items: &[]models.PurchaseReturnTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2PxduUIwAoptr2OTwROegQ98Uvq",
 					DocNo:               "PO23050616392C90",
 					ShopID:              "2PrIIqTWxoBXv16K310sNwfHmfY",
 					LineNumber:          0,
@@ -337,6 +338,7 @@ func TestPurchaseReturnTransactionPhaser(t *testing.T) {
 	assert.Equal(t, *get.CreditorNames[0].Name, "เจ้าหนี้ทั่วไป", "creditorname")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")

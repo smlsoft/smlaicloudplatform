@@ -49,6 +49,7 @@ func (p StockAdjustmentTransactionPhaser) PhaseStockAdjustmentTransactionPGDoc(d
 	for i, detail := range *doc.Transaction.Details {
 		stockDetail := models.StockAdjustmentTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
+				GuidFixed:           doc.GuidFixed,
 				DocNo:               doc.DocNo,
 				ShopID:              doc.ShopID,
 				LineNumber:          int8(detail.LineNumber),

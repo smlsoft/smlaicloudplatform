@@ -332,7 +332,7 @@ func main() {
 	// paymentdetail.MigrationDatabase(ms, cfg)
 
 	// purchase_consumer.MigrationDatabase(ms, cfg)
-	// saleinvoice_consumer.MigrationDatabase(ms, cfg)
+	saleinvoice_consumer.MigrationDatabase(ms, cfg)
 
 	ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
 

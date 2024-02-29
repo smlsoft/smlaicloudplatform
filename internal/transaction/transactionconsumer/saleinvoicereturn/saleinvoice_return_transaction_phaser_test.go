@@ -45,6 +45,7 @@ func SaleInvoiceReturnTransactionStruct() models.SaleInvoiceReturnTransactionPG 
 		Items: &[]models.SaleInvoiceReturnTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2RFXUaW570MAWkgYgDduGM9WYIk",
 					DocRef:              "ITEM001",
 					DocRefDateTime:      time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC),
 					DocNo:               "ST2023061500001",
@@ -350,6 +351,7 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 	assert.Equal(t, *get.DebtorNames[0].Name, *want.DebtorNames[0].Name, "creditorname")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")

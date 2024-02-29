@@ -52,6 +52,7 @@ func (p *StockPickUpTransactionPhaser) PhaseStockPickupTransactionDoc(doc stockP
 
 		stockDetail := models.StockPickUpTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
+				GuidFixed:           doc.GuidFixed,
 				DocNo:               doc.DocNo,
 				ShopID:              doc.ShopID,
 				LineNumber:          int8(detail.LineNumber),

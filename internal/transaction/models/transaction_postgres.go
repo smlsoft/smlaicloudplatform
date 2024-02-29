@@ -44,6 +44,7 @@ type TransactionPG struct {
 type TransactionDetailPG struct {
 	ID                       uint   `gorm:"primarykey"`
 	ShopID                   string `json:"shopid" gorm:"column:shopid"`
+	GuidFixed                string `json:"guidfixed" gorm:"column:guidfixed"`
 	models.PartitionIdentity `gorm:"embedded;"`
 	DocNo                    string       `json:"docno" gorm:"column:docno"`
 	LineNumber               int8         `json:"linenumber" gorm:"column:linenumber"`

@@ -50,6 +50,7 @@ func PurchaseTransactionStruct() models.PurchaseTransactionPG {
 		Items: &[]models.PurchaseTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2RYA2Yri2HRKDF5JFnKpwuGmydO",
 					DocRef:              "detail doc ref",
 					DocRefDateTime:      time.Date(2023, 6, 22, 6, 46, 43, 0, time.UTC),
 					DocNo:               "PU2023062200001",
@@ -367,6 +368,7 @@ func TestPurchaseTransactionPhaser(t *testing.T) {
 	assert.Equal(t, *get.CreditorNames[0].Name, "เจ้าหนี้ทั่วไป", "creditorname")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")

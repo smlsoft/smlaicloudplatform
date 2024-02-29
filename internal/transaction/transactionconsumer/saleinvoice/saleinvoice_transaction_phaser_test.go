@@ -53,6 +53,7 @@ func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
 		Items: &[]models.SaleInvoiceTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2TKOzSqEElEKNuIacaMHxbc4GgU",
 					DocRef:              "--",
 					DocRefDateTime:      time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC),
 					DocNo:               "a91d29f5-67af-4334-8999-8bc49ed73b4a",
@@ -288,6 +289,7 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 	assert.Equal(t, *get.DebtorNames[0].Name, "ลูกค้าทั่วไป", "creditorname")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")
@@ -334,6 +336,8 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 
 func TestDataFromPOS(t *testing.T) {
 	rawData := `{
+		"shopid": "2Eh6e3pfWvXTp0yV3CyFEhKPjdI",
+		"guidfixed": "2TKOzSqEElEKNuIacaMHxbc4GgU",
 		"docno": "002240212-0009",
 		"docdatetime": "2024-02-12T07:51:56.336Z",
 		"guidref": "",
@@ -687,7 +691,10 @@ func TestDataFromPOS(t *testing.T) {
 
 	require.Nil(t, err)
 
+	assert.Equal(t, "2Eh6e3pfWvXTp0yV3CyFEhKPjdI", get.ShopID, "shopid")
 	assert.Equal(t, "002240212-0009", get.DocNo, "doc no")
 	assert.Equal(t, "b01", get.BranchCode, "branch code")
 	assert.Equal(t, "สาขาที่ 1", *(get.BranchNames[0].Name), "branch name")
+
+	assert.Equal(t, "2TKOzSqEElEKNuIacaMHxbc4GgU", get.GuidFixed, "guidfixed")
 }

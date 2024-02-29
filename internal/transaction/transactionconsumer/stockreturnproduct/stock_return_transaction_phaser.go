@@ -51,6 +51,7 @@ func (p *StockReturnTransactionPhaser) PhaseStockReturnProductTransactionDoc(doc
 	for i, detail := range *doc.Transaction.Details {
 		stockDetail := models.StockReturnProductTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
+				GuidFixed:           doc.GuidFixed,
 				DocNo:               doc.DocNo,
 				ShopID:              doc.ShopID,
 				LineNumber:          int8(detail.LineNumber),

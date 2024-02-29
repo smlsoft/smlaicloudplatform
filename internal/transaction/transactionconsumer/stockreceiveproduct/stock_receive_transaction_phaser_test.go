@@ -48,6 +48,7 @@ func wantStockReceiveProductTransactionPGStruct() models.StockReceiveProductTran
 		Items: &[]models.StockReceiveProductTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2QoOKOZ7Bv8dSUv38VTkkS2AZ0J",
 					DocRef:              "",
 					DocRefDateTime:      time.Date(2023, 6, 6, 1, 40, 28, 0, time.UTC),
 					DocNo:               "IF2023060100001",
@@ -269,6 +270,7 @@ func TestStockReceiveProductTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalAmount, want.TotalAmount, "totalamount")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")

@@ -46,6 +46,7 @@ func wantStockTransferTransactionPGStruct() models.StockTransferTransactionPG {
 		Items: &[]models.StockTransferTransactionDetailPG{
 			{
 				TransactionDetailPG: models.TransactionDetailPG{
+					GuidFixed:           "2PxfUZwdpS0nnK99j72fx7rPenz",
 					DocRef:              "",
 					DocRefDateTime:      time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC),
 					DocNo:               "PO2305201653B6B0",
@@ -356,6 +357,7 @@ func TestStockTransferTransactionPhaser(t *testing.T) {
 	assert.Equal(t, get.TotalAmount, want.TotalAmount, "totalamount")
 
 	// detail
+	assert.Equal(t, (*get.Items)[0].GuidFixed, (*want.Items)[0].GuidFixed, "item.guidfixed")
 	assert.Equal(t, (*get.Items)[0].DocNo, (*want.Items)[0].DocNo, "item.docno")
 	assert.Equal(t, (*get.Items)[0].ShopID, (*want.Items)[0].ShopID, "item.shopid")
 	assert.Equal(t, (*get.Items)[0].LineNumber, (*want.Items)[0].LineNumber, "item.linenumber")
