@@ -1116,6 +1116,20 @@ definitions:
       zipcode:
         type: string
     type: object
+  models.FileStatus:
+    properties:
+      filter:
+        additionalProperties: true
+        type: object
+      jobid:
+        type: string
+      menu:
+        type: string
+      path:
+        type: string
+      status:
+        type: string
+    type: object
   models.ForgotPasswordPhoneNumberRequest:
     properties:
       countrycode:
@@ -10443,6 +10457,197 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+  /file-status:
+    delete:
+      consumes:
+      - application/json
+      description: Delete FileStatus
+      parameters:
+      - description: FileStatus GUIDs
+        in: body
+        name: FileStatus
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
+    post:
+      consumes:
+      - application/json
+      description: Upsert FileStatus
+      parameters:
+      - description: FileStatus
+        in: body
+        name: FileStatus
+        required: true
+        schema:
+          $ref: '#/definitions/models.FileStatus'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
+  /file-status/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete FileStatus
+      parameters:
+      - description: FileStatus ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
+    get:
+      consumes:
+      - application/json
+      description: get FileStatus info by guidfixed
+      parameters:
+      - description: FileStatus guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
+  /file-status/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get FileStatus info by Code
+      parameters:
+      - description: FileStatus Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
+  /file-status/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
   /forgot-password-phonenumber:
     post:
       consumes:
