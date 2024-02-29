@@ -13875,6 +13875,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/pos/temp": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get POSTemp",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "POSTemp"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create POSTemp",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "POSTemp"
+                ],
+                "parameters": [
+                    {
+                        "description": "pos temp data",
+                        "name": "POSTemp",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete POSTemp",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "POSTemp"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product-section/branch": {
             "get": {
                 "security": [
@@ -39204,6 +39301,10 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "alertdescription": {
+                    "type": "string",
+                    "maxLength": 1500
+                },
                 "barcode": {
                     "type": "string",
                     "minLength": 1
@@ -39228,6 +39329,10 @@ const docTemplate = `{
                 },
                 "condition": {
                     "type": "boolean"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1500
                 },
                 "dimensions": {
                     "type": "array",
@@ -39269,6 +39374,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isalert": {
                     "type": "boolean"
                 },
                 "isdiscountpointofpurchase": {
@@ -45462,6 +45570,10 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "alertdescription": {
+                    "type": "string",
+                    "maxLength": 1500
+                },
                 "barcode": {
                     "type": "string",
                     "minLength": 1
@@ -45486,6 +45598,10 @@ const docTemplate = `{
                 },
                 "condition": {
                     "type": "boolean"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1500
                 },
                 "dimensions": {
                     "type": "array",
@@ -45527,6 +45643,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isalert": {
                     "type": "boolean"
                 },
                 "isdiscountpointofpurchase": {

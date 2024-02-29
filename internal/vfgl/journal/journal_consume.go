@@ -67,11 +67,11 @@ func (c *JournalTransactionConsumer) RegisterConsumer(ms *microservice.Microserv
 	mq.CreateTopicR(journalKafkaConfig.TopicBulkDeleted(), 5, 1, time.Hour*24*7)
 
 	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicCreated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnCreateOrUpdate)
-	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicCreated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnCreateOrUpdate)
-	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicCreated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnCreateOrUpdate)
-	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicCreated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnCreateOrUpdate)
-	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicCreated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnCreateOrUpdate)
-	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicCreated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnCreateOrUpdate)
+	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicUpdated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnCreateOrUpdate)
+	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicDeleted(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnDelete)
+	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicBulkCreated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnBulkCreateOrUpdate)
+	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicBulkUpdated(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnBulkCreateOrUpdate)
+	ms.Consume(c.cfg.MQConfig().URI(), journalKafkaConfig.TopicBulkDeleted(), trxConsumerGroup, time.Duration(-1), c.ConsumeOnBulkDelete)
 
 }
 
