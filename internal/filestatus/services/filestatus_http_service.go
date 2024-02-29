@@ -18,6 +18,7 @@ type IFileStatusHttpService interface {
 	UpsertFileStatus(shopID string, authUsername string, doc models.FileStatus) (string, error)
 	DeleteFileStatus(shopID string, guid string, authUsername string) error
 	DeleteFileStatusByGUIDs(shopID string, authUsername string, GUIDs []string) error
+	DeleteFileStatusByMenu(shopID string, authUsername string, menu string) error
 	InfoFileStatus(shopID string, guid string) (models.FileStatusInfo, error)
 	InfoFileStatusByCode(shopID string, code string) (models.FileStatusInfo, error)
 	SearchFileStatus(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.FileStatusInfo, mongopagination.PaginationData, error)
@@ -102,6 +103,19 @@ func (svc FileStatusHttpService) updateFileStatus(ctx context.Context, shopID st
 
 	err := svc.repo.Update(ctx, shopID, curDoc.GuidFixed, dataDoc)
 
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc FileStatusHttpService) DeleteFileStatusByMenu(shopID string, authUsername string, menu string) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.Delete(ctx, shopID, authUsername, bson.M{"menu": menu})
 	if err != nil {
 		return err
 	}

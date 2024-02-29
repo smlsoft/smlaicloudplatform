@@ -10648,6 +10648,30 @@ paths:
       - AccessToken: []
       tags:
       - FileStatus
+  /file-status/menu/{menu}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete FileStatus Menu
+      parameters:
+      - description: Menu ID
+        in: path
+        name: menu
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileStatus
   /forgot-password-phonenumber:
     post:
       consumes:

@@ -5111,6 +5111,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/file-status/menu/{menu}": {
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete FileStatus Menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Menu ID",
+                        "name": "menu",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/file-status/{id}": {
             "get": {
                 "security": [

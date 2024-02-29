@@ -43,6 +43,7 @@ func (h FileStatusHttp) RegisterHttp() {
 	h.ms.GET("/file-status/:id", h.InfoFileStatus)
 	h.ms.GET("/file-status/code/:code", h.InfoFileStatusByCode)
 	h.ms.DELETE("/file-status/:id", h.DeleteFileStatus)
+	h.ms.DELETE("/file-status/menu/:menu", h.DeleteFileStatusByMenu)
 	h.ms.DELETE("/file-status", h.DeleteFileStatusByGUIDs)
 }
 
@@ -113,6 +114,36 @@ func (h FileStatusHttp) DeleteFileStatus(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete FileStatus Menu godoc
+// @Description Delete FileStatus Menu
+// @Tags		FileStatus
+// @Param		menu  path      string  true  "Menu ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /file-status/menu/{menu} [delete]
+func (h FileStatusHttp) DeleteFileStatusByMenu(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	menu := ctx.Param("menu")
+
+	err := h.svc.DeleteFileStatusByMenu(shopID, authUsername, menu)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil
