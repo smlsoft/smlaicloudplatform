@@ -77,7 +77,7 @@ func TestUpdate(t *testing.T) {
 
 	currentTime := time.Now()
 	timeStr := currentTime.Format("20060201150405")
-	(*stockTransaction.Details)[0].AverageCost, _ = strconv.ParseFloat(timeStr, 64)
+	(*stockTransaction.Details)[0].CostPerUnit, _ = strconv.ParseFloat(timeStr, 64)
 
 	err := repo.Update(stockTransaction.ShopID, stockTransaction.DocNo, stockTransaction)
 	assert.NoError(t, err)
@@ -85,7 +85,7 @@ func TestUpdate(t *testing.T) {
 	bar, err := repo.Get(stockTransaction.ShopID, stockTransaction.DocNo)
 	assert.NoError(t, err)
 
-	assert.Equal(t, (*stockTransaction.Details)[0].AverageCost, (*bar.Details)[0].AverageCost)
+	assert.Equal(t, (*stockTransaction.Details)[0].CostPerUnit, (*bar.Details)[0].CostPerUnit)
 }
 
 func TestDeleteInRealDB(t *testing.T) {

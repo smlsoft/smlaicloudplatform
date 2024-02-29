@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/vfgl/journal"
 	"smlcloudplatform/pkg/microservice"
 )
 
@@ -18,7 +17,7 @@ func main() {
 	if consumerGroupName == "" {
 		consumerGroupName = "00"
 	}
-	journal.StartJournalComsumeDeleted(ms, cfg, consumerGroupName)
+	// journal.StartJournalComsumeDeleted(ms, cfg, consumerGroupName)
 	// purchase.StartPurchaseComsume(ms, cfg)
 
 	ms.Start()
