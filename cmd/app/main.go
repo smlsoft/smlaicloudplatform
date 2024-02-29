@@ -19,6 +19,7 @@ import (
 	"smlcloudplatform/internal/debtaccount/debtorgroup"
 	"smlcloudplatform/internal/dimension"
 	"smlcloudplatform/internal/documentwarehouse/documentimage"
+	"smlcloudplatform/internal/filestatus"
 	"smlcloudplatform/internal/images"
 	"smlcloudplatform/internal/masterexpense"
 	"smlcloudplatform/internal/masterincome"
@@ -312,6 +313,7 @@ func main() {
 		masterincome.NewMasterIncomeHttp(ms, cfg),
 
 		temp.NewPOSTempHttp(ms, cfg),
+		filestatus.NewFileStatusHttp(ms, cfg),
 	}
 
 	azureFileBlob := microservice.NewPersisterAzureBlob()
@@ -330,9 +332,10 @@ func main() {
 	// paymentdetail.MigrationDatabase(ms, cfg)
 
 	// purchase_consumer.MigrationDatabase(ms, cfg)
+	// saleinvoice_consumer.MigrationDatabase(ms, cfg)
+
 	ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
 
-	// saleinvoice_consumer.MigrationDatabase(ms, cfg)
 	ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))
 
 	consumeServices := []ConsumerRegister{}

@@ -18,6 +18,7 @@ import (
 	"smlcloudplatform/internal/debtaccount/debtorgroup"
 	"smlcloudplatform/internal/dimension"
 	"smlcloudplatform/internal/documentwarehouse/documentimage"
+	"smlcloudplatform/internal/filestatus"
 	"smlcloudplatform/internal/images"
 	"smlcloudplatform/internal/masterexpense"
 	"smlcloudplatform/internal/masterincome"
@@ -357,6 +358,7 @@ func main() {
 			systemadmin.NewSystemAdmin(ms, cfg),
 
 			temp.NewPOSTempHttp(ms, cfg),
+			filestatus.NewFileStatusHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)
