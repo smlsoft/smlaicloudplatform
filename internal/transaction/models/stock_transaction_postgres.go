@@ -65,11 +65,9 @@ type StockTransactionDetail struct {
 	StandValue               float64 `json:"standvalue" gorm:"column:standvalue"`
 	DivideValue              float64 `json:"dividevalue" gorm:"column:dividevalue"`
 	CalcFlag                 int8    `json:"calcflag" gorm:"column:calcflag"`
-	SumOfCost                float64 `json:"sumofcost" gorm:"column:sumofcost"`
-	AverageCost              float64 `json:"averagecost" gorm:"column:averagecost"`
 	LineNumber               int8    `json:"linenumber" gorm:"column:linenumber"`
-	CostPerUnit              float64 `json:"costperunit" gorm:"column:costperunit"`
-	TotalCost                float64 `json:"totalcost" gorm:"column:totalcost"`
+	CostPerUnit              float64 `json:"costperunit" gorm:"column:costperunit"` // ทุนต่อหน่วย
+	TotalCost                float64 `json:"totalcost" gorm:"column:totalcost"`     // ต้นทุนรวม
 	WhCode                   string  `json:"whcode" gorm:"whcode"`
 	LocationCode             string  `json:"locationcode" gorm:"locationcode"`
 	SumAmountExcludeVat      float64 `json:"sumamountexcludevat" gorm:"column:sumamountexcludevat"`
@@ -80,6 +78,11 @@ type StockTransactionDetail struct {
 	PriceExcludeVat          float64 `json:"priceexcludevat" gorm:"column:priceexcludevat"`
 	ItemType                 int8    `json:"itemtype" gorm:"column:itemtype"`
 	DocRef                   string  `json:"docref" gorm:"column:docref"`
+	BalanceQty               float64 `json:"balanceqty" gorm:"column:balanceqty"`         // ยอดคงเหลือ
+	BalanceAmount            float64 `json:"balanceamount" gorm:"column:balanceamount"`   // มูลค่าคงเหลือ
+	BalanceAverage           float64 `json:"balanceaverage" gorm:"column:balanceaverage"` // ต้นทุนเฉลี่ยคงเหลือ
+	// SumOfCost                float64 `json:"sumofcost" gorm:"column:sumofcost"`
+	// AverageCost              float64 `json:"averagecost" gorm:"column:averagecost"`
 }
 
 func (StockTransactionDetail) TableName() string {
@@ -121,7 +124,7 @@ func (s *StockTransaction) CompareTo(other *StockTransaction) bool {
 
 	diff := cmp.Diff(s, other,
 		cmpopts.IgnoreFields(StockTransaction{}, "TotalCost"),
-		cmpopts.IgnoreFields(StockTransactionDetail{}, "ID", "SumOfCost", "AverageCost"),
+		cmpopts.IgnoreFields(StockTransactionDetail{}, "ID", "TotalCost", "CostPerUnit"),
 	)
 
 	if diff == "" {

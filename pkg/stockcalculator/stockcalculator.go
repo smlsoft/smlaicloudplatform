@@ -6,9 +6,9 @@ import (
 )
 
 type IStockCalculator interface {
-	ApplyStock(qty float64, cost float64) (sumOfCost float64, averageCost float64)
-	ReduceStock(qty float64) (sumOfCost float64, averageCost float64)
-	ReduceStockWithCost(qty float64, cost float64) (sumOfCost float64, averageCost float64)
+	ApplyStock(qty float64, totalCostExcludeVat float64) (costPerUnit float64, totalCost float64, balanceQty float64, balanceAmount float64, balanceAverageCost float64)
+	ReduceStock(qty float64) (costPerUnit float64, totalCost float64, balanceQty float64, balanceAmount float64, balanceAverageCost float64)
+	ReduceStockWithCost(qty float64, cost float64) (costPerUnit float64, totalCost float64, balanceQty float64, balanceAmount float64, balanceAverageCost float64)
 	BalanceAmount() float64
 	BalanceQty() float64
 	AverageCost() float64
@@ -44,19 +44,19 @@ func NewStockCalculator(shopID string, barcode string, amountDigit int8, balance
 	}
 }
 
-func (sc *StockCalculator) ApplyStock(qty float64, cost float64) (sumOfCost float64, averageCost float64) {
-	cost = round.Round(cost, sc.AmountDigit)
+func (sc *StockCalculator) ApplyStock(qty float64, totalCostExcludeVat float64) (costPerUnit float64, totalCost float64, balanceQty float64, balanceAmount float64, balanceAverageCost float64) {
+	totalCostExcludeVat = round.Round(totalCostExcludeVat, sc.AmountDigit)
 	sc.balanceQty += qty
-	sc.balanceAmount += cost
+	sc.balanceAmount += totalCostExcludeVat
 
-	average := round.Round(cost/qty, sc.AmountDigit)
+	average := round.Round(totalCostExcludeVat/qty, sc.AmountDigit)
 
 	sc.averageCost = round.Round(sc.balanceAmount/sc.balanceQty, sc.AmountDigit)
 
-	return sc.balanceQty, average
+	return average, totalCostExcludeVat, sc.balanceQty, sc.balanceAmount, sc.averageCost
 }
 
-func (sc *StockCalculator) ReduceStock(qty float64) (sumOfCost float64, averageCost float64) {
+func (sc *StockCalculator) ReduceStock(qty float64) (costPerUnit float64, totalCost float64, balanceQty float64, balanceAmount float64, balanceAverageCost float64) {
 	sc.balanceQty -= qty
 
 	averageCostOut := sc.averageCost
@@ -65,10 +65,10 @@ func (sc *StockCalculator) ReduceStock(qty float64) (sumOfCost float64, averageC
 	sc.balanceAmount -= costOut
 	sc.averageCost = round.Round(sc.balanceAmount/sc.balanceQty, sc.AmountDigit)
 
-	return costOut, averageCostOut
+	return averageCostOut, costOut, sc.balanceQty, sc.balanceAmount, sc.averageCost
 }
 
-func (sc *StockCalculator) ReduceStockWithCost(qty float64, cost float64) (sumOfCost float64, averageCost float64) {
+func (sc *StockCalculator) ReduceStockWithCost(qty float64, cost float64) (costPerUnit float64, totalCost float64, balanceQty float64, balanceAmount float64, balanceAverageCost float64) {
 
 	sc.balanceQty -= qty
 
@@ -77,7 +77,7 @@ func (sc *StockCalculator) ReduceStockWithCost(qty float64, cost float64) (sumOf
 	sc.balanceAmount -= costOut
 	sc.averageCost = round.Round(sc.balanceAmount/sc.balanceQty, sc.AmountDigit)
 
-	return costOut, averageCostOut
+	return averageCostOut, costOut, sc.balanceQty, sc.balanceAmount, sc.averageCost
 }
 
 func (sc *StockCalculator) BalanceAmount() float64 {

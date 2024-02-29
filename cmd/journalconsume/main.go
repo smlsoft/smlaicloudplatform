@@ -2,7 +2,6 @@ package main
 
 import (
 	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/vfgl/journal"
 	"smlcloudplatform/pkg/microservice"
 )
 
@@ -13,7 +12,7 @@ func main() {
 		panic(err)
 	}
 
-	journal.StartJournalComsumeCreated(ms, cfg, "journal-bulk-created-group-1")
+	// journal.StartJournalComsumeCreated(ms, cfg, "journal-bulk-created-group-1")
 	// purchase.StartPurchaseComsume(ms, cfg)
 
 	ms.Start()

@@ -27,9 +27,12 @@ type StockData struct {
 	SumAmount           float64   `json:"sumamount" gorm:"column:sumamount"`
 	SumAmountExcludeVat float64   `json:"sumamountexcludevat" gorm:"column:sumamountexcludevat"`
 	LineNumber          int8      `json:"linenumber" gorm:"column:linenumber"`
-	SumOfCost           float64   `json:"sumofcost" gorm:"column:sumofcost"`
-	AverageCost         float64   `json:"averagecost" gorm:"column:averagecost"`
 	DocRef              string    `json:"docref" gorm:"column:docref"`
+	CostPerUnit         float64   `json:"costperunit" gorm:"column:costperunit"`       // ทุนต่อหน่วย
+	TotalCost           float64   `json:"totalcost" gorm:"column:totalcost"`           // ต้นทุนรวม
+	BalanceQty          float64   `json:"balanceqty" gorm:"column:balanceqty"`         // ยอดคงเหลือ
+	BalanceAmount       float64   `json:"balanceamount" gorm:"column:balanceamount"`   // มูลค่าคงเหลือ
+	BalanceAverage      float64   `json:"balanceaverage" gorm:"column:balanceaverage"` // ต้นทุนเฉลี่ยคงเหลือ
 }
 
 type StockProcessRequest struct {

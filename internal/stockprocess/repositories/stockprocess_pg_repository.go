@@ -63,7 +63,9 @@ func (repo *StockProcessPGRepository) UpdateStockTransactionChange(stockData []s
 	err := repo.pst.Transaction(func(pst *microservice.Persister) error {
 
 		for _, data := range stockData {
-			err := pst.DBClient().Exec("UPDATE stock_transaction_detail SET sumofcost = ? , averagecost = ? WHERE id = ?", data.SumOfCost, data.AverageCost, data.ID).Error
+			err := pst.DBClient().Exec("UPDATE stock_transaction_detail "+
+				" SET costperunit = ? , totalcost = ?, balanceqty = ?, balanceamount = ?, balanceaverage = ? "+
+				" WHERE id = ?", data.CostPerUnit, data.TotalCost, data.BalanceQty, data.BalanceAmount, data.BalanceAverage, data.ID).Error
 			if err != nil {
 				return err
 			}

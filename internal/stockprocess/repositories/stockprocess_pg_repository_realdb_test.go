@@ -26,12 +26,15 @@ func TestGetStockProcessList(t *testing.T) {
 }
 
 func TestUpdateStockTransaction(t *testing.T) {
-	stockLists, err := repo.GetStockTransactionList("2IZS0jFeRXWPidSupyXN7zQIlaS", "888555")
+	stockLists, err := repo.GetStockTransactionList("2VsCV0xYjghds3Tjru425QKGkY1", "8851753098736")
 	assert.Nil(t, err)
 
 	for i, _ := range stockLists {
-		stockLists[i].AverageCost = float64(1)
-		stockLists[i].SumOfCost = float64(1)
+		stockLists[i].CostPerUnit = float64(1)
+		stockLists[i].TotalCost = float64(1)
+		stockLists[i].BalanceQty = float64(1)
+		stockLists[i].BalanceAmount = float64(1)
+		stockLists[i].BalanceAverage = float64(1)
 	}
 
 	err = repo.UpdateStockTransactionChange(stockLists)

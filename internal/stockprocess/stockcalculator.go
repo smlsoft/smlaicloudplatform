@@ -55,17 +55,17 @@ func (sc *StockCalculator) CalculatorStock(shopID string, barcode string) error 
 				var qty, amountExcludeVat float64
 				if data.HasCostFromOtherDoc() {
 
-					var costOut float64
+					var costPerUnitOut float64
 
 					for _, costData := range stockDataList {
 						if costData.DocNo == data.DocRef {
-							costOut = costData.AverageCost
+							costPerUnitOut = costData.CostPerUnit
 							break
 						}
 					}
 
 					qty = data.CalcQty
-					amountExcludeVat = costOut * qty
+					amountExcludeVat = costPerUnitOut * qty
 				} else if data.TransFlag == 66 {
 					qty = data.CalcQty
 					amountExcludeVat = calculator.AverageCost()
@@ -74,38 +74,47 @@ func (sc *StockCalculator) CalculatorStock(shopID string, barcode string) error 
 					amountExcludeVat = data.SumAmountExcludeVat
 				}
 
-				cost, averageCost := calculator.ApplyStock(qty, amountExcludeVat)
+				costPerUnit, totalCost, balanceQty, balanceAmount, balanceAveragePerUnit := calculator.ApplyStock(qty, amountExcludeVat)
 
-				isDataChange := data.SumOfCost != cost || data.AverageCost != averageCost
+				isDataChange := data.CostPerUnit != costPerUnit || data.TotalCost != totalCost || data.BalanceQty != balanceQty || data.BalanceAmount != balanceAmount || data.BalanceAverage != balanceAveragePerUnit
 				if isDataChange {
-					stockDataList[i].SumOfCost = cost
-					stockDataList[i].AverageCost = averageCost
+					stockDataList[i].CostPerUnit = costPerUnit
+					stockDataList[i].TotalCost = totalCost
+					stockDataList[i].BalanceQty = balanceQty
+					stockDataList[i].BalanceAmount = balanceAmount
+					stockDataList[i].BalanceAverage = balanceAveragePerUnit
+
 					stockDataChangeLists = append(stockDataChangeLists, stockDataList[i])
 				}
 				logger.GetLogger().Debugf("ApplyStock: %+v", data)
 			} else {
 
-				var cost, averageCost float64
+				var costPerUnit, totalCost, balanceQty, balanceAmount, balanceAveragePerUnit float64
 				if data.HasCostFromOtherDoc() {
 
 					var costOut float64
 
 					for _, costData := range stockDataList {
 						if costData.DocNo == data.DocRef {
-							costOut = costData.AverageCost
+							costOut = costData.CostPerUnit
 							break
 						}
 					}
 					// find cost from other doc
-					cost, averageCost = calculator.ReduceStockWithCost(data.CalcQty, costOut)
+					costPerUnit, totalCost, balanceQty, balanceAmount, balanceAveragePerUnit = calculator.ReduceStockWithCost(data.CalcQty, costOut)
 				} else {
-					cost, averageCost = calculator.ReduceStock(data.CalcQty)
+					costPerUnit, totalCost, balanceQty, balanceAmount, balanceAveragePerUnit = calculator.ReduceStock(data.CalcQty)
 				}
 
-				isDataChange := data.SumOfCost != cost || data.AverageCost != averageCost
+				isDataChange := data.CostPerUnit != costPerUnit || data.TotalCost != totalCost || data.BalanceQty != balanceQty || data.BalanceAmount != balanceAmount || data.BalanceAverage != balanceAveragePerUnit
 				if isDataChange {
-					stockDataList[i].SumOfCost = cost
-					stockDataList[i].AverageCost = averageCost
+
+					stockDataList[i].CostPerUnit = costPerUnit
+					stockDataList[i].TotalCost = totalCost
+					stockDataList[i].BalanceQty = balanceQty
+					stockDataList[i].BalanceAmount = balanceAmount
+					stockDataList[i].BalanceAverage = balanceAveragePerUnit
+
 					stockDataChangeLists = append(stockDataChangeLists, stockDataList[i])
 				}
 				logger.GetLogger().Debugf("ReduceStock: %+v", data)
