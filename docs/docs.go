@@ -4879,6 +4879,314 @@ const docTemplate = `{
                 }
             }
         },
+        "/file-status": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Upsert FileStatus",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "description": "FileStatus",
+                        "name": "FileStatus",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FileStatus"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete FileStatus",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "description": "FileStatus GUIDs",
+                        "name": "FileStatus",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-status/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get FileStatus info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileStatus Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-status/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-status/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get FileStatus info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileStatus guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete FileStatus",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileStatus"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileStatus ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/forgot-password-phonenumber": {
             "post": {
                 "description": "For User Forgot Password Phonenumber",
@@ -13858,6 +14166,103 @@ const docTemplate = `{
                         "in": "path",
                         "required": true
                     }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/pos/temp": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get POSTemp",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "POSTemp"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create POSTemp",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "POSTemp"
+                ],
+                "parameters": [
+                    {
+                        "description": "pos temp data",
+                        "name": "POSTemp",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete POSTemp",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "POSTemp"
                 ],
                 "responses": {
                     "200": {
@@ -36942,6 +37347,27 @@ const docTemplate = `{
                 }
             }
         },
+        "models.FileStatus": {
+            "type": "object",
+            "properties": {
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "jobid": {
+                    "type": "string"
+                },
+                "menu": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ForgotPasswordPhoneNumberRequest": {
             "type": "object",
             "required": [
@@ -39204,6 +39630,10 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "alertdescription": {
+                    "type": "string",
+                    "maxLength": 1500
+                },
                 "barcode": {
                     "type": "string",
                     "minLength": 1
@@ -39228,6 +39658,10 @@ const docTemplate = `{
                 },
                 "condition": {
                     "type": "boolean"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1500
                 },
                 "dimensions": {
                     "type": "array",
@@ -39269,6 +39703,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isalert": {
                     "type": "boolean"
                 },
                 "isdiscountpointofpurchase": {
@@ -45462,6 +45899,10 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "alertdescription": {
+                    "type": "string",
+                    "maxLength": 1500
+                },
                 "barcode": {
                     "type": "string",
                     "minLength": 1
@@ -45486,6 +45927,10 @@ const docTemplate = `{
                 },
                 "condition": {
                     "type": "boolean"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1500
                 },
                 "dimensions": {
                     "type": "array",
@@ -45527,6 +45972,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "isalacarte": {
+                    "type": "boolean"
+                },
+                "isalert": {
                     "type": "boolean"
                 },
                 "isdiscountpointofpurchase": {
