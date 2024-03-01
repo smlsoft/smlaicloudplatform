@@ -710,6 +710,10 @@ definitions:
     type: object
   models.DebtorLine:
     properties:
+      clientids:
+        items:
+          type: string
+        type: array
       lineid:
         type: string
       lineuid:

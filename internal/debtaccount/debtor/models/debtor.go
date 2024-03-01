@@ -32,8 +32,9 @@ type Debtor struct {
 }
 
 type DebtorLine struct {
-	LineID  string `json:"lineid" bson:"lineid"`
-	LineUID string `json:"lineuid" bson:"lineuid"`
+	LineID    string    `json:"lineid" bson:"lineid"`
+	LineUID   string    `json:"lineuid" bson:"lineuid"`
+	ClientIDs *[]string `json:"clientids" bson:"clientids"`
 }
 
 type DebtorAuth struct {

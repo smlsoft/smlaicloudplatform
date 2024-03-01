@@ -36827,6 +36827,12 @@ const docTemplate = `{
         "models.DebtorLine": {
             "type": "object",
             "properties": {
+                "clientids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "lineid": {
                     "type": "string"
                 },
