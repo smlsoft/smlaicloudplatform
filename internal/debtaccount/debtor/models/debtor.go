@@ -28,6 +28,12 @@ type Debtor struct {
 	IsMember           bool       `json:"ismember" bson:"ismember"`
 	GroupGUIDs         *[]string  `json:"-" bson:"groups"`
 	Auth               DebtorAuth `json:"auth" bson:"auth"`
+	DebtorLine         DebtorLine `json:"line" bson:"line"`
+}
+
+type DebtorLine struct {
+	LineID  string `json:"lineid" bson:"lineid"`
+	LineUID string `json:"lineuid" bson:"lineuid"`
 }
 
 type DebtorAuth struct {

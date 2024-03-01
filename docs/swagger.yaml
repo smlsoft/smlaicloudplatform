@@ -708,6 +708,13 @@ definitions:
     required:
     - names
     type: object
+  models.DebtorLine:
+    properties:
+      lineid:
+        type: string
+      lineuid:
+        type: string
+    type: object
   models.DebtorRequest:
     properties:
       addressforbilling:
@@ -740,6 +747,8 @@ definitions:
         type: array
       ismember:
         type: boolean
+      line:
+        $ref: '#/definitions/models.DebtorLine'
       names:
         items:
           $ref: '#/definitions/models.NameX'

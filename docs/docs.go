@@ -36824,6 +36824,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DebtorLine": {
+            "type": "object",
+            "properties": {
+                "lineid": {
+                    "type": "string"
+                },
+                "lineuid": {
+                    "type": "string"
+                }
+            }
+        },
         "models.DebtorRequest": {
             "type": "object",
             "required": [
@@ -36874,6 +36885,9 @@ const docTemplate = `{
                 },
                 "ismember": {
                     "type": "boolean"
+                },
+                "line": {
+                    "$ref": "#/definitions/models.DebtorLine"
                 },
                 "names": {
                     "type": "array",
