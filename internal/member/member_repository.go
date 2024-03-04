@@ -20,6 +20,7 @@ type IMemberRepository interface {
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.MemberDoc, error)
 	FindPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
 
+	FindByLineUID(ctx context.Context, shopID string, lineUID string) (models.MemberDoc, error)
 	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberDeleteActivity, error)
@@ -73,6 +74,15 @@ func (repo MemberRepository) Delete(ctx context.Context, shopID string, guid str
 func (repo MemberRepository) FindByGuid(ctx context.Context, shopID string, guid string) (models.MemberDoc, error) {
 	doc := &models.MemberDoc{}
 	err := repo.pst.FindOne(ctx, &models.MemberDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, doc)
+	if err != nil {
+		return *doc, err
+	}
+	return *doc, nil
+}
+
+func (repo MemberRepository) FindByLineUID(ctx context.Context, shopID string, lineUID string) (models.MemberDoc, error) {
+	doc := &models.MemberDoc{}
+	err := repo.pst.FindOne(ctx, &models.MemberDoc{}, bson.M{"shopid": shopID, "lineuid": lineUID, "deletedat": bson.M{"$exists": false}}, doc)
 	if err != nil {
 		return *doc, err
 	}

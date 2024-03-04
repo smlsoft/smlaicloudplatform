@@ -72,6 +72,22 @@ func NewAuthService(cacher ICacher, expireTimeBearer time.Duration, expireTimeRe
 	}
 }
 
+func NewAuthServicePrefix(authPrefixCache string, authRefreshCache string, cacher ICacher, expireTimeBearer time.Duration, expireTimeRefresh time.Duration) *AuthService {
+
+	return &AuthService{
+		cacher:                cacher,
+		expireTimeBearer:      expireTimeBearer,
+		expireTimeRefresh:     expireTimeRefresh,
+		prefixBearerCacheKey:  authPrefixCache,
+		prefixBearerToken:     "Bearer",
+		prefixXApiKeyCacheKey: "xapikey-",
+		prefixRefreshCacheKey: "refresh-",
+		encrypt:               *encrypt.NewEncrypt(),
+		cacheMemory:           memorycache.NewMemoryCache(),
+		cacheMemoryExpire:     time.Duration(5) * time.Second,
+	}
+}
+
 func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -79,7 +95,7 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 			currentPath := c.Path()
 
 			for _, publicPath := range publicPath {
-				if strings.HasPrefix(currentPath, publicPath) {
+				if strings.HasSuffix(publicPath, "*") && strings.HasPrefix(currentPath, publicPath) {
 					return next(c)
 				} else if currentPath == publicPath {
 					return next(c)

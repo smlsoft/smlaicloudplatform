@@ -10,6 +10,7 @@ const memberCollectionName = "members"
 const memberIndexName string = "members_index"
 
 type Member struct {
+	PictureUrl   string `json:"pictureurl" bson:"pictureurl"`
 	Telephone    string `json:"telephone" bson:"telephone"`
 	Name         string `json:"name" bson:"name"`
 	Surname      string `json:"surname" bson:"surname"`
@@ -18,7 +19,17 @@ type Member struct {
 	PersonalType int    `json:"personaltype" bson:"personaltype"`
 	BranchType   int    `json:"branchtype" bson:"branchtype"`
 	BranchCode   string `json:"branchcode" bson:"branchcode"`
+	LineUID      string `json:"lineuid" bson:"lineuid"`
+	MemberAdress `bson:"inline"`
+	SubAddress   []MemberAdress `json:"subaddress" bson:"subaddress"`
+}
+
+type MemberAdress struct {
+	Telephone    string `json:"telephone" bson:"telephone"`
 	Address      string `json:"address" bson:"address"`
+	CountryCode  string `json:"countrycode" bson:"countrycode"`
+	ProvinceCode string `json:"provincecode" bson:"provincecode"`
+	DistrictCode string `json:"districtcode" bson:"districtcode"`
 	ZipCode      string `json:"zipcode" bson:"zipcode"`
 }
 

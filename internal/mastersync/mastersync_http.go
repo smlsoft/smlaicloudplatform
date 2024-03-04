@@ -124,7 +124,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	// Member
 	repoMember := member.NewMemberRepository(pst)
 	pgRepoMember := member.NewMemberPGRepository(pstPg)
-	svcMember := member.NewMemberService(repoMember, pgRepoMember, masterSyncCacheRepo)
+	svcMember := member.NewMemberService(repoMember, pgRepoMember, nil, nil, masterSyncCacheRepo)
 	activityModuleManager.Add(svcMember)
 
 	// Employee
