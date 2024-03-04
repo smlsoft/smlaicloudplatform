@@ -1,8 +1,8 @@
-name: Build API
+name: Build Member API
 on: [workflow_dispatch]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: smlsoft/smlcloudlineapi
+  IMAGE_NAME: smlsoft/smlcloudmemberapi
   DISCORD_CHANNEL: "1139124359731093614"
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context:
-          file: ./Dockerfile-line
+          file: ./Dockerfile-member
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
