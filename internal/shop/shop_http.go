@@ -79,6 +79,10 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 	}
 }
 
+func (h ShopHttp) RegisterHttpMember() {
+	h.ms.GET("/shop/:id", h.InfoShop)
+}
+
 func (h ShopHttp) RegisterHttp() {
 	h.ms.GET("/shop/:id", h.InfoShop)
 	// h.ms.GET("/shop", h.SearchShop)

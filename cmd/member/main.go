@@ -3,6 +3,7 @@ package main
 import (
 	"smlcloudplatform/internal/config"
 	"smlcloudplatform/internal/member"
+	"smlcloudplatform/internal/shop"
 	"smlcloudplatform/pkg/microservice"
 	"time"
 )
@@ -19,6 +20,7 @@ func main() {
 	authService := microservice.NewAuthServicePrefix("linemember:", "linememberrefresh:", cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	publicPath := []string{
+		"/shop/*",
 		"/member/line",
 		"/healthz",
 	}
@@ -31,6 +33,7 @@ func main() {
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 
 	member.NewMemberHttp(ms, cfg).RegisterLineHttp()
+	shop.NewShopHttp(ms, cfg).RegisterHttpMember()
 
 	ms.Start()
 }
