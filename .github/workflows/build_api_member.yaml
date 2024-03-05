@@ -51,7 +51,7 @@ jobs:
           git config --global user.email "woranich@gmail.com"
           git config --global user.name "userplant"
           echo ${{ github.sha }}
-          sed -i "s|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-.\{7\}|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}|g" dedepos-api-line-dev/deployment.yaml
+          sed -i "s|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-.\{7\}|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}|g" dedepos-api-member-dev/deployment.yaml
           git add -A
           git commit -am "Update dedepos-api-dev sha-${GITHUB_SHA::7}"
       - run: echo ${{ github }}
