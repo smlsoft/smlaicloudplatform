@@ -10,18 +10,18 @@ const memberCollectionName = "members"
 const memberIndexName string = "members_index"
 
 type Member struct {
-	PictureUrl   string `json:"pictureurl" bson:"pictureurl"`
-	Telephone    string `json:"telephone" bson:"telephone"`
-	Name         string `json:"name" bson:"name"`
-	Surname      string `json:"surname" bson:"surname"`
-	TaxID        string `json:"taxid" bson:"taxid"`
-	ContactType  int    `json:"contacttype" bson:"contacttype"`
-	PersonalType int    `json:"personaltype" bson:"personaltype"`
-	BranchType   int    `json:"branchtype" bson:"branchtype"`
-	BranchCode   string `json:"branchcode" bson:"branchcode"`
-	LineUID      string `json:"lineuid" bson:"lineuid"`
-	MemberAdress `bson:"inline"`
-	SubAddress   []MemberAdress `json:"subaddress" bson:"subaddress"`
+	PictureUrl   string         `json:"pictureurl" bson:"pictureurl"`
+	Telephone    string         `json:"telephone" bson:"telephone"`
+	Email        string         `json:"email" bson:"email"`
+	Name         string         `json:"name" bson:"name"`
+	Surname      string         `json:"surname" bson:"surname"`
+	TaxID        string         `json:"taxid" bson:"taxid"`
+	ContactType  int            `json:"contacttype" bson:"contacttype"`
+	PersonalType int            `json:"personaltype" bson:"personaltype"`
+	BranchType   int            `json:"branchtype" bson:"branchtype"`
+	BranchCode   string         `json:"branchcode" bson:"branchcode"`
+	LineUID      string         `json:"lineuid" bson:"lineuid"`
+	Addresses    []MemberAdress `json:"addresses" bson:"addresses"`
 }
 
 type MemberAdress struct {
@@ -43,8 +43,8 @@ func (MemberInfo) CollectionName() string {
 }
 
 type MemberData struct {
-	models.ShopIdentity `bson:"inline"`
-	MemberInfo          `bson:"inline"`
+	Shops      *[]string `json:"shops" bson:"shops"`
+	MemberInfo `bson:"inline"`
 }
 type MemberDoc struct {
 	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`

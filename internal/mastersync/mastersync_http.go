@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/member"
 	"smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/utils"
 	"smlcloudplatform/pkg/microservice"
@@ -62,7 +61,7 @@ type MasterSyncHttp struct {
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) MasterSyncHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	pstPg := ms.Persister(cfg.PersisterConfig())
+	// pstPg := ms.Persister(cfg.PersisterConfig())
 	// prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
@@ -122,10 +121,10 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	activityModuleManager.Add(svcRestaurantStaff)
 
 	// Member
-	repoMember := member.NewMemberRepository(pst)
-	pgRepoMember := member.NewMemberPGRepository(pstPg)
-	svcMember := member.NewMemberService(repoMember, pgRepoMember, nil, nil, masterSyncCacheRepo)
-	activityModuleManager.Add(svcMember)
+	// repoMember := member.NewMemberRepository(pst)
+	// pgRepoMember := member.NewMemberPGRepository(pstPg)
+	// svcMember := member.NewMemberService(repoMember, pgRepoMember, nil, nil, masterSyncCacheRepo)
+	// activityModuleManager.Add(svcMember)
 
 	// Employee
 	repoEmployee := employeeRepo.NewEmployeeRepository(pst)
