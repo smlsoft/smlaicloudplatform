@@ -521,6 +521,7 @@ func (h ProductBarcodeHttp) InfoArrayMaster(ctx microservice.IContext) error {
 // @Param		branchcode		query	string		false  "branch code ex. b1,b2"
 // @Param		isalacarte		query	boolean		false  "is A La Carte"
 // @Param		isusesubbarcodes		query	boolean		false  "is use sub barcodes"
+// @Param		isbom		query	boolean		false  "is use BOM"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
@@ -537,54 +538,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
-		{
-			Param: "isalacarte",
-			Field: "isalacarte",
-			Type:  requestfilter.FieldTypeBoolean,
-		},
-		{
-			Param: "ordertypes",
-			Field: "ordertypes.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "itemtype",
-			Field: "itemtype",
-			Type:  requestfilter.FieldTypeInt,
-		},
-		{
-			Param: "businesstypecode",
-			Field: "businesstypes.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "branchcode",
-			Field: "branches.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "isusesubbarcodes",
-			Field: "isusesubbarcodes",
-			Type:  requestfilter.FieldTypeBoolean,
-		},
-	})
-
-	if temp, ok := filters["branches.code"]; ok {
-		if tempBson, ok := temp.(bson.M); ok {
-			if tempIn, ok := tempBson["$in"]; ok {
-				filters["ignorebranches.code"] = bson.M{
-					"$nin": tempIn,
-				}
-			}
-		} else {
-			filters["ignorebranches.code"] = bson.M{
-				"$ne": temp,
-			}
-		}
-		delete(filters, "branches.code")
-
-	}
+	filters := h.searchFilter(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.SearchProductBarcode(shopID, filters, pageable)
 
@@ -639,6 +593,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // @Param		branchcode		query	string		false  "branch code ex. b1,b2"
 // @Param		isalacarte		query	boolean		false  "is A La Carte"
 // @Param		isusesubbarcodes		query	boolean		false  "is use sub barcodes"
+// @Param		isbom		query	boolean		false  "is use BOM"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
@@ -658,54 +613,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 
 	lang := ctx.QueryParam("lang")
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
-		{
-			Param: "isalacarte",
-			Field: "isalacarte",
-			Type:  requestfilter.FieldTypeBoolean,
-		},
-		{
-			Param: "ordertypes",
-			Field: "ordertypes.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "itemtype",
-			Field: "itemtype",
-			Type:  requestfilter.FieldTypeInt,
-		},
-		{
-			Param: "businesstypecode",
-			Field: "businesstypes.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "branchcode",
-			Field: "branches.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "isusesubbarcodes",
-			Field: "isusesubbarcodes",
-			Type:  requestfilter.FieldTypeBoolean,
-		},
-	})
-
-	if temp, ok := filters["branches.code"]; ok {
-		if tempBson, ok := temp.(bson.M); ok {
-			if tempIn, ok := tempBson["$in"]; ok {
-				filters["ignorebranches.code"] = bson.M{
-					"$nin": tempIn,
-				}
-			}
-		} else {
-			filters["ignorebranches.code"] = bson.M{
-				"$ne": temp,
-			}
-		}
-		delete(filters, "branches.code")
-
-	}
+	filters := h.searchFilter(ctx.QueryParam)
 
 	docList, total, err := h.svc.SearchProductBarcodeStep(shopID, lang, filters, pageableStep)
 
@@ -984,4 +892,69 @@ func (h ProductBarcodeHttp) InfoBOMView(ctx microservice.IContext) error {
 		Data:    doc,
 	})
 	return nil
+}
+
+func (h ProductBarcodeHttp) searchFilter(queryParam func(string) string) map[string]interface{} {
+	filters := requestfilter.GenerateFilters(queryParam, []requestfilter.FilterRequest{
+		{
+			Param: "isalacarte",
+			Field: "isalacarte",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+		{
+			Param: "ordertypes",
+			Field: "ordertypes.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "itemtype",
+			Field: "itemtype",
+			Type:  requestfilter.FieldTypeInt,
+		},
+		{
+			Param: "businesstypecode",
+			Field: "businesstypes.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "branchcode",
+			Field: "branches.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "isusesubbarcodes",
+			Field: "isusesubbarcodes",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+	})
+
+	if temp, ok := filters["branches.code"]; ok {
+		if tempBson, ok := temp.(bson.M); ok {
+			if tempIn, ok := tempBson["$in"]; ok {
+				filters["ignorebranches.code"] = bson.M{
+					"$nin": tempIn,
+				}
+			}
+		} else {
+			filters["ignorebranches.code"] = bson.M{
+				"$ne": temp,
+			}
+		}
+		delete(filters, "branches.code")
+	}
+
+	if queryParam("isbom") != "" {
+		if queryParam("isbom") == "true" {
+			filters["bom"] = bson.M{
+				"$exists": true,
+				"$ne":     []string{},
+			}
+		} else {
+			filters["bom"] = bson.M{
+				"$eq": []string{},
+			}
+		}
+	}
+
+	return filters
 }

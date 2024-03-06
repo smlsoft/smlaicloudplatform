@@ -17056,6 +17056,10 @@ paths:
         in: query
         name: isusesubbarcodes
         type: boolean
+      - description: is use BOM
+        in: query
+        name: isbom
+        type: boolean
       - description: order types ex. a01,a02
         in: query
         name: ordertypes
@@ -17410,6 +17414,10 @@ paths:
       - description: is use sub barcodes
         in: query
         name: isusesubbarcodes
+        type: boolean
+      - description: is use BOM
+        in: query
+        name: isbom
         type: boolean
       - description: order types ex. a01,a02
         in: query

@@ -15374,6 +15374,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "description": "is use BOM",
+                        "name": "isbom",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "order types ex. a01,a02",
                         "name": "ordertypes",
@@ -15862,6 +15868,12 @@ const docTemplate = `{
                         "type": "boolean",
                         "description": "is use sub barcodes",
                         "name": "isusesubbarcodes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is use BOM",
+                        "name": "isbom",
                         "in": "query"
                     },
                     {
