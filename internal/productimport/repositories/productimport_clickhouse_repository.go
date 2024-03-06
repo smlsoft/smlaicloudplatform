@@ -250,10 +250,10 @@ func (repo ProductImportClickHouseRepository) CountDuplicate(ctx context.Context
 	return count, nil
 }
 
-func (repo ProductImportClickHouseRepository) CountUnitExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error) {
+func (repo ProductImportClickHouseRepository) CountUnitExist(ctx context.Context, shopID string, taskID string, isNotExist bool) (int, error) {
 
 	countArgs := []interface{}{}
-	countArgs = append(countArgs, shopID, taskID, isExist)
+	countArgs = append(countArgs, shopID, taskID, isNotExist)
 
 	exprCount := "shopid = ? AND taskid = ? AND isunitnotexist = ?"
 	count, err := repo.pst.Count(ctx, &models.ProductImportDoc{}, exprCount, countArgs...)

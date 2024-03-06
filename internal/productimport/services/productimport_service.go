@@ -432,6 +432,16 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 		return errors.New("items barcode exist")
 	}
 
+	countUnitNotExist, err := svc.chRepo.CountUnitExist(context.Background(), shopID, taskID, true)
+
+	if err != nil {
+		return errors.New("counting unit not exist failed")
+	}
+
+	if countUnitNotExist > 0 {
+		return errors.New("items unit not exist")
+	}
+
 	docs, err := svc.chRepo.All(context.Background(), shopID, taskID)
 
 	if err != nil {
