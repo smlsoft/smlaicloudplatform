@@ -37393,6 +37393,9 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },

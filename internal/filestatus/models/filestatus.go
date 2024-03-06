@@ -10,6 +10,7 @@ const filestatusCollectionName = "fileStatus"
 
 type FileStatus struct {
 	models.PartitionIdentity `bson:"inline"`
+	XOrder                   int                    `json:"xorder" bson:"xorder"`
 	Username                 string                 `json:"-" bson:"username"`
 	Menu                     string                 `json:"menu" bson:"menu"`
 	JobID                    string                 `json:"jobid" bson:"jobid"`

@@ -1142,6 +1142,8 @@ definitions:
         type: string
       status:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ForgotPasswordPhoneNumberRequest:
     properties:
