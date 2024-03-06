@@ -37,6 +37,8 @@ type IUnitRepository interface {
 	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitActivity, error)
 	FindMasterInCodes(ctx context.Context, codes []string) ([]models.UnitInfo, error)
 
+	FindByUnitCodes(ctx context.Context, shopID string, unitCodes []string) ([]models.UnitInfo, error)
+
 	Transaction(ctx context.Context, callback func(ctx context.Context) error) error
 }
 
@@ -86,6 +88,24 @@ func (repo UnitRepository) FindMasterInCodes(ctx context.Context, codes []string
 	}
 
 	return docList, nil
+}
+
+func (repo UnitRepository) FindByUnitCodes(ctx context.Context, shopID string, unitCodes []string) ([]models.UnitInfo, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"unitcode":  bson.M{"$in": unitCodes},
+	}
+
+	var results []models.UnitInfo
+	err := repo.pst.Find(ctx, models.UnitInfo{}, filters, &results)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 func (repo UnitRepository) Transaction(ctx context.Context, callback func(ctx context.Context) error) error {

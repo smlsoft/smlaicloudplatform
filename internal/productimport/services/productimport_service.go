@@ -11,6 +11,7 @@ import (
 	product_models "smlcloudplatform/internal/product/productbarcode/models"
 	productbarcode_repo "smlcloudplatform/internal/product/productbarcode/repositories"
 	product_services "smlcloudplatform/internal/product/productbarcode/services"
+	productunit_repo "smlcloudplatform/internal/product/unit/repositories"
 	"smlcloudplatform/internal/productimport/models"
 	"smlcloudplatform/internal/productimport/repositories"
 	micromodels "smlcloudplatform/pkg/microservice/models"
@@ -38,6 +39,7 @@ type ProductImportService struct {
 	chRepo                repositories.IProductImportClickHouseRepository
 	productBarcodeRepo    productbarcode_repo.IProductBarcodeRepository
 	productBarcodeService product_services.IProductBarcodeHttpService
+	productUnitRepo       productunit_repo.IUnitRepository
 	generateID            func(int) string
 	generateGUID          func() string
 	timeNow               func() time.Time
@@ -47,6 +49,7 @@ func NewProductImportService(
 	chRepo repositories.IProductImportClickHouseRepository,
 	productBarcodeRepo productbarcode_repo.IProductBarcodeRepository,
 	productBarcodeService product_services.IProductBarcodeHttpService,
+	productUnitRepo productunit_repo.IUnitRepository,
 	generateID func(int) string,
 	generateGUID func() string,
 	timeNow func() time.Time,
@@ -58,6 +61,7 @@ func NewProductImportService(
 		chRepo:                chRepo,
 		productBarcodeRepo:    productBarcodeRepo,
 		productBarcodeService: productBarcodeService,
+		productUnitRepo:       productUnitRepo,
 		generateID:            generateID,
 		generateGUID:          generateGUID,
 		timeNow:               timeNow,
@@ -243,11 +247,14 @@ func (svc ProductImportService) Verify(shopID string, taskID string) error {
 
 	previousDuplicate := map[string]struct{}{}
 	previousExist := map[string]struct{}{}
+	previousUnitNotExist := map[string]struct{}{}
 
 	itemDulpicated := map[string]struct{}{}
 	itemExist := map[string]struct{}{}
+	itemUnitNotExist := map[string]struct{}{}
 
 	tempBarcodes := []string{}
+	tempUnitCodes := []string{}
 
 	itemDict := map[string]struct{}{}
 	for i, doc := range docs {
@@ -267,6 +274,12 @@ func (svc ProductImportService) Verify(shopID string, taskID string) error {
 			}
 		}
 
+		if doc.IsUnitNotExist {
+			previousUnitNotExist[doc.UnitCode] = struct{}{}
+		}
+
+		tempUnitCodes = append(tempUnitCodes, doc.UnitCode)
+
 		if (i > 1 && i%5000 == 0) || i == len(docs)-1 {
 			productList, err := svc.productBarcodeRepo.FindByBarcodes(context.Background(), shopID, tempBarcodes)
 			if err != nil {
@@ -276,6 +289,22 @@ func (svc ProductImportService) Verify(shopID string, taskID string) error {
 			for _, product := range productList {
 				itemExist[product.Barcode] = struct{}{}
 				delete(itemDulpicated, product.Barcode)
+			}
+
+			unitList, err := svc.productUnitRepo.FindByUnitCodes(context.Background(), shopID, tempUnitCodes)
+			if err != nil {
+				return err
+			}
+
+			tempDictUnitCodes := map[string]struct{}{}
+			for _, unit := range unitList {
+				tempDictUnitCodes[unit.UnitCode] = struct{}{}
+			}
+
+			for _, unitCode := range tempUnitCodes {
+				if _, ok := tempDictUnitCodes[unitCode]; !ok {
+					itemUnitNotExist[unitCode] = struct{}{}
+				}
 			}
 
 			//Clear previous duplicate
@@ -295,6 +324,16 @@ func (svc ProductImportService) Verify(shopID string, taskID string) error {
 
 			// Update exist
 			if err := svc.updateExist(shopID, taskID, true, itemExist); err != nil {
+				return err
+			}
+
+			// clear previous unit not exist
+			if err := svc.updateUnitExist(shopID, taskID, false, previousUnitNotExist); err != nil {
+				return err
+			}
+
+			// Update unit not exist
+			if err := svc.updateUnitExist(shopID, taskID, true, itemUnitNotExist); err != nil {
 				return err
 			}
 
@@ -339,6 +378,24 @@ func (svc ProductImportService) updateExist(shopID string, taskID string, isExis
 		tempPreviousExist = append(tempPreviousExist, barcode)
 	}
 	err := svc.chRepo.UpdateExist(context.Background(), shopID, taskID, isExist, tempPreviousExist)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ProductImportService) updateUnitExist(shopID string, taskID string, isExist bool, unitCodes map[string]struct{}) error {
+	if len(unitCodes) == 0 {
+		return nil
+	}
+
+	tempPreviousExist := []string{}
+	for barcode := range unitCodes {
+		tempPreviousExist = append(tempPreviousExist, barcode)
+	}
+	err := svc.chRepo.UpdateUnitExist(context.Background(), shopID, taskID, isExist, tempPreviousExist)
 
 	if err != nil {
 		return err

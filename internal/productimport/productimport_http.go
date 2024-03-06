@@ -12,6 +12,7 @@ import (
 	product_serrvices "smlcloudplatform/internal/product/productbarcode/services"
 	productcategory_repositories "smlcloudplatform/internal/product/productcategory/repositories"
 	productcategory_services "smlcloudplatform/internal/product/productcategory/services"
+	productunit_repo "smlcloudplatform/internal/product/unit/repositories"
 	"smlcloudplatform/internal/productimport/models"
 	"smlcloudplatform/internal/productimport/repositories"
 	"smlcloudplatform/internal/productimport/services"
@@ -43,10 +44,12 @@ func NewProductImportHttp(ms *microservice.Microservice, cfg config.IConfig) Pro
 	productcategoryRepo := productcategory_repositories.NewProductCategoryRepository(pst)
 	productcategorySvc := productcategory_services.NewProductCategoryHttpService(productcategoryRepo, masterSyncCacheRepo)
 
+	unitRepo := productunit_repo.NewUnitRepository(pst)
+
 	chRepo := repositories.NewProductImportClickHouseRepository(pstClickHouse)
 	stockBalanceSvc := product_serrvices.NewProductBarcodeHttpService(repo, repoMq, repoCh, productcategorySvc, masterSyncCacheRepo)
 
-	svc := services.NewProductImportService(chRepo, repo, stockBalanceSvc, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
+	svc := services.NewProductImportService(chRepo, repo, stockBalanceSvc, unitRepo, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
 
 	return ProductImportHttp{
 		ms:  ms,

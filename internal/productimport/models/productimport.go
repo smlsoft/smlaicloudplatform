@@ -10,13 +10,14 @@ type ProductImportHeader struct {
 }
 
 type ProductImportRaw struct {
-	Barcode     string  `json:"barcode" ch:"barcode"`
-	Name        string  `json:"name" ch:"name"`
-	UnitCode    string  `json:"unitcode" ch:"unitcode"`
-	Price       float64 `json:"price" ch:"price"`
-	PriceMember float64 `json:"pricemember" ch:"pricemember"`
-	IsDuplicate bool    `json:"isduplicate" ch:"isduplicate"`
-	IsExist     bool    `json:"isexist" ch:"isexist"`
+	Barcode        string  `json:"barcode" ch:"barcode"`
+	Name           string  `json:"name" ch:"name"`
+	UnitCode       string  `json:"unitcode" ch:"unitcode"`
+	Price          float64 `json:"price" ch:"price"`
+	PriceMember    float64 `json:"pricemember" ch:"pricemember"`
+	IsDuplicate    bool    `json:"isduplicate" ch:"isduplicate"`
+	IsExist        bool    `json:"isexist" ch:"isexist"`
+	IsUnitNotExist bool    `json:"isunitnotexist" ch:"isunitnotexist"`
 }
 
 type ProductImport struct {

@@ -25,6 +25,9 @@ type IProductImportClickHouseRepository interface {
 
 	CountExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error)
 	CountDuplicate(ctx context.Context, shopID string, taskID string, isDuplicate bool) (int, error)
+
+	CountUnitExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error)
+	UpdateUnitExist(ctx context.Context, shopID string, taskID string, isExist bool, unitCodes []string) error
 }
 
 type ProductImportClickHouseRepository struct {
@@ -212,6 +215,11 @@ func (repo ProductImportClickHouseRepository) UpdateExist(ctx context.Context, s
 		"ALTER TABLE productbarcodeimport UPDATE isexist = ? WHERE shopid = ? AND taskid = ? AND barcode IN (?)", isExist, shopID, taskID, barcodes)
 }
 
+func (repo ProductImportClickHouseRepository) UpdateUnitExist(ctx context.Context, shopID string, taskID string, isExist bool, unitCodes []string) error {
+	return repo.pst.Exec(ctx,
+		"ALTER TABLE productbarcodeimport UPDATE isunitnotexist = ? WHERE shopid = ? AND taskid = ? AND unitcode IN (?)", isExist, shopID, taskID, unitCodes)
+}
+
 func (repo ProductImportClickHouseRepository) CountExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error) {
 
 	countArgs := []interface{}{}
@@ -233,6 +241,21 @@ func (repo ProductImportClickHouseRepository) CountDuplicate(ctx context.Context
 	countArgs = append(countArgs, shopID, taskID, isDuplicate)
 
 	exprCount := "shopid = ? AND taskid = ? AND isduplicate = ?"
+	count, err := repo.pst.Count(ctx, &models.ProductImportDoc{}, exprCount, countArgs...)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (repo ProductImportClickHouseRepository) CountUnitExist(ctx context.Context, shopID string, taskID string, isExist bool) (int, error) {
+
+	countArgs := []interface{}{}
+	countArgs = append(countArgs, shopID, taskID, isExist)
+
+	exprCount := "shopid = ? AND taskid = ? AND isunitnotexist = ?"
 	count, err := repo.pst.Count(ctx, &models.ProductImportDoc{}, exprCount, countArgs...)
 
 	if err != nil {
