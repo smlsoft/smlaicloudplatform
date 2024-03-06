@@ -8474,62 +8474,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/member": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Member Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Member"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.MemberPageResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
+        "/member/line": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Member",
+                "description": "Auth Line Member",
                 "consumes": [
                     "application/json"
                 ],
@@ -8538,12 +8490,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Member",
-                        "name": "Member",
+                        "description": "Line Auth Request",
+                        "name": "LineAuthRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Member"
+                            "$ref": "#/definitions/models.LineAuthRequest"
                         }
                     }
                 ],
@@ -8563,28 +8515,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/member/{id}": {
+        "/member/profile": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Get Member",
+                "description": "Get Member Line Profile",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "Member"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Member Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
                 ],
                 "responses": {
                     "200": {
@@ -8607,7 +8550,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Member",
+                "description": "Updat Line Member",
                 "consumes": [
                     "application/json"
                 ],
@@ -8615,13 +8558,6 @@ const docTemplate = `{
                     "Member"
                 ],
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Member ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "Member",
                         "name": "Member",
@@ -8630,43 +8566,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.Member"
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Member",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Member"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Member ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -15463,9 +15362,15 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "boolean",
                         "description": "is A La Carte",
                         "name": "isalacarte",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is use sub barcodes",
+                        "name": "isusesubbarcodes",
                         "in": "query"
                     },
                     {
@@ -15948,9 +15853,15 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "boolean",
                         "description": "is A La Carte",
                         "name": "isalacarte",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is use sub barcodes",
+                        "name": "isusesubbarcodes",
                         "in": "query"
                     },
                     {
@@ -38170,6 +38081,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.LineAuthRequest": {
+            "type": "object",
+            "properties": {
+                "lineaccesstoken": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
         "models.LinePayload": {
             "type": "object",
             "properties": {
@@ -38330,8 +38252,11 @@ const docTemplate = `{
         "models.Member": {
             "type": "object",
             "properties": {
-                "address": {
-                    "type": "string"
+                "addresses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MemberAdress"
+                    }
                 },
                 "branchcode": {
                     "type": "string"
@@ -38342,16 +38267,45 @@ const docTemplate = `{
                 "contacttype": {
                     "type": "integer"
                 },
+                "email": {
+                    "type": "string"
+                },
+                "lineuid": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "personaltype": {
                     "type": "integer"
                 },
+                "pictureurl": {
+                    "type": "string"
+                },
                 "surname": {
                     "type": "string"
                 },
                 "taxid": {
+                    "type": "string"
+                },
+                "telephone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MemberAdress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "provincecode": {
                     "type": "string"
                 },
                 "telephone": {
@@ -38365,8 +38319,11 @@ const docTemplate = `{
         "models.MemberInfo": {
             "type": "object",
             "properties": {
-                "address": {
-                    "type": "string"
+                "addresses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MemberAdress"
+                    }
                 },
                 "branchcode": {
                     "type": "string"
@@ -38377,7 +38334,13 @@ const docTemplate = `{
                 "contacttype": {
                     "type": "integer"
                 },
+                "email": {
+                    "type": "string"
+                },
                 "guidfixed": {
+                    "type": "string"
+                },
+                "lineuid": {
                     "type": "string"
                 },
                 "name": {
@@ -38385,6 +38348,9 @@ const docTemplate = `{
                 },
                 "personaltype": {
                     "type": "integer"
+                },
+                "pictureurl": {
+                    "type": "string"
                 },
                 "surname": {
                     "type": "string"
@@ -38394,9 +38360,6 @@ const docTemplate = `{
                 },
                 "telephone": {
                     "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
                 }
             }
         },
@@ -38405,23 +38368,6 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/models.MemberInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.MemberPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.MemberInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
                 },
                 "success": {
                     "type": "boolean"
@@ -40155,6 +40101,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "isexist": {
+                    "type": "boolean"
+                },
+                "isunitnotexist": {
                     "type": "boolean"
                 },
                 "name": {

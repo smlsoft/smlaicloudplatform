@@ -519,7 +519,8 @@ func (h ProductBarcodeHttp) InfoArrayMaster(ctx microservice.IContext) error {
 // @Tags		ProductBarcode
 // @Param		businesstypecode		query	string		false  "business type code ex. bt1,bt2"
 // @Param		branchcode		query	string		false  "branch code ex. b1,b2"
-// @Param		isalacarte		query	string		false  "is A La Carte"
+// @Param		isalacarte		query	boolean		false  "is A La Carte"
+// @Param		isusesubbarcodes		query	boolean		false  "is use sub barcodes"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
@@ -561,6 +562,11 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 			Param: "branchcode",
 			Field: "branches.code",
 			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "isusesubbarcodes",
+			Field: "isusesubbarcodes",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 	})
 
@@ -631,7 +637,8 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // @Tags		ProductBarcode
 // @Param		businesstypecode		query	string		false  "business type code ex. bt1,bt2"
 // @Param		branchcode		query	string		false  "branch code ex. b1,b2"
-// @Param		isalacarte		query	string		false  "is A La Carte"
+// @Param		isalacarte		query	boolean		false  "is A La Carte"
+// @Param		isusesubbarcodes		query	boolean		false  "is use sub barcodes"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
@@ -676,6 +683,11 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 			Param: "branchcode",
 			Field: "branches.code",
 			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "isusesubbarcodes",
+			Field: "isusesubbarcodes",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 	})
 

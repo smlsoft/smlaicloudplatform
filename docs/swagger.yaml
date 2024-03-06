@@ -1614,6 +1614,13 @@ definitions:
       name:
         type: string
     type: object
+  models.LineAuthRequest:
+    properties:
+      lineaccesstoken:
+        type: string
+      shopid:
+        type: string
+    type: object
   models.LinePayload:
     properties:
       message:
@@ -1720,21 +1727,42 @@ definitions:
     type: object
   models.Member:
     properties:
-      address:
-        type: string
+      addresses:
+        items:
+          $ref: '#/definitions/models.MemberAdress'
+        type: array
       branchcode:
         type: string
       branchtype:
         type: integer
       contacttype:
         type: integer
+      email:
+        type: string
+      lineuid:
+        type: string
       name:
         type: string
       personaltype:
         type: integer
+      pictureurl:
+        type: string
       surname:
         type: string
       taxid:
+        type: string
+      telephone:
+        type: string
+    type: object
+  models.MemberAdress:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      provincecode:
         type: string
       telephone:
         type: string
@@ -1743,44 +1771,39 @@ definitions:
     type: object
   models.MemberInfo:
     properties:
-      address:
-        type: string
+      addresses:
+        items:
+          $ref: '#/definitions/models.MemberAdress'
+        type: array
       branchcode:
         type: string
       branchtype:
         type: integer
       contacttype:
         type: integer
+      email:
+        type: string
       guidfixed:
+        type: string
+      lineuid:
         type: string
       name:
         type: string
       personaltype:
         type: integer
+      pictureurl:
+        type: string
       surname:
         type: string
       taxid:
         type: string
       telephone:
         type: string
-      zipcode:
-        type: string
     type: object
   models.MemberInfoResponse:
     properties:
       data:
         $ref: '#/definitions/models.MemberInfo'
-      success:
-        type: boolean
-    type: object
-  models.MemberPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.MemberInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
     type: object
@@ -2956,6 +2979,8 @@ definitions:
       isduplicate:
         type: boolean
       isexist:
+        type: boolean
+      isunitnotexist:
         type: boolean
       name:
         type: string
@@ -12724,48 +12749,18 @@ paths:
       - AccessToken: []
       tags:
       - MasterSync
-  /member:
-    get:
-      consumes:
-      - application/json
-      description: List Member Category
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.MemberPageResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Member
+  /member/line:
     post:
       consumes:
       - application/json
-      description: Create Member
+      description: Auth Line Member
       parameters:
-      - description: Member
+      - description: Line Auth Request
         in: body
-        name: Member
+        name: LineAuthRequest
         required: true
         schema:
-          $ref: '#/definitions/models.Member'
+          $ref: '#/definitions/models.LineAuthRequest'
       responses:
         "200":
           description: OK
@@ -12779,40 +12774,11 @@ paths:
       - AccessToken: []
       tags:
       - Member
-  /member/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Member
-      parameters:
-      - description: Member ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Member
+  /member/profile:
     get:
       consumes:
       - application/json
-      description: Get Member
-      parameters:
-      - description: Member Id
-        in: path
-        name: id
-        required: true
-        type: string
+      description: Get Member Line Profile
       responses:
         "200":
           description: OK
@@ -12829,13 +12795,8 @@ paths:
     put:
       consumes:
       - application/json
-      description: Update Member
+      description: Updat Line Member
       parameters:
-      - description: Member ID
-        in: path
-        name: id
-        required: true
-        type: string
       - description: Member
         in: body
         name: Member
@@ -17090,7 +17051,11 @@ paths:
       - description: is A La Carte
         in: query
         name: isalacarte
-        type: string
+        type: boolean
+      - description: is use sub barcodes
+        in: query
+        name: isusesubbarcodes
+        type: boolean
       - description: order types ex. a01,a02
         in: query
         name: ordertypes
@@ -17441,7 +17406,11 @@ paths:
       - description: is A La Carte
         in: query
         name: isalacarte
-        type: string
+        type: boolean
+      - description: is use sub barcodes
+        in: query
+        name: isusesubbarcodes
+        type: boolean
       - description: order types ex. a01,a02
         in: query
         name: ordertypes
