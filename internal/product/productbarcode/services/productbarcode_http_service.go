@@ -415,7 +415,7 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid st
 	}
 
 	if countRef > 0 {
-		return errors.New("document has refenced")
+		return errors.New("document has other ref barcode referenced")
 	}
 
 	countBOM, err := svc.repo.CountByBOM(ctx, shopID, findDoc.Barcode)
@@ -425,7 +425,7 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid st
 	}
 
 	if countBOM > 0 {
-		return errors.New("document has refenced")
+		return errors.New("document has other bom referenced")
 	}
 
 	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
@@ -901,7 +901,7 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, 
 	}
 
 	if countRefBarcode > 0 {
-		return errors.New("document has refenced")
+		return errors.New("document has other barcode referenced")
 	}
 
 	countBOM, err := svc.repo.CountByBOMGuids(ctx, shopID, GUIDs)
@@ -911,7 +911,7 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, 
 	}
 
 	if countBOM > 0 {
-		return errors.New("document has refenced")
+		return errors.New("document has other bom referenced")
 	}
 
 	deleteFilterQuery := map[string]interface{}{
