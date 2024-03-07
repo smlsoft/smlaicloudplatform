@@ -21,7 +21,6 @@ type IFileStatusHttpService interface {
 	DeleteFileStatusByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	DeleteFileStatusByMenu(shopID string, authUsername string, menu string) error
 	InfoFileStatus(shopID string, guid string) (models.FileStatusInfo, error)
-	InfoFileStatusByCode(shopID string, code string) (models.FileStatusInfo, error)
 	SearchFileStatus(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.FileStatusInfo, mongopagination.PaginationData, error)
 	SearchFileStatusStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.FileStatusInfo, int, error)
 }
@@ -190,32 +189,12 @@ func (svc FileStatusHttpService) InfoFileStatus(shopID string, guid string) (mod
 	return findDoc.FileStatusInfo, nil
 }
 
-func (svc FileStatusHttpService) InfoFileStatusByCode(shopID string, code string) (models.FileStatusInfo, error) {
-
-	ctx, ctxCancel := svc.getContextTimeout()
-	defer ctxCancel()
-
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", code)
-
-	if err != nil {
-		return models.FileStatusInfo{}, err
-	}
-
-	if len(findDoc.GuidFixed) < 1 {
-		return models.FileStatusInfo{}, errors.New("document not found")
-	}
-
-	return findDoc.FileStatusInfo, nil
-}
-
 func (svc FileStatusHttpService) SearchFileStatus(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.FileStatusInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	searchInFields := []string{
-		"code",
-	}
+	searchInFields := []string{}
 
 	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
@@ -232,18 +211,10 @@ func (svc FileStatusHttpService) SearchFileStatusStep(shopID string, langCode st
 	defer ctxCancel()
 
 	searchInFields := []string{
-		"code",
+		"path",
 	}
 
 	selectFields := map[string]interface{}{}
-
-	/*
-		if langCode != "" {
-			selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-		} else {
-			selectFields["names"] = 1
-		}
-	*/
 
 	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 

@@ -5013,45 +5013,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/file-status/code/{code}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get FileStatus info by Code",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "FileStatus"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "FileStatus Code",
-                        "name": "code",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/file-status/list": {
             "get": {
                 "security": [

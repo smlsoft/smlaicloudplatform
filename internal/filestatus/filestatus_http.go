@@ -42,7 +42,6 @@ func (h FileStatusHttp) RegisterHttp() {
 	h.ms.POST("/file-status", h.CreateFileStatus)
 	h.ms.PUT("/file-status/:id", h.UpdateFileStatus)
 	h.ms.GET("/file-status/:id", h.InfoFileStatus)
-	h.ms.GET("/file-status/code/:code", h.InfoFileStatusByCode)
 	h.ms.DELETE("/file-status/:id", h.DeleteFileStatus)
 	h.ms.DELETE("/file-status/menu/:menu", h.DeleteFileStatusByMenu)
 	h.ms.DELETE("/file-status", h.DeleteFileStatusByGUIDs)
@@ -265,35 +264,6 @@ func (h FileStatusHttp) InfoFileStatus(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get FileStatus By Code godoc
-// @Description get FileStatus info by Code
-// @Tags		FileStatus
-// @Param		code  path      string  true  "FileStatus Code"
-// @Accept 		json
-// @Success		200	{object}	common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /file-status/code/{code} [get]
-func (h FileStatusHttp) InfoFileStatusByCode(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	code := ctx.Param("code")
-
-	doc, err := h.svc.InfoFileStatusByCode(shopID, code)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    doc,
-	})
-	return nil
-}
-
 // List FileStatus step godoc
 // @Description get list step
 // @Tags		FileStatus
@@ -308,6 +278,7 @@ func (h FileStatusHttp) InfoFileStatusByCode(ctx microservice.IContext) error {
 func (h FileStatusHttp) SearchFileStatusPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
@@ -323,6 +294,8 @@ func (h FileStatusHttp) SearchFileStatusPage(ctx microservice.IContext) error {
 			Type:  requestfilter.FieldTypeString,
 		},
 	})
+
+	filters["username"] = authUsername
 
 	docList, pagination, err := h.svc.SearchFileStatus(shopID, filters, pageable)
 
@@ -354,6 +327,7 @@ func (h FileStatusHttp) SearchFileStatusPage(ctx microservice.IContext) error {
 func (h FileStatusHttp) SearchFileStatusStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
 
 	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
@@ -371,6 +345,8 @@ func (h FileStatusHttp) SearchFileStatusStep(ctx microservice.IContext) error {
 			Type:  requestfilter.FieldTypeString,
 		},
 	})
+
+	filters["username"] = authUsername
 
 	docList, total, err := h.svc.SearchFileStatusStep(shopID, lang, filters, pageableStep)
 

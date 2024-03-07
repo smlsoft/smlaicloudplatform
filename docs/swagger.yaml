@@ -10658,30 +10658,6 @@ paths:
       - AccessToken: []
       tags:
       - FileStatus
-  /file-status/code/{code}:
-    get:
-      consumes:
-      - application/json
-      description: get FileStatus info by Code
-      parameters:
-      - description: FileStatus Code
-        in: path
-        name: code
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - FileStatus
   /file-status/list:
     get:
       consumes:
