@@ -176,7 +176,7 @@ func main() {
 		authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 		publicPath := []string{
 			"/migrationtools/",
-			"/swagger",
+			"/swagger/*",
 
 			"/tokenlogin",
 
@@ -192,7 +192,7 @@ func main() {
 			"/employee/login",
 
 			"/images*",
-			"/productimage",
+			"/productimage/*",
 
 			"/healthz",
 			"/ws",
