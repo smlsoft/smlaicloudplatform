@@ -1758,17 +1758,37 @@ definitions:
     type: object
   models.MemberAdress:
     properties:
-      address:
+      build:
         type: string
-      countrycode:
+      district:
         type: string
-      districtcode:
+      floor:
         type: string
-      provincecode:
+      homenumber:
+        type: string
+      ismain:
+        type: boolean
+      name:
+        type: string
+      postcode:
+        type: string
+      province:
+        type: string
+      remark:
+        type: string
+      road:
+        type: string
+      route:
+        type: string
+      soi:
+        type: string
+      subdistrict:
         type: string
       telephone:
         type: string
-      zipcode:
+      village:
+        type: string
+      villageno:
         type: string
     type: object
   models.MemberInfo:

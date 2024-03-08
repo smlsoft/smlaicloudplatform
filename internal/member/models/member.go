@@ -25,12 +25,22 @@ type Member struct {
 }
 
 type MemberAdress struct {
-	Telephone    string `json:"telephone" bson:"telephone"`
-	Address      string `json:"address" bson:"address"`
-	CountryCode  string `json:"countrycode" bson:"countrycode"`
-	ProvinceCode string `json:"provincecode" bson:"provincecode"`
-	DistrictCode string `json:"districtcode" bson:"districtcode"`
-	ZipCode      string `json:"zipcode" bson:"zipcode"`
+	Name        string `json:"name" bson:"name"`
+	Telephone   string `json:"telephone" bson:"telephone"`
+	HomeNumber  string `json:"homenumber" bson:"homenumber"`
+	Build       string `json:"build" bson:"build"`
+	Floor       string `json:"floor" bson:"floor"`
+	Village     string `json:"village" bson:"village"`
+	Soi         string `json:"soi" bson:"soi"`
+	VillageNo   string `json:"villageno" bson:"villageno"`
+	Road        string `json:"road" bson:"road"`
+	Route       string `json:"route" bson:"route"`
+	Province    string `json:"province" bson:"province"`
+	District    string `json:"district" bson:"district"`
+	Subdistrict string `json:"subdistrict" bson:"subdistrict"`
+	Postcode    string `json:"postcode" bson:"postcode"`
+	Remark      string `json:"remark" bson:"remark"`
+	IsMain      bool   `json:"ismain" bson:"ismain"`
 }
 
 type MemberInfo struct {
