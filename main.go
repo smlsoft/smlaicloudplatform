@@ -369,7 +369,7 @@ func main() {
 		// migration db only
 		journal.MigrationJournalTable(ms, cfg)
 		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
-		productbarcode.MigrationProductBarcodeTable(ms, cfg)
+		productbarcode.MigrationDatabase(ms, cfg)
 		// transactionconsumer.MigrationDatabase(ms, cfg)
 		// payment migration
 		payment.MigrationDatabase(ms, cfg)

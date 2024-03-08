@@ -15,7 +15,7 @@ func main() {
 		panic(err)
 	}
 
-	productbarcode.MigrationProductBarcodeTable(ms, cfg)
+	productbarcode.MigrationDatabase(ms, cfg)
 	productBarcodeConsumer := productbarcode.NewProductBarcodeConsumer(ms, cfg)
 	productBarcodeConsumer.RegisterConsumer()
 

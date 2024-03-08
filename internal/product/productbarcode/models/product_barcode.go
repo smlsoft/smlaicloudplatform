@@ -268,20 +268,37 @@ func (ProductBarcodeSearch) TableName() string {
 type ProductBarcodePg struct {
 	ShopID                   string `json:"shopid" gorm:"column:shopid;primaryKey"`
 	models.PartitionIdentity `gorm:"embedded;"`
-	Barcode                  string  `json:"barcode" gorm:"column:barcode;primaryKey"`
-	Names                    JSONB   `json:"names"  gorm:"column:names;type:jsonb" `
-	UnitCode                 string  `json:"itemunitcode" gorm:"column:unitcode"`
-	UnitNames                JSONB   `json:"itemunitnames" gorm:"column:unitnames;type:jsonb"`
-	BalanceQty               float64 `json:"balanceqty" gorm:"column:balanceqty"`
-	MainBarcodeRef           string  `json:"mainbarcoderef" gorm:"column:mainbarcoderef"`
-	StandValue               float64 `json:"standvalue" gorm:"column:standvalue"`
-	DivideValue              float64 `json:"dividevalue" gorm:"column:dividevalue"`
-	BalanceAmount            float64 `json:"balanceamount" gorm:"column:balanceamount"`
-	AverageCost              float64 `json:"averagecost" gorm:"column:averagecost"`
+	Barcode                  string              `json:"barcode" gorm:"column:barcode;primaryKey"`
+	Names                    JSONB               `json:"names"  gorm:"column:names;type:jsonb" `
+	UnitCode                 string              `json:"itemunitcode" gorm:"column:unitcode"`
+	UnitNames                JSONB               `json:"itemunitnames" gorm:"column:unitnames;type:jsonb"`
+	BalanceQty               float64             `json:"balanceqty" gorm:"column:balanceqty"`
+	MainBarcodeRef           string              `json:"mainbarcoderef" gorm:"column:mainbarcoderef"`
+	StandValue               float64             `json:"standvalue" gorm:"column:standvalue"`
+	DivideValue              float64             `json:"dividevalue" gorm:"column:dividevalue"`
+	BalanceAmount            float64             `json:"balanceamount" gorm:"column:balanceamount"`
+	AverageCost              float64             `json:"averagecost" gorm:"column:averagecost"`
+	BOM                      BOMProductBarcodePg `json:"bom" gorm:"column:bom;type:jsonb"`
 }
 
 func (ProductBarcodePg) TableName() string {
 	return "productbarcode"
+}
+
+type BOMProductBarcodePg []BOMProductBarcode
+
+func (a BOMProductBarcodePg) Value() (driver.Value, error) {
+
+	j, err := json.Marshal(a)
+	return j, err
+}
+
+func (a *BOMProductBarcodePg) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(b, &a)
 }
 
 type JSONB []models.NameX

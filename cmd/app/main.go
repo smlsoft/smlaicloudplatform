@@ -334,6 +334,8 @@ func main() {
 	// purchase_consumer.MigrationDatabase(ms, cfg)
 	// saleinvoice_consumer.MigrationDatabase(ms, cfg)
 
+	productbarcode.MigrationDatabase(ms, cfg)
+
 	ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
 
 	ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))

@@ -18,14 +18,6 @@ import (
 	msConfig "smlcloudplatform/internal/config"
 )
 
-func MigrationProductBarcodeTable(ms *microservice.Microservice, cfg msConfig.IConfig) error {
-	pst := ms.Persister(cfg.PersisterConfig())
-	pst.AutoMigrate(
-		models.ProductBarcodePg{},
-	)
-	return nil
-}
-
 type IProductBarcodeConsumer interface {
 	ConsumerOnProductBarcodeCreate(ctx microservice.IContext) error
 	ConsumerOnProductBarcodeUpdate(ctx microservice.IContext) error
@@ -145,11 +137,11 @@ func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeUpdate(ctx microservi
 		pbc.ms.Logger.Errorf(moduleName, err.Error())
 	}
 
-	// _, err = pbc.svc.UpSert(doc.ShopID, doc.Barcode, doc)
+	_, err = pbc.svc.UpSert(doc.ShopID, doc.Barcode, doc)
 
-	// if err != nil {
-	// 	pbc.ms.Logger.Errorf(moduleName, err.Error())
-	// }
+	if err != nil {
+		pbc.ms.Logger.Errorf(moduleName, err.Error())
+	}
 
 	return nil
 }
