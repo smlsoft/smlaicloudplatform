@@ -37657,6 +37657,21 @@ const docTemplate = `{
                 "bookcode": {
                     "type": "string"
                 },
+                "creditors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDebtAccount"
+                    }
+                },
+                "debtaccounttype": {
+                    "type": "string"
+                },
+                "debtors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDebtAccount"
+                    }
+                },
                 "docdate": {
                     "type": "string",
                     "format": "dateTime"
@@ -37793,6 +37808,90 @@ const docTemplate = `{
                 }
             }
         },
+        "models.JournalDebtAccount": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/models.JournalDebtAccountAddress"
+                },
+                "branchnumber": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "customertype": {
+                    "type": "integer"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "taxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.JournalDebtAccountAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "models.JournalDetail": {
             "type": "object",
             "properties": {
@@ -37843,6 +37942,21 @@ const docTemplate = `{
                 },
                 "createdby": {
                     "type": "string"
+                },
+                "creditors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDebtAccount"
+                    }
+                },
+                "debtaccounttype": {
+                    "type": "string"
+                },
+                "debtors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDebtAccount"
+                    }
                 },
                 "docdate": {
                     "type": "string",

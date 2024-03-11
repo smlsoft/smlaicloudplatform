@@ -323,6 +323,8 @@ func main() {
 
 	serviceStartHttp(ms, httpServices...)
 
+	// journal.MigrationJournalTable(ms, cfg)
+
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)
 
@@ -339,6 +341,8 @@ func main() {
 	ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
 
 	ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))
+
+	ms.RegisterConsumer(journal.InitJournalTransactionConsumer(ms, cfg))
 
 	consumeServices := []ConsumerRegister{}
 

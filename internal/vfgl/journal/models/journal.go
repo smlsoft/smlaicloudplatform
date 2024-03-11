@@ -1,6 +1,9 @@
 package models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"smlcloudplatform/internal/models"
 	"time"
 
@@ -29,6 +32,52 @@ type JournalBody struct {
 	ExDocRefDate       time.Time `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
 	DocFormat          string    `json:"docformat" bson:"docformat" gorm:"column:docformat"`
 	AppName            string    `json:"appname" bson:"appname" gorm:"column:appname"`
+
+	DebtAccountType string                     `json:"debtaccounttype" bson:"debtaccounttype" gorm:"column:debtaccounttype"`
+	Creditors       *JournalDebtAccountArrayPg `json:"creditors" bson:"creditors" gorm:"creditors;type:jsonb"`
+	Debtors         *JournalDebtAccountArrayPg `json:"debtors" bson:"debtors" gorm:"debtors;type:jsonb"`
+}
+
+type JournalDebtAccount struct {
+	GuidFixed    string                    `json:"guidfixed" bson:"guidfixed" gorm:"guidfixed"`
+	Code         string                    `json:"code" bson:"code" gorm:"code"`
+	PersonalType int8                      `json:"personaltype" bson:"personaltype" gorm:"personaltype"`
+	CustomerType int                       `json:"customertype" bson:"customertype" gorm:"customertype"`
+	BranchNumber string                    `json:"branchnumber" bson:"branchnumber" gorm:"branchnumber"`
+	TaxId        string                    `json:"taxid" bson:"taxid" gorm:"taxid"`
+	Names        *[]models.NameX           `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive" gorm:"names"`
+	Address      JournalDebtAccountAddress `json:"address" bson:"address" gorm:"address"`
+}
+
+type JournalDebtAccountArrayPg []JournalDebtAccount
+
+func (a JournalDebtAccountArrayPg) Value() (driver.Value, error) {
+
+	j, err := json.Marshal(a)
+	return j, err
+}
+
+func (a JournalDebtAccountArrayPg) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(b, &a)
+}
+
+type JournalDebtAccountAddress struct {
+	GUID            string          `json:"guid" bson:"guid" gorm:"guid"`
+	Address         *[]string       `json:"address" bson:"address" gorm:"address"`
+	CountryCode     string          `json:"countrycode" bson:"countrycode" gorm:"countrycode"`
+	ProvinceCode    string          `json:"provincecode" bson:"provincecode" gorm:"provincecode"`
+	DistrictCode    string          `json:"districtcode" bson:"districtcode" gorm:"districtcode"`
+	SubDistrictCode string          `json:"subdistrictcode" bson:"subdistrictcode" gorm:"subdistrictcode"`
+	ZipCode         string          `json:"zipcode" bson:"zipcode" gorm:"zipcode"`
+	ContactNames    *[]models.NameX `json:"contactnames" bson:"contactnames" gorm:"contactnames"`
+	PhonePrimary    string          `json:"phoneprimary" bson:"phoneprimary" gorm:"phoneprimary"`
+	PhoneSecondary  string          `json:"phonesecondary" bson:"phonesecondary" gorm:"phonesecondary"`
+	Latitude        float64         `json:"latitude" bson:"latitude" gorm:"latitude"`
+	Longitude       float64         `json:"longitude" bson:"longitude" gorm:"longitude"`
 }
 
 type Journal struct {

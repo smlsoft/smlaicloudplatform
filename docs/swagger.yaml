@@ -1348,6 +1348,16 @@ definitions:
         type: string
       bookcode:
         type: string
+      creditors:
+        items:
+          $ref: '#/definitions/models.JournalDebtAccount'
+        type: array
+      debtaccounttype:
+        type: string
+      debtors:
+        items:
+          $ref: '#/definitions/models.JournalDebtAccount'
+        type: array
       docdate:
         format: dateTime
         type: string
@@ -1441,6 +1451,62 @@ definitions:
       success:
         type: boolean
     type: object
+  models.JournalDebtAccount:
+    properties:
+      address:
+        $ref: '#/definitions/models.JournalDebtAccountAddress'
+      branchnumber:
+        type: string
+      code:
+        type: string
+      customertype:
+        type: integer
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      personaltype:
+        type: integer
+      taxid:
+        type: string
+    required:
+    - names
+    type: object
+  models.JournalDebtAccountAddress:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      contactnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      guid:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phoneprimary:
+        type: string
+      phonesecondary:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.JournalDetail:
     properties:
       accountcode:
@@ -1475,6 +1541,16 @@ definitions:
         type: string
       createdby:
         type: string
+      creditors:
+        items:
+          $ref: '#/definitions/models.JournalDebtAccount'
+        type: array
+      debtaccounttype:
+        type: string
+      debtors:
+        items:
+          $ref: '#/definitions/models.JournalDebtAccount'
+        type: array
       docdate:
         format: dateTime
         type: string
