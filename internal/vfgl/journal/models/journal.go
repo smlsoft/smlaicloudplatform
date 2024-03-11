@@ -15,48 +15,48 @@ import (
 const journalCollectionName = "journals"
 
 type JournalBody struct {
-	BatchID            string                     `json:"batchid" bson:"batchid" gorm:"column:batchid"`
-	DocNo              string                     `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
-	DocDate            time.Time                  `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
-	DocumentRef        string                     `json:"documentref" bson:"documentref" gorm:"column:documentref"`
-	AccountPeriod      int16                      `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
-	AccountYear        int16                      `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
-	AccountGroup       string                     `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
-	Amount             float64                    `json:"amount" bson:"amount" gorm:"column:amount"`
-	AccountDescription string                     `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
-	BookCode           string                     `json:"bookcode" bson:"bookcode"`
-	Vats               []Vat                      `json:"vats" bson:"vats" gorm:"-"`
-	Taxes              []Tax                      `json:"taxes" bson:"taxes" gorm:"-"`
-	JournalType        int                        `json:"journaltype" bson:"journaltype" gorm:"column:journaltype"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
-	ExDocRefNo         string                     `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
-	ExDocRefDate       time.Time                  `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
-	DocFormat          string                     `json:"docformat" bson:"docformat" gorm:"column:docformat"`
-	AppName            string                     `json:"appname" bson:"appname" gorm:"column:appname"`
-	DebtAccountType    uint8                      `json:"debtaccounttype" bson:"debtaccounttype" gorm:"column:debtaccounttype"`
-	Creditors          *JournalDebtAccountArrayPg `json:"creditors" bson:"creditors" gorm:"creditors;type:jsonb"`
-	Debtors            *JournalDebtAccountArrayPg `json:"debtors" bson:"debtors" gorm:"debtors;type:jsonb"`
+	BatchID            string               `json:"batchid" bson:"batchid" gorm:"column:batchid"`
+	DocNo              string               `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
+	DocDate            time.Time            `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
+	DocumentRef        string               `json:"documentref" bson:"documentref" gorm:"column:documentref"`
+	AccountPeriod      int16                `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
+	AccountYear        int16                `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
+	AccountGroup       string               `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
+	Amount             float64              `json:"amount" bson:"amount" gorm:"column:amount"`
+	AccountDescription string               `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
+	BookCode           string               `json:"bookcode" bson:"bookcode"`
+	Vats               []Vat                `json:"vats" bson:"vats" gorm:"-"`
+	Taxes              []Tax                `json:"taxes" bson:"taxes" gorm:"-"`
+	JournalType        int                  `json:"journaltype" bson:"journaltype" gorm:"column:journaltype"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
+	ExDocRefNo         string               `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
+	ExDocRefDate       time.Time            `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
+	DocFormat          string               `json:"docformat" bson:"docformat" gorm:"column:docformat"`
+	AppName            string               `json:"appname" bson:"appname" gorm:"column:appname"`
+	DebtAccountType    uint8                `json:"debtaccounttype" bson:"debtaccounttype" gorm:"column:debtaccounttype"`
+	Creditor           JournalDebtAccountPg `json:"creditor" bson:"creditor" gorm:"column:creditor;type:jsonb"`
+	Debtor             JournalDebtAccountPg `json:"debtor" bson:"debtor" gorm:"column:debtor;type:jsonb"`
 }
 
 type JournalDebtAccount struct {
-	GuidFixed    string                    `json:"guidfixed" bson:"guidfixed" gorm:"guidfixed"`
-	Code         string                    `json:"code" bson:"code" gorm:"code"`
-	PersonalType int8                      `json:"personaltype" bson:"personaltype" gorm:"personaltype"`
-	CustomerType int                       `json:"customertype" bson:"customertype" gorm:"customertype"`
-	BranchNumber string                    `json:"branchnumber" bson:"branchnumber" gorm:"branchnumber"`
-	TaxId        string                    `json:"taxid" bson:"taxid" gorm:"taxid"`
-	Names        *[]models.NameX           `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive" gorm:"names"`
-	Address      JournalDebtAccountAddress `json:"address" bson:"address" gorm:"address"`
+	GuidFixed         string                    `json:"guidfixed" bson:"guidfixed" gorm:"guidfixed"`
+	Code              string                    `json:"code" bson:"code" gorm:"code"`
+	PersonalType      int8                      `json:"personaltype" bson:"personaltype" gorm:"personaltype"`
+	CustomerType      int                       `json:"customertype" bson:"customertype" gorm:"customertype"`
+	BranchNumber      string                    `json:"branchnumber" bson:"branchnumber" gorm:"branchnumber"`
+	TaxId             string                    `json:"taxid" bson:"taxid" gorm:"taxid"`
+	Names             *[]models.NameX           `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive" gorm:"names"`
+	AddressForBilling JournalDebtAccountAddress `json:"addressforbilling" bson:"addressforbilling" gorm:"addressforbilling"`
 }
 
-type JournalDebtAccountArrayPg []JournalDebtAccount
+type JournalDebtAccountPg JournalDebtAccount
 
-func (a JournalDebtAccountArrayPg) Value() (driver.Value, error) {
+func (a JournalDebtAccountPg) Value() (driver.Value, error) {
 
 	j, err := json.Marshal(a)
 	return j, err
 }
 
-func (a JournalDebtAccountArrayPg) Scan(value interface{}) error {
+func (a JournalDebtAccountPg) Scan(value interface{}) error {
 	b, ok := value.([]byte)
 	if !ok {
 		return errors.New("type assertion to []byte failed")

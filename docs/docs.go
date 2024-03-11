@@ -37657,20 +37657,14 @@ const docTemplate = `{
                 "bookcode": {
                     "type": "string"
                 },
-                "creditors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.JournalDebtAccount"
-                    }
+                "creditor": {
+                    "$ref": "#/definitions/models.JournalDebtAccountPg"
                 },
                 "debtaccounttype": {
                     "type": "integer"
                 },
-                "debtors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.JournalDebtAccount"
-                    }
+                "debtor": {
+                    "$ref": "#/definitions/models.JournalDebtAccountPg"
                 },
                 "docdate": {
                     "type": "string",
@@ -37808,43 +37802,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.JournalDebtAccount": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "address": {
-                    "$ref": "#/definitions/models.JournalDebtAccountAddress"
-                },
-                "branchnumber": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "customertype": {
-                    "type": "integer"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "personaltype": {
-                    "type": "integer"
-                },
-                "taxid": {
-                    "type": "string"
-                }
-            }
-        },
         "models.JournalDebtAccountAddress": {
             "type": "object",
             "properties": {
@@ -37888,6 +37845,43 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.JournalDebtAccountPg": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "addressforbilling": {
+                    "$ref": "#/definitions/models.JournalDebtAccountAddress"
+                },
+                "branchnumber": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "customertype": {
+                    "type": "integer"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "taxid": {
                     "type": "string"
                 }
             }
@@ -37943,20 +37937,14 @@ const docTemplate = `{
                 "createdby": {
                     "type": "string"
                 },
-                "creditors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.JournalDebtAccount"
-                    }
+                "creditor": {
+                    "$ref": "#/definitions/models.JournalDebtAccountPg"
                 },
                 "debtaccounttype": {
                     "type": "integer"
                 },
-                "debtors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.JournalDebtAccount"
-                    }
+                "debtor": {
+                    "$ref": "#/definitions/models.JournalDebtAccountPg"
                 },
                 "docdate": {
                     "type": "string",
