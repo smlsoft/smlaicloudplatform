@@ -11,6 +11,7 @@ import (
 	product_models "smlcloudplatform/internal/product/productbarcode/models"
 	productbarcode_repo "smlcloudplatform/internal/product/productbarcode/repositories"
 	product_services "smlcloudplatform/internal/product/productbarcode/services"
+	productunit_models "smlcloudplatform/internal/product/unit/models"
 	productunit_repo "smlcloudplatform/internal/product/unit/repositories"
 	"smlcloudplatform/internal/productimport/models"
 	"smlcloudplatform/internal/productimport/repositories"
@@ -450,6 +451,18 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 
 	dataDocs := svc.PrepareProductBarcodes(docHeader.LanguangeCode, docs)
 
+	tempUnitCodes := []string{}
+	for _, doc := range docs {
+		tempUnitCodes = append(tempUnitCodes, doc.UnitCode)
+	}
+
+	unitDocs, err := svc.productUnitRepo.FindByUnitCodes(context.Background(), shopID, tempUnitCodes)
+	if err != nil {
+		return err
+	}
+
+	dataDocs = svc.PrepareProductUnit(unitDocs, dataDocs)
+
 	_, err = svc.productBarcodeService.SaveInBatch(shopID, authUsername, dataDocs)
 
 	if err != nil {
@@ -463,6 +476,30 @@ func (svc ProductImportService) SaveTask(shopID string, authUsername string, tas
 	}
 
 	return nil
+}
+
+func (svc ProductImportService) PrepareProductUnit(unitList []productunit_models.UnitInfo, docs []product_models.ProductBarcode) []product_models.ProductBarcode {
+
+	unitDict := map[string]productunit_models.UnitInfo{}
+	for _, unit := range unitList {
+		unitDict[unit.UnitCode] = unit
+	}
+
+	for i := range docs {
+
+		doc := docs[i]
+
+		tempUnit, ok := unitDict[doc.ItemUnitCode]
+
+		if !ok {
+			continue
+		}
+
+		docs[i].ItemUnitNames = tempUnit.Names
+	}
+
+	return docs
+
 }
 
 func (svc ProductImportService) PrepareProductBarcodes(langCode string, docs []models.ProductImportDoc) []product_models.ProductBarcode {
