@@ -1353,7 +1353,7 @@ definitions:
           $ref: '#/definitions/models.JournalDebtAccount'
         type: array
       debtaccounttype:
-        type: string
+        type: integer
       debtors:
         items:
           $ref: '#/definitions/models.JournalDebtAccount'
@@ -1546,7 +1546,7 @@ definitions:
           $ref: '#/definitions/models.JournalDebtAccount'
         type: array
       debtaccounttype:
-        type: string
+        type: integer
       debtors:
         items:
           $ref: '#/definitions/models.JournalDebtAccount'

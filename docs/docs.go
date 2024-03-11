@@ -37664,7 +37664,7 @@ const docTemplate = `{
                     }
                 },
                 "debtaccounttype": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "debtors": {
                     "type": "array",
@@ -37950,7 +37950,7 @@ const docTemplate = `{
                     }
                 },
                 "debtaccounttype": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "debtors": {
                     "type": "array",

@@ -323,7 +323,7 @@ func main() {
 
 	serviceStartHttp(ms, httpServices...)
 
-	// journal.MigrationJournalTable(ms, cfg)
+	journal.MigrationJournalTable(ms, cfg)
 
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)

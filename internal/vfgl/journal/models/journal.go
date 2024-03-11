@@ -15,27 +15,26 @@ import (
 const journalCollectionName = "journals"
 
 type JournalBody struct {
-	BatchID            string    `json:"batchid" bson:"batchid" gorm:"column:batchid"`
-	DocNo              string    `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
-	DocDate            time.Time `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
-	DocumentRef        string    `json:"documentref" bson:"documentref" gorm:"column:documentref"`
-	AccountPeriod      int16     `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
-	AccountYear        int16     `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
-	AccountGroup       string    `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
-	Amount             float64   `json:"amount" bson:"amount" gorm:"column:amount"`
-	AccountDescription string    `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
-	BookCode           string    `json:"bookcode" bson:"bookcode"`
-	Vats               []Vat     `json:"vats" bson:"vats" gorm:"-"`
-	Taxes              []Tax     `json:"taxes" bson:"taxes" gorm:"-"`
-	JournalType        int       `json:"journaltype" bson:"journaltype" gorm:"column:journaltype"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
-	ExDocRefNo         string    `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
-	ExDocRefDate       time.Time `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
-	DocFormat          string    `json:"docformat" bson:"docformat" gorm:"column:docformat"`
-	AppName            string    `json:"appname" bson:"appname" gorm:"column:appname"`
-
-	DebtAccountType string                     `json:"debtaccounttype" bson:"debtaccounttype" gorm:"column:debtaccounttype"`
-	Creditors       *JournalDebtAccountArrayPg `json:"creditors" bson:"creditors" gorm:"creditors;type:jsonb"`
-	Debtors         *JournalDebtAccountArrayPg `json:"debtors" bson:"debtors" gorm:"debtors;type:jsonb"`
+	BatchID            string                     `json:"batchid" bson:"batchid" gorm:"column:batchid"`
+	DocNo              string                     `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
+	DocDate            time.Time                  `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
+	DocumentRef        string                     `json:"documentref" bson:"documentref" gorm:"column:documentref"`
+	AccountPeriod      int16                      `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
+	AccountYear        int16                      `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
+	AccountGroup       string                     `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
+	Amount             float64                    `json:"amount" bson:"amount" gorm:"column:amount"`
+	AccountDescription string                     `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
+	BookCode           string                     `json:"bookcode" bson:"bookcode"`
+	Vats               []Vat                      `json:"vats" bson:"vats" gorm:"-"`
+	Taxes              []Tax                      `json:"taxes" bson:"taxes" gorm:"-"`
+	JournalType        int                        `json:"journaltype" bson:"journaltype" gorm:"column:journaltype"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
+	ExDocRefNo         string                     `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
+	ExDocRefDate       time.Time                  `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
+	DocFormat          string                     `json:"docformat" bson:"docformat" gorm:"column:docformat"`
+	AppName            string                     `json:"appname" bson:"appname" gorm:"column:appname"`
+	DebtAccountType    uint8                      `json:"debtaccounttype" bson:"debtaccounttype" gorm:"column:debtaccounttype"`
+	Creditors          *JournalDebtAccountArrayPg `json:"creditors" bson:"creditors" gorm:"creditors;type:jsonb"`
+	Debtors            *JournalDebtAccountArrayPg `json:"debtors" bson:"debtors" gorm:"debtors;type:jsonb"`
 }
 
 type JournalDebtAccount struct {
