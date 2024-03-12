@@ -406,6 +406,7 @@ func (svc MemberService) SearchMemberInfo(shopID string, filters map[string]inte
 	searchInFields := []string{
 		"name",
 		"surname",
+		"telephone",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, searchInFields, pageable)
@@ -425,6 +426,7 @@ func (svc MemberService) SearchMemberStep(shopID string, langCode string, filter
 	searchInFields := []string{
 		"name",
 		"surname",
+		"telephone",
 	}
 
 	selectFields := map[string]interface{}{}
