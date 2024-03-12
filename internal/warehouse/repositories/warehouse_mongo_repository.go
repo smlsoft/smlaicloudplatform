@@ -4,6 +4,7 @@ import (
 	"context"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/internal/utils/mogoutil"
+	"smlcloudplatform/internal/utils/search"
 	"smlcloudplatform/internal/warehouse/models"
 	"smlcloudplatform/pkg/microservice"
 	micromodels "smlcloudplatform/pkg/microservice/models"
@@ -79,7 +80,7 @@ func (repo WarehouseRepository) FindLocationPage(ctx context.Context, shopID str
 	}
 	criteria = append(criteria, mainQuery)
 
-	searchFilterQuery := repo.CreateTextFilter([]string{"location.code", "location.code.names.name"}, pageable.Query)
+	searchFilterQuery := search.CreateTextFilter([]string{"location.code", "location.code.names.name"}, pageable.Query)
 
 	if len(searchFilterQuery) > 0 {
 		searchQuery := bson.M{"$match": bson.M{"$or": searchFilterQuery}}
@@ -126,7 +127,7 @@ func (repo WarehouseRepository) FindShelfPage(ctx context.Context, shopID string
 	}
 	criteria = append(criteria, mainQuery)
 
-	searchFilterQuery := repo.CreateTextFilter([]string{"location.shelf.code", "location.shelf.name"}, pageable.Query)
+	searchFilterQuery := search.CreateTextFilter([]string{"location.shelf.code", "location.shelf.name"}, pageable.Query)
 
 	if len(searchFilterQuery) > 0 {
 		searchQuery := bson.M{"$match": bson.M{"$or": searchFilterQuery}}

@@ -8435,6 +8435,98 @@ const docTemplate = `{
                 }
             }
         },
+        "/member": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Member",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "description": "Member",
+                        "name": "Member",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Member"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/member/line": {
             "post": {
                 "security": [
@@ -8447,7 +8539,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Member"
+                    "MemberLine"
                 ],
                 "parameters": [
                     {
@@ -8476,6 +8568,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/member/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/member/profile": {
             "get": {
                 "security": [
@@ -8488,7 +8639,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Member"
+                    "MemberLine"
                 ],
                 "responses": {
                     "200": {
@@ -8516,9 +8667,94 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
+                    "MemberLine"
+                ],
+                "parameters": [
+                    {
+                        "description": "Member",
+                        "name": "Member",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Member"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Member",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
                     "Member"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Member Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.MemberInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Member",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Member ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Member",
                         "name": "Member",
@@ -38333,7 +38569,7 @@ const docTemplate = `{
                 "addresses": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.MemberAdress"
+                        "$ref": "#/definitions/models.MemberAddress"
                     }
                 },
                 "branchcode": {
@@ -38348,8 +38584,14 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "gender": {
+                    "type": "integer"
+                },
                 "lineuid": {
                     "type": "string"
+                },
+                "membertype": {
+                    "$ref": "#/definitions/models.MemberType"
                 },
                 "name": {
                     "type": "string"
@@ -38359,6 +38601,12 @@ const docTemplate = `{
                 },
                 "pictureurl": {
                     "type": "string"
+                },
+                "provider": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "surname": {
                     "type": "string"
@@ -38371,7 +38619,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.MemberAdress": {
+        "models.MemberAddress": {
             "type": "object",
             "properties": {
                 "build": {
@@ -38430,7 +38678,7 @@ const docTemplate = `{
                 "addresses": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.MemberAdress"
+                        "$ref": "#/definitions/models.MemberAddress"
                     }
                 },
                 "branchcode": {
@@ -38445,11 +38693,17 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "gender": {
+                    "type": "integer"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
                 "lineuid": {
                     "type": "string"
+                },
+                "membertype": {
+                    "$ref": "#/definitions/models.MemberType"
                 },
                 "name": {
                     "type": "string"
@@ -38459,6 +38713,12 @@ const docTemplate = `{
                 },
                 "pictureurl": {
                     "type": "string"
+                },
+                "provider": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "surname": {
                     "type": "string"
@@ -38481,6 +38741,17 @@ const docTemplate = `{
                     "type": "boolean"
                 }
             }
+        },
+        "models.MemberType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "MemberTypeCustomer",
+                "MemberTypeLine"
+            ]
         },
         "models.NameNormal": {
             "type": "object",

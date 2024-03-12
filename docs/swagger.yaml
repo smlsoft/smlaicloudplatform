@@ -1799,7 +1799,7 @@ definitions:
     properties:
       addresses:
         items:
-          $ref: '#/definitions/models.MemberAdress'
+          $ref: '#/definitions/models.MemberAddress'
         type: array
       branchcode:
         type: string
@@ -1809,14 +1809,22 @@ definitions:
         type: integer
       email:
         type: string
+      gender:
+        type: integer
       lineuid:
         type: string
+      membertype:
+        $ref: '#/definitions/models.MemberType'
       name:
         type: string
       personaltype:
         type: integer
       pictureurl:
         type: string
+      provider:
+        items:
+          type: string
+        type: array
       surname:
         type: string
       taxid:
@@ -1824,7 +1832,7 @@ definitions:
       telephone:
         type: string
     type: object
-  models.MemberAdress:
+  models.MemberAddress:
     properties:
       build:
         type: string
@@ -1863,7 +1871,7 @@ definitions:
     properties:
       addresses:
         items:
-          $ref: '#/definitions/models.MemberAdress'
+          $ref: '#/definitions/models.MemberAddress'
         type: array
       branchcode:
         type: string
@@ -1873,16 +1881,24 @@ definitions:
         type: integer
       email:
         type: string
+      gender:
+        type: integer
       guidfixed:
         type: string
       lineuid:
         type: string
+      membertype:
+        $ref: '#/definitions/models.MemberType'
       name:
         type: string
       personaltype:
         type: integer
       pictureurl:
         type: string
+      provider:
+        items:
+          type: string
+        type: array
       surname:
         type: string
       taxid:
@@ -1897,6 +1913,14 @@ definitions:
       success:
         type: boolean
     type: object
+  models.MemberType:
+    enum:
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - MemberTypeCustomer
+    - MemberTypeLine
   models.NameNormal:
     properties:
       code:
@@ -12815,6 +12839,116 @@ paths:
       - AccessToken: []
       tags:
       - MasterSync
+  /member:
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Member
+    post:
+      consumes:
+      - application/json
+      description: Create Member
+      parameters:
+      - description: Member
+        in: body
+        name: Member
+        required: true
+        schema:
+          $ref: '#/definitions/models.Member'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Member
+  /member/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get Member
+      parameters:
+      - description: Member Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MemberInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Member
+    put:
+      consumes:
+      - application/json
+      description: Update Member
+      parameters:
+      - description: Member ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Member
+        in: body
+        name: Member
+        required: true
+        schema:
+          $ref: '#/definitions/models.Member'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Member
   /member/line:
     post:
       consumes:
@@ -12832,6 +12966,43 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - MemberLine
+  /member/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
         "401":
           description: Unauthorized
           schema:
@@ -12857,7 +13028,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Member
+      - MemberLine
     put:
       consumes:
       - application/json
@@ -12881,7 +13052,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Member
+      - MemberLine
   /notify:
     delete:
       consumes:

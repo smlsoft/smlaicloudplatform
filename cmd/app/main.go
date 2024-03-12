@@ -314,6 +314,8 @@ func main() {
 
 		temp.NewPOSTempHttp(ms, cfg),
 		filestatus.NewFileStatusHttp(ms, cfg),
+
+		member.NewMemberHttp(ms, cfg),
 	}
 
 	azureFileBlob := microservice.NewPersisterAzureBlob()

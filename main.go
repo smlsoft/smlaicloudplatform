@@ -359,6 +359,9 @@ func main() {
 
 			temp.NewPOSTempHttp(ms, cfg),
 			filestatus.NewFileStatusHttp(ms, cfg),
+
+			// member
+			member.NewMemberHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)

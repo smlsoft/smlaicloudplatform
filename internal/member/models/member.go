@@ -9,22 +9,32 @@ import (
 const memberCollectionName = "members"
 const memberIndexName string = "members_index"
 
+type MemberType int8
+
+const (
+	MemberTypeCustomer MemberType = 0
+	MemberTypeLine     MemberType = 1
+)
+
 type Member struct {
-	PictureUrl   string         `json:"pictureurl" bson:"pictureurl"`
-	Telephone    string         `json:"telephone" bson:"telephone"`
-	Email        string         `json:"email" bson:"email"`
-	Name         string         `json:"name" bson:"name"`
-	Surname      string         `json:"surname" bson:"surname"`
-	TaxID        string         `json:"taxid" bson:"taxid"`
-	ContactType  int            `json:"contacttype" bson:"contacttype"`
-	PersonalType int            `json:"personaltype" bson:"personaltype"`
-	BranchType   int            `json:"branchtype" bson:"branchtype"`
-	BranchCode   string         `json:"branchcode" bson:"branchcode"`
-	LineUID      string         `json:"lineuid" bson:"lineuid"`
-	Addresses    []MemberAdress `json:"addresses" bson:"addresses"`
+	Gender       uint8            `json:"gender" bson:"gender"`
+	PictureUrl   string           `json:"pictureurl" bson:"pictureurl"`
+	Telephone    string           `json:"telephone" bson:"telephone"`
+	Email        string           `json:"email" bson:"email"`
+	Name         string           `json:"name" bson:"name"`
+	Surname      string           `json:"surname" bson:"surname"`
+	TaxID        string           `json:"taxid" bson:"taxid"`
+	ContactType  int              `json:"contacttype" bson:"contacttype"`
+	PersonalType int              `json:"personaltype" bson:"personaltype"`
+	BranchType   int              `json:"branchtype" bson:"branchtype"`
+	BranchCode   string           `json:"branchcode" bson:"branchcode"`
+	LineUID      string           `json:"lineuid" bson:"lineuid"`
+	Addresses    *[]MemberAddress `json:"addresses" bson:"addresses"`
+	MemberType   MemberType       `json:"membertype" bson:"membertype"`
+	Provider     *[]string        `json:"provider" bson:"provider"`
 }
 
-type MemberAdress struct {
+type MemberAddress struct {
 	Name        string `json:"name" bson:"name"`
 	Telephone   string `json:"telephone" bson:"telephone"`
 	HomeNumber  string `json:"homenumber" bson:"homenumber"`

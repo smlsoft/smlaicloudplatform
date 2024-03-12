@@ -16,18 +16,20 @@ import (
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IMemberService interface {
-	IsExistsGuid(shopID string, guidFixed string) (bool, error)
-	// Create(shopID string, username string, doc models.Member) (string, error)
-	// Update(shopID string, username string, doc models.Member) error
-	// Info(shopID string, guid string) (models.MemberInfo, error)
-
 	AuthWithLine(lineAuth models.LineAuthRequest) (string, error)
 	UpdateProfileWithLine(shopID string, lineUID string, doc models.Member) error
 	LineProfileInfo(shopID string, lineUID string) (models.MemberInfo, error)
+
+	Create(shopID string, authUsername string, doc models.Member) (string, error)
+	Update(shopID string, username string, guid string, doc models.Member) error
+	Info(shopID string, guid string) (models.MemberInfo, error)
+	SearchMemberInfo(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
+	SearchMemberStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberInfo, int, error)
 }
 
 type MemberService struct {
@@ -60,24 +62,6 @@ func (svc MemberService) getContextTimeout() (context.Context, context.CancelFun
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
-func (svc MemberService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
-
-	ctx, ctxCancel := svc.getContextTimeout()
-	defer ctxCancel()
-
-	findDoc, err := svc.repo.FindByGuid(ctx, guidFixed)
-
-	if err != nil {
-		return false, err
-	}
-
-	if findDoc.ID == primitive.NilObjectID {
-		return false, nil
-	}
-
-	return true, nil
-}
-
 func (svc MemberService) UpdateProfileWithLine(shopID string, lineUID string, doc models.Member) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
@@ -93,6 +77,10 @@ func (svc MemberService) UpdateProfileWithLine(shopID string, lineUID string, do
 		return errors.New("guid invalid")
 	}
 
+	if findDoc.MemberType != models.MemberTypeLine {
+		return errors.New("member type invalid")
+	}
+
 	dataDoc := findDoc
 
 	dataDoc.Member = doc
@@ -103,6 +91,11 @@ func (svc MemberService) UpdateProfileWithLine(shopID string, lineUID string, do
 
 	*dataDoc.Shops = append(*dataDoc.Shops, shopID)
 	*dataDoc.Shops = lo.Uniq[string](*dataDoc.Shops)
+
+	if doc.Addresses == nil {
+		dataDoc.Addresses = &[]models.MemberAddress{}
+
+	}
 
 	dataDoc.LineUID = findDoc.LineUID
 	dataDoc.UpdatedBy = lineUID
@@ -121,10 +114,11 @@ func (svc MemberService) UpdateProfileWithLine(shopID string, lineUID string, do
 
 func (svc MemberService) registerWithLine(shopID string, lineProfile models.LineProfile) (string, error) {
 
-	idx, err := svc.Create(shopID, lineProfile.UserID, models.Member{
+	idx, err := svc.create(shopID, lineProfile.UserID, models.MemberTypeLine, models.Member{
 		LineUID:    lineProfile.UserID,
 		Name:       lineProfile.DisplayName,
 		PictureUrl: lineProfile.PictureUrl,
+		Provider:   &[]string{"line"},
 	})
 
 	if err != nil {
@@ -304,7 +298,7 @@ func (svc MemberService) LineProfileInfo(shopID string, lineUID string) (models.
 	return doc.MemberInfo, nil
 }
 
-func (svc MemberService) Create(shopID string, username string, doc models.Member) (string, error) {
+func (svc MemberService) create(shopID string, authUsername string, memberType models.MemberType, doc models.Member) (string, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -313,13 +307,20 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 
 	newGuid := utils.NewGUID()
 	dataDoc.GuidFixed = newGuid
-	dataDoc.CreatedBy = username
-	dataDoc.CreatedAt = time.Now()
-
-	dataDoc.LastUpdatedAt = time.Now()
-
 	dataDoc.Member = doc
 
+	if dataDoc.Addresses == nil {
+		dataDoc.Addresses = &[]models.MemberAddress{}
+	}
+
+	if dataDoc.Provider == nil {
+		dataDoc.Provider = &[]string{}
+	}
+
+	dataDoc.MemberType = memberType
+	dataDoc.CreatedBy = authUsername
+	dataDoc.CreatedAt = time.Now()
+	dataDoc.LastUpdatedAt = time.Now()
 	dataDoc.Shops = &[]string{shopID}
 
 	_, err := svc.repo.Create(ctx, dataDoc)
@@ -331,52 +332,108 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 	return newGuid, nil
 }
 
-// func (svc MemberService) Update(shopID string, username string, doc models.Member) error {
+func (svc MemberService) Create(shopID string, authUsername string, doc models.Member) (string, error) {
 
-// 	ctx, ctxCancel := svc.getContextTimeout()
-// 	defer ctxCancel()
+	doc.LineUID = ""
+	idx, err := svc.create(shopID, authUsername, models.MemberTypeCustomer, doc)
 
-// 	findDoc, err := svc.repo.FindByGuid(ctx, guid)
+	if err != nil {
+		return "", err
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	return idx, nil
+}
 
-// 	if findDoc.ID == primitive.NilObjectID {
-// 		return errors.New("guid invalid")
-// 	}
+func (svc MemberService) Update(shopID string, username string, guid string, doc models.Member) error {
 
-// 	dataDoc := findDoc
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
-// 	dataDoc.Member = doc
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
-// 	dataDoc.LineUID = findDoc.LineUID
-// 	dataDoc.UpdatedBy = username
-// 	dataDoc.UpdatedAt = time.Now()
-// 	dataDoc.LastUpdatedAt = time.Now()
+	if err != nil {
+		return err
+	}
 
-// 	*dataDoc.Shops = append(*dataDoc.Shops, shopID)
-// 	*dataDoc.Shops = lo.Uniq[string](*dataDoc.Shops)
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("guid invalid")
+	}
 
-// 	err = svc.repo.Update(ctx, guid, dataDoc)
+	if findDoc.MemberType != models.MemberTypeCustomer {
+		return errors.New("member type invalid")
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	dataDoc := findDoc
 
-// 	return nil
-// }
+	dataDoc.Member = doc
 
-// func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, error) {
+	dataDoc.LineUID = findDoc.LineUID
+	dataDoc.UpdatedBy = username
+	dataDoc.UpdatedAt = time.Now()
+	dataDoc.LastUpdatedAt = time.Now()
 
-// 	ctx, ctxCancel := svc.getContextTimeout()
-// 	defer ctxCancel()
+	*dataDoc.Shops = append(*dataDoc.Shops, shopID)
+	*dataDoc.Shops = lo.Uniq[string](*dataDoc.Shops)
 
-// 	doc, err := svc.repo.FindByGuid(ctx, guid)
+	err = svc.repo.Update(ctx, guid, dataDoc)
 
-// 	if err != nil {
-// 		return models.MemberInfo{}, err
-// 	}
+	if err != nil {
+		return err
+	}
 
-// 	return doc.MemberInfo, nil
-// }
+	return nil
+}
+
+func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	doc, err := svc.repo.FindByGuid(ctx, shopID, guid)
+
+	if err != nil {
+		return models.MemberInfo{}, err
+	}
+
+	return doc.MemberInfo, nil
+}
+
+func (svc MemberService) SearchMemberInfo(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	searchInFields := []string{
+		"name",
+		"surname",
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, searchInFields, pageable)
+
+	if err != nil {
+		return []models.MemberInfo{}, pagination, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (svc MemberService) SearchMemberStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	searchInFields := []string{
+		"name",
+		"surname",
+	}
+
+	selectFields := map[string]interface{}{}
+
+	docList, total, err := svc.repo.FindStep(ctx, shopID, searchInFields, selectFields, pageableStep)
+
+	if err != nil {
+		return []models.MemberInfo{}, 0, err
+	}
+
+	return docList, total, nil
+}

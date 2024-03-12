@@ -3,14 +3,13 @@ package repositories
 import (
 	"context"
 	"smlcloudplatform/internal/utils/mogoutil"
+	"smlcloudplatform/internal/utils/search"
 	"smlcloudplatform/pkg/microservice"
 	"smlcloudplatform/pkg/microservice/models"
-	"strings"
 
 	"github.com/userplant/mongopagination"
 	m "github.com/veer66/mapkha"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -31,7 +30,7 @@ func (repo SearchRepository[T]) Find(ctx context.Context, shopID string, searchI
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	searchFilterQuery := repo.CreateTextFilter(searchInFields, q)
+	searchFilterQuery := search.CreateTextFilter(searchInFields, q)
 
 	if len(searchFilterQuery) > 0 {
 		if filterQuery["$or"] == nil {
@@ -68,7 +67,7 @@ func (repo SearchRepository[T]) FindStep(ctx context.Context, shopID string, fil
 		filterQuery["$and"] = matchFilterList
 	}
 
-	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageableStep.Query)
+	searchFilterQuery := search.CreateTextFilter(searchInFields, pageableStep.Query)
 
 	if len(searchFilterQuery) > 0 {
 		if filterQuery["$or"] == nil {
@@ -124,7 +123,7 @@ func (repo SearchRepository[T]) FindPage(ctx context.Context, shopID string, sea
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageable.Query)
+	searchFilterQuery := search.CreateTextFilter(searchInFields, pageable.Query)
 
 	if len(searchFilterQuery) > 0 {
 		if filterQuery["$or"] == nil {
@@ -156,7 +155,7 @@ func (repo SearchRepository[T]) FindPageFilter(ctx context.Context, shopID strin
 		matchFilterList = append(matchFilterList, bson.M{key: value})
 	}
 
-	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageable.Query)
+	searchFilterQuery := search.CreateTextFilter(searchInFields, pageable.Query)
 
 	// matchFilterList = append(matchFilterList, searchFilterQuery...)
 
@@ -231,55 +230,4 @@ func (repo SearchRepository[T]) getTokenizer() (*m.Wordcut, error) {
 	}
 
 	return wordCut, nil
-}
-
-func (repo SearchRepository[T]) CreateTextFilter(searchFields []string, query string) []interface{} {
-	searchTerms := repo.extractSearchTerms(query)
-	fieldFilters := repo.generateFieldFilters(searchFields, searchTerms)
-
-	return fieldFilters
-}
-
-func (repo SearchRepository[T]) extractSearchTerms(query string) []string {
-	trimmedQuery := strings.Trim(query, " ")
-	splitBySpace := strings.Split(trimmedQuery, " ")
-
-	searchTerms := []string{}
-	tokenizer, err := repo.getTokenizer()
-
-	if err != nil {
-		return searchTerms
-	}
-
-	for _, term := range splitBySpace {
-		if len(term) > 0 {
-			searchTerms = append(searchTerms, tokenizer.Segment(term)...)
-		}
-	}
-
-	return searchTerms
-}
-
-func (repo SearchRepository[T]) generateFieldFilters(searchFields []string, searchTerms []string) []interface{} {
-	fieldFilters := []interface{}{}
-
-	for _, field := range searchFields {
-		termFilters := []interface{}{}
-
-		for _, searchTerm := range searchTerms {
-			termFilters = append(termFilters, bson.M{
-				field: primitive.Regex{
-					Pattern: searchTerm,
-					Options: "i",
-				},
-			})
-		}
-
-		if len(termFilters) > 0 {
-			fieldFilters = append(fieldFilters, bson.M{"$and": termFilters})
-		}
-
-	}
-
-	return fieldFilters
 }
