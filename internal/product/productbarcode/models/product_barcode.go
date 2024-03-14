@@ -66,7 +66,7 @@ type ProductBarcodeBase struct {
 	AlertDescription          string              `json:"alertdescription" bson:"alertdescription" validate:"max=1500"`
 	Description               string              `json:"description" bson:"description" validate:"max=1500"`
 	IsExceptVat               bool                `json:"isexceptvat" bson:"isexceptvat"`                 // ยกเว้นภาษี
-	PriceExcludeVatType       int8                `json:"priceexcludevattype" bson:"priceexcludevattype"` // ราคาไม่รวมภาษี, ราคารวมภาษี
+	PriceExcludeVatType       bool                `json:"priceexcludevattype" bson:"priceexcludevattype"` // ราคาไม่รวมภาษี, ราคารวมภาษี
 }
 
 type ProductRestaurant struct {
