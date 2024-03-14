@@ -40147,10 +40147,6 @@ const docTemplate = `{
                 "isdividend": {
                     "type": "boolean"
                 },
-                "isexceptvat": {
-                    "description": "ยกเว้นภาษี",
-                    "type": "boolean"
-                },
                 "isonlystaff": {
                     "type": "boolean"
                 },
@@ -40218,10 +40214,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.ProductOrderType"
                     }
-                },
-                "priceexcludevattype": {
-                    "description": "ราคาไม่รวมภาษี, ราคารวมภาษี",
-                    "type": "boolean"
                 },
                 "prices": {
                     "type": "array",
@@ -46427,10 +46419,6 @@ const docTemplate = `{
                 "isdividend": {
                     "type": "boolean"
                 },
-                "isexceptvat": {
-                    "description": "ยกเว้นภาษี",
-                    "type": "boolean"
-                },
                 "isonlystaff": {
                     "type": "boolean"
                 },
@@ -46498,10 +46486,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.ProductOrderType"
                     }
-                },
-                "priceexcludevattype": {
-                    "description": "ราคาไม่รวมภาษี, ราคารวมภาษี",
-                    "type": "boolean"
                 },
                 "prices": {
                     "type": "array",
