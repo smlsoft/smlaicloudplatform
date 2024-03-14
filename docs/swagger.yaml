@@ -2700,9 +2700,6 @@ definitions:
         type: boolean
       isdividend:
         type: boolean
-      isexceptvat:
-        description: ยกเว้นภาษี
-        type: boolean
       isonlystaff:
         type: boolean
       issplitunitprint:
@@ -2749,9 +2746,6 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductOrderType'
         type: array
-      priceexcludevattype:
-        description: ราคาไม่รวมภาษี, ราคารวมภาษี
-        type: boolean
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'
@@ -6916,9 +6910,6 @@ definitions:
         type: boolean
       isdividend:
         type: boolean
-      isexceptvat:
-        description: ยกเว้นภาษี
-        type: boolean
       isonlystaff:
         type: boolean
       issplitunitprint:
@@ -6965,9 +6956,6 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductOrderType'
         type: array
-      priceexcludevattype:
-        description: ราคาไม่รวมภาษี, ราคารวมภาษี
-        type: boolean
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'
