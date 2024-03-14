@@ -137,6 +137,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 	if mongodbUri != "" {
 		ms.Logger.Debug("[MONGODB]Test Connection.")
 		pst := NewPersisterMongo(ms.config.MongoPersisterConfig())
+		ms.Logger.Debug("connect : ", mongodbUri)
 		err := pst.TestConnect(context.Background())
 		if err != nil {
 			ms.Logger.Errorf("[MONGODB]Connection Failed(%v)., with error %v", mongodbUri, err)
