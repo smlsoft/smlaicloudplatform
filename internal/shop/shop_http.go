@@ -146,9 +146,9 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 	err = h.initialShop(shopID, authUsername, *shopPayload)
 
 	if err != nil {
-		err = h.service.DeleteShop(shopID, authUsername)
+		err2 := h.service.DeleteShop(shopID, authUsername)
 
-		if err != nil {
+		if err2 != nil {
 			logger.GetLogger().Error("HTTP:: Error Rollback Shop " + err.Error())
 		}
 

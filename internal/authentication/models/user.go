@@ -28,7 +28,7 @@ type DedeZoom struct {
 }
 
 type UsernameField struct {
-	Username string `json:"username,omitempty" bson:"username" validate:"required,alphanum,gte=3,max=233"`
+	Username string `json:"username,omitempty" bson:"username" validate:"required,gte=3,max=233"` // validate:"required,alphanum,gte=3,max=233"
 }
 
 type PhoneNumberField struct {
