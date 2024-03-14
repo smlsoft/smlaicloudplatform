@@ -2751,7 +2751,7 @@ definitions:
         type: array
       priceexcludevattype:
         description: ราคาไม่รวมภาษี, ราคารวมภาษี
-        type: integer
+        type: boolean
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'
@@ -6967,7 +6967,7 @@ definitions:
         type: array
       priceexcludevattype:
         description: ราคาไม่รวมภาษี, ราคารวมภาษี
-        type: integer
+        type: boolean
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'

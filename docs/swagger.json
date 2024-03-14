@@ -39454,7 +39454,7 @@
                 },
                 "priceexcludevattype": {
                     "description": "ราคาไม่รวมภาษี, ราคารวมภาษี",
-                    "type": "integer"
+                    "type": "boolean"
                 },
                 "prices": {
                     "type": "array",
@@ -45731,7 +45731,7 @@
                 },
                 "priceexcludevattype": {
                     "description": "ราคาไม่รวมภาษี, ราคารวมภาษี",
-                    "type": "integer"
+                    "type": "boolean"
                 },
                 "prices": {
                     "type": "array",

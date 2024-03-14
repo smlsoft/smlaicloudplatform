@@ -39459,7 +39459,7 @@ const docTemplate = `{
                 },
                 "priceexcludevattype": {
                     "description": "ราคาไม่รวมภาษี, ราคารวมภาษี",
-                    "type": "integer"
+                    "type": "boolean"
                 },
                 "prices": {
                     "type": "array",
@@ -45736,7 +45736,7 @@ const docTemplate = `{
                 },
                 "priceexcludevattype": {
                     "description": "ราคาไม่รวมภาษี, ราคารวมภาษี",
-                    "type": "integer"
+                    "type": "boolean"
                 },
                 "prices": {
                     "type": "array",
