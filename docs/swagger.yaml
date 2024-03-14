@@ -2643,6 +2643,9 @@ definitions:
     type: object
   models.ProductBarcodeRequest:
     properties:
+      alertdescription:
+        maxLength: 1500
+        type: string
       barcode:
         minLength: 1
         type: string
@@ -2660,6 +2663,9 @@ definitions:
         type: string
       condition:
         type: boolean
+      description:
+        maxLength: 1500
+        type: string
       dimensions:
         items:
           $ref: '#/definitions/models.ProductDimension'
@@ -2688,9 +2694,14 @@ definitions:
         type: string
       isalacarte:
         type: boolean
+      isalert:
+        type: boolean
       isdiscountpointofpurchase:
         type: boolean
       isdividend:
+        type: boolean
+      isexceptvat:
+        description: ยกเว้นภาษี
         type: boolean
       isonlystaff:
         type: boolean
@@ -2738,6 +2749,9 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductOrderType'
         type: array
+      priceexcludevattype:
+        description: ราคาไม่รวมภาษี, ราคารวมภาษี
+        type: integer
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'
@@ -6845,6 +6859,9 @@ definitions:
     type: object
   smlcloudplatform_internal_product_productbarcode_models.ProductBarcode:
     properties:
+      alertdescription:
+        maxLength: 1500
+        type: string
       barcode:
         minLength: 1
         type: string
@@ -6862,6 +6879,9 @@ definitions:
         type: string
       condition:
         type: boolean
+      description:
+        maxLength: 1500
+        type: string
       dimensions:
         items:
           $ref: '#/definitions/models.ProductDimension'
@@ -6890,9 +6910,14 @@ definitions:
         type: string
       isalacarte:
         type: boolean
+      isalert:
+        type: boolean
       isdiscountpointofpurchase:
         type: boolean
       isdividend:
+        type: boolean
+      isexceptvat:
+        description: ยกเว้นภาษี
         type: boolean
       isonlystaff:
         type: boolean
@@ -6940,6 +6965,9 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductOrderType'
         type: array
+      priceexcludevattype:
+        description: ราคาไม่รวมภาษี, ราคารวมภาษี
+        type: integer
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'
@@ -16035,6 +16063,65 @@ paths:
       - AccessToken: []
       tags:
       - Shift
+  /pos/temp:
+    delete:
+      consumes:
+      - application/json
+      description: Delete POSTemp
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - POSTemp
+    get:
+      consumes:
+      - application/json
+      description: Get POSTemp
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - POSTemp
+    post:
+      consumes:
+      - application/json
+      description: Create POSTemp
+      parameters:
+      - description: pos temp data
+        in: body
+        name: POSTemp
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - POSTemp
   /product-section/branch:
     delete:
       consumes:
