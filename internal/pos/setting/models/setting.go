@@ -41,6 +41,7 @@ type Setting struct {
 	PaymentType              int8                              `json:"paymenttype" bson:"paymenttype"`   // ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
 	IsPOSActive              bool                              `json:"isposactive" bson:"isposactive"`   // ใช้งาน POS
 	SaleChanels              *[]salechannel_models.SaleChannel `json:"salechanels" bson:"salechanels"`
+	ServiceCharge            float64                           `json:"servicecharge" bson:"servicecharge"` // ค่าบริการ
 
 	// ภาษี
 	IsVatRegister bool    `json:"isvatregister" bson:"isvatregister"` // จดทะเบียนภาษี

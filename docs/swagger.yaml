@@ -4634,6 +4634,9 @@ definitions:
         items:
           $ref: '#/definitions/models.SaleChannel'
         type: array
+      servicecharge:
+        description: ค่าบริการ
+        type: number
       slips:
         items:
           $ref: '#/definitions/models.PosSettingSlip'
@@ -6501,6 +6504,7 @@ definitions:
   models.UsernameField:
     properties:
       username:
+        description: validate:"required,alphanum,gte=3,max=233"
         maxLength: 233
         minLength: 3
         type: string
@@ -6718,6 +6722,7 @@ definitions:
       shopid:
         type: string
       username:
+        description: validate:"required,alphanum,gte=3,max=233"
         maxLength: 233
         minLength: 3
         type: string
@@ -6742,6 +6747,7 @@ definitions:
       uid:
         type: string
       username:
+        description: validate:"required,alphanum,gte=3,max=233"
         maxLength: 233
         minLength: 3
         type: string

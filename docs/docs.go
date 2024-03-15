@@ -42770,6 +42770,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.SaleChannel"
                     }
                 },
+                "servicecharge": {
+                    "description": "ค่าบริการ",
+                    "type": "number"
+                },
                 "slips": {
                     "type": "array",
                     "items": {
@@ -45558,6 +45562,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "username": {
+                    "description": "validate:\"required,alphanum,gte=3,max=233\"",
                     "type": "string",
                     "maxLength": 233,
                     "minLength": 3
@@ -45881,6 +45886,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "description": "validate:\"required,alphanum,gte=3,max=233\"",
                     "type": "string",
                     "maxLength": 233,
                     "minLength": 3
@@ -45915,6 +45921,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "description": "validate:\"required,alphanum,gte=3,max=233\"",
                     "type": "string",
                     "maxLength": 233,
                     "minLength": 3
