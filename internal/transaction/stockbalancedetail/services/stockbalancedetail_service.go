@@ -42,7 +42,7 @@ type StockBalanceDetailService struct {
 	repoMq             repositories.IStockBalanceDetailMessageQueueRepository
 	repo               repositories.IStockBalanceDetailRepository
 	repoCache          trancache.ICacheRepository
-	productbarcodeRepo productbarcode_repositories.IProductBarcodeRepository
+	productBarcodeRepo productbarcode_repositories.IProductBarcodeRepository
 	cacheExpireDocNo   time.Duration
 	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockBalanceDetailActivity, models.StockBalanceDetailDeleteActivity]
@@ -62,12 +62,14 @@ func NewStockBalanceDetailService(
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &StockBalanceDetailService{
-		repoMq:           repoMq,
-		repo:             repo,
-		repoCache:        repoCache,
-		syncCacheRepo:    syncCacheRepo,
-		cacheExpireDocNo: time.Hour * 24,
-		contextTimeout:   contextTimeout,
+		repoMq:             repoMq,
+		repo:               repo,
+		productBarcodeRepo: productBarcodeRepo,
+		parser:             parser,
+		repoCache:          repoCache,
+		syncCacheRepo:      syncCacheRepo,
+		cacheExpireDocNo:   time.Hour * 24,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockBalanceDetailActivity, models.StockBalanceDetailDeleteActivity](repo)
@@ -122,7 +124,7 @@ func (svc StockBalanceDetailService) CreateStockBalanceDetail(shopID string, aut
 }
 
 func (svc StockBalanceDetailService) GetDetailProductBarcode(ctx context.Context, shopID string, barcode string) (productbarcode_models.ProductBarcodeInfo, error) {
-	results, err := svc.productbarcodeRepo.FindByBarcodes(ctx, shopID, []string{barcode})
+	results, err := svc.productBarcodeRepo.FindByBarcodes(ctx, shopID, []string{barcode})
 
 	if err != nil {
 		return productbarcode_models.ProductBarcodeInfo{}, err
