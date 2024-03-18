@@ -35,24 +35,27 @@ type Member struct {
 }
 
 type MemberAddress struct {
-	Name        string `json:"name" bson:"name"`
-	Telephone   string `json:"telephone" bson:"telephone"`
-	HomeNumber  string `json:"homenumber" bson:"homenumber"`
-	Build       string `json:"build" bson:"build"`
-	Floor       string `json:"floor" bson:"floor"`
-	Village     string `json:"village" bson:"village"`
-	Soi         string `json:"soi" bson:"soi"`
-	VillageNo   string `json:"villageno" bson:"villageno"`
-	Road        string `json:"road" bson:"road"`
-	Route       string `json:"route" bson:"route"`
-	Province    string `json:"province" bson:"province"`
-	District    string `json:"district" bson:"district"`
-	Subdistrict string `json:"subdistrict" bson:"subdistrict"`
-	Postcode    string `json:"postcode" bson:"postcode"`
-	Remark      string `json:"remark" bson:"remark"`
-	IsMain      bool   `json:"ismain" bson:"ismain"`
-	Latitude    string `json:"latitude" bson:"latitude"`
-	Longitude   string `json:"longitude" bson:"longitude"`
+	Name                  string  `json:"name" bson:"name"`
+	Telephone             string  `json:"telephone" bson:"telephone"`
+	HomeNumber            string  `json:"homenumber" bson:"homenumber"`
+	Build                 string  `json:"build" bson:"build"`
+	Floor                 string  `json:"floor" bson:"floor"`
+	Village               string  `json:"village" bson:"village"`
+	Soi                   string  `json:"soi" bson:"soi"`
+	VillageNo             string  `json:"villageno" bson:"villageno"`
+	Road                  string  `json:"road" bson:"road"`
+	Route                 string  `json:"route" bson:"route"`
+	Province              string  `json:"province" bson:"province"`
+	District              string  `json:"district" bson:"district"`
+	Subdistrict           string  `json:"subdistrict" bson:"subdistrict"`
+	Postcode              string  `json:"postcode" bson:"postcode"`
+	Remark                string  `json:"remark" bson:"remark"`
+	IsMain                bool    `json:"ismain" bson:"ismain"`
+	Latitude              string  `json:"latitude" bson:"latitude"`
+	Longitude             string  `json:"longitude" bson:"longitude"`
+	LalaMovePrice         float64 `json:"lalamoveprice" bson:"lalamoveprice"`
+	Distance              float64 `json:"distance" bson:"distance"`
+	EstimatedDeliveryTime string  `json:"estimateddeliverytime" bson:"estimateddeliverytime"`
 }
 
 type MemberInfo struct {
