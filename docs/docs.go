@@ -38637,6 +38637,12 @@ const docTemplate = `{
                 "ismain": {
                     "type": "boolean"
                 },
+                "latitude": {
+                    "type": "string"
+                },
+                "longitude": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },

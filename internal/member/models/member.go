@@ -51,6 +51,8 @@ type MemberAddress struct {
 	Postcode    string `json:"postcode" bson:"postcode"`
 	Remark      string `json:"remark" bson:"remark"`
 	IsMain      bool   `json:"ismain" bson:"ismain"`
+	Latitude    string `json:"latitude" bson:"latitude"`
+	Longitude   string `json:"longitude" bson:"longitude"`
 }
 
 type MemberInfo struct {
