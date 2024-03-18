@@ -97,6 +97,7 @@ func (svc MemberService) UpdateProfileWithLine(shopID string, lineUID string, do
 
 	}
 
+	dataDoc.MemberType = findDoc.MemberType
 	dataDoc.LineUID = findDoc.LineUID
 	dataDoc.UpdatedBy = lineUID
 	dataDoc.UpdatedAt = time.Now()
@@ -367,6 +368,7 @@ func (svc MemberService) Update(shopID string, username string, guid string, doc
 
 	dataDoc.Member = doc
 
+	dataDoc.MemberType = findDoc.MemberType
 	dataDoc.LineUID = findDoc.LineUID
 	dataDoc.UpdatedBy = username
 	dataDoc.UpdatedAt = time.Now()
