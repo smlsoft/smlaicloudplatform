@@ -1836,7 +1836,13 @@ definitions:
     properties:
       build:
         type: string
+      distance:
+        type: number
+      distanceimage:
+        type: string
       district:
+        type: string
+      estimateddeliverytime:
         type: string
       floor:
         type: string
@@ -1844,6 +1850,8 @@ definitions:
         type: string
       ismain:
         type: boolean
+      lalamoveprice:
+        type: number
       latitude:
         type: string
       longitude:

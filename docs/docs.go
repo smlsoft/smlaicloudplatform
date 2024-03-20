@@ -38625,7 +38625,16 @@ const docTemplate = `{
                 "build": {
                     "type": "string"
                 },
+                "distance": {
+                    "type": "number"
+                },
+                "distanceimage": {
+                    "type": "string"
+                },
                 "district": {
+                    "type": "string"
+                },
+                "estimateddeliverytime": {
                     "type": "string"
                 },
                 "floor": {
@@ -38636,6 +38645,9 @@ const docTemplate = `{
                 },
                 "ismain": {
                     "type": "boolean"
+                },
+                "lalamoveprice": {
+                    "type": "number"
                 },
                 "latitude": {
                     "type": "string"

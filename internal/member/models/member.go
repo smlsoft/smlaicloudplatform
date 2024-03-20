@@ -56,6 +56,7 @@ type MemberAddress struct {
 	LalaMovePrice         float64 `json:"lalamoveprice" bson:"lalamoveprice"`
 	Distance              float64 `json:"distance" bson:"distance"`
 	EstimatedDeliveryTime string  `json:"estimateddeliverytime" bson:"estimateddeliverytime"`
+	DistanceImage         string  `json:"distanceimage" bson:"distanceimage"`
 }
 
 type MemberInfo struct {
