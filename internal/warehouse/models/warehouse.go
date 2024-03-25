@@ -1,9 +1,16 @@
 package models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"smlcloudplatform/internal/models"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const warehouseCollectionName = "warehouse"
@@ -115,4 +122,55 @@ type WarehouseDeleteActivity struct {
 
 func (WarehouseDeleteActivity) CollectionName() string {
 	return warehouseCollectionName
+}
+
+type WarehouseMessageQueue struct {
+	models.ShopIdentity `bson:"inline"`
+	models.DocIdentity  `bson:"inline"`
+	Warehouse           `bson:"inline"`
+}
+
+type WarehousePG struct {
+	models.ShopIdentity `gorm:"embedded;"`
+	GuidFixed           string       `json:"guidfixed" gorm:"column:guidfixed;primaryKey"`
+	Code                string       `json:"code" gorm:"column:code"`
+	Names               models.JSONB `json:"names" gorm:"column:names;type:jsonb"`
+	Location            LocationsPG  `json:"location" gorm:"column:location;type:jsonb"`
+}
+
+func (WarehousePG) TableName() string {
+	return "warehouse"
+}
+
+func (jd *WarehousePG) BeforeCreate(tx *gorm.DB) error {
+
+	tx.Statement.AddClause(clause.OnConflict{
+		UpdateAll: true,
+	})
+	return nil
+}
+
+func (s *WarehousePG) CompareTo(other *WarehousePG) bool {
+
+	diff := cmp.Diff(s, other,
+		cmpopts.IgnoreFields(WarehousePG{}, "guidfixed"),
+	)
+
+	return diff == ""
+}
+
+type LocationsPG []Location
+
+func (a LocationsPG) Value() (driver.Value, error) {
+
+	j, err := json.Marshal(a)
+	return j, err
+}
+
+func (a *LocationsPG) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(b, &a)
 }

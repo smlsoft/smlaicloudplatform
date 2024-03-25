@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"smlcloudplatform/internal/logger"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/services"
@@ -48,19 +49,21 @@ type IWarehouseHttpService interface {
 }
 
 type WarehouseHttpService struct {
-	repo repositories.IWarehouseRepository
+	repo   repositories.IWarehouseRepository
+	repoMq repositories.IWarehouseMessageQueueRepository
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.WarehouseActivity, models.WarehouseDeleteActivity]
 	contextTimeout time.Duration
 }
 
-func NewWarehouseHttpService(repo repositories.IWarehouseRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *WarehouseHttpService {
+func NewWarehouseHttpService(repo repositories.IWarehouseRepository, repoMq repositories.IWarehouseMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *WarehouseHttpService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &WarehouseHttpService{
 		repo:           repo,
+		repoMq:         repoMq,
 		syncCacheRepo:  syncCacheRepo,
 		contextTimeout: contextTimeout,
 	}
@@ -86,7 +89,7 @@ func (svc WarehouseHttpService) CreateWarehouse(shopID string, authUsername stri
 	}
 
 	if findDoc.Code != "" {
-		return "", errors.New("Code is exists")
+		return "", errors.New("code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -105,7 +108,14 @@ func (svc WarehouseHttpService) CreateWarehouse(shopID string, authUsername stri
 		return "", err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		err = svc.repoMq.Create(docData)
+
+		if err != nil {
+			logger.GetLogger().Errorf("Error create warehouse message queue : %v", err)
+		}
+	}()
 
 	return newGuidFixed, nil
 }
@@ -125,18 +135,23 @@ func (svc WarehouseHttpService) UpdateWarehouse(shopID string, guid string, auth
 		return errors.New("document not found")
 	}
 
-	findDoc.Warehouse = doc
+	dataDoc := findDoc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	dataDoc.Warehouse = doc
 
-	err = svc.repo.Update(ctx, shopID, guid, findDoc)
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		svc.repoMq.Update(dataDoc)
+	}()
 
 	return nil
 }
@@ -156,7 +171,7 @@ func (svc WarehouseHttpService) CreateLocation(shopID, authUsername, warehouseCo
 		return errors.New("document not found")
 	}
 
-	locations := findDoc.Warehouse.Location
+	locations := findDoc.Location
 
 	for _, location := range *locations {
 		if location.Code == doc.Code {
@@ -164,22 +179,27 @@ func (svc WarehouseHttpService) CreateLocation(shopID, authUsername, warehouseCo
 		}
 	}
 
-	*findDoc.Location = append(*findDoc.Location, models.Location{
+	dataDoc := findDoc
+
+	*dataDoc.Location = append(*dataDoc.Location, models.Location{
 		Code:  doc.Code,
 		Names: doc.Names,
 		Shelf: &doc.Shelf,
 	})
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
+	err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		svc.repoMq.Update(dataDoc)
+	}()
 
 	return nil
 }
@@ -311,7 +331,11 @@ func (svc WarehouseHttpService) UpdateLocation(shopID, authUsername, warehouseCo
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		svc.repoMq.Update(updateDoc)
+		svc.repoMq.Update(removeDoc)
+	}()
 
 	return nil
 }
@@ -354,9 +378,10 @@ func (svc WarehouseHttpService) DeleteLocationByCodes(shopID, authUsername, ware
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
+	go func() {
+		svc.saveMasterSync(shopID)
+		svc.repoMq.Update(removeDoc)
+	}()
 
 	return nil
 }
@@ -376,7 +401,8 @@ func (svc WarehouseHttpService) CreateShelf(shopID, authUsername, warehouseCode,
 		return errors.New("document not found")
 	}
 
-	locations := findDoc.Warehouse.Location
+	dataDoc := findDoc
+	locations := findDoc.Location
 
 	for indexLocation, location := range *locations {
 
@@ -389,7 +415,7 @@ func (svc WarehouseHttpService) CreateShelf(shopID, authUsername, warehouseCode,
 				}
 			}
 
-			tempLocation := (*findDoc.Location)[indexLocation]
+			tempLocation := (*dataDoc.Location)[indexLocation]
 			tempShelf := *tempLocation.Shelf
 
 			tempShelf = append(tempShelf, models.Shelf{
@@ -397,7 +423,7 @@ func (svc WarehouseHttpService) CreateShelf(shopID, authUsername, warehouseCode,
 				Name: doc.Name,
 			})
 
-			(*findDoc.Location)[indexLocation].Shelf = &tempShelf
+			(*dataDoc.Location)[indexLocation].Shelf = &tempShelf
 
 			break
 		}
@@ -578,9 +604,10 @@ func (svc WarehouseHttpService) DeleteShelfByCodes(shopID, authUsername, warehou
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
+	go func() {
+		svc.saveMasterSync(shopID)
+		svc.repoMq.Update(removeDoc)
+	}()
 
 	return nil
 }
@@ -605,7 +632,10 @@ func (svc WarehouseHttpService) DeleteWarehouse(shopID string, guid string, auth
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		svc.repoMq.Delete(findDoc)
+	}()
 
 	return nil
 }
@@ -623,6 +653,10 @@ func (svc WarehouseHttpService) DeleteWarehouseByGUIDs(shopID string, authUserna
 	if err != nil {
 		return err
 	}
+
+	go func() {
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }

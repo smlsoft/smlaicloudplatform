@@ -145,7 +145,7 @@ func TestUpdateLocation(t *testing.T) {
 
 	t.Run("successfully update location within the same warehouse", func(t *testing.T) {
 		mockRepo := new(MockWarehouseRepository)
-		svc := services.NewWarehouseHttpService(mockRepo, nil)
+		svc := services.NewWarehouseHttpService(mockRepo, nil, nil)
 
 		mockRepo.On("FindWarehouseByLocation", shopID, warehouseCode, locationCode).Return(warehouseDoc, nil)
 		mockRepo.On("Update", shopID, warehouseDoc.GuidFixed, mock.Anything).Return(nil)
@@ -164,7 +164,7 @@ func TestUpdateLocation(t *testing.T) {
 
 	t.Run("successfully move location to a different warehouse", func(t *testing.T) {
 		mockRepo := new(MockWarehouseRepository)
-		svc := services.NewWarehouseHttpService(mockRepo, nil)
+		svc := services.NewWarehouseHttpService(mockRepo, nil, nil)
 
 		targetWarehouseDoc := models.WarehouseDoc{}
 
@@ -192,7 +192,7 @@ func TestUpdateLocation(t *testing.T) {
 
 	t.Run("error when location not found", func(t *testing.T) {
 		mockRepo := new(MockWarehouseRepository)
-		svc := services.NewWarehouseHttpService(mockRepo, nil)
+		svc := services.NewWarehouseHttpService(mockRepo, nil, nil)
 
 		mockRepo.On("FindWarehouseByLocation", shopID, warehouseCode, locationCode).Return(models.WarehouseDoc{}, nil)
 

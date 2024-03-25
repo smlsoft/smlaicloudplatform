@@ -391,6 +391,7 @@ func main() {
 		stocktranferproduct_consumer.MigrationDatabase(ms, cfg)
 		creditorpayment_consumer.MigrationDatabase(ms, cfg)
 		debtorpayment_consumer.MigrationDatabase(ms, cfg)
+		warehouse.MigrationDatabase(ms, cfg)
 
 		return
 	}
@@ -415,6 +416,7 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
+		// Transaction
 		ms.RegisterConsumer(pay_consumer.InitPayTransactionConsumer(ms, cfg))
 		ms.RegisterConsumer(paid_consumer.InitPaidTransactionConsumer(ms, cfg))
 		ms.RegisterConsumer(stockprocess.NewStockProcessConsumer(ms, cfg))
@@ -429,6 +431,9 @@ func main() {
 		ms.RegisterConsumer(stocktranferproduct_consumer.InitStockTransferTransactionConsumer(ms, cfg))
 		ms.RegisterConsumer(creditorpayment_consumer.InitCreditorPaymentTransactionConsumer(ms, cfg))
 		ms.RegisterConsumer(debtorpayment_consumer.InitDebtorPaymentTransactionConsumer(ms, cfg))
+
+		// Warehouse
+		ms.RegisterConsumer(warehouse.InitWarehouseConsumer(ms, cfg))
 
 		consumerServices := []ConsumerRegister{
 			task.NewTaskConsumer(ms, cfg),

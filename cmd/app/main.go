@@ -325,7 +325,9 @@ func main() {
 
 	serviceStartHttp(ms, httpServices...)
 
-	journal.MigrationJournalTable(ms, cfg)
+	// journal.MigrationJournalTable(ms, cfg)
+
+	warehouse.MigrationDatabase(ms, cfg)
 
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)
@@ -338,13 +340,15 @@ func main() {
 	// purchase_consumer.MigrationDatabase(ms, cfg)
 	// saleinvoice_consumer.MigrationDatabase(ms, cfg)
 
-	productbarcode.MigrationDatabase(ms, cfg)
+	// productbarcode.MigrationDatabase(ms, cfg)
 
 	ms.RegisterConsumer(purchase_consumer.InitPurchaseTransactionConsumer(ms, cfg))
 
 	ms.RegisterConsumer(saleinvoice_consumer.InitSaleInvoiceTransactionConsumer(ms, cfg))
 
 	ms.RegisterConsumer(journal.InitJournalTransactionConsumer(ms, cfg))
+
+	ms.RegisterConsumer(warehouse.InitWarehouseConsumer(ms, cfg))
 
 	consumeServices := []ConsumerRegister{}
 

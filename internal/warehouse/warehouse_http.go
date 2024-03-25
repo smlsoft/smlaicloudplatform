@@ -24,11 +24,13 @@ type WarehouseHttp struct {
 func NewWarehouseHttp(ms *microservice.Microservice, cfg config.IConfig) WarehouseHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
+	repoMq := repositories.NewWarehouseMessageQueueRepository(producer)
 	repo := repositories.NewWarehouseRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewWarehouseHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewWarehouseHttpService(repo, repoMq, masterSyncCacheRepo)
 
 	return WarehouseHttp{
 		ms:  ms,
