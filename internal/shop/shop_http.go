@@ -50,6 +50,8 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopRepository(pst)
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
+
 	shopUserRepo := NewShopUserRepository(pst)
 	service := NewShopService(repo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 
@@ -66,7 +68,8 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 	serviceBusinessType := businesstype_services.NewBusinessTypeHttpService(repoBusinessType, masterSyncCacheRepo)
 
 	repoWarehouse := warehouse_repositories.NewWarehouseRepository(pst)
-	svcWarehouse := warehouse_services.NewWarehouseHttpService(repoWarehouse, masterSyncCacheRepo)
+	repoWarehouseMq := warehouse_repositories.NewWarehouseMessageQueueRepository(producer)
+	svcWarehouse := warehouse_services.NewWarehouseHttpService(repoWarehouse, repoWarehouseMq, masterSyncCacheRepo)
 
 	return ShopHttp{
 		ms:                  ms,
