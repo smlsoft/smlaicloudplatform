@@ -130,6 +130,7 @@ func main() {
 	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	publicPath := []string{
+		"/slip/*",
 		"/swagger",
 		"/login",
 		"/login/phone-number",

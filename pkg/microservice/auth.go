@@ -95,7 +95,7 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 			currentPath := c.Path()
 
 			for _, publicPath := range publicPath {
-				if strings.HasSuffix(publicPath, "*") && strings.HasPrefix(currentPath, publicPath) {
+				if strings.HasSuffix(publicPath, "*") && strings.HasPrefix(currentPath, publicPath[:len(publicPath)-1]) {
 					return next(c)
 				} else if currentPath == publicPath {
 					return next(c)
