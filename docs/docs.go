@@ -16502,6 +16502,245 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/bom": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BOM"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BOM",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BOM"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcodeBOMView",
+                        "name": "BOM",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/bom/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BOM"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/bom/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get BOM info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BOM"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BOM guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BOM",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BOM"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BOM ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/category": {
             "get": {
                 "security": [
@@ -24742,6 +24981,24 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Machine Code",
+                        "name": "machinecode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Branch Code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ZoneGroupNumber",
+                        "name": "zonegroupnumber",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -24909,6 +25166,24 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Doc Date",
                         "name": "docdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Machine Code",
+                        "name": "machinecode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Branch Code",
+                        "name": "branchcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ZoneGroupNumber",
+                        "name": "zonegroupnumber",
                         "in": "query"
                     },
                     {
@@ -36057,48 +36332,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.BOMProductBarcode": {
-            "type": "object",
-            "required": [
-                "barcode"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "standvalue": {
-                    "type": "number"
-                }
-            }
-        },
         "models.BOMRequest": {
             "type": "object",
             "required": [
@@ -46353,6 +46586,102 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "bom": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView"
+                    }
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
+                }
+            }
+        },
+        "smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_internal_product_productbarcode_models.ProductBarcode": {
             "type": "object",
             "required": [
@@ -46371,7 +46700,7 @@ const docTemplate = `{
                 "bom": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.BOMProductBarcode"
+                        "$ref": "#/definitions/smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode"
                     }
                 },
                 "businesstypes": {

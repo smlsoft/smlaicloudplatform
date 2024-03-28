@@ -105,34 +105,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.BOMProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
-    type: object
   models.BOMRequest:
     properties:
       barcode:
@@ -7037,6 +7009,70 @@ definitions:
           type: string
         type: array
     type: object
+  smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      bom:
+        items:
+          $ref: '#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView'
+        type: array
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      guidfixed:
+        type: string
+      imageuri:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      level:
+        type: integer
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      qty:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
+    type: object
+  smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      guidfixed:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      qty:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
+    type: object
   smlcloudplatform_internal_product_productbarcode_models.ProductBarcode:
     properties:
       alertdescription:
@@ -7047,7 +7083,7 @@ definitions:
         type: string
       bom:
         items:
-          $ref: '#/definitions/models.BOMProductBarcode'
+          $ref: '#/definitions/smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode'
         type: array
       businesstypes:
         items:
@@ -17867,6 +17903,155 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode2
+  /product/bom:
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Barcode
+        in: query
+        name: barcode
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BOM
+    post:
+      consumes:
+      - application/json
+      description: Create BOM
+      parameters:
+      - description: ProductBarcodeBOMView
+        in: body
+        name: BOM
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BOM
+  /product/bom/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete BOM
+      parameters:
+      - description: BOM ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BOM
+    get:
+      consumes:
+      - application/json
+      description: get BOM info by guidfixed
+      parameters:
+      - description: BOM guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BOM
+  /product/bom/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Barcode
+        in: query
+        name: barcode
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BOM
   /product/category:
     delete:
       consumes:
@@ -23008,6 +23193,18 @@ paths:
         in: query
         name: docdate
         type: string
+      - description: Machine Code
+        in: query
+        name: machinecode
+        type: string
+      - description: Branch Code
+        in: query
+        name: branchcode
+        type: string
+      - description: ZoneGroupNumber
+        in: query
+        name: zonegroupnumber
+        type: string
       - description: Search Value
         in: query
         name: q
@@ -23137,6 +23334,18 @@ paths:
       - description: Doc Date
         in: query
         name: docdate
+        type: string
+      - description: Machine Code
+        in: query
+        name: machinecode
+        type: string
+      - description: Branch Code
+        in: query
+        name: branchcode
+        type: string
+      - description: ZoneGroupNumber
+        in: query
+        name: zonegroupnumber
         type: string
       - description: Search Value
         in: query

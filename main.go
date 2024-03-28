@@ -193,7 +193,6 @@ func main() {
 
 			"/images*",
 			"/productimage/*",
-			"/slip/*",
 
 			"/healthz",
 			"/ws",

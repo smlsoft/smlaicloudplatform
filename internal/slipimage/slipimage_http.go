@@ -2,7 +2,6 @@ package slipimage
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
@@ -80,6 +79,9 @@ func (h SlipImageHttp) UploadSlipImage(ctx microservice.IContext) error {
 	docNo := ctx.FormValue("docno")
 	posID := ctx.FormValue("posid")
 	docDateRaw := ctx.FormValue("docdate")
+	machineCode := ctx.FormValue("machinecode")
+	branchCode := ctx.FormValue("branchcode")
+	zoneGroupNumber := ctx.FormValue("zonegroupnumber")
 
 	if docNo == "" {
 		ctx.ResponseError(http.StatusBadRequest, "docno is required")
@@ -96,6 +98,21 @@ func (h SlipImageHttp) UploadSlipImage(ctx microservice.IContext) error {
 		return err
 	}
 
+	if machineCode == "" {
+		ctx.ResponseError(http.StatusBadRequest, "machinecode is required")
+		return err
+	}
+
+	if branchCode == "" {
+		ctx.ResponseError(http.StatusBadRequest, "branchcode is required")
+		return err
+	}
+
+	if zoneGroupNumber == "" {
+		ctx.ResponseError(http.StatusBadRequest, "zonegroupnumber is required")
+		return err
+	}
+
 	layout := "2006-01-02"
 	docDate, err := time.Parse(layout, docDateRaw)
 	if err != nil {
@@ -104,10 +121,13 @@ func (h SlipImageHttp) UploadSlipImage(ctx microservice.IContext) error {
 	}
 
 	payload := models.SlipImageRequest{
-		File:    fileHeader,
-		DocNo:   docNo,
-		PosID:   posID,
-		DocDate: docDate,
+		File:            fileHeader,
+		DocNo:           docNo,
+		PosID:           posID,
+		DocDate:         docDate,
+		MachineCode:     machineCode,
+		BranchCode:      branchCode,
+		ZoneGroupNumber: zoneGroupNumber,
 	}
 
 	data, err := h.svc.CreateSlipImage(shopID, authUsername, payload)
@@ -230,6 +250,9 @@ func (h SlipImageHttp) InfoSlipImage(ctx microservice.IContext) error {
 // @Param		posid		query	string		false  "POS ID"
 // @Param		docno		query	string		false  "DocNo"
 // @Param		docdate		query	string		false  "Doc Date"
+// @Param		machinecode		query	string		false  "Machine Code"
+// @Param		branchcode		query	string		false  "Branch Code"
+// @Param		zonegroupnumber		query	string		false  "ZoneGroupNumber"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -244,27 +267,7 @@ func (h SlipImageHttp) SearchSlipImagePage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docdate := ctx.QueryParam("docdate")
-
-	fmt.Println("docdate", docdate)
-
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
-		{
-			Param: "posid",
-			Field: "posid",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "docno",
-			Field: "docno",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "docdate",
-			Field: "docdate",
-			Type:  requestfilter.FieldTypeDate,
-		},
-	})
+	filters := h.searchFilter(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.SearchSlipImage(shopID, filters, pageable)
 
@@ -287,6 +290,9 @@ func (h SlipImageHttp) SearchSlipImagePage(ctx microservice.IContext) error {
 // @Param		posid		query	string		false  "POS ID"
 // @Param		docno		query	string		false  "DocNo"
 // @Param		docdate		query	string		false  "Doc Date"
+// @Param		machinecode		query	string		false  "Machine Code"
+// @Param		branchcode		query	string		false  "Branch Code"
+// @Param		zonegroupnumber		query	string		false  "ZoneGroupNumber"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -304,7 +310,25 @@ func (h SlipImageHttp) SearchSlipImageStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+	filters := h.searchFilter(ctx.QueryParam)
+
+	docList, total, err := h.svc.SearchSlipImageStep(shopID, lang, filters, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
+	})
+	return nil
+}
+
+func (h SlipImageHttp) searchFilter(queryParam func(string) string) map[string]interface{} {
+	filters := requestfilter.GenerateFilters(queryParam, []requestfilter.FilterRequest{
 		{
 			Param: "posid",
 			Field: "posid",
@@ -320,19 +344,22 @@ func (h SlipImageHttp) SearchSlipImageStep(ctx microservice.IContext) error {
 			Field: "docdate",
 			Type:  requestfilter.FieldTypeDate,
 		},
+		{
+			Param: "machinecode",
+			Field: "machinecode",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "branchcode",
+			Field: "branchcode",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "zonegroupnumber",
+			Field: "zonegroupnumber",
+			Type:  requestfilter.FieldTypeString,
+		},
 	})
 
-	docList, total, err := h.svc.SearchSlipImageStep(shopID, lang, filters, pageableStep)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    docList,
-		Total:   total,
-	})
-	return nil
+	return filters
 }

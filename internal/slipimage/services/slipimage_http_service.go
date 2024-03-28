@@ -68,13 +68,15 @@ func (svc SlipImageHttpService) CreateSlipImage(shopID string, authUsername stri
 
 	newGuidFixed := utils.NewGUID()
 
-	layout := "2006-01-02"
-	docDateStr := payload.DocDate.Format(layout)
+	// layout := "2006-01-02"
+	// docDateStr := payload.DocDate.Format(layout)
 
 	tempSplitFileName := strings.Split(payload.File.Filename, ".")
 	fileExt := tempSplitFileName[len(tempSplitFileName)-1]
 
-	fileName := fmt.Sprintf("%s/slip/%s/%s/%s", shopID, payload.PosID, docDateStr, payload.DocNo)
+	// fileName := fmt.Sprintf("%s/slip/%s/%s/%s", shopID, payload.PosID, docDateStr, payload.DocNo)
+	fileNameUUId := fmt.Sprintf("%s-%s", utils.NewUUID(), utils.NewUUID())
+	fileName := fmt.Sprintf("slip/%s", fileNameUUId)
 
 	uploadUri, err := svc.repoStorageImage.Upload(payload.File, fileName, fileExt)
 
@@ -86,11 +88,14 @@ func (svc SlipImageHttpService) CreateSlipImage(shopID string, authUsername stri
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
 	docData.SlipImage = models.SlipImage{
-		URI:     uploadUri,
-		Size:    fileSize,
-		DocNo:   payload.DocNo,
-		DocDate: payload.DocDate,
-		PosID:   payload.PosID,
+		URI:             uploadUri,
+		Size:            fileSize,
+		DocNo:           payload.DocNo,
+		DocDate:         payload.DocDate,
+		PosID:           payload.PosID,
+		MachineCode:     payload.MachineCode,
+		BranchCode:      payload.BranchCode,
+		ZoneGroupNumber: payload.ZoneGroupNumber,
 	}
 
 	docData.CreatedBy = authUsername
@@ -169,7 +174,7 @@ func (svc SlipImageHttpService) SearchSlipImage(shopID string, filters map[strin
 	defer ctxCancel()
 
 	searchInFields := []string{
-		"uid",
+		"docno",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
@@ -187,7 +192,7 @@ func (svc SlipImageHttpService) SearchSlipImageStep(shopID string, langCode stri
 	defer ctxCancel()
 
 	searchInFields := []string{
-		"uid",
+		"docno",
 	}
 
 	selectFields := map[string]interface{}{}

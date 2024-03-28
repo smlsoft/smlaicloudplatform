@@ -6,6 +6,7 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/google/uuid"
 	"github.com/rs/xid"
 	"github.com/segmentio/ksuid"
 )
@@ -53,6 +54,10 @@ func NewGUID() string {
 func NewID() string {
 	newid := xid.New()
 	return newid.String()
+}
+
+func NewUUID() string {
+	return uuid.NewString()
 }
 
 func RandNumberX(n int) string {

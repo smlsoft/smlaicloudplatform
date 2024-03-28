@@ -11,18 +11,24 @@ import (
 const slipimageCollectionName = "slipImages"
 
 type SlipImageRequest struct {
-	File    *multipart.FileHeader `json:"file" bson:"file"`
-	DocNo   string                `json:"docno" bson:"docno"`
-	DocDate time.Time             `json:"docdate" bson:"docdate"`
-	PosID   string                `json:"posid" bson:"posid"`
+	File            *multipart.FileHeader `json:"file" bson:"file"`
+	DocNo           string                `json:"docno" bson:"docno"`
+	DocDate         time.Time             `json:"docdate" bson:"docdate"`
+	PosID           string                `json:"posid" bson:"posid"`
+	MachineCode     string                `json:"machinecode" bson:"machinecode"`
+	BranchCode      string                `json:"branchcode" bson:"branchcode"`
+	ZoneGroupNumber string                `json:"zonegroupnumber" bson:"zonegroupnumber"`
 }
 
 type SlipImage struct {
-	URI     string    `json:"uri" bson:"uri"`
-	Size    int64     `json:"size" bson:"size"`
-	DocNo   string    `json:"docno" bson:"docno"`
-	DocDate time.Time `json:"docdate" bson:"docdate"`
-	PosID   string    `json:"posid" bson:"posid"`
+	URI             string    `json:"uri" bson:"uri"`
+	Size            int64     `json:"size" bson:"size"`
+	DocNo           string    `json:"docno" bson:"docno"`
+	DocDate         time.Time `json:"docdate" bson:"docdate"`
+	PosID           string    `json:"posid" bson:"posid"`
+	MachineCode     string    `json:"machinecode" bson:"machinecode"`
+	BranchCode      string    `json:"branchcode" bson:"branchcode"`
+	ZoneGroupNumber string    `json:"zonegroupnumber" bson:"zonegroupnumber"`
 }
 
 type SlipImageInfo struct {
