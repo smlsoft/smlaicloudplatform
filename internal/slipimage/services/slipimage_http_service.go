@@ -122,13 +122,13 @@ func (svc SlipImageHttpService) CreateSlipImage(shopID string, authUsername stri
 		return models.SlipImageInfo{}, err
 	}
 
-	err = svc.svcSaleInvoice.UpdateSlip(shopID, authUsername, payload.DocNo, mode, uploadUri)
+	err = svc.svcSaleInvoice.UpdateSlip(shopID, authUsername, payload.DocNo, mode, payload.MachineCode, payload.ZoneGroupNumber, uploadUri)
 
 	if err != nil {
 		logger.GetLogger().Error(err)
 	}
 
-	err = svc.svcSaleInvoiceReturn.UpdateSlip(shopID, authUsername, payload.DocNo, mode, uploadUri)
+	err = svc.svcSaleInvoiceReturn.UpdateSlip(shopID, authUsername, payload.DocNo, mode, payload.MachineCode, payload.ZoneGroupNumber, uploadUri)
 
 	if err != nil {
 		logger.GetLogger().Error(err)

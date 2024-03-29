@@ -27,7 +27,7 @@ import (
 type ISaleInvoiceService interface {
 	CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, string, error)
 	UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error
-	UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error
+	UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, machineCode string, zoneGroupNumber string, imageUrl string) error
 
 	DeleteSaleInvoice(shopID string, guid string, authUsername string) error
 	DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -310,7 +310,7 @@ func (svc SaleInvoiceService) UpdateSaleInvoice(shopID string, guid string, auth
 	return nil
 }
 
-func (svc SaleInvoiceService) UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error {
+func (svc SaleInvoiceService) UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, machineCode string, zoneGroupNumber string, imageUrl string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -340,6 +340,9 @@ func (svc SaleInvoiceService) UpdateSlip(shopID string, authUsername string, doc
 
 		dataDoc.SlipUrl = imageUrl
 	}
+
+	dataDoc.MachineCode = machineCode
+	dataDoc.ZoneGroupNumber = zoneGroupNumber
 
 	dataDoc.UpdatedBy = authUsername
 	dataDoc.UpdatedAt = time.Now()

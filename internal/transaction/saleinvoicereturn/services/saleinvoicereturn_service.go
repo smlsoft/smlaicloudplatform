@@ -27,6 +27,8 @@ import (
 type ISaleInvoiceReturnService interface {
 	CreateSaleInvoiceReturn(shopID string, authUsername string, doc models.SaleInvoiceReturn) (string, string, error)
 	UpdateSaleInvoiceReturn(shopID string, guid string, authUsername string, doc models.SaleInvoiceReturn) error
+	UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, machineCode string, zoneGroupNumber string, imageUrl string) error
+
 	DeleteSaleInvoiceReturn(shopID string, guid string, authUsername string) error
 	DeleteSaleInvoiceReturnByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSaleInvoiceReturn(shopID string, guid string) (models.SaleInvoiceReturnInfo, error)
@@ -35,7 +37,6 @@ type ISaleInvoiceReturnService interface {
 	SearchSaleInvoiceReturnStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micro_models.PageableStep) ([]models.SaleInvoiceReturnInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoiceReturn) (common.BulkImport, error)
 	GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error)
-	UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error
 
 	GetModuleName() string
 }
@@ -289,7 +290,7 @@ func (svc SaleInvoiceReturnService) UpdateSaleInvoiceReturn(shopID string, guid 
 	return nil
 }
 
-func (svc SaleInvoiceReturnService) UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error {
+func (svc SaleInvoiceReturnService) UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, machineCode string, zoneGroupNumber string, imageUrl string) error {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -319,6 +320,9 @@ func (svc SaleInvoiceReturnService) UpdateSlip(shopID string, authUsername strin
 
 		dataDoc.SlipUrl = imageUrl
 	}
+
+	dataDoc.MachineCode = machineCode
+	dataDoc.ZoneGroupNumber = zoneGroupNumber
 
 	dataDoc.UpdatedBy = authUsername
 	dataDoc.UpdatedAt = time.Now()

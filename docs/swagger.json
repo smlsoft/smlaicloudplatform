@@ -30148,6 +30148,18 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Page",
                         "name": "page",
@@ -30309,6 +30321,18 @@
                         "type": "boolean",
                         "description": "is POS",
                         "name": "ispos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
                         "in": "query"
                     },
                     {
@@ -30600,6 +30624,18 @@
                         "type": "boolean",
                         "description": "is POS",
                         "name": "ispos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
                         "in": "query"
                     },
                     {
@@ -31024,6 +31060,18 @@
                         "type": "boolean",
                         "description": "is POS",
                         "name": "ispos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
                         "in": "query"
                     },
                     {
@@ -42426,6 +42474,10 @@
                 "isvatregister": {
                     "type": "boolean"
                 },
+                "machinecode": {
+                    "description": "PosID              string   `json:\"posid\" bson:\"posid\"`",
+                    "type": "string"
+                },
                 "mancount": {
                     "type": "integer"
                 },
@@ -42476,6 +42528,24 @@
                 },
                 "salename": {
                     "type": "string"
+                },
+                "slipqrurl": {
+                    "type": "string"
+                },
+                "slipqrurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "slipurl": {
+                    "type": "string"
+                },
+                "slipurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "status": {
                     "type": "integer"
@@ -42563,6 +42633,9 @@
                 },
                 "womancount": {
                     "type": "integer"
+                },
+                "zonegroupnumber": {
+                    "type": "string"
                 }
             }
         },
@@ -42719,6 +42792,10 @@
                 "isvatregister": {
                     "type": "boolean"
                 },
+                "machinecode": {
+                    "description": "PosID              string   `json:\"posid\" bson:\"posid\"`",
+                    "type": "string"
+                },
                 "mancount": {
                     "type": "integer"
                 },
@@ -42781,6 +42858,24 @@
                 },
                 "salename": {
                     "type": "string"
+                },
+                "slipqrurl": {
+                    "type": "string"
+                },
+                "slipqrurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "slipurl": {
+                    "type": "string"
+                },
+                "slipurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "status": {
                     "type": "integer"
@@ -42865,6 +42960,9 @@
                 },
                 "womancount": {
                     "type": "integer"
+                },
+                "zonegroupnumber": {
+                    "type": "string"
                 }
             }
         },

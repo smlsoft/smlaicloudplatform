@@ -36,6 +36,9 @@ type SaleInvoice struct {
 	SlipQrUrl          string   `json:"slipqrurl" bson:"slipqrurl"`
 	SlipUrlHistories   []string `json:"slipurlhistories" bson:"slipurlhistories"`
 	SlipQrUrlHistories []string `json:"slipqrurlhistories" bson:"slipqrurlhistories"`
+	// PosID              string   `json:"posid" bson:"posid"`
+	MachineCode     string `json:"machinecode" bson:"machinecode"`
+	ZoneGroupNumber string `json:"zonegroupnumber" bson:"zonegroupnumber"`
 }
 
 // type SaleInvoiceDetail struct {

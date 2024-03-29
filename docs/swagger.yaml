@@ -4225,6 +4225,9 @@ definitions:
         type: boolean
       isvatregister:
         type: boolean
+      machinecode:
+        description: PosID              string   `json:"posid" bson:"posid"`
+        type: string
       mancount:
         type: integer
       membercode:
@@ -4259,6 +4262,18 @@ definitions:
         type: string
       salename:
         type: string
+      slipqrurl:
+        type: string
+      slipqrurlhistories:
+        items:
+          type: string
+        type: array
+      slipurl:
+        type: string
+      slipurlhistories:
+        items:
+          type: string
+        type: array
       status:
         type: integer
       sumcheque:
@@ -4317,6 +4332,8 @@ definitions:
         type: integer
       womancount:
         type: integer
+      zonegroupnumber:
+        type: string
     type: object
   models.SaleInvoiceReturn:
     properties:
@@ -4420,6 +4437,9 @@ definitions:
         type: boolean
       isvatregister:
         type: boolean
+      machinecode:
+        description: PosID              string   `json:"posid" bson:"posid"`
+        type: string
       mancount:
         type: integer
       membercode:
@@ -4463,6 +4483,18 @@ definitions:
         type: string
       salename:
         type: string
+      slipqrurl:
+        type: string
+      slipqrurlhistories:
+        items:
+          type: string
+        type: array
+      slipurl:
+        type: string
+      slipurlhistories:
+        items:
+          type: string
+        type: array
       status:
         type: integer
       sumcheque:
@@ -4519,6 +4551,8 @@ definitions:
         type: integer
       womancount:
         type: integer
+      zonegroupnumber:
+        type: string
     type: object
   models.SectionBranch:
     properties:
@@ -26426,6 +26460,14 @@ paths:
         in: query
         name: ispos
         type: boolean
+      - description: POS id
+        in: query
+        name: posid
+        type: string
+      - description: machine code
+        in: query
+        name: machinecode
+        type: string
       - description: Page
         in: query
         name: page
@@ -26529,6 +26571,14 @@ paths:
         in: query
         name: ispos
         type: boolean
+      - description: POS id
+        in: query
+        name: posid
+        type: string
+      - description: machine code
+        in: query
+        name: machinecode
+        type: string
       - description: Page
         in: query
         name: page
@@ -26760,6 +26810,14 @@ paths:
         in: query
         name: ispos
         type: boolean
+      - description: POS id
+        in: query
+        name: posid
+        type: string
+      - description: machine code
+        in: query
+        name: machinecode
+        type: string
       - description: offset
         in: query
         name: offset
@@ -27026,6 +27084,14 @@ paths:
         in: query
         name: ispos
         type: boolean
+      - description: POS id
+        in: query
+        name: posid
+        type: string
+      - description: machine code
+        in: query
+        name: machinecode
+        type: string
       - description: offset
         in: query
         name: offset

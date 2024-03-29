@@ -322,6 +322,9 @@ func (h SaleInvoiceReturnHttp) GetLastPOSDocNo(ctx microservice.IContext) error 
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		ispos	query	boolean		false  "is POS"
+// @Param		posid 	query	string		false  "POS id"
+// @Param		machinecode query	string		false  "machine code"
+// @Parm		zonegroupnumber query	string		false  "zone group number"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -335,27 +338,7 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
-		{
-			Param: "custcode",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "ispos",
-			Field: "ispos",
-			Type:  requestfilter.FieldTypeBoolean,
-		},
-		{
-			Param: "-",
-			Field: "docdatetime",
-			Type:  requestfilter.FieldTypeRangeDate,
-		},
-		{
-			Param: "branchcode",
-			Field: "branch.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-	})
+	filters := h.searchFilter(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.SearchSaleInvoiceReturn(shopID, filters, pageable)
 
@@ -381,6 +364,9 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
 // @Param		ispos	query	boolean		false  "is POS"
+// @Param		posid 	query	string		false  "POS id"
+// @Param		machinecode query	string		false  "machine code"
+// @Parm		zonegroupnumber query	string		false  "zone group number"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -397,27 +383,7 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnStep(ctx microservice.ICon
 
 	lang := ctx.QueryParam("lang")
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
-		{
-			Param: "custcode",
-			Type:  requestfilter.FieldTypeString,
-		},
-		{
-			Param: "ispos",
-			Field: "ispos",
-			Type:  requestfilter.FieldTypeBoolean,
-		},
-		{
-			Param: "-",
-			Field: "docdatetime",
-			Type:  requestfilter.FieldTypeRangeDate,
-		},
-		{
-			Param: "branchcode",
-			Field: "branch.code",
-			Type:  requestfilter.FieldTypeString,
-		},
-	})
+	filters := h.searchFilter(ctx.QueryParam)
 
 	docList, total, err := h.svc.SearchSaleInvoiceReturnStep(shopID, lang, filters, pageableStep)
 
@@ -475,4 +441,45 @@ func (h SaleInvoiceReturnHttp) SaveBulk(ctx microservice.IContext) error {
 	)
 
 	return nil
+}
+
+func (h SaleInvoiceReturnHttp) searchFilter(queryParam func(string) string) map[string]interface{} {
+	filters := requestfilter.GenerateFilters(queryParam, []requestfilter.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  requestfilter.FieldTypeRangeDate,
+		},
+		{
+			Param: "branchcode",
+			Field: "branch.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "posid",
+			Field: "posid",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "machinecode",
+			Field: "machinecode",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "zonegroupnumber",
+			Field: "zonegroupnumber",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	return filters
 }

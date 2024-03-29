@@ -30153,6 +30153,18 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Page",
                         "name": "page",
@@ -30314,6 +30326,18 @@ const docTemplate = `{
                         "type": "boolean",
                         "description": "is POS",
                         "name": "ispos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
                         "in": "query"
                     },
                     {
@@ -30605,6 +30629,18 @@ const docTemplate = `{
                         "type": "boolean",
                         "description": "is POS",
                         "name": "ispos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
                         "in": "query"
                     },
                     {
@@ -31029,6 +31065,18 @@ const docTemplate = `{
                         "type": "boolean",
                         "description": "is POS",
                         "name": "ispos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "POS id",
+                        "name": "posid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "machine code",
+                        "name": "machinecode",
                         "in": "query"
                     },
                     {
@@ -42431,6 +42479,10 @@ const docTemplate = `{
                 "isvatregister": {
                     "type": "boolean"
                 },
+                "machinecode": {
+                    "description": "PosID              string   ` + "`" + `json:\"posid\" bson:\"posid\"` + "`" + `",
+                    "type": "string"
+                },
                 "mancount": {
                     "type": "integer"
                 },
@@ -42481,6 +42533,24 @@ const docTemplate = `{
                 },
                 "salename": {
                     "type": "string"
+                },
+                "slipqrurl": {
+                    "type": "string"
+                },
+                "slipqrurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "slipurl": {
+                    "type": "string"
+                },
+                "slipurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "status": {
                     "type": "integer"
@@ -42568,6 +42638,9 @@ const docTemplate = `{
                 },
                 "womancount": {
                     "type": "integer"
+                },
+                "zonegroupnumber": {
+                    "type": "string"
                 }
             }
         },
@@ -42724,6 +42797,10 @@ const docTemplate = `{
                 "isvatregister": {
                     "type": "boolean"
                 },
+                "machinecode": {
+                    "description": "PosID              string   ` + "`" + `json:\"posid\" bson:\"posid\"` + "`" + `",
+                    "type": "string"
+                },
                 "mancount": {
                     "type": "integer"
                 },
@@ -42786,6 +42863,24 @@ const docTemplate = `{
                 },
                 "salename": {
                     "type": "string"
+                },
+                "slipqrurl": {
+                    "type": "string"
+                },
+                "slipqrurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "slipurl": {
+                    "type": "string"
+                },
+                "slipurlhistories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "status": {
                     "type": "integer"
@@ -42870,6 +42965,9 @@ const docTemplate = `{
                 },
                 "womancount": {
                     "type": "integer"
+                },
+                "zonegroupnumber": {
+                    "type": "string"
                 }
             }
         },
