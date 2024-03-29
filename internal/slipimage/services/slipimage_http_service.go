@@ -4,10 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"smlcloudplatform/internal/logger"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	"smlcloudplatform/internal/services"
 	"smlcloudplatform/internal/slipimage/models"
 	"smlcloudplatform/internal/slipimage/repositories"
+	saleInvoiceServices "smlcloudplatform/internal/transaction/saleinvoice/services"
+	saleInvoiceReturnServices "smlcloudplatform/internal/transaction/saleinvoicereturn/services"
 	"smlcloudplatform/internal/utils"
 	micromodels "smlcloudplatform/pkg/microservice/models"
 	"strings"
@@ -22,14 +25,17 @@ type ISlipImageHttpService interface {
 	DeleteSlipImage(shopID string, guid string, authUsername string) error
 	DeleteSlipImageByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSlipImage(shopID string, guid string) (models.SlipImageInfo, error)
+	InfoSlipImageByDocno(shopID string, mode uint8, docNo string) ([]models.SlipImageInfo, error)
 	SearchSlipImage(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SlipImageInfo, mongopagination.PaginationData, error)
 	SearchSlipImageStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SlipImageInfo, int, error)
 }
 
 type SlipImageHttpService struct {
-	repo             repositories.ISlipImageMongoRepository
-	repoStorageImage repositories.ISlipImageStorageImageRepository
-	syncCacheRepo    mastersync.IMasterSyncCacheRepository
+	svcSaleInvoice       saleInvoiceServices.ISaleInvoiceService
+	svcSaleInvoiceReturn saleInvoiceReturnServices.ISaleInvoiceReturnService
+	repo                 repositories.ISlipImageMongoRepository
+	repoStorageImage     repositories.ISlipImageStorageImageRepository
+	syncCacheRepo        mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.SlipImageActivity, models.SlipImageDeleteActivity]
 	contextTimeout time.Duration
 }
@@ -38,16 +44,18 @@ func NewSlipImageHttpService(
 	repo repositories.ISlipImageMongoRepository,
 	repoStorageImage repositories.ISlipImageStorageImageRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
-
+	svcSaleInvoice saleInvoiceServices.ISaleInvoiceService,
+	svcSaleInvoiceReturn saleInvoiceReturnServices.ISaleInvoiceReturnService,
 	contextTimeout time.Duration,
 ) *SlipImageHttpService {
 
 	insSvc := &SlipImageHttpService{
-		repo:             repo,
-		repoStorageImage: repoStorageImage,
-		syncCacheRepo:    syncCacheRepo,
-
-		contextTimeout: contextTimeout,
+		repo:                 repo,
+		repoStorageImage:     repoStorageImage,
+		syncCacheRepo:        syncCacheRepo,
+		svcSaleInvoice:       svcSaleInvoice,
+		svcSaleInvoiceReturn: svcSaleInvoiceReturn,
+		contextTimeout:       contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.SlipImageActivity, models.SlipImageDeleteActivity](repo)
@@ -84,10 +92,17 @@ func (svc SlipImageHttpService) CreateSlipImage(shopID string, authUsername stri
 		return models.SlipImageInfo{}, fmt.Errorf("upload file failed")
 	}
 
+	mode := uint8(0)
+
+	if payload.Mode == 1 {
+		mode = 1
+	}
+
 	docData := models.SlipImageDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
 	docData.SlipImage = models.SlipImage{
+		Mode:            mode,
 		URI:             uploadUri,
 		Size:            fileSize,
 		DocNo:           payload.DocNo,
@@ -105,6 +120,18 @@ func (svc SlipImageHttpService) CreateSlipImage(shopID string, authUsername stri
 
 	if err != nil {
 		return models.SlipImageInfo{}, err
+	}
+
+	err = svc.svcSaleInvoice.UpdateSlip(shopID, authUsername, payload.DocNo, mode, uploadUri)
+
+	if err != nil {
+		logger.GetLogger().Error(err)
+	}
+
+	err = svc.svcSaleInvoiceReturn.UpdateSlip(shopID, authUsername, payload.DocNo, mode, uploadUri)
+
+	if err != nil {
+		logger.GetLogger().Error(err)
 	}
 
 	return docData.SlipImageInfo, nil
@@ -166,6 +193,24 @@ func (svc SlipImageHttpService) InfoSlipImage(shopID string, guid string) (model
 	}
 
 	return findDoc.SlipImageInfo, nil
+}
+
+func (svc SlipImageHttpService) InfoSlipImageByDocno(shopID string, mode uint8, docNo string) ([]models.SlipImageInfo, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocs, err := svc.repo.FindByDocNo(ctx, shopID, mode, docNo)
+
+	if err != nil {
+		return []models.SlipImageInfo{}, err
+	}
+
+	if len(findDocs) < 1 {
+		return []models.SlipImageInfo{}, errors.New("document not found")
+	}
+
+	return findDocs, nil
 }
 
 func (svc SlipImageHttpService) SearchSlipImage(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SlipImageInfo, mongopagination.PaginationData, error) {

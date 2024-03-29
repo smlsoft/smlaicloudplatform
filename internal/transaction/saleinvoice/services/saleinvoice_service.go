@@ -27,6 +27,8 @@ import (
 type ISaleInvoiceService interface {
 	CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, string, error)
 	UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error
+	UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error
+
 	DeleteSaleInvoice(shopID string, guid string, authUsername string) error
 	DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error)
@@ -281,12 +283,68 @@ func (svc SaleInvoiceService) UpdateSaleInvoice(shopID string, guid string, auth
 	details := svc.PrepareDetail(*doc.Details, productBarcodes)
 	dataDoc.Details = &details
 
+	dataDoc.SlipQrUrl = findDoc.SlipQrUrl
+	dataDoc.SlipQrUrlHistories = findDoc.SlipQrUrlHistories
+	dataDoc.SlipUrl = findDoc.SlipUrl
+	dataDoc.SlipUrlHistories = findDoc.SlipUrlHistories
+
 	dataDoc.DocNo = findDoc.DocNo
 	dataDoc.TransFlag = TRANS_FLAG
 	dataDoc.UpdatedBy = authUsername
 	dataDoc.UpdatedAt = time.Now()
 
 	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
+
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		err := svc.repoMq.Update(dataDoc)
+		if err != nil {
+			fmt.Printf("create mq error :: %s", err.Error())
+		}
+		svc.saveMasterSync(shopID)
+	}()
+
+	return nil
+}
+
+func (svc SaleInvoiceService) UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", docNo)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	dataDoc := findDoc
+
+	if mode == 1 {
+		if findDoc.SlipQrUrl != "" {
+			dataDoc.SlipQrUrlHistories = append(dataDoc.SlipQrUrlHistories, findDoc.SlipQrUrl)
+		}
+
+		dataDoc.SlipQrUrl = imageUrl
+	} else {
+		if findDoc.SlipUrl != "" {
+			dataDoc.SlipUrlHistories = append(dataDoc.SlipUrlHistories, findDoc.SlipUrl)
+		}
+
+		dataDoc.SlipUrl = imageUrl
+	}
+
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, dataDoc)
 
 	if err != nil {
 		return err

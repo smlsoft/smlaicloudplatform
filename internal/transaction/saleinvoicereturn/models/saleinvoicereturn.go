@@ -34,6 +34,10 @@ type SaleInvoiceReturn struct {
 	RefTotalCorrect  float64 `json:"reftotalcorrect" bson:"reftotalcorrect"`   // มูลค่าที่ถูกต้อง
 	RefTotalDiff     float64 `json:"reftotaldiff" bson:"reftotaldiff"`         // ผลต่าง
 
+	SlipUrl            string   `json:"slipurl" bson:"slipurl"`
+	SlipQrUrl          string   `json:"slipqrurl" bson:"slipqrurl"`
+	SlipUrlHistories   []string `json:"slipurlhistories" bson:"slipurlhistories"`
+	SlipQrUrlHistories []string `json:"slipqrurlhistories" bson:"slipqrurlhistories"`
 }
 
 type SaleInvoiceReturnInfo struct {

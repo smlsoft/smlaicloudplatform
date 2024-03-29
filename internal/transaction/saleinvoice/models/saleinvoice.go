@@ -31,6 +31,11 @@ type SaleInvoice struct {
 	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`
 	SaleChannelGPType int8    `json:"salechannelgptype" bson:"salechannelgptype"`
 	TakeAway          int8    `json:"takeaway" bson:"takeaway"`
+
+	SlipUrl            string   `json:"slipurl" bson:"slipurl"`
+	SlipQrUrl          string   `json:"slipqrurl" bson:"slipqrurl"`
+	SlipUrlHistories   []string `json:"slipurlhistories" bson:"slipurlhistories"`
+	SlipQrUrlHistories []string `json:"slipqrurlhistories" bson:"slipqrurlhistories"`
 }
 
 // type SaleInvoiceDetail struct {

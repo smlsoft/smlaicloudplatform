@@ -35,6 +35,7 @@ type ISaleInvoiceReturnService interface {
 	SearchSaleInvoiceReturnStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micro_models.PageableStep) ([]models.SaleInvoiceReturnInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoiceReturn) (common.BulkImport, error)
 	GetLastPOSDocNo(shopID, posID, maxDocNo string) (string, error)
+	UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error
 
 	GetModuleName() string
 }
@@ -265,6 +266,11 @@ func (svc SaleInvoiceReturnService) UpdateSaleInvoiceReturn(shopID string, guid 
 	details := svc.PrepareDetail(*doc.Details, productBarcodes)
 	dataDoc.Details = &details
 
+	dataDoc.SlipQrUrl = findDoc.SlipQrUrl
+	dataDoc.SlipQrUrlHistories = findDoc.SlipQrUrlHistories
+	dataDoc.SlipUrl = findDoc.SlipUrl
+	dataDoc.SlipUrlHistories = findDoc.SlipUrlHistories
+
 	dataDoc.DocNo = findDoc.DocNo
 	dataDoc.UpdatedBy = authUsername
 	dataDoc.UpdatedAt = time.Now()
@@ -277,6 +283,57 @@ func (svc SaleInvoiceReturnService) UpdateSaleInvoiceReturn(shopID string, guid 
 
 	func() {
 		svc.repoMq.Update(dataDoc)
+		svc.saveMasterSync(shopID)
+	}()
+
+	return nil
+}
+
+func (svc SaleInvoiceReturnService) UpdateSlip(shopID string, authUsername string, docNo string, mode uint8, imageUrl string) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", docNo)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	dataDoc := findDoc
+
+	if mode == 1 {
+		if findDoc.SlipQrUrl != "" {
+			dataDoc.SlipQrUrlHistories = append(dataDoc.SlipQrUrlHistories, findDoc.SlipQrUrl)
+		}
+
+		dataDoc.SlipQrUrl = imageUrl
+	} else {
+		if findDoc.SlipUrl != "" {
+			dataDoc.SlipUrlHistories = append(dataDoc.SlipUrlHistories, findDoc.SlipUrl)
+		}
+
+		dataDoc.SlipUrl = imageUrl
+	}
+
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, dataDoc)
+
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		err := svc.repoMq.Update(dataDoc)
+		if err != nil {
+			fmt.Printf("create mq error :: %s", err.Error())
+		}
 		svc.saveMasterSync(shopID)
 	}()
 

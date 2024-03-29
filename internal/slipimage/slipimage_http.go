@@ -6,9 +6,15 @@ import (
 	"smlcloudplatform/internal/config"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/slipimage/models"
 	"smlcloudplatform/internal/slipimage/repositories"
 	"smlcloudplatform/internal/slipimage/services"
+	trans_cache "smlcloudplatform/internal/transaction/repositories"
+	saleInvoiceRepositories "smlcloudplatform/internal/transaction/saleinvoice/repositories"
+	saleInvoiceServices "smlcloudplatform/internal/transaction/saleinvoice/services"
+	saleInvoiceReturnRepositories "smlcloudplatform/internal/transaction/saleinvoicereturn/repositories"
+	saleInvoiceReturnServices "smlcloudplatform/internal/transaction/saleinvoicereturn/services"
 	"smlcloudplatform/internal/utils"
 	"smlcloudplatform/internal/utils/requestfilter"
 	"smlcloudplatform/pkg/microservice"
@@ -25,8 +31,8 @@ type SlipImageHttp struct {
 
 func NewSlipImageHttp(ms *microservice.Microservice, cfg config.IConfig) SlipImageHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewSlipImageMongoRepository(pst)
 
@@ -34,8 +40,36 @@ func NewSlipImageHttp(ms *microservice.Microservice, cfg config.IConfig) SlipIma
 	imagePersister := microservice.NewPersisterImage(azureFileBlob)
 	repoStorageImage := repositories.NewSlipImageStorageImageRepository(imagePersister)
 
+	productBarcodeRepo := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
+
+	saleInvoiceRepo := saleInvoiceRepositories.NewSaleInvoiceRepository(pst)
+	saleInvoiceRepoMq := saleInvoiceRepositories.NewSaleInvoiceMessageQueueRepository(producer)
+	transCacheRepo := trans_cache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSlipImageHttpService(repo, repoStorageImage, masterSyncCacheRepo, 30*time.Second)
+
+	saleInvoiceSvc := saleInvoiceServices.NewSaleInvoiceService(
+		saleInvoiceRepo,
+		transCacheRepo,
+		productBarcodeRepo,
+		saleInvoiceRepoMq,
+		masterSyncCacheRepo,
+		saleInvoiceServices.SaleInvocieParser{},
+		saleInvoiceServices.SaleInvocieExport{},
+	)
+
+	saleInvoiceReturnRepo := saleInvoiceReturnRepositories.NewSaleInvoiceReturnRepository(pst)
+	saleInvoiceReturnRepoMq := saleInvoiceReturnRepositories.NewSaleInvoiceReturnMessageQueueRepository(producer)
+
+	saleInvoiceReturnSvc := saleInvoiceReturnServices.NewSaleInvoiceReturnService(
+		saleInvoiceReturnRepo,
+		transCacheRepo,
+		productBarcodeRepo,
+		saleInvoiceReturnRepoMq,
+		masterSyncCacheRepo,
+		saleInvoiceReturnServices.SaleInvocieReturnParser{},
+	)
+
+	svc := services.NewSlipImageHttpService(repo, repoStorageImage, masterSyncCacheRepo, saleInvoiceSvc, saleInvoiceReturnSvc, 30*time.Second)
 
 	return SlipImageHttp{
 		ms:  ms,
@@ -76,12 +110,18 @@ func (h SlipImageHttp) UploadSlipImage(ctx microservice.IContext) error {
 		return err
 	}
 
+	mode := ctx.FormValue("mode")
 	docNo := ctx.FormValue("docno")
 	posID := ctx.FormValue("posid")
 	docDateRaw := ctx.FormValue("docdate")
 	machineCode := ctx.FormValue("machinecode")
 	branchCode := ctx.FormValue("branchcode")
 	zoneGroupNumber := ctx.FormValue("zonegroupnumber")
+
+	if mode == "" {
+		ctx.ResponseError(http.StatusBadRequest, "mode is require. 0 = slip, 1 = qr")
+		return err
+	}
 
 	if docNo == "" {
 		ctx.ResponseError(http.StatusBadRequest, "docno is required")
@@ -120,7 +160,14 @@ func (h SlipImageHttp) UploadSlipImage(ctx microservice.IContext) error {
 		return err
 	}
 
+	modeVal := uint8(0)
+
+	if mode == "1" {
+		modeVal = 1
+	}
+
 	payload := models.SlipImageRequest{
+		Mode:            modeVal,
 		File:            fileHeader,
 		DocNo:           docNo,
 		PosID:           posID,

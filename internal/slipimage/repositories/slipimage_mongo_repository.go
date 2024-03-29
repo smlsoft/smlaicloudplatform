@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ISlipImageMongoRepository interface {
@@ -32,6 +33,8 @@ type ISlipImageMongoRepository interface {
 	FindCreatedOrUpdatedPage(sctx context.Context, hopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SlipImageActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SlipImageDeleteActivity, error)
 	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SlipImageActivity, error)
+
+	FindByDocNo(ctx context.Context, shopID string, mode uint8, docNo string) ([]models.SlipImageInfo, error)
 }
 
 type SlipImageMongoRepository struct {
@@ -54,4 +57,23 @@ func NewSlipImageMongoRepository(pst microservice.IPersisterMongo) *SlipImageMon
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.SlipImageActivity, models.SlipImageDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo SlipImageMongoRepository) FindByDocNo(ctx context.Context, shopID string, mode uint8, docNo string) ([]models.SlipImageInfo, error) {
+
+	filter := bson.M{
+		"shopid": shopID,
+		"mode":   mode,
+		"docno":  docNo,
+	}
+
+	var docs []models.SlipImageInfo
+
+	err := repo.pst.Find(ctx, &models.SlipImageInfo{}, filter, &docs)
+
+	if err != nil {
+		return []models.SlipImageInfo{}, err
+	}
+
+	return docs, nil
 }

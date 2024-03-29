@@ -11,6 +11,7 @@ import (
 const slipimageCollectionName = "slipImages"
 
 type SlipImageRequest struct {
+	Mode            uint8                 `json:"mode" bson:"mode"` // 0 = slip, 1 = qr
 	File            *multipart.FileHeader `json:"file" bson:"file"`
 	DocNo           string                `json:"docno" bson:"docno"`
 	DocDate         time.Time             `json:"docdate" bson:"docdate"`
@@ -21,6 +22,7 @@ type SlipImageRequest struct {
 }
 
 type SlipImage struct {
+	Mode            uint8     `json:"mode" bson:"mode"` // 0 = slip, 1 = qr
 	URI             string    `json:"uri" bson:"uri"`
 	Size            int64     `json:"size" bson:"size"`
 	DocNo           string    `json:"docno" bson:"docno"`
