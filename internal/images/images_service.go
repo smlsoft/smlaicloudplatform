@@ -58,7 +58,7 @@ func (svc ImagesService) UploadImage(shopId string, fh *multipart.FileHeader) (*
 
 	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")
 	fileName := svc.NewGUIDFn() //fileUploadMetadataSlice[0]
-	fileExtension := fileUploadMetadataSlice[1]
+	fileExtension := fileUploadMetadataSlice[len(fileUploadMetadataSlice)-1]
 
 	fileName, err := svc.persisterImage.Upload(fh, shopId+"/"+fileName, fileExtension)
 
