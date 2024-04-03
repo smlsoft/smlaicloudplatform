@@ -992,13 +992,15 @@ func (svc ProductBarcodeHttpService) Export(shopID string, languageCode string, 
 	}
 
 	keyCols := []string{
-		"barcode",     //บาร์โค้ด",
-		"productname", //"ชื่อสินค้า",
-		"unitcode",    //"หน่วยนับ",
-		"unitname",    //"ชื่อหน่วยนับ",
-		"price",       //ราคาขาย",
-		"itemtype",    //ประเภทสินค้า",
-		"groupcode",   //กลุ่มสินค้า",
+		"barcode",        //บาร์โค้ด",
+		"productname",    //"ชื่อสินค้า",
+		"unitcode",       //"หน่วยนับ",
+		"unitname",       //"ชื่อหน่วยนับ",
+		"price",          //ราคาขาย",
+		"price member",   //ราคาขาย",
+		"price delivery", //ราคาขาย",
+		"itemtype",       //ประเภทสินค้า",
+		"groupcode",      //กลุ่มสินค้า",
 	}
 
 	headerRow := []string{}
@@ -1055,18 +1057,30 @@ func prepareDataToCSV(languageCode string, data []models.ProductBarcodeDoc) [][]
 		groupName := getName(value.GroupNames, langCode)
 
 		price := "0"
+		priceMember := "0"
+		priceDelivery := "0"
 
 		if value.Prices != nil && len(*value.Prices) > 0 {
 			for _, priceItem := range *value.Prices {
-				if priceItem.KeyNumber == 0 {
+				if priceItem.KeyNumber == 1 {
 					price = fmt.Sprintf("%.2f", priceItem.Price)
-					break
+					continue
+				}
+
+				if priceItem.KeyNumber == 2 {
+					priceMember = fmt.Sprintf("%.2f", priceItem.Price)
+					continue
+				}
+
+				if priceItem.KeyNumber == 3 {
+					priceDelivery = fmt.Sprintf("%.2f", priceItem.Price)
+					continue
 				}
 			}
 		}
 
 		itemType := strconv.Itoa(int(value.ItemType))
-		results = append(results, []string{value.Barcode, productName, value.ItemUnitCode, unitName, price, itemType, value.GroupCode, groupName})
+		results = append(results, []string{value.Barcode, productName, value.ItemUnitCode, unitName, price, priceMember, priceDelivery, itemType, value.GroupCode, groupName})
 	}
 
 	return results
