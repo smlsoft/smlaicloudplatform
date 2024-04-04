@@ -176,7 +176,7 @@ type Detail struct {
 	ManufacturerGUID    string          `json:"manufacturerguid" bson:"manufacturerguid"`
 	ManufacturerCode    string          `json:"manufacturercode" bson:"manufacturercode"`
 	ManufacturerNames   *[]models.NameX `json:"manufacturernames" bson:"manufacturernames"`
-	SumAmountChioce     float64         `json:"sumamountchioce" bson:"sumamountchioce"`
+	SumAmountChoice     float64         `json:"sumamountchoice" bson:"sumamountchoice"`
 }
 
 type PaymentDetail struct {
