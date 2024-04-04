@@ -15,6 +15,7 @@ type ProductImportRaw struct {
 	UnitCode       string  `json:"unitcode" ch:"unitcode"`
 	Price          float64 `json:"price" ch:"price"`
 	PriceMember    float64 `json:"pricemember" ch:"pricemember"`
+	PriceDelivery  float64 `json:"pricedelivery" ch:"pricedelivery"`
 	IsDuplicate    bool    `json:"isduplicate" ch:"isduplicate"`
 	IsExist        bool    `json:"isexist" ch:"isexist"`
 	IsUnitNotExist bool    `json:"isunitnotexist" ch:"isunitnotexist"`

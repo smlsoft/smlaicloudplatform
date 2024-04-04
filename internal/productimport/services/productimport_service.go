@@ -148,6 +148,7 @@ func (svc *ProductImportService) ImportFromFile(shopID string, authUsername stri
 		"Unit Code",
 		"Price",
 		"Price Member",
+		"Price Delivery",
 	}
 
 	isNotfoundColumn := false
@@ -209,6 +210,11 @@ func (svc *ProductImportService) prepareData(shopID string, taskID string, rowNu
 		return models.ProductImportDoc{}, fmt.Errorf("price member in row %d invalid", int(rowNumber))
 	}
 
+	priceDelivery, err := strconv.ParseFloat(doc[colIdx["Price Delivery"]], 64)
+	if err != nil {
+		return models.ProductImportDoc{}, fmt.Errorf("price delivery in row %d invalid", int(rowNumber))
+	}
+
 	newGUID := svc.generateGUID()
 
 	dataDoc := models.ProductImportDoc{}
@@ -223,6 +229,7 @@ func (svc *ProductImportService) prepareData(shopID string, taskID string, rowNu
 
 	dataDoc.Price = price
 	dataDoc.PriceMember = priceMember
+	dataDoc.PriceDelivery = priceDelivery
 
 	return dataDoc, nil
 }
@@ -516,14 +523,20 @@ func (svc ProductImportService) PrepareProductBarcodes(langCode string, docs []m
 		productPrices := []product_models.ProductPrice{}
 
 		productPrices = append(productPrices, product_models.ProductPrice{
-			KeyNumber: 0,
+			KeyNumber: 1,
 			Price:     docs[i].Price,
 		})
 
 		productPrices = append(productPrices, product_models.ProductPrice{
-			KeyNumber: 1,
+			KeyNumber: 2,
 			Price:     docs[i].PriceMember,
 		})
+
+		productPrices = append(productPrices, product_models.ProductPrice{
+			KeyNumber: 3,
+			Price:     docs[i].PriceDelivery,
+		})
+
 		temp.Prices = &productPrices
 
 		productNames := []common.NameX{}
