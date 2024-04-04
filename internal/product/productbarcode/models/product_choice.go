@@ -15,4 +15,5 @@ type ProductChoice struct {
 	ImageURI        string          `json:"imageuri" bson:"imageuri"`
 	IsStock         bool            `json:"isstock" bson:"isstock"`
 	IsDefault       bool            `json:"isdefault" bson:"isdefault"`
+	VatCal          int8            `json:"vatcal" bson:"vatcal"`
 }
