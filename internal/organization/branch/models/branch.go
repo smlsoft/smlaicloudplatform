@@ -41,7 +41,7 @@ type BranchPOS struct {
 }
 
 type Contact struct {
-	Address         []models.NameX `json:"address" bson:"address"`
+	Address         []models.NameX `json:"address" bson:"addressx"`
 	CountryCode     string         `json:"countrycode" bson:"countrycode"`
 	ProvinceCode    string         `json:"provincecode" bson:"provincecode"`
 	DistrictCode    string         `json:"districtcode" bson:"districtcode"`
