@@ -26,6 +26,11 @@ type SaleInvoiceTransactionPG struct {
 	TotalDiscountExceptVatAmount float64 `json:"totaldiscountexceptvatamount" gorm:"column:totaldiscountexceptvatamount;default:0"`
 	DetailTotalDiscount          float64 `json:"detailtotaldiscount" gorm:"column:detailtotaldiscount;default:0"`
 
+	SaleChannelCode   string  `json:"salechannelcode" gorm:"column:salechannelcode"`
+	SaleChannelGP     float64 `json:"salechannelgp" gorm:"column:salechannelgp"`
+	SaleChannelGPType int8    `json:"salechannelgptype" gorm:"column:salechannelgptype"`
+	TakeAway          int8    `json:"takeaway" gorm:"column:takeaway"`
+
 	Items *[]SaleInvoiceTransactionDetailPG `json:"items" gorm:"items;foreignKey:shopid,docno"`
 }
 

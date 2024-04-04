@@ -111,6 +111,10 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 		TotalDiscountVatAmount:       doc.TotalDiscountVatAmount,
 		TotalDiscountExceptVatAmount: doc.TotalDiscountExceptVatAmount,
 		DetailTotalDiscount:          doc.DetailTotalDiscount,
+		SaleChannelCode:              doc.SaleChannelCode,
+		SaleChannelGP:                doc.SaleChannelGP,
+		SaleChannelGPType:            doc.SaleChannelGPType,
+		TakeAway:                     doc.TakeAway,
 
 		DebtorCode:       doc.CustCode,
 		DebtorNames:      *pkgModels.DefaultArrayNameX(doc.CustNames),
