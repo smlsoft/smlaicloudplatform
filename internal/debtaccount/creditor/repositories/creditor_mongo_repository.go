@@ -20,6 +20,7 @@ type ICreditorRepository interface {
 	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.CreditorInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.CreditorDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.CreditorDoc, error)
 
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.CreditorItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.CreditorDoc, error)

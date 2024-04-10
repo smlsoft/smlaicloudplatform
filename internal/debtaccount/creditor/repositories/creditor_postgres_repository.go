@@ -9,8 +9,8 @@ import (
 
 type ICreditorPostgresRepository interface {
 	Get(shopID string, creditorCode string) (*creditorModels.CreditorPG, error)
-	Create(doc *creditorModels.CreditorPG) error
-	Update(shopID string, creditorCode string, doc *creditorModels.CreditorPG) error
+	Create(doc creditorModels.CreditorPG) error
+	Update(shopID string, creditorCode string, doc creditorModels.CreditorPG) error
 	Delete(shopID string, creditorCode string) error
 }
 
@@ -38,7 +38,7 @@ func (repo *CreditorPostgresRepository) Get(shopID string, creditorCode string) 
 	return &result, nil
 }
 
-func (repo *CreditorPostgresRepository) Create(doc *creditorModels.CreditorPG) error {
+func (repo *CreditorPostgresRepository) Create(doc creditorModels.CreditorPG) error {
 	err := repo.pst.Create(doc)
 	if err != nil {
 		return err
@@ -46,10 +46,10 @@ func (repo *CreditorPostgresRepository) Create(doc *creditorModels.CreditorPG) e
 	return nil
 }
 
-func (repo *CreditorPostgresRepository) Update(shopID string, creditorCode string, doc *creditorModels.CreditorPG) error {
+func (repo *CreditorPostgresRepository) Update(shopID string, creditorCode string, doc creditorModels.CreditorPG) error {
 	err := repo.pst.Update(&doc, map[string]interface{}{
-		"shopid":       shopID,
-		"creditorcode": creditorCode,
+		"shopid": shopID,
+		"code":   creditorCode,
 	})
 
 	if err != nil {
@@ -60,8 +60,8 @@ func (repo *CreditorPostgresRepository) Update(shopID string, creditorCode strin
 
 func (repo *CreditorPostgresRepository) Delete(shopID string, creditorCode string) error {
 	err := repo.pst.Delete(&creditorModels.CreditorPG{}, map[string]interface{}{
-		"shopid":       shopID,
-		"creditorcode": creditorCode,
+		"shopid": shopID,
+		"code":   creditorCode,
 	})
 
 	if err != nil {

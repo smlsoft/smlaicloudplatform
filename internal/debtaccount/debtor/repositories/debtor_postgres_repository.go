@@ -9,8 +9,8 @@ import (
 
 type IDebtorPostgresRepository interface {
 	Get(shopID string, code string) (*debtorModels.DebtorPG, error)
-	Create(doc *debtorModels.DebtorPG) error
-	Update(shopID string, code string, doc *debtorModels.DebtorPG) error
+	Create(doc debtorModels.DebtorPG) error
+	Update(shopID string, code string, doc debtorModels.DebtorPG) error
 	Delete(shopID string, code string) error
 }
 
@@ -38,7 +38,7 @@ func (repo *DebtorPostgresRepository) Get(shopID string, code string) (*debtorMo
 	return &result, nil
 }
 
-func (repo *DebtorPostgresRepository) Create(doc *debtorModels.DebtorPG) error {
+func (repo *DebtorPostgresRepository) Create(doc debtorModels.DebtorPG) error {
 	err := repo.pst.Create(doc)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (repo *DebtorPostgresRepository) Create(doc *debtorModels.DebtorPG) error {
 	return nil
 }
 
-func (repo *DebtorPostgresRepository) Update(shopID string, code string, doc *debtorModels.DebtorPG) error {
+func (repo *DebtorPostgresRepository) Update(shopID string, code string, doc debtorModels.DebtorPG) error {
 	err := repo.pst.Update(&doc, map[string]interface{}{
 		"shopid": shopID,
 		"code":   code,

@@ -21,6 +21,7 @@ type IDebtorRepository interface {
 	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DebtorInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.DebtorDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.DebtorDoc, error)
 
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.DebtorItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.DebtorDoc, error)

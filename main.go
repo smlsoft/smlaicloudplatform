@@ -368,6 +368,7 @@ func main() {
 
 	}
 
+	// Migration
 	if devApiMode == "3" {
 		// migration db only
 		journal.MigrationJournalTable(ms, cfg)
@@ -392,6 +393,10 @@ func main() {
 		creditorpayment_consumer.MigrationDatabase(ms, cfg)
 		debtorpayment_consumer.MigrationDatabase(ms, cfg)
 		warehouse.MigrationDatabase(ms, cfg)
+
+		// debt account
+		creditor.MigrationDatabase(ms, cfg)
+		debtor.MigrationDatabase(ms, cfg)
 
 		return
 	}
@@ -434,6 +439,10 @@ func main() {
 
 		// Warehouse
 		ms.RegisterConsumer(warehouse.InitWarehouseConsumer(ms, cfg))
+
+		// Debt Account
+		ms.RegisterConsumer(creditor.InitCreditorConsumer(ms, cfg))
+		ms.RegisterConsumer(debtor.InitDebtorConsumer(ms, cfg))
 
 		consumerServices := []ConsumerRegister{
 			task.NewTaskConsumer(ms, cfg),

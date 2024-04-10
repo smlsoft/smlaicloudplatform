@@ -328,7 +328,12 @@ func main() {
 
 	// journal.MigrationJournalTable(ms, cfg)
 
-	warehouse.MigrationDatabase(ms, cfg)
+	// warehouse.MigrationDatabase(ms, cfg)
+	// creditor.MigrationDatabase(ms, cfg)
+	// ms.RegisterConsumer(creditor.InitCreditorConsumer(ms, cfg))
+
+	debtor.MigrationDatabase(ms, cfg)
+	ms.RegisterConsumer(debtor.InitDebtorConsumer(ms, cfg))
 
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)

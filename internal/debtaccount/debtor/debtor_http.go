@@ -26,13 +26,16 @@ type DebtorHttp struct {
 func NewDebtorHttp(ms *microservice.Microservice, cfg config.IConfig) DebtorHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewDebtorRepository(pst)
+	repoMq := repositories.NewDebtorMessageQueueRepository(prod)
 	repoGroup := groupRepositories.NewDebtorGroupRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	svc := services.NewDebtorHttpService(
 		repo,
+		repoMq,
 		repoGroup,
 		masterSyncCacheRepo,
 		utils.HashPassword,

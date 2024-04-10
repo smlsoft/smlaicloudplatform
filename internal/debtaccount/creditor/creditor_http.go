@@ -26,12 +26,14 @@ type CreditorHttp struct {
 func NewCreditorHttp(ms *microservice.Microservice, cfg config.IConfig) CreditorHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewCreditorRepository(pst)
+	repoMq := repositories.NewCreditorMessageQueueRepository(prod)
 	repoGroup := repositoriesGroup.NewCreditorGroupRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewCreditorHttpService(repo, repoGroup, masterSyncCacheRepo)
+	svc := services.NewCreditorHttpService(repo, repoMq, repoGroup, masterSyncCacheRepo)
 
 	return CreditorHttp{
 		ms:  ms,

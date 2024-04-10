@@ -8,6 +8,7 @@ import (
 	"smlcloudplatform/internal/debtaccount/debtor/repositories"
 	groupModels "smlcloudplatform/internal/debtaccount/debtorgroup/models"
 	groupRepositories "smlcloudplatform/internal/debtaccount/debtorgroup/repositories"
+	"smlcloudplatform/internal/logger"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/services"
@@ -39,6 +40,7 @@ type IDebtorHttpService interface {
 
 type DebtorHttpService struct {
 	repo          repositories.IDebtorRepository
+	repoMq        repositories.IDebtorMessageQueueRepository
 	repoGroup     groupRepositories.IDebtorGroupRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.DebtorActivity, models.DebtorDeleteActivity]
@@ -49,6 +51,7 @@ type DebtorHttpService struct {
 
 func NewDebtorHttpService(
 	repo repositories.IDebtorRepository,
+	repoMq repositories.IDebtorMessageQueueRepository,
 	repoGroup groupRepositories.IDebtorGroupRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 	hashPassword func(password string) (string, error),
@@ -58,6 +61,7 @@ func NewDebtorHttpService(
 
 	insSvc := &DebtorHttpService{
 		repo:              repo,
+		repoMq:            repoMq,
 		repoGroup:         repoGroup,
 		syncCacheRepo:     syncCacheRepo,
 		hashPassword:      hashPassword,
@@ -164,7 +168,13 @@ func (svc DebtorHttpService) CreateDebtor(shopID string, authUsername string, do
 		return "", err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		err = svc.repoMq.Create(docData)
+		if err != nil {
+			logger.GetLogger().Errorf("Create creditor message queue error :: %s", err.Error())
+		}
+	}()
 
 	return newGuidFixed, nil
 }
@@ -197,27 +207,35 @@ func (svc DebtorHttpService) UpdateDebtor(shopID string, guid string, authUserna
 
 	}
 
-	findDoc.Debtor = doc.Debtor
-	findDoc.GroupGUIDs = &doc.Groups
+	dataDoc := findDoc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	dataDoc.Debtor = doc.Debtor
+	dataDoc.GroupGUIDs = &doc.Groups
+
+	dataDoc.UpdatedBy = authUsername
+	dataDoc.UpdatedAt = time.Now()
 
 	if doc.Auth.Password != "" {
 		hashedPassword, err := svc.hashPassword(doc.Auth.Password)
 		if err != nil {
 			return err
 		}
-		findDoc.Auth.Password = hashedPassword
+		dataDoc.Auth.Password = hashedPassword
 	}
 
-	err = svc.repo.Update(ctx, shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, dataDoc)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		err = svc.repoMq.Update(dataDoc)
+		if err != nil {
+			logger.GetLogger().Errorf("Update creditor message queue error :: %s", err.Error())
+		}
+	}()
 
 	return nil
 }
@@ -241,7 +259,13 @@ func (svc DebtorHttpService) DeleteDebtor(shopID string, guid string, authUserna
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		err = svc.repoMq.Delete(findDoc)
+		if err != nil {
+			logger.GetLogger().Errorf("Delete creditor message queue error :: %s", err.Error())
+		}
+	}()
 
 	return nil
 }
@@ -250,14 +274,28 @@ func (svc DebtorHttpService) DeleteDebtorByGUIDs(shopID string, authUsername str
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
+	findDocs, err := svc.repo.FindByGuids(ctx, shopID, GUIDs)
+
+	if err != nil {
+		return err
+	}
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
+	err = svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
+
+	go func() {
+		svc.saveMasterSync(shopID)
+		err = svc.repoMq.DeleteInBatch(findDocs)
+		if err != nil {
+			logger.GetLogger().Errorf("Delete creditor message queue error :: %s", err.Error())
+		}
+	}()
 
 	return nil
 }
@@ -533,7 +571,18 @@ func (svc DebtorHttpService) SaveInBatch(shopID string, authUsername string, dat
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		err = svc.repoMq.CreateInBatch(createDataList)
+		if err != nil {
+			logger.GetLogger().Errorf("Create creditor message queue error :: %s", err.Error())
+		}
+		svc.repoMq.UpdateInBatch(updateSuccessDataList)
+
+		if err != nil {
+			logger.GetLogger().Errorf("Update creditor message queue error :: %s", err.Error())
+		}
+	}()
 
 	return common.BulkImport{
 		Created:          createDataKey,
