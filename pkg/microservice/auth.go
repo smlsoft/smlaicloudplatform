@@ -92,10 +92,13 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
-			currentPath := c.Path()
+			currentPath := c.Request().URL.Path
 
 			for _, publicPath := range publicPath {
-				if strings.HasSuffix(publicPath, "*") && strings.HasPrefix(currentPath, publicPath[:len(publicPath)-1]) {
+				checkSuffix := strings.HasSuffix(publicPath, "*")
+				checkPrefix := strings.HasPrefix(currentPath, publicPath[:len(publicPath)-1])
+
+				if checkSuffix && checkPrefix {
 					return next(c)
 				} else if currentPath == publicPath {
 					return next(c)
