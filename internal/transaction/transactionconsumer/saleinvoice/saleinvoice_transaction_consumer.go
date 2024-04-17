@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	pkgConfig "smlcloudplatform/internal/config"
 	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/transaction/models"
 	saleInvoiceConfig "smlcloudplatform/internal/transaction/saleinvoice/config"
 	"smlcloudplatform/internal/transaction/transactionconsumer/debtortransaction"
 	"smlcloudplatform/internal/transaction/transactionconsumer/services"
@@ -15,17 +14,24 @@ import (
 
 	trans_models "smlcloudplatform/internal/transaction/models"
 	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
+
+	productbom_repositories "smlcloudplatform/internal/product/bom/repositories"
+	productbom_services "smlcloudplatform/internal/product/bom/services"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
+	saleinvoicebomprice_repositories "smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
+	saleinvoicebomprice_services "smlcloudplatform/internal/transaction/saleinvoicebomprice/services"
 )
 
 type SaleInvoiceTransactionConsumer struct {
 	ms                         *microservice.Microservice
 	cfg                        pkgConfig.IConfig
 	svc                        ISaleInvoiceTransactionConsumerService
-	trxPhaser                  usecases.ITransactionPhaser[models.SaleInvoiceTransactionPG]
-	stockPhaser                usecases.IStockTransactionPhaser[models.SaleInvoiceTransactionPG]
-	debtorPhaser               usecases.IDebtorTransactionPhaser[models.SaleInvoiceTransactionPG]
+	trxPhaser                  usecases.ITransactionPhaser[trans_models.SaleInvoiceTransactionPG]
+	stockPhaser                usecases.IStockTransactionPhaser[trans_models.SaleInvoiceTransactionPG]
+	debtorPhaser               usecases.IDebtorTransactionPhaser[trans_models.SaleInvoiceTransactionPG]
 	stockConsumerService       stocktransaction.IStockTransactionConsumerService
 	debtorConsumerService      debtortransaction.IDebtorTransactionConsumerService
+	productBomService          productbom_services.IBOMHttpService
 	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase
 }
 
@@ -35,6 +41,7 @@ func NewSaleInvoiceTransactionConsumer(
 	svc ISaleInvoiceTransactionConsumerService,
 	stockConsumerService stocktransaction.IStockTransactionConsumerService,
 	debtorConsumerService debtortransaction.IDebtorTransactionConsumerService,
+	productBomService productbom_services.IBOMHttpService,
 	transPaymentConsumeUsecase transaction_payment_consume.IPaymentUsecase,
 ) services.ITransactionDocConsumer {
 
@@ -51,6 +58,7 @@ func NewSaleInvoiceTransactionConsumer(
 		debtorPhaser:               saleInvoiceDebtorPhaser,
 		stockConsumerService:       stockConsumerService,
 		debtorConsumerService:      debtorConsumerService,
+		productBomService:          productBomService,
 		transPaymentConsumeUsecase: transPaymentConsumeUsecase,
 	}
 }
@@ -78,16 +86,24 @@ func (t *SaleInvoiceTransactionConsumer) RegisterConsumer(ms *microservice.Micro
 
 func InitSaleInvoiceTransactionConsumer(ms *microservice.Microservice, cfg pkgConfig.IConfig) services.ITransactionDocConsumer {
 
+	persisterMongo := ms.MongoPersister(cfg.MongoPersisterConfig())
 	persister := ms.Persister(cfg.PersisterConfig())
 	producer := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	stockService := stocktransaction.NewStockTransactionConsumerService(persister, producer)
 	debtorService := debtortransaction.NewDebtorTransactionService(persister, producer)
 
+	productBarcodeRepository := productbarcode_repositories.NewProductBarcodeRepository(persisterMongo, cache)
+	saleinvoiceBomPriceRepository := saleinvoicebomprice_repositories.NewSaleInvoiceBomPriceRepository(persisterMongo)
+	saleinvoiceBomPriceService := saleinvoicebomprice_services.NewSaleInvoiceBomPriceService(saleinvoiceBomPriceRepository)
+	productBomRepository := productbom_repositories.NewBomRepository(persisterMongo)
+	productBomService := productbom_services.NewBOMHttpService(productBomRepository, productBarcodeRepository, saleinvoiceBomPriceService)
+
 	transPaymentConsumeUsecase := transaction_payment_consume.InitPayment(persister)
 
 	saleInvoiceConsumerService := NewSaleInvoiceTransactionConsumerService(NewSaleInvoiceTransactionPGRepository(persister))
-	consumer := NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService, transPaymentConsumeUsecase)
+	consumer := NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService, productBomService, transPaymentConsumeUsecase)
 
 	return consumer
 }
@@ -151,6 +167,10 @@ func (t *SaleInvoiceTransactionConsumer) ConsumeOnCreateOrUpdate(ctx microservic
 	if err != nil {
 		logger.GetLogger().Errorf("Cannot Upsert Payment : %v", err.Error())
 		return err
+	}
+
+	for _, item := range *transaction.Items {
+		t.productBomService.UpsertBOM(transaction.ShopID, "SYSTEM", transaction.DocNo, item.Barcode)
 	}
 
 	return nil
@@ -320,8 +340,8 @@ func (t *SaleInvoiceTransactionConsumer) HasPaymentEffectDoc(transDoc trans_mode
 func MigrationDatabase(ms *microservice.Microservice, cfg pkgConfig.IConfig) error {
 	pst := ms.Persister(cfg.PersisterConfig())
 	pst.AutoMigrate(
-		models.SaleInvoiceTransactionPG{},
-		models.SaleInvoiceTransactionDetailPG{},
+		trans_models.SaleInvoiceTransactionPG{},
+		trans_models.SaleInvoiceTransactionDetailPG{},
 	)
 	return nil
 }

@@ -152,13 +152,15 @@ func (svc PurchaseService) CreatePurchase(shopID string, authUsername string, do
 	dataDoc.GuidFixed = newGuidFixed
 	dataDoc.Purchase = doc
 
-	productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
-	if err != nil {
-		return "", "", err
-	}
+	if doc.Details != nil {
+		productBarcodes, err := svc.GetDetailProductBarcodes(ctx, shopID, *doc.Details)
+		if err != nil {
+			return "", "", err
+		}
 
-	details := svc.PrepareDetail(*doc.Details, productBarcodes)
-	dataDoc.Details = &details
+		details := svc.PrepareDetail(*doc.Details, productBarcodes)
+		dataDoc.Details = &details
+	}
 
 	dataDoc.DocNo = newDocNo
 	dataDoc.CreatedBy = authUsername

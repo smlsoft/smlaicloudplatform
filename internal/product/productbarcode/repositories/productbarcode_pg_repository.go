@@ -8,6 +8,8 @@ import (
 )
 
 type IProductBarcodePGRepository interface {
+	FindByBarcode(shopID string, barcode string) (*models.ProductBarcodePg, error)
+	FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodePg, error)
 	Get(shopID string, barcode string) (*models.ProductBarcodePg, error)
 	Create(doc *models.ProductBarcodePg) error
 	Update(shopID string, barcode string, doc *models.ProductBarcodePg) error
@@ -36,6 +38,34 @@ func (repo *ProductBarcodePGRepository) Get(shopID string, barcode string) (*mod
 	}
 
 	return &result, nil
+}
+
+func (repo *ProductBarcodePGRepository) FindByBarcode(shopID string, barcode string) (*models.ProductBarcodePg, error) {
+	var result models.ProductBarcodePg
+	_, err := repo.pst.First(&result, "shopid=? AND barcode = ?", shopID, barcode)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		} else {
+			return nil, err
+		}
+	}
+
+	return &result, nil
+}
+
+func (repo *ProductBarcodePGRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodePg, error) {
+	var results []models.ProductBarcodePg
+	_, err := repo.pst.Where(&results, "shopid=? AND barcode IN ?", shopID, barcodes)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		} else {
+			return nil, err
+		}
+	}
+
+	return results, nil
 }
 
 func (repo *ProductBarcodePGRepository) Create(doc *models.ProductBarcodePg) error {

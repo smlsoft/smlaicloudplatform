@@ -33,7 +33,7 @@ func TestDeserializeJsonProductBarcode(t *testing.T) {
 	assert.Equal(t, "จาน", *got.UnitNames[0].Name)
 	assert.Equal(t, 1, len(got.BOM))
 
-	assert.Equal(t, "some-guid-fixed-value", (*got).BOM[0].GuidFixed)
+	assert.Equal(t, "some-guid-fixed-value", (*got).BOM[0].BarcodeGuidFixed)
 	assert.Equal(t, "1234567890", (*got).BOM[0].Barcode)
 
 }

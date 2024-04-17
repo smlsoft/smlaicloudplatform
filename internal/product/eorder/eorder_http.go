@@ -23,7 +23,7 @@ import (
 	repo_order_setting "smlcloudplatform/internal/order/setting/repositories"
 	branch_repositories "smlcloudplatform/internal/organization/branch/repositories"
 	repo_media "smlcloudplatform/internal/pos/media/repositories"
-	repo_product "smlcloudplatform/internal/product/productbarcode/repositories"
+	product_repo "smlcloudplatform/internal/product/productbarcode/repositories"
 	product_services "smlcloudplatform/internal/product/productbarcode/services"
 	"smlcloudplatform/internal/restaurant/kitchen"
 	"smlcloudplatform/internal/restaurant/table"
@@ -62,9 +62,9 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	repoCategory := category_repositories.NewProductCategoryRepository(pst)
 	svcCategory := category_services.NewProductCategoryHttpService(repoCategory, masterSyncCacheRepo)
 
-	repo := repo_product.NewProductBarcodeRepository(pst, cache)
-	clickHouseRepo := repo_product.NewProductBarcodeClickhouseRepository(pstClickHouse)
-	mqRepo := repo_product.NewProductBarcodeMessageQueueRepository(prod)
+	repo := product_repo.NewProductBarcodeRepository(pst, cache)
+	clickHouseRepo := product_repo.NewProductBarcodeClickhouseRepository(pstClickHouse)
+	mqRepo := product_repo.NewProductBarcodeMessageQueueRepository(prod)
 
 	svcProduct := product_services.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
 
