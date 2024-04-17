@@ -15,6 +15,12 @@ import (
 	"smlcloudplatform/internal/transaction/transactionconsumer/stocktransaction"
 	"smlcloudplatform/pkg/microservice"
 	"time"
+
+	productbom_repositories "smlcloudplatform/internal/product/bom/repositories"
+	productbom_services "smlcloudplatform/internal/product/bom/services"
+	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
+	saleinvoicebomprice_repositories "smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
+	saleinvoicebomprice_services "smlcloudplatform/internal/transaction/saleinvoicebomprice/services"
 )
 
 type ITransactionConsumer interface {
@@ -45,8 +51,10 @@ type TransactionConsumer struct {
 
 func NewTransactionConsumer(ms *microservice.Microservice, cfg pkgConfig.IConfig) ITransactionConsumer {
 
+	persisterMongo := ms.MongoPersister(cfg.MongoPersisterConfig())
 	persister := ms.Persister(cfg.PersisterConfig())
 	producer := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	stockService := stocktransaction.NewStockTransactionConsumerService(persister, producer)
 	creditorService := creditortransaction.NewCreditorTransactionConsumerService(persister, producer)
@@ -60,8 +68,14 @@ func NewTransactionConsumer(ms *microservice.Microservice, cfg pkgConfig.IConfig
 	purchaseReturnConsumerService := purchasereturn.NewPurchaseReturnTransactionService(purchasereturn.NewPurchaseReturnTransactionPGRepository(persister))
 	purchaseReturnStockConsumer := purchasereturn.NewTransactionPurchaseReturnConsumer(ms, cfg, purchaseReturnConsumerService, stockService, creditorService, transPaymentConsumeUsecase)
 
+	productBarcodeRepository := productbarcode_repositories.NewProductBarcodeRepository(persisterMongo, cache)
+	saleinvoiceBomPriceRepository := saleinvoicebomprice_repositories.NewSaleInvoiceBomPriceRepository(persisterMongo)
+	saleinvoiceBomPriceService := saleinvoicebomprice_services.NewSaleInvoiceBomPriceService(saleinvoiceBomPriceRepository)
+	productBomRepository := productbom_repositories.NewBomRepository(persisterMongo)
+	productBomService := productbom_services.NewBOMHttpService(productBomRepository, productBarcodeRepository, saleinvoiceBomPriceService)
+
 	saleInvoiceConsumerService := saleinvoice.NewSaleInvoiceTransactionConsumerService(saleinvoice.NewSaleInvoiceTransactionPGRepository(persister))
-	saleInvoiceStockConsumer := saleinvoice.NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService, transPaymentConsumeUsecase)
+	saleInvoiceStockConsumer := saleinvoice.NewSaleInvoiceTransactionConsumer(ms, cfg, saleInvoiceConsumerService, stockService, debtorService, productBomService, transPaymentConsumeUsecase)
 
 	saleInvoiceReturnConsumerService := saleinvoicereturn.NewSaleInvoiceReturnTransactionConsumerService(saleinvoicereturn.NewSaleInvoiceReturnTransactionPGRepository(persister))
 	saleInvoiceReturnStockConsumer := saleinvoicereturn.NewSaleInvoiceReturnTransactionConsumer(ms, cfg, saleInvoiceReturnConsumerService, stockService, debtorService, transPaymentConsumeUsecase)

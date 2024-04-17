@@ -86,6 +86,10 @@ type TransactionHeader struct {
 	TotalAmountAfterDiscount        float64           `json:"totalamountafterdiscount" bson:"totalamountafterdiscount"`
 	DetailTotalAmountBeforeDiscount float64           `json:"detailtotalamountbeforediscount" bson:"detailtotalamountbeforediscount"`
 	SumCredit                       float64           `json:"sumcredit" bson:"sumcredit"`
+	// IsCalcSuccess                   bool              `json:"iscalcsuccess" bson:"iscalcsuccess"`
+	// IsCalcBOM                       bool              `json:"iscalcbom" bson:"iscalcbom"`
+	// BOMCost                         float64           `json:"bomcost" bson:"bomcost"`
+	// BOMGUID                         string            `json:"bomguid" bson:"bomguid"`
 }
 
 type Transaction struct {

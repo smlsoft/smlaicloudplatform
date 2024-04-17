@@ -34,6 +34,7 @@ import (
 	"smlcloudplatform/internal/payment/bookbank"
 	"smlcloudplatform/internal/payment/qrpayment"
 	"smlcloudplatform/internal/paymentmaster"
+	"smlcloudplatform/internal/product/bom"
 	"smlcloudplatform/internal/product/color"
 	"smlcloudplatform/internal/product/eorder"
 	"smlcloudplatform/internal/product/optionpattern"
@@ -317,6 +318,8 @@ func main() {
 		filestatus.NewFileStatusHttp(ms, cfg),
 
 		member.NewMemberHttp(ms, cfg),
+
+		bom.NewBOMHttp(ms, cfg),
 	}
 
 	azureFileBlob := microservice.NewPersisterAzureBlob()
@@ -327,8 +330,7 @@ func main() {
 	serviceStartHttp(ms, httpServices...)
 
 	// journal.MigrationJournalTable(ms, cfg)
-
-	warehouse.MigrationDatabase(ms, cfg)
+	// warehouse.MigrationDatabase(ms, cfg)
 
 	// inventory.StartInventoryAsync(ms, cfg)
 	// inventory.StartInventoryComsumeCreated(ms, cfg)
