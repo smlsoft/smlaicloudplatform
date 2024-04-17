@@ -54,8 +54,7 @@ func (h BOMHttp) RegisterHttp() {
 // Create BOM godoc
 // @Description Create BOM
 // @Tags		BOM
-// @Param		barcode	query	string		false  "barcode"
-// @Param		docNo	query	string		false  "docNo"
+// @Param		BOM  body      models.ProductBarcodeBOMView  true  "ProductBarcodeBOMView"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
