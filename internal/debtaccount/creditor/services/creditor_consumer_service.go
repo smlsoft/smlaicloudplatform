@@ -6,8 +6,8 @@ import (
 )
 
 type ICreditorConsumerService interface {
-	Upsert(shopID string, code string, doc models.CreditorPG) error
-	Delete(shopID string, code string) error
+	Upsert(shopID string, guidFixed string, doc models.CreditorPG) error
+	Delete(shopID string, guidFixed string) error
 }
 
 type CreditorConsumerService struct {
@@ -20,8 +20,8 @@ func NewCreditorConsumerService(repo repositories.ICreditorPostgresRepository) I
 	}
 }
 
-func (s *CreditorConsumerService) Upsert(shopID string, code string, doc models.CreditorPG) error {
-	findDoc, err := s.repo.Get(shopID, code)
+func (s *CreditorConsumerService) Upsert(shopID string, guidFixed string, doc models.CreditorPG) error {
+	findDoc, err := s.repo.Get(shopID, guidFixed)
 	if err != nil || findDoc == nil {
 		err = s.repo.Create(doc)
 		if err != nil {
@@ -32,20 +32,18 @@ func (s *CreditorConsumerService) Upsert(shopID string, code string, doc models.
 		isEqual := findDoc.CompareTo(&doc)
 
 		if !isEqual {
-			err = s.repo.Update(shopID, code, doc)
+			err = s.repo.Update(shopID, guidFixed, doc)
 			if err != nil {
 				return err
 			}
-		} else {
-			// logger.GetLogger().Debug("Doc is equal, skip update")
 		}
 	}
 
 	return nil
 }
 
-func (s *CreditorConsumerService) Delete(shopID string, code string) error {
-	err := s.repo.Delete(shopID, code)
+func (s *CreditorConsumerService) Delete(shopID string, guidFixed string) error {
+	err := s.repo.Delete(shopID, guidFixed)
 	if err != nil {
 		return err
 	}

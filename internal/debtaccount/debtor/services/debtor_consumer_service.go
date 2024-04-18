@@ -36,8 +36,6 @@ func (s *DebtorConsumerService) Upsert(shopID string, code string, doc models.De
 			if err != nil {
 				return err
 			}
-		} else {
-			// logger.GetLogger().Debug("Doc is equal, skip update")
 		}
 	}
 

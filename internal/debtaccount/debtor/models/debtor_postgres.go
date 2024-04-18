@@ -8,7 +8,8 @@ import (
 )
 
 type DebtorPG struct {
-	ShopID                   string `json:"shopid" gorm:"column:shopid;primaryKey"`
+	ShopID                   string `json:"shopid" gorm:"column:shopid"`
+	GuidFixed                string `json:"guidfixed" bson:"guidfixed" gorm:"column:guidfixed;primaryKey"`
 	models.PartitionIdentity `gorm:"embedded;"`
 	Code                     string       `json:"code" gorm:"column:code;primaryKey"`
 	Names                    models.JSONB `json:"names"  gorm:"column:names;type:jsonb" `
@@ -30,8 +31,7 @@ func (DebtorPG) TableName() string {
 func (s *DebtorPG) CompareTo(other *DebtorPG) bool {
 
 	diff := cmp.Diff(s, other,
-		//cmpopts.IgnoreFields(StockReturnProductTransactionPG{}, "TotalCost"),
-		cmpopts.IgnoreFields(DebtorPG{}),
+		cmpopts.IgnoreFields(DebtorPG{}, "ShopID", "GuidFixed"),
 	)
 
 	return diff == ""
