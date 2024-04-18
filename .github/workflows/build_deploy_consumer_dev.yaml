@@ -1,4 +1,4 @@
-name: Build Deploy Consumer
+name: Build Deploy Consumer Dev 🤖
 on: [workflow_dispatch]
 env: 
     REGISTRY: ghcr.io
@@ -49,8 +49,8 @@ jobs:
           token: ${{ secrets.GH_SECRET }}
       - name: setup git config
         run: |
-          git config --global user.email "woranich@gmail.com"
-          git config --global user.name "userplant"
+          git config --global user.email "smlsoftdev@gmail.com"
+          git config --global user.name "smlsoftdev"
           echo ${{ github.sha }}
           sed -i "s|ghcr.io/smlsoft/smlcloudconsumer:sha-.\{7\}|ghcr.io/smlsoft/smlcloudconsumer:sha-${GITHUB_SHA::7}|g" dedepos-consumer-dev/deployment.yaml
           git add -A
