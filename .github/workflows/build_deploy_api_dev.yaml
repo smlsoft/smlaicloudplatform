@@ -1,4 +1,4 @@
-name: Build Deploy API DEV 
+name: Build Deploy API Dev 🤖
 on: [workflow_dispatch]
 env:
   REGISTRY: ghcr.io

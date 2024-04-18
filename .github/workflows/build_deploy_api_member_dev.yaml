@@ -1,4 +1,4 @@
-name: Build Deploy API Member Dev
+name: Build Deploy API Member Dev 🤖
 on: [workflow_dispatch]
 env:
   REGISTRY: ghcr.io
@@ -48,8 +48,8 @@ jobs:
           token: ${{ secrets.GH_SECRET }}
       - name: setup git config
         run: |
-          git config --global user.email "woranich@gmail.com"
-          git config --global user.name "userplant"
+          git config --global user.email "smlsoftdev@gmail.com"
+          git config --global user.name "smlsoftdev"
           echo ${{ github.sha }}
           sed -i "s|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-.\{7\}|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}|g" dedepos-api-member-dev/deployment.yaml
           git add -A
