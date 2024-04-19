@@ -116,6 +116,12 @@ func (svc BOMHttpService) UpsertBOM(shopID string, authUsername string, docNo st
 		}
 	}
 
+	bomAllBarcode := []string{}
+
+	for tempBarcode := range productBarcodeDict {
+		bomAllBarcode = append(bomAllBarcode, tempBarcode)
+	}
+
 	if isCreate {
 
 		err := svc.clearUseBOMByBarcode(ctx, shopID, barcode)
