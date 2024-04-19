@@ -116,10 +116,10 @@ func (svc BOMHttpService) UpsertBOM(shopID string, authUsername string, docNo st
 		}
 	}
 
-	bomAllBarcode := []string{}
+	bomBarcodes := []string{}
 
 	for tempBarcode := range productBarcodeDict {
-		bomAllBarcode = append(bomAllBarcode, tempBarcode)
+		bomBarcodes = append(bomBarcodes, tempBarcode)
 	}
 
 	if isCreate {
@@ -136,7 +136,7 @@ func (svc BOMHttpService) UpsertBOM(shopID string, authUsername string, docNo st
 			return newGUID, err
 		}
 
-		_, err = svc.saleInvoiceBomSvc.CreateSaleInvoiceBomPrice(shopID, authUsername, docNo, newGUID)
+		_, err = svc.saleInvoiceBomSvc.CreateSaleInvoiceBomPrice(shopID, authUsername, docNo, newGUID, bomBarcodes)
 
 		if err != nil {
 			return newGUID, err
@@ -145,7 +145,7 @@ func (svc BOMHttpService) UpsertBOM(shopID string, authUsername string, docNo st
 		return newGUID, nil
 	}
 
-	_, err = svc.saleInvoiceBomSvc.CreateSaleInvoiceBomPrice(shopID, authUsername, docNo, findDoc.GuidFixed)
+	_, err = svc.saleInvoiceBomSvc.CreateSaleInvoiceBomPrice(shopID, authUsername, docNo, findDoc.GuidFixed, bomBarcodes)
 
 	if err != nil {
 		return findDoc.GuidFixed, err
