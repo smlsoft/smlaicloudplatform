@@ -12,7 +12,7 @@ type IJournalReportPgRepository interface {
 	GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
 	GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
 	GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
-	GetDataLedgerAccount(shopId string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
+	GetDataLedgerAccount(shopId string, accountGroup string, creditorCode string, debtorCode string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
 }
 
 type JournalReportPgRepository struct {
@@ -387,11 +387,23 @@ func (repo JournalReportPgRepository) GetDataBalanceSheet(shopId string, account
 	return details, nil
 }
 
-func (repo JournalReportPgRepository) GetDataLedgerAccount(shopID string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+func (repo JournalReportPgRepository) GetDataLedgerAccount(
+	shopID string,
+	accountGroup string,
+	creditorCode string,
+	debtorCode string,
+	consolidateAccountCode string,
+	accountRanges []models.LedgerAccountCodeRange,
+	startDate time.Time,
+	endDate time.Time,
+) ([]models.LedgerAccountRaw, error) {
 
 	accountCodeQuery := ""
 	accountGroupQuery := ""
 	consolidateAccountCodeQuery := ""
+
+	creditorQuery := ""
+	debtorQuery := ""
 
 	values := map[string]interface{}{
 		"shopid":    shopID,
@@ -429,6 +441,16 @@ func (repo JournalReportPgRepository) GetDataLedgerAccount(shopID string, accoun
 		accountCodeQuery = " and ( " + accountCodeQuery + " ) "
 	}
 
+	if len(creditorCode) > 0 {
+		creditorQuery = " and j.creditor->>'code' = @creditorcode"
+		values["creditorcode"] = creditorCode
+	}
+
+	if len(debtorCode) > 0 {
+		debtorQuery = " and j.debtor->>'code' = @debtorcode"
+		values["debtorcode"] = debtorCode
+	}
+
 	rawQuery := `select * from (
 		WITH 
 			acc as ( 
@@ -441,7 +463,7 @@ func (repo JournalReportPgRepository) GetDataLedgerAccount(shopID string, accoun
 		from  journals j
                 left join journals_detail d on j.shopid = d.shopid AND j.docno = d.docno 
                 left join chartofaccounts a on j.shopid = a.shopid AND d.accountcode = a.accountcode
-		where j.docdate < @startdate and j.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
+		where j.docdate < @startdate and j.shopid = @shopid ` + accountGroupQuery + creditorQuery + debtorQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
 		group by d.accountcode
 		)
 		SELECT -1 as rowmode, '1900-01-01'::date as docdate, '' as docno,acc.accountcode,acc.accountname, '' as accountdescription,
@@ -452,7 +474,7 @@ func (repo JournalReportPgRepository) GetDataLedgerAccount(shopID string, accoun
 		from journals j 
 		join journals_detail d on j.shopid = d.shopid and j.docno = d.docno
 		join chartofaccounts a on a.shopid = j.shopid and a.accountcode = d.accountcode
-		where j.docdate between @startdate and @enddate and j.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
+		where j.docdate between @startdate and @enddate and j.shopid = @shopid ` + accountGroupQuery + creditorQuery + debtorQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
 			) as final_data order by accountcode,rowmode,docdate`
 
 	rawDocList := []models.LedgerAccountRaw{}

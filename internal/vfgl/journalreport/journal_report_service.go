@@ -15,7 +15,7 @@ type IJournalReportService interface {
 	ProcessTrialBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error)
 	ProcessProfitAndLossSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error)
 	ProcessBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) (*models.BalanceSheetReport, error)
-	ProcessLedgerAccount(shopId string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error)
+	ProcessLedgerAccount(shopId string, accountGroup string, creditorCode string, debtorCode string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error)
 }
 
 type JournalReportService struct {
@@ -225,12 +225,12 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 	return result, nil
 }
 
-func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error) {
+func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup string, creditorCode string, debtorCode string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	rawDocList, err := svc.repoPg.GetDataLedgerAccount(shopID, accountGroup, consolidateAccountCode, accountRanges, startDate, endDate)
+	rawDocList, err := svc.repoPg.GetDataLedgerAccount(shopID, accountGroup, creditorCode, debtorCode, consolidateAccountCode, accountRanges, startDate, endDate)
 
 	if err != nil {
 		return nil, err

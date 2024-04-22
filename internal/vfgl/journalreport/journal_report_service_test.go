@@ -1,6 +1,7 @@
 package journalreport_test
 
 import (
+	"context"
 	"fmt"
 	chartofaccountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
 	"smlcloudplatform/internal/vfgl/journalreport"
@@ -14,28 +15,41 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockJournalreportRepository struct {
+type MockJournalReportPgRepository struct {
 	mock.Mock
 }
 
-func (m *MockJournalreportRepository) GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
+func (m *MockJournalReportPgRepository) GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
 	ret := m.Called(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 	return ret.Get(0).([]models.TrialBalanceSheetAccountDetail), ret.Error(1)
 }
 
-func (m *MockJournalreportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
+func (m *MockJournalReportPgRepository) GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
 	ret := m.Called(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 	return ret.Get(0).([]models.ProfitAndLossSheetAccountDetail), ret.Error(1)
 }
 
-func (m *MockJournalreportRepository) GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
+func (m *MockJournalReportPgRepository) GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
 	ret := m.Called(shopId, accountGroup, includeCloseAccountMode, endDate)
 	return ret.Get(0).([]models.BalanceSheetAccountDetail), ret.Error(1)
 }
 
-func (m *MockJournalreportRepository) GetDataLedgerAccount(shopId string, accountGroup string, consolidateAccountCode string, accountCodeRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
-	ret := m.Called(shopId, accountGroup, consolidateAccountCode, accountCodeRanges, startDate, endDate)
+func (m *MockJournalReportPgRepository) GetDataLedgerAccount(shopId string, accountGroup string, creditorCode string, debtorCode string, consolidateAccountCode string, accountCodeRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+	ret := m.Called(shopId, accountGroup, creditorCode, debtorCode, consolidateAccountCode, accountCodeRanges, startDate, endDate)
 	return ret.Get(0).([]models.LedgerAccountRaw), ret.Error(1)
+}
+
+type MockJournalReportMongoRepository struct {
+	mock.Mock
+}
+
+func (m *MockJournalReportMongoRepository) FindCountDetailByDocs(ctx context.Context, shopID string, docs []string) ([]models.JournalSummary, error) {
+	ret := m.Called(ctx, shopID, docs)
+	return ret.Get(0).([]models.JournalSummary), ret.Error(1)
+}
+func (m *MockJournalReportMongoRepository) FindCountImageByDocs(ctx context.Context, shopID string, docs []string) ([]models.JournalImageSummary, error) {
+	ret := m.Called(ctx, shopID, docs)
+	return ret.Get(0).([]models.JournalImageSummary), ret.Error(1)
 }
 
 func TestProcessBalanceSheetReport(t *testing.T) {
@@ -43,8 +57,8 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 	var balances = journalreport.MockBalanceSheetDetailReport()
 	endDate := time.Date(2022, 05, 31, 0, 0, 0, 0, time.UTC)
 
-	repo := new(MockJournalreportRepository)
-	repo.On("GetDataBalanceSheet", "TESTSHOP", "01", endDate).Return(balances, nil)
+	repo := new(MockJournalReportPgRepository)
+	repo.On("GetDataBalanceSheet", "TESTSHOP", "01", false, endDate).Return(balances, nil)
 
 	var liabilities []models.BalanceSheetAccountDetail
 
@@ -102,7 +116,11 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 		TotalLiabilityAndOwnersEquityAmount: 30020,
 	}
 
-	service := journalreport.NewJournalReportService(repo, nil)
+	repoMongo := new(MockJournalReportMongoRepository)
+	repoMongo.On("FindCountDetailByDocs", mock.Anything, "TESTSHOP", []string{"DOC001", "DOC002", "DOC003", ""}).Return([]models.JournalSummary{}, nil)
+	repoMongo.On("FindCountImageByDocs", mock.Anything, "TESTSHOP", []string{"DOC001", "DOC002", "DOC003", ""}).Return([]models.JournalImageSummary{}, nil)
+
+	service := journalreport.NewJournalReportService(repo, repoMongo)
 	get, err := service.ProcessBalanceSheetReport("TESTSHOP", "01", false, endDate)
 	get.ReportDate = fixReportDate
 	assert.Nil(t, err, "Error should be nil")
@@ -111,8 +129,8 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 }
 
 func TestLedgerAccount(t *testing.T) {
-	repo := new(MockJournalreportRepository)
-	repo.On("GetDataLedgerAccount", "TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
+	repo := new(MockJournalReportPgRepository)
+	repo.On("GetDataLedgerAccount", "TESTSHOP", "accGroup", "", "", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",
@@ -240,8 +258,12 @@ func TestLedgerAccount(t *testing.T) {
 		},
 	}, nil)
 
-	service := journalreport.NewJournalReportService(repo, nil)
-	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
+	repoMongo := new(MockJournalReportMongoRepository)
+	repoMongo.On("FindCountDetailByDocs", mock.Anything, "TESTSHOP", []string{"DOC001", "DOC002", "DOC003", ""}).Return([]models.JournalSummary{}, nil)
+	repoMongo.On("FindCountImageByDocs", mock.Anything, "TESTSHOP", []string{"DOC001", "DOC002", "DOC003", ""}).Return([]models.JournalImageSummary{}, nil)
+
+	service := journalreport.NewJournalReportService(repo, repoMongo)
+	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "", "", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",
@@ -262,8 +284,8 @@ func TestLedgerAccount(t *testing.T) {
 }
 
 func TestLedgerAccount2(t *testing.T) {
-	repo := new(MockJournalreportRepository)
-	repo.On("GetDataLedgerAccount", "TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
+	repo := new(MockJournalReportPgRepository)
+	repo.On("GetDataLedgerAccount", "TESTSHOP", "accGroup", "", "", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",
@@ -411,8 +433,12 @@ func TestLedgerAccount2(t *testing.T) {
 		},
 	}, nil)
 
-	service := journalreport.NewJournalReportService(repo, nil)
-	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
+	repoMongo := new(MockJournalReportMongoRepository)
+	repoMongo.On("FindCountDetailByDocs", mock.Anything, "TESTSHOP", []string{""}).Return([]models.JournalSummary{}, nil)
+	repoMongo.On("FindCountImageByDocs", mock.Anything, "TESTSHOP", []string{""}).Return([]models.JournalImageSummary{}, nil)
+
+	service := journalreport.NewJournalReportService(repo, repoMongo)
+	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "", "", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",

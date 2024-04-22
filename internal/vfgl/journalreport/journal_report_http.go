@@ -249,6 +249,8 @@ func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext)
 // @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
 // @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
 // @Param		accountcode query string true "Account Code"
+// @Param		creditorcode query string true "Creditor Code"
+// @Param		debtorcode query string true "Debtor Code"
 // @Param		timezone query string false "TimeZone"
 // @Accept		json
 // @Success		200 {object} models.TrialBalanceSheetReportResponse
@@ -267,6 +269,8 @@ func (r JournalReportHttp) ProcessReportLedgerAccount(ctx microservice.IContext)
 	timeZone := ctx.QueryParam("timezone") // +07
 
 	accountGroup := ctx.QueryParam("accountgroup")
+	creditorCode := ctx.QueryParam("creditorcode")
+	debtorCode := ctx.QueryParam("debtorcode")
 	consolidateAccountCode := ctx.QueryParam("consolidateaccountcode")
 
 	if timeZone != "" {
@@ -313,7 +317,7 @@ func (r JournalReportHttp) ProcessReportLedgerAccount(ctx microservice.IContext)
 	}
 
 	r.ms.Logger.Debugf("Start Process Ledger Account %v:%v", startDate, endDate)
-	reportData, err := r.svc.ProcessLedgerAccount(shopID, accountGroup, consolidateAccountCode, accRanges, startDate.UTC(), endDate.UTC())
+	reportData, err := r.svc.ProcessLedgerAccount(shopID, accountGroup, creditorCode, debtorCode, consolidateAccountCode, accRanges, startDate.UTC(), endDate.UTC())
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))
 		return err
