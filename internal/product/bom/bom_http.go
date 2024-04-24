@@ -24,16 +24,18 @@ type BOMHttp struct {
 
 func NewBOMHttp(ms *microservice.Microservice, cfg config.IConfig) BOMHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	producer := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewBomRepository(pst)
+	repoMq := repositories.NewBomMessageQueueRepository(producer)
 
 	repoProduct := product_repositories.NewProductBarcodeRepository(pst, cache)
 
 	repoSaleinvoiceBom := saleinvoicebom_repositories.NewSaleInvoiceBomPriceRepository(pst)
 	svcSaleinvoiceBom := saleinvoicebom_services.NewSaleInvoiceBomPriceService(repoSaleinvoiceBom)
 
-	svc := services.NewBOMHttpService(repo, repoProduct, svcSaleinvoiceBom)
+	svc := services.NewBOMHttpService(repo, repoMq, repoProduct, svcSaleinvoiceBom)
 
 	return BOMHttp{
 		ms:  ms,
@@ -54,7 +56,8 @@ func (h BOMHttp) RegisterHttp() {
 // Create BOM godoc
 // @Description Create BOM
 // @Tags		BOM
-// @Param		BOM  body      models.ProductBarcodeBOMView  true  "ProductBarcodeBOMView"
+// @Param		barcode		query	string		false  "Barcode"
+// @Param		docNo		query	string		false  "DocNo"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed

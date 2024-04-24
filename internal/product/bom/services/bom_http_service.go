@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"smlcloudplatform/internal/logger"
 	"smlcloudplatform/internal/product/bom/models"
 	"smlcloudplatform/internal/product/bom/repositories"
 	"smlcloudplatform/internal/services"
@@ -32,18 +33,20 @@ type IBOMHttpService interface {
 
 type BOMHttpService struct {
 	repo              repositories.IBomRepository
+	repoMq            repositories.IBomMessageQueueRepository
 	saleInvoiceBomSvc saleinvoicebom_services.ISaleInvoiceBomPriceService
 	productRepo       product_repositories.IProductBarcodeRepository
 	services.ActivityService[models.ProductBarcodeBOMViewActivity, models.ProductBarcodeBOMViewDeleteActivity]
 	contextTimeout time.Duration
 }
 
-func NewBOMHttpService(repo repositories.IBomRepository, productRepo product_repositories.IProductBarcodeRepository, saleInvoiceBomSvc saleinvoicebom_services.ISaleInvoiceBomPriceService) *BOMHttpService {
+func NewBOMHttpService(repo repositories.IBomRepository, repoMq repositories.IBomMessageQueueRepository, productRepo product_repositories.IProductBarcodeRepository, saleInvoiceBomSvc saleinvoicebom_services.ISaleInvoiceBomPriceService) *BOMHttpService {
 
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &BOMHttpService{
 		repo:              repo,
+		repoMq:            repoMq,
 		productRepo:       productRepo,
 		saleInvoiceBomSvc: saleInvoiceBomSvc,
 		contextTimeout:    contextTimeout,
@@ -182,6 +185,14 @@ func (svc BOMHttpService) create(ctx context.Context, shopID string, authUsernam
 		return "", err
 	}
 
+	go func() {
+		err := svc.repoMq.Create(docData)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+	}()
+
 	return newGuidFixed, nil
 }
 
@@ -204,6 +215,14 @@ func (svc BOMHttpService) DeleteBOM(shopID string, guid string, authUsername str
 	if err != nil {
 		return err
 	}
+
+	go func() {
+		err := svc.repoMq.Delete(findDoc)
+
+		if err != nil {
+			logger.GetLogger().Error(err)
+		}
+	}()
 
 	return nil
 }
