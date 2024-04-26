@@ -87,7 +87,7 @@ func (h SaleInvoicePriceHttp) InfoSaleInvoicePriceByDocNo(ctx microservice.ICont
 
 	docNo := ctx.Param("docno")
 
-	doc, err := h.svc.InfoSaleInvoiceBomPriceByCode(shopID, docNo)
+	docs, err := h.svc.InfoSaleInvoiceBomPriceByDocNo(shopID, docNo)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -96,7 +96,7 @@ func (h SaleInvoicePriceHttp) InfoSaleInvoicePriceByDocNo(ctx microservice.ICont
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
-		Data:    doc,
+		Data:    docs,
 	})
 	return nil
 }

@@ -8,6 +8,7 @@ import (
 	micromodels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ISaleInvoiceBomPriceRepository interface {
@@ -20,6 +21,7 @@ type ISaleInvoiceBomPriceRepository interface {
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleInvoiceBomPriceInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.SaleInvoiceBomPriceDoc, error)
 	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.SaleInvoiceBomPriceDoc, error)
+	FindByDocNo(ctx context.Context, shopID string, docNo string) ([]models.SaleInvoiceBomPriceInfo, error)
 
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.SaleInvoiceBomPriceItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.SaleInvoiceBomPriceDoc, error)
@@ -45,4 +47,15 @@ func NewSaleInvoiceBomPriceRepository(pst microservice.IPersisterMongo) *SaleInv
 	insRepo.GuidRepository = repositories.NewGuidRepository[models.SaleInvoiceBomPriceItemGuid](pst)
 
 	return insRepo
+}
+
+func (repo SaleInvoiceBomPriceRepository) FindByDocNo(ctx context.Context, shopID string, docNo string) ([]models.SaleInvoiceBomPriceInfo, error) {
+	var docs []models.SaleInvoiceBomPriceInfo
+	filters := map[string]interface{}{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"docno":     docNo,
+	}
+	err := repo.pst.Find(ctx, models.SaleInvoiceBomPriceInfo{}, filters, &docs)
+	return docs, err
 }

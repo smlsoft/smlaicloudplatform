@@ -17,6 +17,7 @@ type ISaleInvoiceBomPriceService interface {
 	DeleteSaleInvoiceBomPrice(shopID string, guid string, authUsername string) error
 	InfoSaleInvoiceBomPrice(shopID string, guid string) (models.SaleInvoiceBomPriceInfo, error)
 	InfoSaleInvoiceBomPriceByCode(shopID string, code string) (models.SaleInvoiceBomPriceInfo, error)
+	InfoSaleInvoiceBomPriceByDocNo(shopID string, docNo string) ([]models.SaleInvoiceBomPriceInfo, error)
 	SearchSaleInvoiceBomPrice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceBomPriceInfo, mongopagination.PaginationData, error)
 	SearchSaleInvoiceBomPriceStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceBomPriceInfo, int, error)
 }
@@ -137,6 +138,24 @@ func (svc SaleInvoiceBomPriceService) InfoSaleInvoiceBomPriceByCode(shopID strin
 	}
 
 	return findDoc.SaleInvoiceBomPriceInfo, nil
+}
+
+func (svc SaleInvoiceBomPriceService) InfoSaleInvoiceBomPriceByDocNo(shopID string, docNo string) ([]models.SaleInvoiceBomPriceInfo, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocs, err := svc.repo.FindByDocNo(ctx, shopID, docNo)
+
+	if err != nil {
+		return []models.SaleInvoiceBomPriceInfo{}, err
+	}
+
+	if len(findDocs) < 1 {
+		return []models.SaleInvoiceBomPriceInfo{}, errors.New("document not found")
+	}
+
+	return findDocs, nil
 }
 
 func (svc SaleInvoiceBomPriceService) SearchSaleInvoiceBomPrice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceBomPriceInfo, mongopagination.PaginationData, error) {
