@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const saleInvoiceBOMPriceCollectionName = "transactionSaleinvoiceBPMPrices"
+const saleInvoiceBOMPriceCollectionName = "transactionSaleinvoiceBOMPrices"
 
 type SaleInvoiceBomPrice struct {
 	BOMGuid string             `json:"bomguid" bson:"bomguid"`
