@@ -7192,6 +7192,20 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Creditor Code",
+                        "name": "creditorcode",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Debtor Code",
+                        "name": "debtorcode",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "TimeZone",
                         "name": "timezone",
                         "in": "query"
@@ -16575,13 +16589,16 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "ProductBarcodeBOMView",
-                        "name": "BOM",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView"
-                        }
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "DocNo",
+                        "name": "docNo",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -30277,6 +30294,208 @@ const docTemplate = `{
                 }
             }
         },
+        "/transaction/sale-invoice-price": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoicePrice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-price/docno/{docno}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoicePrice info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoicePrice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoicePrice guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-price/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoicePrice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-price/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoicePrice info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoicePrice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoicePrice guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/transaction/sale-invoice-return": {
             "get": {
                 "security": [
@@ -37429,6 +37648,9 @@ const docTemplate = `{
                 "sumamount": {
                     "type": "number"
                 },
+                "sumamountchoice": {
+                    "type": "number"
+                },
                 "sumamountexcludevat": {
                     "type": "number"
                 },
@@ -40718,6 +40940,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "vatcal": {
+                    "type": "integer"
                 }
             }
         },
@@ -40788,6 +41013,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricedelivery": {
                     "type": "number"
                 },
                 "pricemember": {
@@ -46684,60 +46912,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView": {
-            "type": "object",
-            "required": [
-                "barcode"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "bom": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView"
-                    }
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "imageuri": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "level": {
-                    "type": "integer"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "standvalue": {
-                    "type": "number"
-                }
-            }
-        },
         "smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode": {
             "type": "object",
             "required": [
@@ -46765,6 +46939,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "level": {
+                    "type": "integer"
                 },
                 "names": {
                     "type": "array",
@@ -47502,6 +47679,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "sumamount": {
+                    "type": "number"
+                },
+                "sumamountchoice": {
                     "type": "number"
                 },
                 "sumamountexcludevat": {

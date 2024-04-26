@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"smlcloudplatform/internal/logger"
 	"smlcloudplatform/internal/product/bom/models"
 	"smlcloudplatform/internal/product/bom/repositories"
@@ -69,17 +70,43 @@ func (svc BOMHttpService) UpsertBOM(shopID string, authUsername string, docNo st
 	bomViewDict := map[string]*product_models.ProductBarcodeBOMView{}
 	bomView := product_models.ProductBarcodeBOMView{}
 
-	product_services.BuildBOMViewCache(
-		ctx,
-		svc.productRepo.FindByBarcode,
-		0,
-		&productBarcodeDict,
-		&bomViewDict,
-		shopID,
-		barcode,
-		[]product_models.BOMProductBarcode{},
-		&bomView,
-	)
+	// product_services.BuildBOMViewCache(
+	// 	ctx,
+	// 	svc.productRepo.FindByBarcode,
+	// 	0,
+	// 	&productBarcodeDict,
+	// 	&bomViewDict,
+	// 	shopID,
+	// 	barcode,
+	// 	[]product_models.BOMProductBarcode{},
+	// 	&bomView,
+	// )
+
+	doc, err := svc.productRepo.FindByBarcode(ctx, shopID, barcode)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(doc.ProductBarcode.Barcode) == 0 {
+		return "", fmt.Errorf("barcode not found")
+	}
+
+	bomView.FromProductBarcode(doc.ProductBarcodeData)
+
+	if _, ok := bomViewDict[doc.Barcode]; !ok {
+		bomViewDict[doc.Barcode] = &bomView
+	}
+
+	bomView.Level = 1
+
+	if doc.BOM != nil && len(*doc.BOM) > 0 {
+		productBarcodeDict := map[string]product_models.ProductBarcodeDoc{}
+		err = product_services.BuildBOMView(ctx, svc.productRepo.FindByBarcode, bomView.Level, &productBarcodeDict, &bomViewDict, shopID, doc.BOM, &bomView.BOM)
+		if err != nil {
+			return "", err
+		}
+	}
 
 	findDoc, err := svc.repo.FindUseBOMByBarcode(ctx, shopID, barcode)
 	if err != nil {
