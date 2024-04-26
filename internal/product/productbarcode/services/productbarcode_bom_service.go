@@ -24,26 +24,26 @@ func (svc ProductBarcodeHttpService) InfoBomView(shopID string, barcode string) 
 	bomViewDict := map[string]*models.ProductBarcodeBOMView{}
 	bomView := models.ProductBarcodeBOMView{}
 
-	BuildBOMViewCache(ctx, svc.repo.FindByBarcode,
-		0, &map[string]models.ProductBarcodeDoc{},
-		&bomViewDict,
-		shopID, doc.Barcode, []models.BOMProductBarcode{}, &bomView)
+	// BuildBOMViewCache(ctx, svc.repo.FindByBarcode,
+	// 	0, &map[string]models.ProductBarcodeDoc{},
+	// 	&bomViewDict,
+	// 	shopID, doc.Barcode, []models.BOMProductBarcode{}, &bomView)
 
-	// bomView.FromProductBarcode(doc.ProductBarcodeData)
+	bomView.FromProductBarcode(doc.ProductBarcodeData)
 
-	// if _, ok := bomViewDict[doc.Barcode]; !ok {
-	// 	bomViewDict[doc.Barcode] = &bomView
-	// }
+	if _, ok := bomViewDict[doc.Barcode]; !ok {
+		bomViewDict[doc.Barcode] = &bomView
+	}
 
-	// bomView.Level = 1
+	bomView.Level = 1
 
-	// if doc.BOM != nil && len(*doc.BOM) > 0 {
-	// 	productBarcodeDict := map[string]models.ProductBarcodeDoc{}
-	// 	err = BuildBOMView(ctx, svc.repo.FindByBarcode, bomView.Level, &productBarcodeDict, &bomViewDict, shopID, doc.BOM, &bomView.BOM)
-	// 	if err != nil {
-	// 		return models.ProductBarcodeBOMView{}, err
-	// 	}
-	// }
+	if doc.BOM != nil && len(*doc.BOM) > 0 {
+		productBarcodeDict := map[string]models.ProductBarcodeDoc{}
+		err = BuildBOMView(ctx, svc.repo.FindByBarcode, bomView.Level, &productBarcodeDict, &bomViewDict, shopID, doc.BOM, &bomView.BOM)
+		if err != nil {
+			return models.ProductBarcodeBOMView{}, err
+		}
+	}
 
 	return bomView, nil
 }
@@ -210,6 +210,11 @@ func BuildBOMViewCache(
 
 		if tempDoc.BOM != nil {
 			tempBOMs = *tempDoc.BOM
+		}
+
+		if tempDoc.GuidFixed == "2dJ5kfBc9tTIcHeB14I4P4PoTqP" {
+			fmt.Println("tempDoc", tempDoc)
+			fmt.Println("tempBOMs", tempBOMs)
 		}
 
 		if len(tempBOMs) != 0 {

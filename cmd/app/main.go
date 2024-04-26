@@ -89,6 +89,7 @@ import (
 	"smlcloudplatform/internal/transaction/purchaseorder"
 	"smlcloudplatform/internal/transaction/purchasereturn"
 	"smlcloudplatform/internal/transaction/saleinvoice"
+	"smlcloudplatform/internal/transaction/saleinvoicebomprice"
 	"smlcloudplatform/internal/transaction/saleinvoicereturn"
 	"smlcloudplatform/internal/transaction/smltransaction"
 	"smlcloudplatform/internal/transaction/stockadjustment"
@@ -320,6 +321,7 @@ func main() {
 		member.NewMemberHttp(ms, cfg),
 
 		bom.NewBOMHttp(ms, cfg),
+		saleinvoicebomprice.NewSaleInvoicePriceHttp(ms, cfg),
 	}
 
 	azureFileBlob := microservice.NewPersisterAzureBlob()

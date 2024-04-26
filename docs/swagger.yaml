@@ -816,6 +816,8 @@ definitions:
         type: number
       sumamount:
         type: number
+      sumamountchoice:
+        type: number
       sumamountexcludevat:
         type: number
       sumofcost:
@@ -3035,6 +3037,8 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
+      vatcal:
+        type: integer
     required:
     - names
     - refunitnames
@@ -3083,6 +3087,8 @@ definitions:
       name:
         type: string
       price:
+        type: number
+      pricedelivery:
         type: number
       pricemember:
         type: number
@@ -7043,42 +7049,6 @@ definitions:
           type: string
         type: array
     type: object
-  smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      bom:
-        items:
-          $ref: '#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView'
-        type: array
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      imageuri:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      level:
-        type: integer
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
-    type: object
   smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode:
     properties:
       barcode:
@@ -7096,6 +7066,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      level:
+        type: integer
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -7589,6 +7561,8 @@ definitions:
       standvalue:
         type: number
       sumamount:
+        type: number
+      sumamountchoice:
         type: number
       sumamountexcludevat:
         type: number
@@ -12143,6 +12117,16 @@ paths:
       - description: Account Code
         in: query
         name: accountcode
+        required: true
+        type: string
+      - description: Creditor Code
+        in: query
+        name: creditorcode
+        required: true
+        type: string
+      - description: Debtor Code
+        in: query
+        name: debtorcode
         required: true
         type: string
       - description: TimeZone
@@ -17979,12 +17963,14 @@ paths:
       - application/json
       description: Create BOM
       parameters:
-      - description: ProductBarcodeBOMView
-        in: body
-        name: BOM
-        required: true
-        schema:
-          $ref: '#/definitions/smlcloudplatform_internal_product_bom_models.ProductBarcodeBOMView'
+      - description: Barcode
+        in: query
+        name: barcode
+        type: string
+      - description: DocNo
+        in: query
+        name: docNo
+        type: string
       responses:
         "201":
           description: Created
@@ -26515,6 +26501,132 @@ paths:
       - AccessToken: []
       tags:
       - SaleInvoice
+  /transaction/sale-invoice-price:
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Barcode
+        in: query
+        name: barcode
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoicePrice
+  /transaction/sale-invoice-price/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get SaleInvoicePrice info by guidfixed
+      parameters:
+      - description: SaleInvoicePrice guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoicePrice
+  /transaction/sale-invoice-price/docno/{docno}:
+    get:
+      consumes:
+      - application/json
+      description: get SaleInvoicePrice info by guidfixed
+      parameters:
+      - description: SaleInvoicePrice guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoicePrice
+  /transaction/sale-invoice-price/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Barcode
+        in: query
+        name: barcode
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoicePrice
   /transaction/sale-invoice-return:
     delete:
       consumes:
