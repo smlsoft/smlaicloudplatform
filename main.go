@@ -39,6 +39,7 @@ import (
 	pos_setting "smlcloudplatform/internal/pos/setting"
 	"smlcloudplatform/internal/pos/shift"
 	"smlcloudplatform/internal/pos/temp"
+	"smlcloudplatform/internal/product/bom"
 	"smlcloudplatform/internal/product/color"
 	"smlcloudplatform/internal/product/eorder"
 	"smlcloudplatform/internal/product/option"
@@ -364,7 +365,9 @@ func main() {
 			// member
 			member.NewMemberHttp(ms, cfg),
 
-			saleinvoicebomprice.NewSaleInvoicePriceHttp(ms, cfg),
+			// BOM
+			bom.NewBOMHttp(ms, cfg),
+			saleinvoicebomprice.NewSaleInvoiceBomPriceHttp(ms, cfg),
 		}
 
 		serviceStartHttp(ms, httpServices...)
@@ -400,6 +403,10 @@ func main() {
 		// debt account
 		creditor.MigrationDatabase(ms, cfg)
 		debtor.MigrationDatabase(ms, cfg)
+
+		// BOM
+		bom.MigrationDatabase(ms, cfg)
+		saleinvoicebomprice.MigrationDatabase(ms, cfg)
 
 		return
 	}
@@ -446,6 +453,10 @@ func main() {
 		// Debt Account
 		ms.RegisterConsumer(creditor.InitCreditorConsumer(ms, cfg))
 		ms.RegisterConsumer(debtor.InitDebtorConsumer(ms, cfg))
+
+		// BOM
+		ms.RegisterConsumer(bom.InitBOMConsumer(ms, cfg))
+		ms.RegisterConsumer(saleinvoicebomprice.InitSaleInvoiceBomPriceConsumer(ms, cfg))
 
 		consumerServices := []ConsumerRegister{
 			task.NewTaskConsumer(ms, cfg),

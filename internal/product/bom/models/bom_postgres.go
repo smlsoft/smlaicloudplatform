@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"smlcloudplatform/internal/models"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 type BOMProductBarcodePg struct {
@@ -21,6 +24,8 @@ type BOMProductBarcodePg struct {
 }
 
 type ProductBarcodeBOMViewPG struct {
+	ShopID            string `json:"shopid" gorm:"column:shopid"`
+	GuidFixed         string `json:"guidfixed" bson:"guidfixed" gorm:"column:guidfixed;primaryKey"`
 	BOMProductBarcode `gorm:"embedded;"`
 	ImageURI          string    `json:"imageuri" gor:"column:imageuri"`
 	BOM               BOMViewPg `json:"bom" gor:"column:bom"`
@@ -28,6 +33,15 @@ type ProductBarcodeBOMViewPG struct {
 
 func (b *ProductBarcodeBOMViewPG) TableName() string {
 	return "productBarcodeBOMs"
+}
+
+func (s *ProductBarcodeBOMViewPG) CompareTo(other *ProductBarcodeBOMViewPG) bool {
+
+	diff := cmp.Diff(s, other,
+		cmpopts.IgnoreFields(ProductBarcodeBOMViewPG{}, "ShopID", "GuidFixed"),
+	)
+
+	return diff == ""
 }
 
 type BOMViewPg []ProductBarcodeBOMViewPG

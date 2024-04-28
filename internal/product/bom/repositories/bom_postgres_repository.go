@@ -2,60 +2,54 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/product/bom/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/repositories"
 	"smlcloudplatform/pkg/microservice"
 
-	"gorm.io/gorm/clause"
+	"gorm.io/gorm"
 )
 
-type IBomPgRepository interface {
-	Get(shopID string, docNo string) (*models.ProductBarcodeBOMViewPG, error)
+type IBOMPostgresRepository interface {
+	Get(shopID string, creditorCode string) (*models.ProductBarcodeBOMViewPG, error)
 	Create(doc models.ProductBarcodeBOMViewPG) error
-	Update(shopID string, docNo string, doc models.ProductBarcodeBOMViewPG) error
-	Delete(shopID string, docNo string, doc models.ProductBarcodeBOMViewPG) error
+	Update(shopID string, creditorCode string, doc models.ProductBarcodeBOMViewPG) error
+	Delete(shopID string, creditorCode string) error
 }
 
-type BomPgRepository struct {
+type BOMPostgresRepository struct {
 	pst microservice.IPersister
-	repositories.ITransactionConsumerRepository[models.ProductBarcodeBOMViewPG]
 }
 
-func NewBomPgRepository(pst microservice.IPersister) *BomPgRepository {
-
-	repo := &BomPgRepository{
+func NewBOMPostgresRepository(pst microservice.IPersister) IBOMPostgresRepository {
+	return &BOMPostgresRepository{
 		pst: pst,
 	}
-
-	return repo
 }
 
-func (repo BomPgRepository) Get(shopID string, docNo string) (*models.ProductBarcodeBOMViewPG, error) {
-
-	var data models.ProductBarcodeBOMViewPG
-	err := repo.pst.DBClient().Preload(clause.Associations).
-		Where("shopid=? AND docno=?", shopID, docNo).
-		First(&data).Error
-
+func (repo *BOMPostgresRepository) Get(shopID string, creditorCode string) (*models.ProductBarcodeBOMViewPG, error) {
+	var result models.ProductBarcodeBOMViewPG
+	_, err := repo.pst.First(&result, "shopid=? AND code=?", shopID, creditorCode)
 	if err != nil {
-		return nil, err
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		} else {
+			return nil, err
+		}
 	}
 
-	return &data, nil
+	return &result, nil
 }
 
-func (repo BomPgRepository) Create(doc models.ProductBarcodeBOMViewPG) error {
-	err := repo.pst.Create(&doc)
+func (repo *BOMPostgresRepository) Create(doc models.ProductBarcodeBOMViewPG) error {
+	err := repo.pst.Create(doc)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo BomPgRepository) Update(shopID string, docNo string, doc models.ProductBarcodeBOMViewPG) error {
-
+func (repo *BOMPostgresRepository) Update(shopID string, creditorCode string, doc models.ProductBarcodeBOMViewPG) error {
 	err := repo.pst.Update(&doc, map[string]interface{}{
 		"shopid": shopID,
-		"docno":  docNo,
+		"code":   creditorCode,
 	})
 
 	if err != nil {
@@ -64,19 +58,14 @@ func (repo BomPgRepository) Update(shopID string, docNo string, doc models.Produ
 	return nil
 }
 
-func (repo BomPgRepository) Delete(shopID string, docNo string, doc models.ProductBarcodeBOMViewPG) error {
-
-	tx := repo.pst.DBClient().Begin()
-
-	err := tx.Delete(&doc, map[string]interface{}{
+func (repo *BOMPostgresRepository) Delete(shopID string, creditorCode string) error {
+	err := repo.pst.Delete(&models.ProductBarcodeBOMViewPG{}, map[string]interface{}{
 		"shopid": shopID,
-		"docno":  docNo,
-	}).Error
+		"code":   creditorCode,
+	})
 
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
-	tx.Commit()
 	return nil
 }
