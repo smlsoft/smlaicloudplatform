@@ -11,52 +11,52 @@ import (
 	"smlcloudplatform/pkg/microservice"
 )
 
-type ISaleInvoicePriceHttp interface{}
+type ISaleInvoiceBomPriceHttp interface{}
 
-type SaleInvoicePriceHttp struct {
+type SaleInvoiceBomPriceHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
 	svc services.ISaleInvoiceBomPriceService
 }
 
-func NewSaleInvoicePriceHttp(ms *microservice.Microservice, cfg config.IConfig) SaleInvoicePriceHttp {
+func NewSaleInvoiceBomPriceHttp(ms *microservice.Microservice, cfg config.IConfig) SaleInvoiceBomPriceHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewSaleInvoiceBomPriceRepository(pst)
 
 	svc := services.NewSaleInvoiceBomPriceService(repo)
 
-	return SaleInvoicePriceHttp{
+	return SaleInvoiceBomPriceHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h SaleInvoicePriceHttp) RegisterHttp() {
+func (h SaleInvoiceBomPriceHttp) RegisterHttp() {
 
-	h.ms.GET("/transaction/sale-invoice-price", h.SearchSaleInvoicePricePage)
-	h.ms.GET("/transaction/sale-invoice-price/list", h.SearchSaleInvoicePriceStep)
-	h.ms.GET("/transaction/sale-invoice-price/:id", h.InfoSaleInvoicePrice)
-	h.ms.GET("/transaction/sale-invoice-price/docno/:docno", h.InfoSaleInvoicePriceByDocNo)
+	h.ms.GET("/transaction/sale-invoice-price", h.SearchSaleInvoiceBomPricePage)
+	h.ms.GET("/transaction/sale-invoice-price/list", h.SearchSaleInvoiceBomPriceStep)
+	h.ms.GET("/transaction/sale-invoice-price/:id", h.InfoSaleInvoiceBomPrice)
+	h.ms.GET("/transaction/sale-invoice-price/docno/:docno", h.InfoSaleInvoiceBomPriceByDocNo)
 }
 
-// Get SaleInvoicePrice godoc
-// @Description get SaleInvoicePrice info by guidfixed
-// @Tags		SaleInvoicePrice
-// @Param		id  path      string  true  "SaleInvoicePrice guidfixed"
+// Get SaleInvoiceBomPrice godoc
+// @Description get SaleInvoiceBomPrice info by guidfixed
+// @Tags		SaleInvoiceBomPrice
+// @Param		id  path      string  true  "SaleInvoiceBomPrice guidfixed"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/sale-invoice-price/{id} [get]
-func (h SaleInvoicePriceHttp) InfoSaleInvoicePrice(ctx microservice.IContext) error {
+func (h SaleInvoiceBomPriceHttp) InfoSaleInvoiceBomPrice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get SaleInvoicePrice %v", id)
+	h.ms.Logger.Debugf("Get SaleInvoiceBomPrice %v", id)
 	doc, err := h.svc.InfoSaleInvoiceBomPrice(shopID, id)
 
 	if err != nil {
@@ -72,16 +72,16 @@ func (h SaleInvoicePriceHttp) InfoSaleInvoicePrice(ctx microservice.IContext) er
 	return nil
 }
 
-// Get SaleInvoicePrice godoc
-// @Description get SaleInvoicePrice info by guidfixed
-// @Tags		SaleInvoicePrice
-// @Param		id  path      string  true  "SaleInvoicePrice guidfixed"
+// Get SaleInvoiceBomPrice godoc
+// @Description get SaleInvoiceBomPrice info by guidfixed
+// @Tags		SaleInvoiceBomPrice
+// @Param		id  path      string  true  "SaleInvoiceBomPrice guidfixed"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/sale-invoice-price/docno/{docno} [get]
-func (h SaleInvoicePriceHttp) InfoSaleInvoicePriceByDocNo(ctx microservice.IContext) error {
+func (h SaleInvoiceBomPriceHttp) InfoSaleInvoiceBomPriceByDocNo(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -101,9 +101,9 @@ func (h SaleInvoicePriceHttp) InfoSaleInvoicePriceByDocNo(ctx microservice.ICont
 	return nil
 }
 
-// List SaleInvoicePrice step godoc
+// List SaleInvoiceBomPrice step godoc
 // @Description get list step
-// @Tags		SaleInvoicePrice
+// @Tags		SaleInvoiceBomPrice
 // @Param		barcode		query	string		false  "Barcode"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
@@ -113,7 +113,7 @@ func (h SaleInvoicePriceHttp) InfoSaleInvoicePriceByDocNo(ctx microservice.ICont
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/sale-invoice-price [get]
-func (h SaleInvoicePriceHttp) SearchSaleInvoicePricePage(ctx microservice.IContext) error {
+func (h SaleInvoiceBomPriceHttp) SearchSaleInvoiceBomPricePage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -136,9 +136,9 @@ func (h SaleInvoicePriceHttp) SearchSaleInvoicePricePage(ctx microservice.IConte
 	return nil
 }
 
-// List SaleInvoicePrice godoc
+// List SaleInvoiceBomPrice godoc
 // @Description search limit offset
-// @Tags		SaleInvoicePrice
+// @Tags		SaleInvoiceBomPrice
 // @Param		barcode		query	string		false  "Barcode"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
@@ -149,7 +149,7 @@ func (h SaleInvoicePriceHttp) SearchSaleInvoicePricePage(ctx microservice.IConte
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /transaction/sale-invoice-price/list [get]
-func (h SaleInvoicePriceHttp) SearchSaleInvoicePriceStep(ctx microservice.IContext) error {
+func (h SaleInvoiceBomPriceHttp) SearchSaleInvoiceBomPriceStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -174,7 +174,7 @@ func (h SaleInvoicePriceHttp) SearchSaleInvoicePriceStep(ctx microservice.IConte
 	return nil
 }
 
-func (h SaleInvoicePriceHttp) searchFilter(queryParam func(string) string) map[string]interface{} {
+func (h SaleInvoiceBomPriceHttp) searchFilter(queryParam func(string) string) map[string]interface{} {
 	filters := requestfilter.GenerateFilters(queryParam, []requestfilter.FilterRequest{
 		{
 			Param: "barcode",

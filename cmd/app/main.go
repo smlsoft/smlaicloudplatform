@@ -321,7 +321,7 @@ func main() {
 		member.NewMemberHttp(ms, cfg),
 
 		bom.NewBOMHttp(ms, cfg),
-		saleinvoicebomprice.NewSaleInvoicePriceHttp(ms, cfg),
+		saleinvoicebomprice.NewSaleInvoiceBomPriceHttp(ms, cfg),
 	}
 
 	azureFileBlob := microservice.NewPersisterAzureBlob()
