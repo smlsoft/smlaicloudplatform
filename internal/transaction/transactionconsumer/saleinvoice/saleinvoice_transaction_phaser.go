@@ -31,6 +31,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 				DiscountAmount:      detail.DiscountAmount,
 				SumAmount:           detail.SumAmount,
 				SumAmountExcludeVat: detail.SumAmountExcludeVat,
+				SumAmountChoice:     detail.SumAmountChoice,
 				WhCode:              detail.WhCode,
 				LocationCode:        detail.LocationCode,
 				VatType:             detail.VatType,
