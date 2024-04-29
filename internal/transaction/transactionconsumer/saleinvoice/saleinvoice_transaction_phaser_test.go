@@ -69,6 +69,7 @@ func SaleInvoiceTransactionStruct() models.SaleInvoiceTransactionPG {
 					DiscountAmount:      2,
 					SumAmount:           1250,
 					SumAmountExcludeVat: 1245,
+					SumAmountChoice:     100,
 					TotalValueVat:       75,
 					WhCode:              "POSWH000",
 					LocationCode:        "POSLC000",
@@ -180,6 +181,7 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 				"totalvaluevat": 75,
 				"sumamount": 1250,
 				"sumamountexcludevat": 1245,
+				"sumamountchoice":100,
 				"dividevalue": 1,
 				"standvalue": 1,
 				"vattype": 0,
@@ -305,6 +307,8 @@ func TestSaleInvoiceTransactionPhaser(t *testing.T) {
 	assert.Equal(t, (*get.Items)[0].DiscountAmount, (*want.Items)[0].DiscountAmount, "item.discountamount")
 	assert.Equal(t, (*get.Items)[0].SumAmount, (*want.Items)[0].SumAmount, "item.sumamount")
 	assert.Equal(t, (*get.Items)[0].SumAmountExcludeVat, (*want.Items)[0].SumAmountExcludeVat, "item.sumamountexcludevat")
+	assert.Equal(t, (*get.Items)[0].SumAmountChoice, (*want.Items)[0].SumAmountChoice, "item.sumamountchoice")
+
 	assert.Equal(t, (*get.Items)[0].StandValue, (*want.Items)[0].StandValue, "item.standvalue")
 	assert.Equal(t, (*get.Items)[0].DivideValue, (*want.Items)[0].DivideValue, "item.dividevalue")
 	// assert.Equal(t, *((*get.Items)[0].ItemNames[0]).Name, "โอวัลติน ซอง", "item.ItemNames")

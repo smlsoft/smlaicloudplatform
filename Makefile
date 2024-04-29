@@ -75,6 +75,9 @@ run_m1_local_comsumerdev:
 run_m1_dev_migrationdb:
 	DEV_API_MODE=3 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
+run_m1_dev_migrationdb2:
+	DEV_API_MODE=3 go run --tags dynamic main.go
+
 run_m1_dev_consumer:
 	DEV_API_MODE=1 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
