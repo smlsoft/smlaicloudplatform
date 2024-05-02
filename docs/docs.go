@@ -30306,7 +30306,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
@@ -30360,17 +30360,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get SaleInvoicePrice info by guidfixed",
+                "description": "get SaleInvoiceBomPrice info by guidfixed",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "SaleInvoicePrice guidfixed",
+                        "description": "SaleInvoiceBomPrice guidfixed",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -30404,7 +30404,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
@@ -30464,17 +30464,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get SaleInvoicePrice info by guidfixed",
+                "description": "get SaleInvoiceBomPrice info by guidfixed",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "SaleInvoicePrice guidfixed",
+                        "description": "SaleInvoiceBomPrice guidfixed",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -37632,6 +37632,9 @@ const docTemplate = `{
                 },
                 "qty": {
                     "type": "number"
+                },
+                "refguid": {
+                    "type": "string"
                 },
                 "remark": {
                     "type": "string"
@@ -47665,6 +47668,9 @@ const docTemplate = `{
                 },
                 "qty": {
                     "type": "number"
+                },
+                "refguid": {
+                    "type": "string"
                 },
                 "remark": {
                     "type": "string"

@@ -30301,7 +30301,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
@@ -30355,17 +30355,17 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "get SaleInvoicePrice info by guidfixed",
+                "description": "get SaleInvoiceBomPrice info by guidfixed",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "SaleInvoicePrice guidfixed",
+                        "description": "SaleInvoiceBomPrice guidfixed",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -30399,7 +30399,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
@@ -30459,17 +30459,17 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "get SaleInvoicePrice info by guidfixed",
+                "description": "get SaleInvoiceBomPrice info by guidfixed",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "SaleInvoicePrice"
+                    "SaleInvoiceBomPrice"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "SaleInvoicePrice guidfixed",
+                        "description": "SaleInvoiceBomPrice guidfixed",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -37627,6 +37627,9 @@
                 },
                 "qty": {
                     "type": "number"
+                },
+                "refguid": {
+                    "type": "string"
                 },
                 "remark": {
                     "type": "string"
@@ -47660,6 +47663,9 @@
                 },
                 "qty": {
                     "type": "number"
+                },
+                "refguid": {
+                    "type": "string"
                 },
                 "remark": {
                     "type": "string"

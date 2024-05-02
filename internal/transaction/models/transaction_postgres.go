@@ -59,6 +59,7 @@ type TransactionDetailPG struct {
 	SumAmount                float64      `json:"sumamount" gorm:"column:sumamount"`
 	SumAmountExcludeVat      float64      `json:"sumamountexcludevat" gorm:"column:sumamountexcludevat"`
 	SumAmountChoice          float64      `json:"sumamountchoice" gorm:"column:sumamountchoice"`
+	RefGuid                  string       `json:"refguid" gorm:"column:refguid"`
 	WhCode                   string       `json:"whcode" gorm:"column:whcode"`
 	WhNames                  models.JSONB `json:"whnames" gorm:"column:whnames;type:jsonb"`
 	LocationCode             string       `json:"locationcode" gorm:"column:locationcode"`

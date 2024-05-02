@@ -153,6 +153,7 @@ type Detail struct {
 	PriceExcludeVat     float64         `json:"priceexcludevat" bson:"priceexcludevat"`
 	SumAmount           float64         `json:"sumamount" bson:"sumamount"`
 	SumAmountExcludeVat float64         `json:"sumamountexcludevat" bson:"sumamountexcludevat"`
+	RefGuid             string          `json:"refguid" bson:"refguid"`
 	DivideValue         float64         `json:"dividevalue" bson:"dividevalue"`
 	StandValue          float64         `json:"standvalue" bson:"standvalue"`
 	VatType             int8            `json:"vattype" bson:"vattype"`
