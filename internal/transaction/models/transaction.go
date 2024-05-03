@@ -162,6 +162,7 @@ type Detail struct {
 	SumOfCost           float64         `json:"sumofcost" bson:"sumofcost"`
 	AverageCost         float64         `json:"averagecost" bson:"averagecost"`
 	LastStatus          int8            `json:"laststatus" bson:"laststatus"`
+	IsChoice            int8            `json:"ischoice" bson:"ischoice"`
 	IsPos               int8            `json:"ispos" bson:"ispos"`
 	TaxType             int8            `json:"taxtype" bson:"taxtype"`
 	VatCal              int             `json:"vatcal" bson:"vatcal"`

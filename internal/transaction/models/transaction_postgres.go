@@ -67,6 +67,7 @@ type TransactionDetailPG struct {
 	VatCal                   int8         `json:"vatcal" gorm:"column:vatcal"`
 	VatType                  int8         `json:"vattype" gorm:"column:vattype"`
 	TaxType                  int8         `json:"taxtype" gorm:"column:taxtype"`
+	IsChoice                 int8         `json:"ischoice" gorm:"column:ischoice"`
 	StandValue               float64      `json:"standvalue" gorm:"column:standvalue"`
 	DivideValue              float64      `json:"dividevalue" gorm:"column:dividevalue"`
 	ItemType                 int8         `json:"itemtype" gorm:"column:itemtype"`
