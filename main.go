@@ -403,6 +403,7 @@ func main() {
 		// debt account
 		creditor.MigrationDatabase(ms, cfg)
 		debtor.MigrationDatabase(ms, cfg)
+		shift.MigrationDatabase(ms, cfg)
 
 		// BOM
 		bom.MigrationDatabase(ms, cfg)
