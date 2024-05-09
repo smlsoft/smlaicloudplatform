@@ -37571,6 +37571,9 @@
                 "inquirytype": {
                     "type": "integer"
                 },
+                "ischoice": {
+                    "type": "integer"
+                },
                 "ispos": {
                     "type": "integer"
                 },
@@ -43446,8 +43449,14 @@
                 "docdate": {
                     "type": "string"
                 },
+                "docno": {
+                    "type": "string"
+                },
                 "doctype": {
                     "type": "integer"
+                },
+                "posid": {
+                    "type": "string"
                 },
                 "promptpay": {
                     "type": "number"
@@ -47605,6 +47614,9 @@
                     }
                 },
                 "inquirytype": {
+                    "type": "integer"
+                },
+                "ischoice": {
                     "type": "integer"
                 },
                 "ispos": {

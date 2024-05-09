@@ -37576,6 +37576,9 @@ const docTemplate = `{
                 "inquirytype": {
                     "type": "integer"
                 },
+                "ischoice": {
+                    "type": "integer"
+                },
                 "ispos": {
                     "type": "integer"
                 },
@@ -43451,8 +43454,14 @@ const docTemplate = `{
                 "docdate": {
                     "type": "string"
                 },
+                "docno": {
+                    "type": "string"
+                },
                 "doctype": {
                     "type": "integer"
+                },
+                "posid": {
+                    "type": "string"
                 },
                 "promptpay": {
                     "type": "number"
@@ -47610,6 +47619,9 @@ const docTemplate = `{
                     }
                 },
                 "inquirytype": {
+                    "type": "integer"
+                },
+                "ischoice": {
                     "type": "integer"
                 },
                 "ispos": {

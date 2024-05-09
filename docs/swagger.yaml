@@ -768,6 +768,8 @@ definitions:
         type: array
       inquirytype:
         type: integer
+      ischoice:
+        type: integer
       ispos:
         type: integer
       itemcode:
@@ -4731,8 +4733,12 @@ definitions:
         type: number
       docdate:
         type: string
+      docno:
+        type: string
       doctype:
         type: integer
+      posid:
+        type: string
       promptpay:
         type: number
       remark:
@@ -7515,6 +7521,8 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       inquirytype:
+        type: integer
+      ischoice:
         type: integer
       ispos:
         type: integer
