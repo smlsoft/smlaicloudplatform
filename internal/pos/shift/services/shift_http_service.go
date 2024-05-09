@@ -69,14 +69,14 @@ func (svc ShiftHttpService) CreateShift(shopID string, authUsername string, doc 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "usercode", doc.UserCode)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", doc.DocNo)
 
 	if err != nil {
 		return "", err
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("UserCode is exists")
+		return "", errors.New("DocNo is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -226,7 +226,7 @@ func (svc ShiftHttpService) InfoShiftByCode(shopID string, code string) (models.
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "usercode", code)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", code)
 
 	if err != nil {
 		return models.ShiftInfo{}, err
@@ -245,7 +245,7 @@ func (svc ShiftHttpService) SearchShift(shopID string, filters map[string]interf
 	defer ctxCancel()
 
 	searchInFields := []string{
-		"usercode",
+		"docno",
 		"username",
 		"remark",
 	}
@@ -265,7 +265,7 @@ func (svc ShiftHttpService) SearchShiftStep(shopID string, langCode string, filt
 	defer ctxCancel()
 
 	searchInFields := []string{
-		"usercode",
+		"docno",
 		"username",
 		"remark",
 	}
@@ -298,10 +298,10 @@ func (svc ShiftHttpService) SaveInBatch(shopID string, authUsername string, data
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.UserCode)
+		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "usercode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "docno", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -309,7 +309,7 @@ func (svc ShiftHttpService) SaveInBatch(shopID string, authUsername string, data
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.UserCode)
+		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Shift, models.ShiftDoc](
@@ -340,10 +340,10 @@ func (svc ShiftHttpService) SaveInBatch(shopID string, authUsername string, data
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.ShiftDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "usercode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", guid)
 		},
 		func(doc models.ShiftDoc) bool {
-			return doc.UserCode != ""
+			return doc.DocNo != ""
 		},
 		func(shopID string, authUsername string, data models.Shift, doc models.ShiftDoc) error {
 
@@ -371,18 +371,18 @@ func (svc ShiftHttpService) SaveInBatch(shopID string, authUsername string, data
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.UserCode)
+		createDataKey = append(createDataKey, doc.DocNo)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.UserCode)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.DocNo)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.UserCode)
+		updateDataKey = append(updateDataKey, doc.DocNo)
 	}
 
 	updateFailDataKey := []string{}
@@ -412,7 +412,7 @@ func (svc ShiftHttpService) SaveInBatch(shopID string, authUsername string, data
 }
 
 func (svc ShiftHttpService) getDocIDKey(doc models.Shift) string {
-	return doc.UserCode
+	return doc.DocNo
 }
 
 func (svc ShiftHttpService) saveMasterSync(shopID string) {

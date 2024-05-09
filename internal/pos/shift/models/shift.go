@@ -51,7 +51,7 @@ func (ShiftDoc) CollectionName() string {
 }
 
 type ShiftItemGuid struct {
-	UserCode string `json:"usercode" bson:"usercode"`
+	DocNo string `json:"docno" bson:"docno"`
 }
 
 func (ShiftItemGuid) CollectionName() string {
