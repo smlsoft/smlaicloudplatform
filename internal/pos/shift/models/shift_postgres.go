@@ -12,6 +12,7 @@ type ShiftPG struct {
 	ShopID                   string `json:"shopid" gorm:"column:shopid"`
 	GuidFixed                string `json:"guidfixed" bson:"guidfixed" gorm:"column:guidfixed;primaryKey"`
 	models.PartitionIdentity `gorm:"embedded;"`
+	PosId                    string       `json:"posid" gorm:"column:posid"`
 	DocNo                    string       `json:"docno" gorm:"column:docno"`
 	UserCode                 string       `json:"usercode" gorm:"column:usercode"`
 	Username                 models.JSONB `json:"names"  gorm:"column:names;type:jsonb" `
