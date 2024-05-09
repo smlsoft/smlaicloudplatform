@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"smlcloudplatform/internal/logger"
 	mastersync "smlcloudplatform/internal/mastersync/repositories"
 	common "smlcloudplatform/internal/models"
 	"smlcloudplatform/internal/pos/shift/models"
@@ -33,8 +34,8 @@ type IShiftHttpService interface {
 }
 
 type ShiftHttpService struct {
-	repo repositories.IShiftRepository
-
+	repo          repositories.IShiftRepository
+	repoMq        repositories.IShiftMessageQueueRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.ShiftActivity, models.ShiftDeleteActivity]
 	contextTimeout time.Duration
@@ -96,6 +97,10 @@ func (svc ShiftHttpService) CreateShift(shopID string, authUsername string, doc 
 
 	go func() {
 		svc.saveMasterSync(shopID)
+		err = svc.repoMq.Create(docData)
+		if err != nil {
+			logger.GetLogger().Errorf("Create shift message queue error :: %s", err.Error())
+		}
 	}()
 
 	return newGuidFixed, nil
@@ -129,6 +134,10 @@ func (svc ShiftHttpService) UpdateShift(shopID string, guid string, authUsername
 
 	go func() {
 		svc.saveMasterSync(shopID)
+		err = svc.repoMq.Update(findDoc)
+		if err != nil {
+			logger.GetLogger().Errorf("Update shift message queue error :: %s", err.Error())
+		}
 	}()
 
 	return nil
@@ -156,6 +165,10 @@ func (svc ShiftHttpService) DeleteShift(shopID string, guid string, authUsername
 
 	go func() {
 		svc.saveMasterSync(shopID)
+		err = svc.repoMq.Delete(findDoc)
+		if err != nil {
+			logger.GetLogger().Errorf("Delete creditor message queue error :: %s", err.Error())
+		}
 	}()
 
 	return nil
@@ -169,14 +182,22 @@ func (svc ShiftHttpService) DeleteShiftByGUIDs(shopID string, authUsername strin
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
+	findDocs, err := svc.repo.FindByGuids(ctx, shopID, GUIDs)
 
-	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
 
+	err = svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
 	go func() {
 		svc.saveMasterSync(shopID)
+		err = svc.repoMq.DeleteInBatch(findDocs)
+		if err != nil {
+			logger.GetLogger().Errorf("Delete creditor message queue error :: %s", err.Error())
+		}
 	}()
 
 	return nil
@@ -369,7 +390,18 @@ func (svc ShiftHttpService) SaveInBatch(shopID string, authUsername string, data
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.saveMasterSync(shopID)
+		err = svc.repoMq.CreateInBatch(createDataList)
+		if err != nil {
+			logger.GetLogger().Errorf("Create shift message queue error :: %s", err.Error())
+		}
+		svc.repoMq.UpdateInBatch(updateSuccessDataList)
+
+		if err != nil {
+			logger.GetLogger().Errorf("Update shift message queue error :: %s", err.Error())
+		}
+	}()
 
 	return common.BulkImport{
 		Created:          createDataKey,

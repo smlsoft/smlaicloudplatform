@@ -13,6 +13,7 @@ type Shift struct {
 	models.PartitionIdentity `bson:"inline"`
 	UserCode                 string    `json:"usercode" bson:"usercode"`
 	Username                 string    `json:"username" bson:"username"`
+	DocNo                    string    `json:"docno" bson:"docno"`
 	DocType                  int8      `json:"doctype" bson:"doctype"`
 	DocDate                  time.Time `json:"docdate" bson:"docdate"`
 	Remark                   string    `json:"remark" bson:"remark"`
