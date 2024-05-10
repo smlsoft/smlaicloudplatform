@@ -26,11 +26,13 @@ type ShiftHttp struct {
 func NewShiftHttp(ms *microservice.Microservice, cfg config.IConfig) ShiftHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewShiftRepository(pst)
+	repoMq := repositories.NewShiftMessageQueueRepository(prod)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewShiftHttpService(repo, masterSyncCacheRepo, 15*time.Second)
+	svc := services.NewShiftHttpService(repo, repoMq, masterSyncCacheRepo, 15*time.Second)
 
 	return ShiftHttp{
 		ms:  ms,

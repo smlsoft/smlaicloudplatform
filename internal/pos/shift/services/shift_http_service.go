@@ -43,6 +43,7 @@ type ShiftHttpService struct {
 
 func NewShiftHttpService(
 	repo repositories.IShiftRepository,
+	repoMq repositories.IShiftMessageQueueRepository,
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 
 	contextTimeout time.Duration,
@@ -50,6 +51,7 @@ func NewShiftHttpService(
 
 	insSvc := &ShiftHttpService{
 		repo:          repo,
+		repoMq:        repoMq,
 		syncCacheRepo: syncCacheRepo,
 
 		contextTimeout: contextTimeout,
