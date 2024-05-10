@@ -454,6 +454,8 @@ func main() {
 		// Debt Account
 		ms.RegisterConsumer(creditor.InitCreditorConsumer(ms, cfg))
 		ms.RegisterConsumer(debtor.InitDebtorConsumer(ms, cfg))
+
+		// Shift
 		ms.RegisterConsumer(shift.InitShiftConsumer(ms, cfg))
 
 		// BOM
