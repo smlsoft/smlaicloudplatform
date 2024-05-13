@@ -36858,6 +36858,9 @@ const docTemplate = `{
                 "inquirytypesale": {
                     "type": "integer"
                 },
+                "isbom": {
+                    "type": "boolean"
+                },
                 "taxid": {
                     "type": "string"
                 },
