@@ -70,7 +70,8 @@ func NewTransactionConsumer(ms *microservice.Microservice, cfg pkgConfig.IConfig
 
 	productBarcodeRepository := productbarcode_repositories.NewProductBarcodeRepository(persisterMongo, cache)
 	saleinvoiceBomPriceRepository := saleinvoicebomprice_repositories.NewSaleInvoiceBomPriceRepository(persisterMongo)
-	saleinvoiceBomPriceService := saleinvoicebomprice_services.NewSaleInvoiceBomPriceService(saleinvoiceBomPriceRepository)
+	saleinvoiceBomPriceRepo := saleinvoicebomprice_repositories.NewSaleInvoiceBOMPriceMessageQueueRepository(producer)
+	saleinvoiceBomPriceService := saleinvoicebomprice_services.NewSaleInvoiceBomPriceService(saleinvoiceBomPriceRepo, saleinvoiceBomPriceRepository)
 	productBomRepository := productbom_repositories.NewBomRepository(persisterMongo)
 	productBomMqRepository := productbom_repositories.NewBomMessageQueueRepository(producer)
 	productBomService := productbom_services.NewBOMHttpService(productBomRepository, productBomMqRepository, productBarcodeRepository, saleinvoiceBomPriceService)

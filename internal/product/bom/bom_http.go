@@ -29,11 +29,12 @@ func NewBOMHttp(ms *microservice.Microservice, cfg config.IConfig) BOMHttp {
 
 	repo := repositories.NewBomRepository(pst)
 	repoMq := repositories.NewBomMessageQueueRepository(producer)
+	repoSaleBomMq := saleinvoicebom_repositories.NewSaleInvoiceBOMPriceMessageQueueRepository(producer)
 
 	repoProduct := product_repositories.NewProductBarcodeRepository(pst, cache)
 
 	repoSaleinvoiceBom := saleinvoicebom_repositories.NewSaleInvoiceBomPriceRepository(pst)
-	svcSaleinvoiceBom := saleinvoicebom_services.NewSaleInvoiceBomPriceService(repoSaleinvoiceBom)
+	svcSaleinvoiceBom := saleinvoicebom_services.NewSaleInvoiceBomPriceService(repoSaleBomMq, repoSaleinvoiceBom)
 
 	svc := services.NewBOMHttpService(repo, repoMq, repoProduct, svcSaleinvoiceBom)
 

@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"smlcloudplatform/internal/transaction/saleinvoicebomprice/models"
 	"smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
 	"smlcloudplatform/internal/utils"
@@ -23,12 +24,14 @@ type ISaleInvoiceBomPriceService interface {
 }
 
 type SaleInvoiceBomPriceService struct {
+	repoMq           repositories.ISaleInvoiceBOMPriceMessageQueueRepository
 	repo             repositories.ISaleInvoiceBomPriceRepository
 	cacheExpireDocNo time.Duration
 	contextTimeout   time.Duration
 }
 
 func NewSaleInvoiceBomPriceService(
+	repoMq repositories.ISaleInvoiceBOMPriceMessageQueueRepository,
 	repo repositories.ISaleInvoiceBomPriceRepository,
 ) *SaleInvoiceBomPriceService {
 
@@ -77,6 +80,14 @@ func (svc SaleInvoiceBomPriceService) CreateSaleInvoiceBomPrice(shopID string, a
 	if err != nil {
 		return "", err
 	}
+
+	go func() {
+		err := svc.repoMq.Create(dataDoc)
+		if err != nil {
+			fmt.Printf("create mq error :: %s", err.Error())
+		}
+
+	}()
 
 	return newGuidFixed, nil
 }

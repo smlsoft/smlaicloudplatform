@@ -23,8 +23,9 @@ func NewSaleInvoiceBomPriceHttp(ms *microservice.Microservice, cfg config.IConfi
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewSaleInvoiceBomPriceRepository(pst)
+	repoMq := repositories.NewSaleInvoiceBOMPriceMessageQueueRepository(ms.Producer(cfg.MQConfig()))
 
-	svc := services.NewSaleInvoiceBomPriceService(repo)
+	svc := services.NewSaleInvoiceBomPriceService(repoMq, repo)
 
 	return SaleInvoiceBomPriceHttp{
 		ms:  ms,
