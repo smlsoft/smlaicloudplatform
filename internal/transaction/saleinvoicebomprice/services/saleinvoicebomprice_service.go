@@ -39,6 +39,7 @@ func NewSaleInvoiceBomPriceService(
 
 	insSvc := &SaleInvoiceBomPriceService{
 		repo:             repo,
+		repoMq:           repoMq,
 		cacheExpireDocNo: time.Hour * 24,
 		contextTimeout:   contextTimeout,
 	}
