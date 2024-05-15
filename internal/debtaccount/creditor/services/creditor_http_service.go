@@ -216,32 +216,39 @@ func (svc CreditorHttpService) InfoCreditor(shopID string, guid string) (models.
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
+	// Find the document by guid
 	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
-
 	if err != nil {
 		return models.CreditorInfo{}, err
 	}
 
+	// Check if the document is not found
 	if findDoc.ID == primitive.NilObjectID {
 		return models.CreditorInfo{}, errors.New("document not found")
 	}
 
-	findGroups, err := svc.repoGroup.FindByGuids(ctx, shopID, *findDoc.GroupGUIDs)
+	// Check if GroupGUIDs is nil
+	if findDoc.GroupGUIDs == nil {
+		return findDoc.CreditorInfo, nil
+	}
 
+	// Find groups by GroupGUIDs
+	findGroups, err := svc.repoGroup.FindByGuids(ctx, shopID, *findDoc.GroupGUIDs)
 	if err != nil {
 		return models.CreditorInfo{}, err
 	}
 
+	// Map group documents to group info
 	groupInfo := lo.Map[groupModels.CreditorGroupDoc, groupModels.CreditorGroupInfo](
 		findGroups,
 		func(docGroup groupModels.CreditorGroupDoc, idx int) groupModels.CreditorGroupInfo {
 			return docGroup.CreditorGroupInfo
 		})
 
+	// Assign group info to the creditor info
 	findDoc.CreditorInfo.Groups = &groupInfo
 
 	return findDoc.CreditorInfo, nil
-
 }
 
 func (svc CreditorHttpService) InfoCreditorByCode(shopID string, code string) (models.CreditorInfo, error) {
