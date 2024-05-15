@@ -13,6 +13,7 @@ type SaleInvoice struct {
 	models.PartitionIdentity `bson:"inline"`
 	transmodels.Transaction  `bson:"inline"`
 	IsPOS                    bool `json:"ispos" bson:"ispos"`
+	IsBom                    bool `json:"isbom" bson:"isbom"`
 
 	CouponNo          string  `json:"couponno" bson:"couponno"`
 	CouponAmount      float64 `json:"couponamount" bson:"couponamount"`

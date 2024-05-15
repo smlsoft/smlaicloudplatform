@@ -80,6 +80,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			ShopIdentity: pkgModels.ShopIdentity{
 				ShopID: doc.ShopID,
 			},
+
 			GuidFixed:      doc.GuidFixed,
 			GuidRef:        doc.GuidRef,
 			InquiryType:    doc.InquiryType,
@@ -103,6 +104,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			TotalExceptVat: doc.TotalExceptVat,
 			TotalAmount:    doc.TotalAmount,
 			IsCancel:       doc.IsCancel,
+			IsBom:          doc.IsBom,
 			BranchCode:     doc.Branch.Code,
 			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 		},

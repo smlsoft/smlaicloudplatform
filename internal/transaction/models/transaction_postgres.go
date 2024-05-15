@@ -22,6 +22,7 @@ type TransactionPG struct {
 	TaxDocNo                 string       `json:"taxdocno"  gorm:"column:taxdocno"`
 	TaxDocDate               time.Time    `json:"taxdocdate" gorm:"column:taxdocdate"`
 	IsCancel                 bool         `json:"iscancel" gorm:"column:iscancel"`
+	IsBom                    bool         `json:"isbom" gorm:"column:isbom"`
 	Status                   int8         `json:"status" gorm:"column:status"`
 	VatType                  int8         `json:"vattype" gorm:"column:vattype" `
 	VatRate                  float64      `json:"vatrate" gorm:"column:vatrate"`
