@@ -42701,6 +42701,9 @@ const docTemplate = `{
                 "inquirytype": {
                     "type": "integer"
                 },
+                "isbom": {
+                    "type": "boolean"
+                },
                 "iscancel": {
                     "type": "boolean"
                 },

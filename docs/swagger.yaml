@@ -4227,6 +4227,8 @@ definitions:
         type: string
       inquirytype:
         type: integer
+      isbom:
+        type: boolean
       iscancel:
         type: boolean
       ismanualamount:
