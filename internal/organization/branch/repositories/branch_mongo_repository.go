@@ -26,6 +26,7 @@ type IBranchRepository interface {
 	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.BranchDoc, error)
 	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.BranchInfo, mongopagination.PaginationData, error)
 	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.BranchInfo, int, error)
+	FindOneFilter(ctx context.Context, shopID string, filters map[string]interface{}) (models.BranchDoc, error)
 
 	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchActivity, mongopagination.PaginationData, error)

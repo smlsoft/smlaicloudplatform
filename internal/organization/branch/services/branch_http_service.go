@@ -70,14 +70,20 @@ func (svc BranchHttpService) CreateBranch(shopID string, authUsername string, do
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
-
+	findDoc, err := svc.repo.FindOneFilter(
+		ctx,
+		shopID,
+		map[string]interface{}{
+			"code":              doc.Code,
+			"businesstype.code": doc.BusinessType.Code,
+		},
+	)
 	if err != nil {
 		return "", err
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("code is exists")
+		return "", errors.New("branch is exists")
 	}
 
 	tempMap := map[string]struct{}{}
