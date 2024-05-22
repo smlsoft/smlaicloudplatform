@@ -12,6 +12,10 @@ type SaleInvoiceBomPrice struct {
 	BOMGuid string             `json:"bomguid" bson:"bomguid"`
 	DocNo   string             `json:"docno" bson:"docno"`
 	Prices  []SaleInvoicePrice `json:"prices" bson:"prices"`
+	Barcode string             `json:"barcode" bson:"barcode"`
+	Qty     float64            `json:"qty" bson:"qty"`
+	Price   float64            `json:"price" bson:"price"`
+	Ratio   float64            `json:"ratio" bson:"ratio"`
 }
 
 type SaleInvoicePrice struct {

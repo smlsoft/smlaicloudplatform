@@ -36,8 +36,8 @@ func (j *JSONB) Scan(value interface{}) error {
 	return nil
 }
 
-// BOMProductBarcodePg holds data for the BOM product barcode
-type BOMProductBarcodePg struct {
+// BomProductBarcodePg holds data for the BOM product barcode
+type BomProductBarcodePg struct {
 	BarcodeGuidFixed string  `json:"guidfixed" gorm:"column:guidfixed"`
 	Level            int     `json:"level" gorm:"column:level"`
 	Names            JSONB   `json:"names" gorm:"column:names;type:jsonb"`
@@ -54,14 +54,14 @@ type BOMProductBarcodePg struct {
 type ProductBarcodeBOMViewPG struct {
 	ShopID            string              `json:"shopid" gorm:"column:shopid"`
 	GuidFixed         string              `json:"guidfixed" bson:"guidfixed" gorm:"column:guidfixed;primaryKey"`
-	BOMProductBarcode BOMProductBarcodePg `gorm:"embedded;"`
+	BOMProductBarcode BomProductBarcodePg `gorm:"embedded;"`
 	ImageURI          string              `json:"imageuri" gorm:"column:imageuri"`
 	BOM               BOMViewPg           `json:"bom" gorm:"foreignKey:BOMForeignKey;references:BOMReference"` // Update ForeignKey and References
 }
 
 // TableName sets the custom table name for GORM
 func (b *ProductBarcodeBOMViewPG) TableName() string {
-	return "productBarcodeBOMs"
+	return "productbarcodeboms"
 }
 
 // CompareTo provides comparison for two ProductBarcodeBOMViewPG objects
