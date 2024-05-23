@@ -82,32 +82,13 @@ func (svc SaleInvoiceBomPriceService) CreateSaleInvoiceBomPrice(shopID string, a
 		return "", err
 	}
 
-	for _, barcode := range bomBarcodes {
+	go func() {
+		err := svc.repoMq.Create(dataDoc)
+		if err != nil {
+			fmt.Printf("create mq error :: %s", err.Error())
+		}
 
-		dataDocPg := models.SaleInvoiceBomPriceDoc{}
-
-		dataDocPg.ShopID = shopID
-		dataDocPg.GuidFixed = newGuidFixed
-		dataDocPg.BOMGuid = bomGUID
-		dataDocPg.DocNo = docNo
-
-		// implement bom price
-		dataDocPg.Prices = []models.SaleInvoicePrice{}
-		dataDocPg.Barcode = barcode
-		dataDocPg.Qty = 0
-		dataDocPg.Price = 0
-		dataDocPg.Ratio = 1
-		dataDocPg.CreatedBy = authUsername
-		dataDocPg.CreatedAt = time.Now()
-
-		go func() {
-			err := svc.repoMq.Create(dataDocPg)
-			if err != nil {
-				fmt.Printf("create mq error :: %s", err.Error())
-			}
-
-		}()
-	}
+	}()
 
 	return newGuidFixed, nil
 }
