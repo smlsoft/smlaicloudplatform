@@ -40787,6 +40787,12 @@ const docTemplate = `{
                 "taxtype": {
                     "type": "integer"
                 },
+                "timeforsales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductTimeForSale"
+                    }
+                },
                 "useimageorcolor": {
                     "type": "boolean"
                 },
@@ -41145,6 +41151,29 @@ const docTemplate = `{
                 "isfortakeaway": {
                     "description": "สั่งกลับบ้าน",
                     "type": "boolean"
+                }
+            }
+        },
+        "models.ProductTimeForSale": {
+            "type": "object",
+            "properties": {
+                "daysofweek": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "fromdate": {
+                    "type": "string"
+                },
+                "fromtime": {
+                    "type": "string"
+                },
+                "todate": {
+                    "type": "string"
+                },
+                "totime": {
+                    "type": "string"
                 }
             }
         },
@@ -42560,6 +42589,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "minLength": 1
+                },
+                "price": {
+                    "type": "integer"
                 }
             }
         },
@@ -47175,6 +47207,12 @@ const docTemplate = `{
                 },
                 "taxtype": {
                     "type": "integer"
+                },
+                "timeforsales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductTimeForSale"
+                    }
                 },
                 "useimageorcolor": {
                     "type": "boolean"

@@ -9,11 +9,12 @@ import (
 const salechannelCollectionName = "saleChannel"
 
 type SaleChannel struct {
-	Code     string  `json:"code" bson:"code" validate:"required,min=1"`
-	Name     string  `json:"name" bson:"name" validate:"required,min=1"`
-	GP       float64 `json:"gp" bson:"gp"`
-	GPType   int8    `json:"gptype" bson:"gptype"`
-	ImageUri string  `json:"imageuri" bson:"imageuri"`
+	Code        string  `json:"code" bson:"code" validate:"required,min=1"`
+	Name        string  `json:"name" bson:"name" validate:"required,min=1"`
+	GP          float64 `json:"gp" bson:"gp"`
+	GPType      int8    `json:"gptype" bson:"gptype"`
+	PriceNumber int8    `json:"price" bson:"price"`
+	ImageUri    string  `json:"imageuri" bson:"imageuri"`
 }
 
 type SaleChannelInfo struct {

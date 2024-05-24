@@ -2932,6 +2932,10 @@ definitions:
         type: string
       taxtype:
         type: integer
+      timeforsales:
+        items:
+          $ref: '#/definitions/models.ProductTimeForSale'
+        type: array
       useimageorcolor:
         type: boolean
       vatcal:
@@ -3178,6 +3182,21 @@ definitions:
       isfortakeaway:
         description: สั่งกลับบ้าน
         type: boolean
+    type: object
+  models.ProductTimeForSale:
+    properties:
+      daysofweek:
+        items:
+          type: integer
+        type: array
+      fromdate:
+        type: string
+      fromtime:
+        type: string
+      todate:
+        type: string
+      totime:
+        type: string
     type: object
   models.ProfitAndLossSheetAccountDetail:
     properties:
@@ -4131,6 +4150,8 @@ definitions:
       name:
         minLength: 1
         type: string
+      price:
+        type: integer
     required:
     - code
     - name
@@ -7224,6 +7245,10 @@ definitions:
         type: string
       taxtype:
         type: integer
+      timeforsales:
+        items:
+          $ref: '#/definitions/models.ProductTimeForSale'
+        type: array
       useimageorcolor:
         type: boolean
       vatcal:

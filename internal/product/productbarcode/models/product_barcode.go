@@ -42,29 +42,38 @@ type ProductBarcodeBase struct {
 	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
 	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
 
-	RefUnitNames              *[]models.NameX     `json:"refunitnames" bson:"refunitnames"`
-	StockBarcode              string              `json:"stockbarcode" bson:"stockbarcode"`
-	Qty                       float64             `json:"qty" bson:"qty"`
-	RefDivideValue            float64             `json:"refdividevalue" bson:"refdividevalue"`
-	RefStandValue             float64             `json:"refstandvalue" bson:"refstandvalue"`
-	VatCal                    int                 `json:"vatcal" bson:"vatcal"`
-	IsALaCarte                bool                `json:"isalacarte" bson:"isalacarte"`
-	OrderTypes                *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
-	ProductType               ProductType         `json:"producttype" bson:"producttype"`
-	IsSplitUnitPrint          bool                `json:"issplitunitprint" bson:"issplitunitprint"`
-	IsOnlyStaff               bool                `json:"isonlystaff" bson:"isonlystaff"`
-	FoodType                  int                 `json:"foodtype" bson:"foodtype"`
-	Discount                  string              `json:"discount" bson:"discount"`
-	IsStockForRestaurant      bool                `json:"isstockforrestaurant" bson:"isstockforrestaurant"`
-	ManufacturerGUID          string              `json:"manufacturerguid" bson:"manufacturerguid"`
-	ManufacturerCode          string              `json:"manufacturercode" bson:"manufacturercode"`
-	ManufacturerNames         *[]models.NameX     `json:"manufacturernames" bson:"manufacturernames"`
-	Dimensions                []ProductDimension  `json:"dimensions" bson:"dimensions"`
-	IsDiscountPointOfPurchase bool                `json:"isdiscountpointofpurchase" bson:"isdiscountpointofpurchase"`
-	Restaurant                ProductRestaurant   `json:"restaurant" bson:"restaurant"`
-	IsAlert                   bool                `json:"isalert" bson:"isalert"`
-	AlertDescription          string              `json:"alertdescription" bson:"alertdescription" validate:"max=1500"`
-	Description               string              `json:"description" bson:"description" validate:"max=1500"`
+	RefUnitNames              *[]models.NameX       `json:"refunitnames" bson:"refunitnames"`
+	StockBarcode              string                `json:"stockbarcode" bson:"stockbarcode"`
+	Qty                       float64               `json:"qty" bson:"qty"`
+	RefDivideValue            float64               `json:"refdividevalue" bson:"refdividevalue"`
+	RefStandValue             float64               `json:"refstandvalue" bson:"refstandvalue"`
+	VatCal                    int                   `json:"vatcal" bson:"vatcal"`
+	IsALaCarte                bool                  `json:"isalacarte" bson:"isalacarte"`
+	OrderTypes                *[]ProductOrderType   `json:"ordertypes" bson:"ordertypes"`
+	ProductType               ProductType           `json:"producttype" bson:"producttype"`
+	IsSplitUnitPrint          bool                  `json:"issplitunitprint" bson:"issplitunitprint"`
+	IsOnlyStaff               bool                  `json:"isonlystaff" bson:"isonlystaff"`
+	FoodType                  int                   `json:"foodtype" bson:"foodtype"`
+	Discount                  string                `json:"discount" bson:"discount"`
+	IsStockForRestaurant      bool                  `json:"isstockforrestaurant" bson:"isstockforrestaurant"`
+	ManufacturerGUID          string                `json:"manufacturerguid" bson:"manufacturerguid"`
+	ManufacturerCode          string                `json:"manufacturercode" bson:"manufacturercode"`
+	ManufacturerNames         *[]models.NameX       `json:"manufacturernames" bson:"manufacturernames"`
+	Dimensions                []ProductDimension    `json:"dimensions" bson:"dimensions"`
+	IsDiscountPointOfPurchase bool                  `json:"isdiscountpointofpurchase" bson:"isdiscountpointofpurchase"`
+	Restaurant                ProductRestaurant     `json:"restaurant" bson:"restaurant"`
+	IsAlert                   bool                  `json:"isalert" bson:"isalert"`
+	AlertDescription          string                `json:"alertdescription" bson:"alertdescription" validate:"max=1500"`
+	Description               string                `json:"description" bson:"description" validate:"max=1500"`
+	TimeForSales              *[]ProductTimeForSale `json:"timeforsales" bson:"timeforsales"`
+}
+
+type ProductTimeForSale struct {
+	DaysOfWeek []int8 `json:"daysofweek" bson:"daysofweek"`
+	FromDate   string `json:"fromdate" bson:"fromdate"`
+	ToDate     string `json:"todate" bson:"todate"`
+	FromTime   string `json:"fromtime" bson:"fromtime"`
+	ToTime     string `json:"totime" bson:"totime"`
 }
 
 type ProductRestaurant struct {
