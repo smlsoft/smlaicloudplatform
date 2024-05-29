@@ -265,19 +265,22 @@ func (svc CreditorHttpService) InfoCreditorByCode(shopID string, code string) (m
 		return models.CreditorInfo{}, errors.New("document not found")
 	}
 
-	findGroups, err := svc.repoGroup.FindByGuids(ctx, shopID, *findDoc.GroupGUIDs)
+	if findDoc.GroupGUIDs != nil {
+		findGroups, err := svc.repoGroup.FindByGuids(ctx, shopID, *findDoc.GroupGUIDs)
 
-	if err != nil {
-		return models.CreditorInfo{}, err
+		if err != nil {
+			return models.CreditorInfo{}, err
+		}
+
+		groupInfo := lo.Map[groupModels.CreditorGroupDoc, groupModels.CreditorGroupInfo](
+			findGroups,
+			func(docGroup groupModels.CreditorGroupDoc, idx int) groupModels.CreditorGroupInfo {
+				return docGroup.CreditorGroupInfo
+			})
+
+		findDoc.CreditorInfo.Groups = &groupInfo
+
 	}
-
-	groupInfo := lo.Map[groupModels.CreditorGroupDoc, groupModels.CreditorGroupInfo](
-		findGroups,
-		func(docGroup groupModels.CreditorGroupDoc, idx int) groupModels.CreditorGroupInfo {
-			return docGroup.CreditorGroupInfo
-		})
-
-	findDoc.CreditorInfo.Groups = &groupInfo
 
 	return findDoc.CreditorInfo, nil
 
