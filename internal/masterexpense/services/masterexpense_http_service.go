@@ -74,7 +74,7 @@ func (svc MasterExpenseHttpService) CreateMasterExpense(shopID string, authUsern
 		return "", err
 	}
 
-	time.Sleep(30 * time.Second)
+	// time.Sleep(30 * time.Second)
 
 	newGuidFixed := utils.NewGUID()
 
