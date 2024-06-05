@@ -110,6 +110,7 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 		},
 		IsPOS:                        doc.IsPOS,
 		IsBom:                        doc.IsBom,
+		OrderNumber:                  doc.OrderNumber,
 		DeliveryAmount:               doc.DeliveryAmount,
 		SaleCode:                     doc.SaleCode,
 		SaleName:                     doc.SaleName,
