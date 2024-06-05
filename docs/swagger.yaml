@@ -4204,6 +4204,8 @@ definitions:
         type: array
       customertelephone:
         type: string
+      deliveryamount:
+        type: number
       description:
         type: string
       detaildiscountformula:
@@ -4252,11 +4254,15 @@ definitions:
         type: boolean
       iscancel:
         type: boolean
+      isdelivery:
+        type: boolean
       ismanualamount:
         type: boolean
       ispos:
         type: boolean
       istableallacratemode:
+        type: boolean
+      istransport:
         type: boolean
       isvatregister:
         type: boolean
@@ -4266,6 +4272,8 @@ definitions:
       mancount:
         type: integer
       membercode:
+        type: string
+      ordernumber:
         type: string
       paycashamount:
         type: number
@@ -4361,6 +4369,10 @@ definitions:
         type: number
       transflag:
         type: integer
+      transportamount:
+        type: number
+      transportcode:
+        type: string
       vatrate:
         type: number
       vattype:

@@ -42667,6 +42667,9 @@ const docTemplate = `{
                 "customertelephone": {
                     "type": "string"
                 },
+                "deliveryamount": {
+                    "type": "number"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -42739,6 +42742,9 @@ const docTemplate = `{
                 "iscancel": {
                     "type": "boolean"
                 },
+                "isdelivery": {
+                    "type": "boolean"
+                },
                 "ismanualamount": {
                     "type": "boolean"
                 },
@@ -42746,6 +42752,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "istransport": {
                     "type": "boolean"
                 },
                 "isvatregister": {
@@ -42759,6 +42768,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "membercode": {
+                    "type": "string"
+                },
+                "ordernumber": {
                     "type": "string"
                 },
                 "paycashamount": {
@@ -42901,6 +42913,12 @@ const docTemplate = `{
                 },
                 "transflag": {
                     "type": "integer"
+                },
+                "transportamount": {
+                    "type": "number"
+                },
+                "transportcode": {
+                    "type": "string"
                 },
                 "vatrate": {
                     "type": "number"

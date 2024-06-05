@@ -42662,6 +42662,9 @@
                 "customertelephone": {
                     "type": "string"
                 },
+                "deliveryamount": {
+                    "type": "number"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -42734,6 +42737,9 @@
                 "iscancel": {
                     "type": "boolean"
                 },
+                "isdelivery": {
+                    "type": "boolean"
+                },
                 "ismanualamount": {
                     "type": "boolean"
                 },
@@ -42741,6 +42747,9 @@
                     "type": "boolean"
                 },
                 "istableallacratemode": {
+                    "type": "boolean"
+                },
+                "istransport": {
                     "type": "boolean"
                 },
                 "isvatregister": {
@@ -42754,6 +42763,9 @@
                     "type": "integer"
                 },
                 "membercode": {
+                    "type": "string"
+                },
+                "ordernumber": {
                     "type": "string"
                 },
                 "paycashamount": {
@@ -42896,6 +42908,12 @@
                 },
                 "transflag": {
                     "type": "integer"
+                },
+                "transportamount": {
+                    "type": "number"
+                },
+                "transportcode": {
+                    "type": "string"
                 },
                 "vatrate": {
                     "type": "number"

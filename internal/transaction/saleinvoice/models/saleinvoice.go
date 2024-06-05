@@ -12,14 +12,19 @@ const saleinvoiceCollectionName = "transactionSaleInvoice"
 type SaleInvoice struct {
 	models.PartitionIdentity `bson:"inline"`
 	transmodels.Transaction  `bson:"inline"`
-	IsPOS                    bool `json:"ispos" bson:"ispos"`
-	IsBom                    bool `json:"isbom" bson:"isbom"`
+	IsPOS                    bool    `json:"ispos" bson:"ispos"`
+	IsBom                    bool    `json:"isbom" bson:"isbom"`
+	IsDelivery               bool    `json:"isdelivery" bson:"isdelivery"`
+	IsTransport              bool    `json:"istransport" bson:"istransport"`
+	TransportCode            string  `json:"transportcode" bson:"transportcode"`
+	TransportAmount          float64 `json:"transportamount" bson:"transportamount"`
 
 	CouponNo          string  `json:"couponno" bson:"couponno"`
 	CouponAmount      float64 `json:"couponamount" bson:"couponamount"`
 	CouponDescription string  `json:"coupondescription" bson:"coupondescription"`
 
-	OrderNumber    string  `json:"ordernumber" bson:"ordernumber"`
+	OrderNumber string `json:"ordernumber" bson:"ordernumber"`
+
 	QRCode         string  `json:"qrcode" bson:"qrcode"`
 	QRCodeAmount   float64 `json:"qrcodeamount" bson:"qrcodeamount"`
 	DeliveryAmount float64 `json:"deliveryamount" bson:"deliveryamount"`

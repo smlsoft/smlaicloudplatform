@@ -19,6 +19,10 @@ type SaleInvoiceTransactionPG struct {
 	TotalPayCredit   float64         `json:"totalpaycredit" gorm:"column:totalpaycredit;default:0"`
 	IsPOS            bool            `json:"ispos" gorm:"column:ispos;default:0"`
 	IsBom            bool            `json:"isbom" gorm:"column:isbom;default:0"`
+	IsDelivery       bool            `json:"isdelivery" gorm:"column:isdelivery;default:0"`
+	IsTransport      bool            `json:"istransport" gorm:"column:istransport;default:0"`
+	TransportCode    string          `json:"transportcode" gorm:"column:transportcode"`
+	TransportAmount  float64         `json:"transportamount" gorm:"column:transportamount"`
 
 	OrderNumber                  string  `json:"ordernumber" gorm:"column:ordernumber"`
 	SaleCode                     string  `json:"salecode" gorm:"column:salecode"`

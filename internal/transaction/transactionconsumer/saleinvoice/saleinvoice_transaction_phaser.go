@@ -123,6 +123,10 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 		SaleChannelGP:                doc.SaleChannelGP,
 		SaleChannelGPType:            doc.SaleChannelGPType,
 		TakeAway:                     doc.TakeAway,
+		IsDelivery:                   doc.IsDelivery,
+		IsTransport:                  doc.IsTransport,
+		TransportCode:                doc.TransportCode,
+		TransportAmount:              doc.TransportAmount,
 
 		DebtorCode:       doc.CustCode,
 		DebtorNames:      *pkgModels.DefaultArrayNameX(doc.CustNames),
