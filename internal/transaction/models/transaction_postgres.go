@@ -28,6 +28,7 @@ type TransactionPG struct {
 	VatRate                  float64      `json:"vatrate" gorm:"column:vatrate"`
 	TotalValue               float64      `json:"totalvalue" gorm:"column:totalvalue"`
 	DiscountWord             string       `json:"discountword" gorm:"column:discountword"`
+	DeliveryAmount           float64      `json:"deliveryamount" gorm:"column:deliveryamount"`
 	TotalDiscount            float64      `json:"totaldiscount" gorm:"column:totaldiscount"`
 	TotalBeforeVat           float64      `json:"totalbeforevat" gorm:"column:totalbeforevat"`
 	TotalVatValue            float64      `json:"totalvatvalue" gorm:"column:totalvatvalue"`

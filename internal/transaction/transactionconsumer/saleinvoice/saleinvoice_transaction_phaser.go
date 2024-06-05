@@ -109,6 +109,8 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
 		},
 		IsPOS:                        doc.IsPOS,
+		IsBom:                        doc.IsBom,
+		DeliveryAmount:               doc.DeliveryAmount,
 		SaleCode:                     doc.SaleCode,
 		SaleName:                     doc.SaleName,
 		DetailDiscountFormula:        doc.DetailDiscountFormula,

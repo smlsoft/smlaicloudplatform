@@ -13,6 +13,7 @@ type SaleInvoiceTransactionPG struct {
 	TransactionPG    `gorm:"embedded;"`
 	DebtorCode       string          `json:"creditorcode" gorm:"column:creditorcode"`
 	DebtorNames      pkgModels.JSONB `json:"creditornames" gorm:"column:creditornames;type:jsonb"`
+	DeliveryAmount   float64         `json:"deliveryamount" gorm:"column:deliveryamount"`
 	TotalPayCash     float64         `json:"totalpaycash" gorm:"column:totalpaycash;default:0"`
 	TotalPayTransfer float64         `json:"totalpaytransfer" gorm:"column:totalpaytransfer;default:0"`
 	TotalPayCredit   float64         `json:"totalpaycredit" gorm:"column:totalpaycredit;default:0"`
