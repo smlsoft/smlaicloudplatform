@@ -20,6 +20,7 @@ type SaleInvoiceTransactionPG struct {
 	IsPOS            bool            `json:"ispos" gorm:"column:ispos;default:0"`
 	IsBom            bool            `json:"isbom" gorm:"column:isbom;default:0"`
 
+	OrderNumber                  string  `json:"ordernumber" gorm:"column:ordernumber"`
 	SaleCode                     string  `json:"salecode" gorm:"column:salecode"`
 	SaleName                     string  `json:"salename" gorm:"column:salename" `
 	DetailDiscountFormula        string  `json:"detaildiscountformula" gorm:"column:detaildiscountformula"`

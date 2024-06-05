@@ -19,6 +19,7 @@ type SaleInvoice struct {
 	CouponAmount      float64 `json:"couponamount" bson:"couponamount"`
 	CouponDescription string  `json:"coupondescription" bson:"coupondescription"`
 
+	OrderNumber    string  `json:"ordernumber" bson:"ordernumber"`
 	QRCode         string  `json:"qrcode" bson:"qrcode"`
 	QRCodeAmount   float64 `json:"qrcodeamount" bson:"qrcodeamount"`
 	DeliveryAmount float64 `json:"deliveryamount" bson:"deliveryamount"`
