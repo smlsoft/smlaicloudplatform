@@ -4,6 +4,7 @@ import (
 	"context"
 	chartOfAccountRepositories "smlcloudplatform/internal/vfgl/chartofaccount/repositories"
 	"smlcloudplatform/pkg/microservice"
+	msModels "smlcloudplatform/pkg/microservice/models"
 	"time"
 )
 
@@ -29,17 +30,36 @@ func NewChartOfAccountAdminService(pst microservice.IPersisterMongo, kfProducer 
 }
 func (s *ChartOfAccountAdminService) ReSyncChartOfAccountDoc(shopID string) error {
 
-	ctx, cancel := context.WithTimeout(context.Background(), s.timeoutDuration)
-	defer cancel()
-
-	docs, err := s.mongoRepo.FindChartOfAccountDocByShopID(ctx, shopID)
-	if err != nil {
-		return err
+	pageRequest := msModels.Pageable{
+		Limit: 20,
+		Page:  1,
+		Sorts: []msModels.KeyInt{
+			{
+				Key:   "guidfixed",
+				Value: -1,
+			},
+		},
 	}
 
-	err = s.kafkaRepo.CreateInBatch(docs)
-	if err != nil {
-		return err
+	for {
+		ctx, cancel := context.WithTimeout(context.Background(), s.timeoutDuration)
+		defer cancel()
+
+		docs, pages, err := s.mongoRepo.FindChartOfAccountDocByShopID(ctx, shopID, false, pageRequest)
+		if err != nil {
+			return err
+		}
+
+		err = s.kafkaRepo.CreateInBatch(docs)
+		if err != nil {
+			return err
+		}
+
+		if pages.TotalPage > int64(pageRequest.Page) {
+			pageRequest.Page++
+		} else {
+			break
+		}
 	}
 	return nil
 }

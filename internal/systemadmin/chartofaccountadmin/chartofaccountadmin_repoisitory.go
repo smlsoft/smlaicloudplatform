@@ -4,12 +4,14 @@ import (
 	"context"
 	chartOfAccountModels "smlcloudplatform/internal/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/microservice"
+	msModels "smlcloudplatform/pkg/microservice/models"
 
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IChartOfAccountAdminRepository interface {
-	FindChartOfAccountDocByShopID(ctx context.Context, shopID string) ([]chartOfAccountModels.ChartOfAccountDoc, error)
+	FindChartOfAccountDocByShopID(ctx context.Context, shopID string, isDeleted bool, pageable msModels.Pageable) ([]chartOfAccountModels.ChartOfAccountDoc, mongopagination.PaginationData, error)
 }
 
 type ChartOfAccountAdminRepository struct {
@@ -22,14 +24,24 @@ func NewChartOfAccountAdminRepository(pst microservice.IPersisterMongo) IChartOf
 	}
 }
 
-func (r ChartOfAccountAdminRepository) FindChartOfAccountDocByShopID(ctx context.Context, shopID string) ([]chartOfAccountModels.ChartOfAccountDoc, error) {
+func (r ChartOfAccountAdminRepository) FindChartOfAccountDocByShopID(ctx context.Context, shopID string, isDeleted bool, pageable msModels.Pageable) ([]chartOfAccountModels.ChartOfAccountDoc, mongopagination.PaginationData, error) {
 
 	docList := []chartOfAccountModels.ChartOfAccountDoc{}
 
-	err := r.pst.Find(ctx, &chartOfAccountModels.ChartOfAccountDoc{}, bson.M{"shopid": shopID}, &docList)
-	if err != nil {
-		return nil, err
+	// err := r.pst.Find(ctx, &chartOfAccountModels.ChartOfAccountDoc{}, bson.M{"shopid": shopID}, &docList)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": isDeleted},
 	}
 
-	return docList, nil
+	pagination, err := r.pst.FindPage(ctx, &chartOfAccountModels.ChartOfAccountDoc{}, queryFilters, pageable, &docList)
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
 }
