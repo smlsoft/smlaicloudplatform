@@ -120,7 +120,7 @@ func (repo JournalReportPgRepository) GetDataTrialBalance(shopId string, account
 			from journals_detail as d
 			join journals as h on h.shopid = d.shopid and h.docno = d.docno
 			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode
-			where h.shopid= @shopid ` + accountGroupFilter + `  and h.docdate < @enddate 
+			where h.shopid= @shopid ` + accountGroupFilter + `  and h.docdate <= @enddate 
 			 and (( h.journaltype = 0) or (h.journaltype=1 and h.docdate < @startdate ))
 		
 		` + closeDocFilter + `
@@ -129,7 +129,7 @@ func (repo JournalReportPgRepository) GetDataTrialBalance(shopId string, account
 		, bal as (
 			select accountcode, sum(debitamount) as debitamount, sum(creditamount) as creditamount 
 			from journal_doc where journal_doc.docdate < @startdate
-			and accountcategory in (1,2,3)
+			
 			group by accountcode
 		)
 		, prd as (
@@ -141,7 +141,7 @@ func (repo JournalReportPgRepository) GetDataTrialBalance(shopId string, account
 			select accountcode, sum(debitamount) as debitamount, sum(creditamount) as creditamount 
 			from journal_doc 
 			where 
-			 ( accountcategory in (1,2,3) and journal_doc.docdate <= @enddate ) or ( accountcategory in (4,5) and journal_doc.docdate between @startdate and @enddate )
+			 ( journal_doc.docdate <= @enddate )
 			group by accountcode
 		)
 		, journal_sheet_sum as (
