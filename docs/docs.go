@@ -13244,7 +13244,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Media"
+                            "$ref": "#/definitions/smlcloudplatform_internal_pos_media_models.Media"
                         }
                     }
                 ],
@@ -13329,7 +13329,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Media"
+                                "$ref": "#/definitions/smlcloudplatform_internal_pos_media_models.Media"
                             }
                         }
                     }
@@ -13513,7 +13513,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Media"
+                            "$ref": "#/definitions/smlcloudplatform_internal_pos_media_models.Media"
                         }
                     }
                 ],
@@ -39017,26 +39017,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Media": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "resources": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.MediaResource"
-                    }
-                }
-            }
-        },
         "models.MediaResource": {
             "type": "object",
             "properties": {
@@ -46957,6 +46937,26 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_internal_pos_media_models.Media": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MediaResource"
+                    }
                 }
             }
         },

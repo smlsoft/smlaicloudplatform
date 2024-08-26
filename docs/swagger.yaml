@@ -1737,19 +1737,6 @@ definitions:
     required:
     - names
     type: object
-  models.Media:
-    properties:
-      code:
-        type: string
-      description:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      resources:
-        items:
-          $ref: '#/definitions/models.MediaResource'
-        type: array
-    type: object
   models.MediaResource:
     properties:
       daysofweek:
@@ -7080,6 +7067,19 @@ definitions:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_internal_pos_media_models.Media:
+    properties:
+      code:
+        type: string
+      description:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      resources:
+        items:
+          $ref: '#/definitions/models.MediaResource'
+        type: array
     type: object
   smlcloudplatform_internal_pos_setting_models.POSEmployee:
     properties:
@@ -15967,7 +15967,7 @@ paths:
         name: Media
         required: true
         schema:
-          $ref: '#/definitions/models.Media'
+          $ref: '#/definitions/smlcloudplatform_internal_pos_media_models.Media'
       responses:
         "201":
           description: Created
@@ -16043,7 +16043,7 @@ paths:
         name: Media
         required: true
         schema:
-          $ref: '#/definitions/models.Media'
+          $ref: '#/definitions/smlcloudplatform_internal_pos_media_models.Media'
       responses:
         "201":
           description: Created
@@ -16069,7 +16069,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.Media'
+            $ref: '#/definitions/smlcloudplatform_internal_pos_media_models.Media'
           type: array
       responses:
         "201":

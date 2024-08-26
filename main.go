@@ -23,6 +23,7 @@ import (
 	"smlcloudplatform/internal/masterexpense"
 	"smlcloudplatform/internal/masterincome"
 	"smlcloudplatform/internal/mastersync"
+	"smlcloudplatform/internal/media"
 	"smlcloudplatform/internal/member"
 	"smlcloudplatform/internal/notify"
 	"smlcloudplatform/internal/ocr"
@@ -471,6 +472,7 @@ func main() {
 	}
 
 	ms.RegisterHttp(migrationAPI.NewMigrationAPI(ms, cfg))
+	ms.RegisterHttp(media.InitMediaUploadHttp(ms, cfg))
 	ms.Start()
 }
 

@@ -112,3 +112,6 @@ run_m1_test_all:
 run_m1_prd_alldev:
 	swag init
 	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=prd go run --tags dynamic main.go
+
+run_m1_media_service_dev:
+	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic ./cmd/uploadmediaservice/main.go
