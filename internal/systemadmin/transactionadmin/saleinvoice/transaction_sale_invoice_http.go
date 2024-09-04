@@ -12,6 +12,8 @@ import (
 type ISaleInvoiceTransactionAdminHttp interface {
 	ReSyncSaleInvoiceTransaction(ctx microservice.IContext) error
 	ReSyncSaleInvoiceDeleteTransaction(ctx microservice.IContext) error
+	ReSyncSaleInvoiceTransactionByDate(ctx microservice.IContext) error
+	ReSyncSaleInvoiceDeleteTransactionByDate(ctx microservice.IContext) error
 	RegisterHttp(ms *microservice.Microservice, prefix string)
 }
 
@@ -32,7 +34,9 @@ func NewSaleInvoiceTransactionAdminHttp(ms *microservice.Microservice, cfg confi
 
 func (s *SaleInvoiceTransactionAdminHttp) RegisterHttp(ms *microservice.Microservice, prefix string) {
 	ms.POST(prefix+"/transactionadmin/saleinvoice/resynctransaction", s.ReSyncSaleInvoiceTransaction)
+	ms.POST(prefix+"/transactionadmin/saleinvoice/resynctransactionbydate", s.ReSyncSaleInvoiceTransactionByDate)
 	ms.POST(prefix+"/transactionadmin/saleinvoice/resyncdeletetransaction", s.ReSyncSaleInvoiceDeleteTransaction)
+	ms.POST(prefix+"/transactionadmin/saleinvoice/resyncdeletetransactionbydate", s.ReSyncSaleInvoiceDeleteTransactionByDate)
 }
 
 func (s *SaleInvoiceTransactionAdminHttp) ReSyncSaleInvoiceTransaction(ctx microservice.IContext) error {
@@ -66,6 +70,66 @@ func (s *SaleInvoiceTransactionAdminHttp) ReSyncSaleInvoiceTransaction(ctx micro
 }
 
 func (s *SaleInvoiceTransactionAdminHttp) ReSyncSaleInvoiceDeleteTransaction(ctx microservice.IContext) error {
+
+	input := ctx.ReadInput()
+	var req adminModels.RequestReSyncTenant
+
+	err := json.Unmarshal([]byte(input), &req)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	err = s.svc.ReSyncSaleInvoiceDeleteDoc(req.ShopID)
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ResponseSuccess{
+		Success: true,
+	})
+	return nil
+}
+
+func (s *SaleInvoiceTransactionAdminHttp) ReSyncSaleInvoiceTransactionByDate(ctx microservice.IContext) error {
+
+	input := ctx.ReadInput()
+	var req adminModels.RequestReSyncTenantByDate
+
+	err := json.Unmarshal([]byte(input), &req)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	err = s.svc.ReSyncSaleInvoiceDocByDate(req.ShopID, req.Date)
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ResponseSuccess{
+		Success: true,
+	})
+	return nil
+}
+
+func (s *SaleInvoiceTransactionAdminHttp) ReSyncSaleInvoiceDeleteTransactionByDate(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 	var req adminModels.RequestReSyncTenant

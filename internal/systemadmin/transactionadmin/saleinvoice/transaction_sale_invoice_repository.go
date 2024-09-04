@@ -14,6 +14,7 @@ import (
 type ISaleInvoiceTransactionAdminRepository interface {
 	FindSaleInvoiceByShopID(ctx context.Context, shopID string) ([]saleInvoiceModels.SaleInvoiceDoc, error)
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]saleInvoiceModels.SaleInvoiceDoc, mongopagination.PaginationData, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable msModels.Pageable) ([]saleInvoiceModels.SaleInvoiceDoc, mongopagination.PaginationData, error)
 	FindSaleInvoiceDeleteByShopID(ctx context.Context, shopID string) ([]saleInvoiceModels.SaleInvoiceDoc, error)
 }
 
@@ -48,6 +49,17 @@ func (r SaleInvoiceTransactionAdminRepository) FindSaleInvoiceByShopID(ctx conte
 func (r SaleInvoiceTransactionAdminRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]saleInvoiceModels.SaleInvoiceDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := r.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
+
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
+}
+
+func (r SaleInvoiceTransactionAdminRepository) FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable msModels.Pageable) ([]saleInvoiceModels.SaleInvoiceDoc, mongopagination.PaginationData, error) {
+
+	results, pagination, err := r.SearchRepository.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return nil, mongopagination.PaginationData{}, err
