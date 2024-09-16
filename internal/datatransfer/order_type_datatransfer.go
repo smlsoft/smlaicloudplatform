@@ -1,0 +1,86 @@
+package datatransfer
+
+import (
+	"context"
+	"smlcloudplatform/internal/product/ordertype/models"
+	orderTypeRepository "smlcloudplatform/internal/product/ordertype/repositories"
+	"smlcloudplatform/internal/repositories"
+	"smlcloudplatform/pkg/microservice"
+	micromodels "smlcloudplatform/pkg/microservice/models"
+	msModels "smlcloudplatform/pkg/microservice/models"
+
+	"github.com/userplant/mongopagination"
+)
+
+type OrderTypeDataTransfer struct {
+	transferConnection IDataTransferConnection
+}
+
+type IOrderTypeDataTransferRepository interface {
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.OrderTypeDoc, mongopagination.PaginationData, error)
+}
+
+type OrderTypeDataTransferRepository struct {
+	pst microservice.IPersisterMongo
+	repositories.SearchRepository[models.OrderTypeDoc]
+}
+
+func NewOrderTypeDataTransferRepository(mongodbPersister microservice.IPersisterMongo) IOrderTypeDataTransferRepository {
+	repo := &OrderTypeDataTransferRepository{
+		pst: mongodbPersister,
+	}
+
+	repo.SearchRepository = repositories.NewSearchRepository[models.OrderTypeDoc](mongodbPersister)
+	return repo
+}
+
+func (repo OrderTypeDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.OrderTypeDoc, mongopagination.PaginationData, error) {
+
+	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
+
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
+}
+
+func NewOrderTypeDataTransfer(transferConnection IDataTransferConnection) IDataTransfer {
+	return &OrderTypeDataTransfer{
+		transferConnection: transferConnection,
+	}
+}
+
+func (pdt *OrderTypeDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+
+	sourceRepository := NewOrderTypeDataTransferRepository(pdt.transferConnection.GetSourceConnection())
+	targetRepository := orderTypeRepository.NewOrderTypeRepository(pdt.transferConnection.GetTargetConnection())
+
+	pageRequest := msModels.Pageable{
+		Limit: 100,
+		Page:  1,
+	}
+
+	for {
+
+		docs, pages, err := sourceRepository.FindPage(ctx, shopID, nil, pageRequest)
+		if err != nil {
+			return err
+		}
+
+		if len(docs) > 0 {
+			err = targetRepository.CreateInBatch(ctx, docs)
+			if err != nil {
+				return err
+			}
+		}
+
+		if pages.TotalPage > int64(pageRequest.Page) {
+			pageRequest.Page++
+		} else {
+			break
+		}
+	}
+
+	return nil
+}
