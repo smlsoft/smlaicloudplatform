@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/stockreceiveproduct/models"
 	stockReceiveProductRepository "smlcloudplatform/internal/transaction/stockreceiveproduct/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type StockReceiveProductDataTransfer struct {
 }
 
 type IStockReceiveProductDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockReceiveProductDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockReceiveProductDoc, mongopagination.PaginationData, error)
 }
 
 type StockReceiveProductDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewStockReceiveProductDataTransferRepository(mongodbPersister microservice.
 	return repo
 }
 
-func (repo StockReceiveProductDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockReceiveProductDoc, mongopagination.PaginationData, error) {
+func (repo StockReceiveProductDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockReceiveProductDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

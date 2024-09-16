@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/slipimage/models"
 	slipImageRepository "smlcloudplatform/internal/slipimage/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type SlipImageDataTransfer struct {
 }
 
 type ISlipImageDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SlipImageDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SlipImageDoc, mongopagination.PaginationData, error)
 }
 
 type SlipImageDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewSlipImageDataTransferRepository(mongodbPersister microservice.IPersister
 	return repo
 }
 
-func (repo SlipImageDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SlipImageDoc, mongopagination.PaginationData, error) {
+func (repo SlipImageDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SlipImageDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/purchasereturn/models"
 	purchaseReturnRepository "smlcloudplatform/internal/transaction/purchasereturn/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type PurchaseReturnDataTransfer struct {
 }
 
 type IPurchaseReturnDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseReturnDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.PurchaseReturnDoc, mongopagination.PaginationData, error)
 }
 
 type PurchaseReturnDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewPurchaseReturnDataTransferRepository(mongodbPersister microservice.IPers
 	return repo
 }
 
-func (repo PurchaseReturnDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseReturnDoc, mongopagination.PaginationData, error) {
+func (repo PurchaseReturnDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.PurchaseReturnDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

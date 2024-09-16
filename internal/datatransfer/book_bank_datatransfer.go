@@ -6,7 +6,6 @@ import (
 	bookbankRepository "smlcloudplatform/internal/payment/bookbank/repositories"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type BookBankDataTransfer struct {
 }
 
 type IBookBankDataTransferDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.BookBankDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.BookBankDoc, mongopagination.PaginationData, error)
 }
 
 type BookBankDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewBookBankDataTransferRepository(mongodbPersister microservice.IPersisterM
 	return repo
 }
 
-func (repo BookBankDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.BookBankDoc, mongopagination.PaginationData, error) {
+func (repo BookBankDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.BookBankDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

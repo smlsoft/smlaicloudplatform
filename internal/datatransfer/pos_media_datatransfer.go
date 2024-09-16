@@ -6,7 +6,6 @@ import (
 	posMediaRepository "smlcloudplatform/internal/pos/media/repositories"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type PosMediaDataTransfer struct {
 }
 
 type IPosMediaDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.MediaDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.MediaDoc, mongopagination.PaginationData, error)
 }
 
 type PosMediaDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewPosMediaDataTransferRepository(mongodbPersister microservice.IPersisterM
 	return repo
 }
 
-func (repo PosMediaDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.MediaDoc, mongopagination.PaginationData, error) {
+func (repo PosMediaDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.MediaDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

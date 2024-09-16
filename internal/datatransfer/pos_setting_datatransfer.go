@@ -6,7 +6,6 @@ import (
 	posSettingRepository "smlcloudplatform/internal/pos/setting/repositories"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type PosSettingDataTransfer struct {
 }
 
 type IPosSettingDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error)
 }
 
 type PosSettingDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewPosSettingDataTransferRepository(mongodbPersister microservice.IPersiste
 	return repo
 }
 
-func (repo PosSettingDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error) {
+func (repo PosSettingDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

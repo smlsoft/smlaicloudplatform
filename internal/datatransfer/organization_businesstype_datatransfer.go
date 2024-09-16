@@ -5,7 +5,6 @@ import (
 	"smlcloudplatform/internal/organization/businesstype/models"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	organizationBusinessTypeRepository "smlcloudplatform/internal/organization/businesstype/repositories"
@@ -18,7 +17,7 @@ type OrganizationBusinessTypeDataTransfer struct {
 }
 
 type IOrganizationBusinessTypeDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.BusinessTypeDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.BusinessTypeDoc, mongopagination.PaginationData, error)
 }
 
 type OrganizationBusinessTypeDataTransferRepository struct {
@@ -35,7 +34,7 @@ func NewOrganizationBusinessTypeDataTransferRepository(mongodbPersister microser
 	return repo
 }
 
-func (repo OrganizationBusinessTypeDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.BusinessTypeDoc, mongopagination.PaginationData, error) {
+func (repo OrganizationBusinessTypeDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.BusinessTypeDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

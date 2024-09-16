@@ -6,7 +6,6 @@ import (
 	saleChannelRepository "smlcloudplatform/internal/channel/salechannel/repositories"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type SaleChannelDataTransfer struct {
 }
 
 type ISaleChannelDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleChannelDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SaleChannelDoc, mongopagination.PaginationData, error)
 }
 
 type SaleChannelDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewSaleChannelDataTransferRepository(mongodbPersister microservice.IPersist
 	return repo
 }
 
-func (repo SaleChannelDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleChannelDoc, mongopagination.PaginationData, error) {
+func (repo SaleChannelDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SaleChannelDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

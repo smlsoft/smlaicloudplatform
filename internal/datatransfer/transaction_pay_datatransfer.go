@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/pay/models"
 	transactionPayRepository "smlcloudplatform/internal/transaction/pay/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type TransactionPayDataTransfer struct {
 }
 
 type ITransactionPayDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PayDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.PayDoc, mongopagination.PaginationData, error)
 }
 
 type TransactionPayDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewTransactionPayDataTransferRepository(mongodbPersister microservice.IPers
 	return repo
 }
 
-func (repo TransactionPayDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PayDoc, mongopagination.PaginationData, error) {
+func (repo TransactionPayDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.PayDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	msModels "smlcloudplatform/pkg/microservice/models"
 
 	models "smlcloudplatform/internal/organization/branch/models"
 	organizationBranchRepository "smlcloudplatform/internal/organization/branch/repositories"
@@ -17,7 +17,7 @@ type OrganizationBranchDataTransfer struct {
 }
 
 type IOrganizationBranchDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.BranchDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.BranchDoc, mongopagination.PaginationData, error)
 }
 
 type OrganizationBranchDataTransferRepository struct {
@@ -34,7 +34,7 @@ func NewOrganizationBranchDataTransferRepository(mongodbPersister microservice.I
 	return repo
 }
 
-func (repo OrganizationBranchDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.BranchDoc, mongopagination.PaginationData, error) {
+func (repo OrganizationBranchDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.BranchDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 
@@ -56,7 +56,7 @@ func (dt *OrganizationBranchDataTransfer) StartTransfer(ctx context.Context, sho
 	sourceRepository := NewOrganizationBranchDataTransferRepository(dt.transferConnection.GetSourceConnection())
 	targetRepository := organizationBranchRepository.NewBranchRepository(dt.transferConnection.GetTargetConnection())
 
-	pageRequest := micromodels.Pageable{
+	pageRequest := msModels.Pageable{
 		Limit: 100,
 		Page:  1,
 	}

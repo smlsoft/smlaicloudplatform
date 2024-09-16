@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/warehouse/models"
 	warehouseRepository "smlcloudplatform/internal/warehouse/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type ProductWarehouseDataTransfer struct {
 }
 
 type IProductWarehouseDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.WarehouseDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.WarehouseDoc, mongopagination.PaginationData, error)
 }
 
 type ProductWarehouseDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewProductWarehouseDataTransferRepository(mongodbPersister microservice.IPe
 	return repo
 }
 
-func (repo ProductWarehouseDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.WarehouseDoc, mongopagination.PaginationData, error) {
+func (repo ProductWarehouseDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.WarehouseDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

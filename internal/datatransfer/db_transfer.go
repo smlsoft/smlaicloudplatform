@@ -23,6 +23,9 @@ func (db *DBTransfer) BeginTransfer(shopID string) {
 	connection := NewDataTransferConnection(db.sourceDatabase, db.targetDatabase)
 
 	_, err := connection.TestConnect()
+	if err != nil {
+		panic(err)
+	}
 
 	// start transfer shop
 	todo := context.TODO()

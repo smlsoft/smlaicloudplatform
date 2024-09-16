@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/saleinvoicereturn/models"
 	saleInvoiceReturnRepository "smlcloudplatform/internal/transaction/saleinvoicereturn/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type SaleInvoiceReturnDataTransfer struct {
 }
 
 type ISaleInvoiceReturnDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleInvoiceReturnDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SaleInvoiceReturnDoc, mongopagination.PaginationData, error)
 }
 
 type SaleInvoiceReturnDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewSaleInvoiceReturnDataTransferRepository(mongodbPersister microservice.IP
 	return repo
 }
 
-func (repo SaleInvoiceReturnDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleInvoiceReturnDoc, mongopagination.PaginationData, error) {
+func (repo SaleInvoiceReturnDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SaleInvoiceReturnDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

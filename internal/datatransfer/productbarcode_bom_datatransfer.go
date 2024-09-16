@@ -6,7 +6,6 @@ import (
 	productbarcodeBOMRepository "smlcloudplatform/internal/product/bom/repositories"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type ProductbarcodeBOMDataTransfer struct {
 }
 
 type IProductbarcodeBOMDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeBOMViewDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.ProductBarcodeBOMViewDoc, mongopagination.PaginationData, error)
 }
 
 type ProductbarcodeBOMDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewProductbarcodeBOMDataTransferRepository(mongodbPersister microservice.IP
 	return repo
 }
 
-func (repo ProductbarcodeBOMDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeBOMViewDoc, mongopagination.PaginationData, error) {
+func (repo ProductbarcodeBOMDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.ProductBarcodeBOMViewDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

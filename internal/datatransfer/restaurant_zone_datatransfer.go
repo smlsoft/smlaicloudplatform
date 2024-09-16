@@ -6,7 +6,6 @@ import (
 	restaurantZoneRepository "smlcloudplatform/internal/restaurant/zone"
 	"smlcloudplatform/internal/restaurant/zone/models"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type RestaurantZoneDataTransfer struct {
 }
 
 type IRestaurantZoneDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.ZoneDoc, mongopagination.PaginationData, error)
 }
 
 type RestaurantZoneDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewRestaurantZoneDataTransferRepository(mongodbPersister microservice.IPers
 	return repo
 }
 
-func (repo RestaurantZoneDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneDoc, mongopagination.PaginationData, error) {
+func (repo RestaurantZoneDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.ZoneDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

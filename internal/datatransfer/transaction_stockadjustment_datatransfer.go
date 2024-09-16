@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/stockadjustment/models"
 	stockAdjustmentRepository "smlcloudplatform/internal/transaction/stockadjustment/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type StockAdjustmentDataTransfer struct {
 }
 
 type IStockAdjustmentDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockAdjustmentDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockAdjustmentDoc, mongopagination.PaginationData, error)
 }
 
 type StockAdjustmentDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewStockAdjustmentDataTransferRepository(mongodbPersister microservice.IPer
 	return repo
 }
 
-func (repo StockAdjustmentDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockAdjustmentDoc, mongopagination.PaginationData, error) {
+func (repo StockAdjustmentDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockAdjustmentDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

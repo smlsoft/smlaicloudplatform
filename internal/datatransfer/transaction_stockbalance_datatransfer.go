@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/stockbalance/models"
 	stockbalancerepository "smlcloudplatform/internal/transaction/stockbalance/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type StockBalanceDataTransfer struct {
 }
 
 type IStockBalanceDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockBalanceDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockBalanceDoc, mongopagination.PaginationData, error)
 }
 
 type StockBalanceDataTransferRepository struct {
@@ -35,7 +34,7 @@ func NewStockBalanceDataTransferRepository(mongodbPersister microservice.IPersis
 	return repo
 }
 
-func (repo StockBalanceDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockBalanceDoc, mongopagination.PaginationData, error) {
+func (repo StockBalanceDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockBalanceDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

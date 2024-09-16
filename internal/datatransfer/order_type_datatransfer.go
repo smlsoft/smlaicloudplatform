@@ -6,7 +6,6 @@ import (
 	orderTypeRepository "smlcloudplatform/internal/product/ordertype/repositories"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type OrderTypeDataTransfer struct {
 }
 
 type IOrderTypeDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.OrderTypeDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.OrderTypeDoc, mongopagination.PaginationData, error)
 }
 
 type OrderTypeDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewOrderTypeDataTransferRepository(mongodbPersister microservice.IPersister
 	return repo
 }
 
-func (repo OrderTypeDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.OrderTypeDoc, mongopagination.PaginationData, error) {
+func (repo OrderTypeDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.OrderTypeDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

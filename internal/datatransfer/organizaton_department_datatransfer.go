@@ -5,7 +5,6 @@ import (
 	"smlcloudplatform/internal/organization/department/models"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	organizationDepartmentRepository "smlcloudplatform/internal/organization/department/repositories"
@@ -18,7 +17,7 @@ type OrganizationDepartmentDataTransfer struct {
 }
 
 type IOrganizationDepartmentDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DepartmentDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.DepartmentDoc, mongopagination.PaginationData, error)
 }
 
 type OrganizationDepartmentDataTransferRepository struct {
@@ -35,7 +34,7 @@ func NewOrganizationDepartmentDataTransferRepository(mongodbPersister microservi
 	return repo
 }
 
-func (repo OrganizationDepartmentDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DepartmentDoc, mongopagination.PaginationData, error) {
+func (repo OrganizationDepartmentDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.DepartmentDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

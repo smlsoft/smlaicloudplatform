@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/purchase/models"
 	transactionPurchaserRepository "smlcloudplatform/internal/transaction/purchase/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type TransactionPurchaseDataTransfer struct {
 }
 
 type ITransactionPurchaseDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.PurchaseDoc, mongopagination.PaginationData, error)
 }
 
 type TransactionPurchaseDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewTransactionPurchaseDataTransferRepository(mongodbPersister microservice.
 	return repo
 }
 
-func (repo TransactionPurchaseDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseDoc, mongopagination.PaginationData, error) {
+func (repo TransactionPurchaseDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.PurchaseDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

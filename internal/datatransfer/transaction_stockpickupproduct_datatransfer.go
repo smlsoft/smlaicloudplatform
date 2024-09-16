@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/transaction/stockpickupproduct/models"
 	stockPickupProductRepository "smlcloudplatform/internal/transaction/stockpickupproduct/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type StockPickupProductDataTransfer struct {
 }
 
 type IStockPickupProductDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockPickupProductDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockPickupProductDoc, mongopagination.PaginationData, error)
 }
 
 type StockPickupProductDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewStockPickupProductDataTransferRepository(mongodbPersister microservice.I
 	return repo
 }
 
-func (repo StockPickupProductDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockPickupProductDoc, mongopagination.PaginationData, error) {
+func (repo StockPickupProductDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.StockPickupProductDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

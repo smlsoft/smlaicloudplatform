@@ -5,7 +5,6 @@ import (
 	"smlcloudplatform/internal/order/setting/models"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	orderDeviceSettingRepository "smlcloudplatform/internal/order/setting/repositories"
@@ -18,7 +17,7 @@ type OrderDeviceSettingDataTransfer struct {
 }
 
 type IOrderDeviceSettingDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error)
 }
 
 type OrderDeviceSettingDataTransferRepository struct {
@@ -35,7 +34,7 @@ func NewOrderDeviceSettingDataTransferRepository(mongodbPersister microservice.I
 	return repo
 }
 
-func (repo OrderDeviceSettingDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error) {
+func (repo OrderDeviceSettingDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.SettingDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

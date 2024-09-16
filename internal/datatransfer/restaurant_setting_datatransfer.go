@@ -6,7 +6,6 @@ import (
 	restaurantRepository "smlcloudplatform/internal/restaurant/settings"
 	"smlcloudplatform/internal/restaurant/settings/models"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type RestaurantSettingDataTransfer struct {
 }
 
 type IRestaurentSettingDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.RestaurantSettingsDoc, mongopagination.PaginationData, error)
 }
 
 type RestaurentSettingDataTransferRepository struct {
@@ -40,7 +39,7 @@ func NewRestaurentSettingDataTransferRepository(mongodbPersister microservice.IP
 	return repo
 }
 
-func (repo RestaurentSettingDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsDoc, mongopagination.PaginationData, error) {
+func (repo RestaurentSettingDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.RestaurantSettingsDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 

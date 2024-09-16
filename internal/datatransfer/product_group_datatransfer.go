@@ -6,7 +6,6 @@ import (
 	productGroupRepository "smlcloudplatform/internal/product/productgroup/repositories"
 	"smlcloudplatform/internal/repositories"
 	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/userplant/mongopagination"
@@ -17,7 +16,7 @@ type ProductGroupDataTransfer struct {
 }
 
 type IProductGroupDataTransferRepository interface {
-	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductGroupDoc, mongopagination.PaginationData, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.ProductGroupDoc, mongopagination.PaginationData, error)
 }
 
 type ProductGroupDataTransferRepository struct {
@@ -34,7 +33,7 @@ func NewProductGroupDataTransferRepository(mongodbPersister microservice.IPersis
 	return repo
 }
 
-func (repo ProductGroupDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductGroupDoc, mongopagination.PaginationData, error) {
+func (repo ProductGroupDataTransferRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable msModels.Pageable) ([]models.ProductGroupDoc, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 
