@@ -1125,6 +1125,13 @@ definitions:
       xorder:
         type: integer
     type: object
+  models.FixedCost:
+    properties:
+      amount:
+        type: boolean
+      effectdate:
+        type: string
+    type: object
   models.ForgotPasswordPhoneNumberRequest:
     properties:
       countrycode:
@@ -2819,6 +2826,10 @@ definitions:
         type: string
       dividevalue:
         type: number
+      fixedcost:
+        items:
+          $ref: '#/definitions/models.FixedCost'
+        type: array
       foodtype:
         type: integer
       groupcode:
@@ -2875,6 +2886,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      materialtype:
+        type: integer
       maxdiscount:
         type: string
       names:
@@ -7157,6 +7170,10 @@ definitions:
         type: string
       dividevalue:
         type: number
+      fixedcost:
+        items:
+          $ref: '#/definitions/models.FixedCost'
+        type: array
       foodtype:
         type: integer
       groupcode:
@@ -7213,6 +7230,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      materialtype:
+        type: integer
       maxdiscount:
         type: string
       names:

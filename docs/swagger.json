@@ -38103,6 +38103,17 @@
                 }
             }
         },
+        "models.FixedCost": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "boolean"
+                },
+                "effectdate": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ForgotPasswordPhoneNumberRequest": {
             "type": "object",
             "required": [
@@ -40613,6 +40624,12 @@
                 "dividevalue": {
                     "type": "number"
                 },
+                "fixedcost": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FixedCost"
+                    }
+                },
                 "foodtype": {
                     "type": "integer"
                 },
@@ -40696,6 +40713,9 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "materialtype": {
+                    "type": "integer"
                 },
                 "maxdiscount": {
                     "type": "string"
@@ -47072,6 +47092,12 @@
                 "dividevalue": {
                     "type": "number"
                 },
+                "fixedcost": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FixedCost"
+                    }
+                },
                 "foodtype": {
                     "type": "integer"
                 },
@@ -47155,6 +47181,9 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "materialtype": {
+                    "type": "integer"
                 },
                 "maxdiscount": {
                     "type": "string"
