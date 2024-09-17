@@ -35,3 +35,19 @@ func (sdt *ShopDataTransfer) StartTransfer(ctx context.Context, shopID string) e
 	return nil
 
 }
+
+func (sdt *ShopDataTransfer) CheckingBeforeTransfer(ctx context.Context, shopID string) (bool, error) {
+
+	shopSourceRepository := shopModule.NewShopRepository(sdt.transferConnection.GetSourceConnection())
+
+	shopInfo, err := shopSourceRepository.FindByGuid(ctx, shopID)
+	if err != nil {
+		return false, err
+	}
+
+	if shopInfo.GuidFixed != "" {
+		return false, fmt.Errorf("Shop Already Exist")
+	}
+
+	return true, nil
+}
