@@ -35,13 +35,15 @@ type ProductBarcodeBase struct {
 	StandValue       float64 `json:"standvalue" bson:"standvalue"`
 	IsUseSubBarcodes bool    `json:"isusesubbarcodes" bson:"isusesubbarcodes"`
 
-	ItemType    int8   `json:"itemtype" bson:"itemtype"`
-	TaxType     int8   `json:"taxtype" bson:"taxtype"`
-	VatType     int8   `json:"vattype" bson:"vattype"`
-	IsSumPoint  bool   `json:"issumpoint" bson:"issumpoint"`
-	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
-	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
+	ItemType     int8   `json:"itemtype" bson:"itemtype"`
+	MaterialType int8   `json:"materialtype" bson:"materialtype"`
+	TaxType      int8   `json:"taxtype" bson:"taxtype"`
+	VatType      int8   `json:"vattype" bson:"vattype"`
+	IsSumPoint   bool   `json:"issumpoint" bson:"issumpoint"`
+	MaxDiscount  string `json:"maxdiscount" bson:"maxdiscount"`
+	IsDividend   bool   `json:"isdividend" bson:"isdividend"`
 
+	FixedCost                 *[]FixedCost          `json:"fixedcost" bson:"fixedcost"`
 	RefUnitNames              *[]models.NameX       `json:"refunitnames" bson:"refunitnames"`
 	StockBarcode              string                `json:"stockbarcode" bson:"stockbarcode"`
 	Qty                       float64               `json:"qty" bson:"qty"`
@@ -74,6 +76,11 @@ type ProductTimeForSale struct {
 	ToDate     string `json:"todate" bson:"todate"`
 	FromTime   string `json:"fromtime" bson:"fromtime"`
 	ToTime     string `json:"totime" bson:"totime"`
+}
+
+type FixedCost struct {
+	EffectDate string `json:"effectdate" bson:"effectdate"`
+	Amount     bool   `json:"amount" bson:"amount"`
 }
 
 type ProductRestaurant struct {
