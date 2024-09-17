@@ -79,8 +79,8 @@ type ProductTimeForSale struct {
 }
 
 type FixedCost struct {
-	EffectDate string `json:"effectdate" bson:"effectdate"`
-	Amount     bool   `json:"amount" bson:"amount"`
+	EffectDate string  `json:"effectdate" bson:"effectdate"`
+	Amount     float64 `json:"amount" bson:"amount"`
 }
 
 type ProductRestaurant struct {
