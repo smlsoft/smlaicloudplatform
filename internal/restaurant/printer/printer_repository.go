@@ -8,7 +8,7 @@ import (
 	micromodels "smlcloudplatform/pkg/microservice/models"
 	"time"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 )
 
 type IPrinterRepository interface {

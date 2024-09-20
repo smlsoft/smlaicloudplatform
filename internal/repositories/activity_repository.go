@@ -7,7 +7,7 @@ import (
 
 	micromodels "smlcloudplatform/pkg/microservice/models"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

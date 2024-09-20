@@ -20,7 +20,7 @@ import (
 	product_services "smlcloudplatform/internal/product/productbarcode/services"
 	saleinvoicebom_services "smlcloudplatform/internal/transaction/saleinvoicebomprice/services"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

@@ -8,9 +8,9 @@ import (
 	"smlcloudplatform/internal/productsection/sectionbranch/models"
 	micromodels "smlcloudplatform/pkg/microservice/models"
 
+	"github.com/smlsoft/mongopagination"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/userplant/mongopagination"
 )
 
 // Create a mock for the SectionBranchRepository

@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/smlsoft/mongopagination"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/userplant/mongopagination"
 )
 
 // MockWarehouseRepository mocks the WarehouseRepository

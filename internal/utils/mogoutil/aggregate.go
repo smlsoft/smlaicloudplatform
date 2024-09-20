@@ -1,7 +1,7 @@
 package mogoutil
 
 import (
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

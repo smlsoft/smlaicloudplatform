@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/smlsoft/mongopagination"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

@@ -7,7 +7,7 @@ import (
 	"smlcloudplatform/pkg/microservice"
 	micromodels "smlcloudplatform/pkg/microservice/models"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 )
 
 type IColorRepository interface {

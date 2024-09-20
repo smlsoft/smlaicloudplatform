@@ -9,7 +9,7 @@ import (
 
 	organizationDepartmentRepository "smlcloudplatform/internal/organization/department/repositories"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 )
 
 type OrganizationDepartmentDataTransfer struct {

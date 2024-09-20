@@ -16,7 +16,7 @@ import (
 
 	salechannel_models "smlcloudplatform/internal/channel/salechannel/models"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

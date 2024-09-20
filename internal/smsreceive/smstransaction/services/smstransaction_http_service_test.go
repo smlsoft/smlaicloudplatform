@@ -17,7 +17,7 @@ import (
 
 	utilmock "smlcloudplatform/mock"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

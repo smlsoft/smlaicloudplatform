@@ -9,7 +9,7 @@ import (
 	models "smlcloudplatform/internal/organization/branch/models"
 	organizationBranchRepository "smlcloudplatform/internal/organization/branch/repositories"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 )
 
 type OrganizationBranchDataTransfer struct {

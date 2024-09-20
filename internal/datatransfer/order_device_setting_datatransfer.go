@@ -9,7 +9,7 @@ import (
 
 	orderDeviceSettingRepository "smlcloudplatform/internal/order/setting/repositories"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 )
 
 type OrderDeviceSettingDataTransfer struct {

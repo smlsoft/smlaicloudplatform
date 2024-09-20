@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 )
 
 type ActivityService[TCU any, TDEL any] struct {

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/userplant/mongopagination"
+	"github.com/smlsoft/mongopagination"
 )
 
 type ActivityModuleManager struct {

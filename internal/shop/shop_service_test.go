@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/smlsoft/mongopagination"
 	"github.com/stretchr/testify/mock"
 	"github.com/tj/assert"
-	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
