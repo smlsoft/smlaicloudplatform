@@ -58,21 +58,21 @@ func (db *DBTransfer) BeginTransfer(shopID string, targetShopID string) {
 		}
 	}
 
-	// // shopuser
-	// fmt.Println("Start transfer shop user")
-	// shopUserDataTransfer := NewShopUserDataTransfer(connection)
-	// err = shopUserDataTransfer.StartTransfer(todo, shopID, targetShopID)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	// shopuser
+	fmt.Println("Start transfer shop user")
+	shopUserDataTransfer := NewShopUserDataTransfer(connection)
+	err = shopUserDataTransfer.StartTransfer(todo, shopID, targetShopID)
+	if err != nil {
+		panic(err)
+	}
 
-	// // shop employee
-	// fmt.Println("Start transfer shop employee")
-	// shopEmployeeDataTransfer := NewShopEmployeeDataTransfer(connection)
-	// err = shopEmployeeDataTransfer.StartTransfer(todo, shopID, targetShopID)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	// shop employee
+	fmt.Println("Start transfer shop employee")
+	shopEmployeeDataTransfer := NewShopEmployeeDataTransfer(connection)
+	err = shopEmployeeDataTransfer.StartTransfer(todo, shopID, targetShopID)
+	if err != nil {
+		panic(err)
+	}
 
 	// productbarcode
 	fmt.Println("Start transfer Product Barcode")
