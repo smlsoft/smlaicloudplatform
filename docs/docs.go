@@ -38112,7 +38112,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "type": "boolean"
+                    "type": "number"
                 },
                 "effectdate": {
                     "type": "string"

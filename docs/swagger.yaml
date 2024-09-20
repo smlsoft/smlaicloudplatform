@@ -1128,7 +1128,7 @@ definitions:
   models.FixedCost:
     properties:
       amount:
-        type: boolean
+        type: number
       effectdate:
         type: string
     type: object

@@ -41,8 +41,8 @@ func (db *DBTransfer) BeginTransfer(shopID string) {
 		panic(err)
 	}
 
-	fmt.Println("Start transfer shop user")
 	// shopuser
+	fmt.Println("Start transfer shop user")
 	shopUserDataTransfer := NewShopUserDataTransfer(connection)
 	err = shopUserDataTransfer.StartTransfer(todo, shopID)
 	if err != nil {
