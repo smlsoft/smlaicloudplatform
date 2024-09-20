@@ -9,6 +9,7 @@ import (
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ProductBarcodeDataTransfer struct {
@@ -50,7 +51,7 @@ func NewProductBarcodeDataTransfer(transferConnection IDataTransferConnection) I
 		transferConnection: transferConnection,
 	}
 }
-func (pbd *ProductBarcodeDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (pbd *ProductBarcodeDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceProductBarcodeRepository := NewProductBarcodeDataTransferRepository(pbd.transferConnection.GetSourceConnection())
 	targetProductBarcodeRepository := productbarcoderepository.NewProductBarcodeRepository(pbd.transferConnection.GetTargetConnection(), nil)
@@ -67,13 +68,21 @@ func (pbd *ProductBarcodeDataTransfer) StartTransfer(ctx context.Context, shopID
 	}
 
 	for {
-		barcodes, pages, err := sourceProductBarcodeRepository.FindPage(ctx, shopID, nil, pageRequest)
+		docs, pages, err := sourceProductBarcodeRepository.FindPage(ctx, shopID, nil, pageRequest)
 		if err != nil {
 			return err
 		}
 
-		if len(barcodes) > 0 {
-			err = targetProductBarcodeRepository.CreateInBatch(ctx, barcodes)
+		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
+			err = targetProductBarcodeRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err
 			}

@@ -9,6 +9,7 @@ import (
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type DebtorGroupDataTransfer struct {
@@ -51,7 +52,7 @@ func NewDebtorGroupDataTransfer(transferConnection IDataTransferConnection) IDat
 	}
 }
 
-func (pdt *DebtorGroupDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (pdt *DebtorGroupDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceRepository := NewDebtorGroupDataTransferRepository(pdt.transferConnection.GetSourceConnection())
 	targetRepository := debtorGroupRepositories.NewDebtorGroupRepository(pdt.transferConnection.GetTargetConnection())
@@ -69,6 +70,14 @@ func (pdt *DebtorGroupDataTransfer) StartTransfer(ctx context.Context, shopID st
 		}
 
 		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
 			err = targetRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err

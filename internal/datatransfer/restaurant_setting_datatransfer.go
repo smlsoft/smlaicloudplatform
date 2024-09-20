@@ -9,6 +9,7 @@ import (
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type RestaurantSettingDataTransfer struct {
@@ -50,7 +51,7 @@ func (repo RestaurentSettingDataTransferRepository) FindPage(ctx context.Context
 	return results, pagination, nil
 }
 
-func (sdt *RestaurantSettingDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (sdt *RestaurantSettingDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceRepository := NewRestaurentSettingDataTransferRepository(sdt.transferConnection.GetSourceConnection())
 	targetRepository := restaurantRepository.NewRestaurantSettingsRepository(sdt.transferConnection.GetTargetConnection())
@@ -68,6 +69,14 @@ func (sdt *RestaurantSettingDataTransfer) StartTransfer(ctx context.Context, sho
 		}
 
 		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
 			err = targetRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err

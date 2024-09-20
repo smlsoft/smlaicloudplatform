@@ -10,6 +10,7 @@ import (
 	orderDeviceSettingRepository "smlcloudplatform/internal/order/setting/repositories"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type OrderDeviceSettingDataTransfer struct {
@@ -51,7 +52,7 @@ func NewOrderDeviceSettingDataTransfer(transferConnection IDataTransferConnectio
 	}
 }
 
-func (dt *OrderDeviceSettingDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (dt *OrderDeviceSettingDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceRepository := NewOrderDeviceSettingDataTransferRepository(dt.transferConnection.GetSourceConnection())
 	targetRepository := orderDeviceSettingRepository.NewSettingRepository(dt.transferConnection.GetTargetConnection())
@@ -62,13 +63,21 @@ func (dt *OrderDeviceSettingDataTransfer) StartTransfer(ctx context.Context, sho
 	}
 
 	for {
-		results, pages, err := sourceRepository.FindPage(ctx, shopID, nil, pageRequest)
+		docs, pages, err := sourceRepository.FindPage(ctx, shopID, nil, pageRequest)
 		if err != nil {
 			return err
 		}
 
-		if len(results) > 0 {
-			err = targetRepository.CreateInBatch(ctx, results)
+		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
+			err = targetRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err
 			}

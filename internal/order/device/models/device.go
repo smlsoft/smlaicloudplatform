@@ -2,6 +2,8 @@ package models
 
 import (
 	"smlcloudplatform/internal/models"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const deviceCollectionName = "orderDevices"
@@ -31,6 +33,7 @@ type OrderDeviceData struct {
 }
 
 type OrderDeviceDoc struct {
+	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	OrderDeviceData    `bson:"inline"`
 	models.ActivityDoc `bson:"inline"`
 }

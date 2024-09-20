@@ -10,6 +10,7 @@ import (
 	organizationDepartmentRepository "smlcloudplatform/internal/organization/department/repositories"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type OrganizationDepartmentDataTransfer struct {
@@ -51,7 +52,7 @@ func NewOrganizationDepartmentDataTransfer(transferConnection IDataTransferConne
 	}
 }
 
-func (dt *OrganizationDepartmentDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (dt *OrganizationDepartmentDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceRepository := NewOrganizationDepartmentDataTransferRepository(dt.transferConnection.GetSourceConnection())
 	targetRepository := organizationDepartmentRepository.NewDepartmentRepository(dt.transferConnection.GetTargetConnection())
@@ -69,6 +70,14 @@ func (dt *OrganizationDepartmentDataTransfer) StartTransfer(ctx context.Context,
 		}
 
 		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
 			err = targetRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err

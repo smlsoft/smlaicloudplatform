@@ -16,7 +16,7 @@ func NewShopDataTransfer(transferConnection IDataTransferConnection) IDataTransf
 	}
 }
 
-func (sdt *ShopDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (sdt *ShopDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	shopSourceRepository := shopModule.NewShopRepository(sdt.transferConnection.GetSourceConnection())
 

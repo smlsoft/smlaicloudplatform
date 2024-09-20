@@ -13,6 +13,7 @@ import (
 
 var (
 	shopID         = flag.String("shopid", "", "shopID to transfer")
+	toShopID       = flag.String("toshopid", "", "shopID to transfer")
 	confirmTranser = flag.Bool("confirm", false, "confirm transfer")
 )
 
@@ -30,7 +31,13 @@ func main() {
 	if confirmTranser != nil && !*confirmTranser {
 
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Println("Are you sure to transfer shopID: ", *shopID, " ? (y/n)")
+
+		messageToShopDisplay := ""
+		if *toShopID != "" {
+			messageToShopDisplay = " to shopID: " + *toShopID
+		}
+		fmt.Println("Are you sure to transfer shopID: ", *shopID, messageToShopDisplay, " ? (y/n)")
+
 		text, _ := reader.ReadString('\n')
 
 		if text != "y\n" {
@@ -47,5 +54,5 @@ func main() {
 	targetDatabase := microservice.NewPersisterMongo(destinationDBConfig)
 
 	dbTransfer := tf.NewDBTransfer(sourceDatabase, targetDatabase)
-	dbTransfer.BeginTransfer(*shopID)
+	dbTransfer.BeginTransfer(*shopID, *toShopID)
 }

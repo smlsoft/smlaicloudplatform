@@ -9,6 +9,7 @@ import (
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type StockPickupProductDataTransfer struct {
@@ -50,7 +51,7 @@ func NewStockPickupProductDataTransfer(transferConnection IDataTransferConnectio
 	}
 }
 
-func (pdt *StockPickupProductDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (pdt *StockPickupProductDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceRepository := NewStockPickupProductDataTransferRepository(pdt.transferConnection.GetSourceConnection())
 	targetRepository := stockPickupProductRepository.NewStockPickupProductRepository(pdt.transferConnection.GetTargetConnection())
@@ -68,6 +69,14 @@ func (pdt *StockPickupProductDataTransfer) StartTransfer(ctx context.Context, sh
 		}
 
 		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
 			err = targetRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err

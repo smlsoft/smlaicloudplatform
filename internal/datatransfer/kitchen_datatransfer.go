@@ -9,6 +9,7 @@ import (
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type RestaurantKitchenDataTransfer struct {
@@ -51,7 +52,7 @@ func NewRestaurantKitchenDataTransfer(transferConnection IDataTransferConnection
 	}
 }
 
-func (pbd *RestaurantKitchenDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (pbd *RestaurantKitchenDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceRestaurantKitchenRepository := NewRestaurantKitchenDataTransferRepository(pbd.transferConnection.GetSourceConnection())
 	targetRestaurantKitchenRepository := kitchen.NewKitchenRepository(pbd.transferConnection.GetTargetConnection())
@@ -62,13 +63,21 @@ func (pbd *RestaurantKitchenDataTransfer) StartTransfer(ctx context.Context, sho
 	}
 
 	for {
-		kitchenDocs, pages, err := sourceRestaurantKitchenRepository.FindPage(ctx, shopID, []string{}, pageRequest)
+		docs, pages, err := sourceRestaurantKitchenRepository.FindPage(ctx, shopID, []string{}, pageRequest)
 		if err != nil {
 			return err
 		}
 
-		if len(kitchenDocs) > 0 {
-			err = targetRestaurantKitchenRepository.CreateInBatch(ctx, kitchenDocs)
+		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
+			err = targetRestaurantKitchenRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err
 			}

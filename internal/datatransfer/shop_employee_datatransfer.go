@@ -9,6 +9,7 @@ import (
 	msModels "smlcloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ShopEmployeeDataTransfer struct {
@@ -51,7 +52,7 @@ func NewShopEmployeeDataTransfer(transferConnection IDataTransferConnection) IDa
 	}
 }
 
-func (pdt *ShopEmployeeDataTransfer) StartTransfer(ctx context.Context, shopID string) error {
+func (pdt *ShopEmployeeDataTransfer) StartTransfer(ctx context.Context, shopID string, targetShopID string) error {
 
 	sourceRepository := NewShopEmployeeDataTransferRepository(pdt.transferConnection.GetSourceConnection())
 	targetRepository := shopEmployeeRepositories.NewEmployeeRepository(pdt.transferConnection.GetTargetConnection())
@@ -69,6 +70,14 @@ func (pdt *ShopEmployeeDataTransfer) StartTransfer(ctx context.Context, shopID s
 		}
 
 		if len(docs) > 0 {
+
+			if targetShopID != "" {
+				for i := range docs {
+					docs[i].ShopID = targetShopID
+					docs[i].ID = primitive.NewObjectID()
+				}
+			}
+
 			err = targetRepository.CreateInBatch(ctx, docs)
 			if err != nil {
 				return err
