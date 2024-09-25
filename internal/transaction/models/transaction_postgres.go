@@ -37,6 +37,10 @@ type TransactionPG struct {
 	TotalAmount              float64      `json:"totalamount" gorm:"column:totalamount"`
 	GuidRef                  string       `json:"guidref" gorm:"column:guidref"`
 	IsManualAmount           bool         `json:"ismanualamount" gorm:"column:ismanualamount"`
+	AlcoholAmount            float64      `json:"alcoholamount" gorm:"column:alcoholamount"`
+	OtherAmount              float64      `json:"otheramount" gorm:"column:otheramount"`
+	DrinkAmount              float64      `json:"drinkamount" gorm:"column:drinkamount"`
+	FoodAmount               float64      `json:"foodamount" gorm:"column:foodamount"`
 	// TotalCost                float64                   `json:"totalcost" gorm:"column:totalcost"`
 	// PosID                    string                    `json:"posid" gorm:"column:posid"`
 
@@ -67,6 +71,7 @@ type TransactionDetailPG struct {
 	LocationCode             string       `json:"locationcode" gorm:"column:locationcode"`
 	LocationNames            models.JSONB `json:"locationnames" gorm:"column:locationnames;type:jsonb"`
 	VatCal                   int8         `json:"vatcal" gorm:"column:vatcal"`
+	FoodType                 int8         `json:"foodtype" gorm:"column:foodtype"`
 	VatType                  int8         `json:"vattype" gorm:"column:vattype"`
 	TaxType                  int8         `json:"taxtype" gorm:"column:taxtype"`
 	IsChoice                 int8         `json:"ischoice" gorm:"column:ischoice"`

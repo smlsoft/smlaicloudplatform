@@ -37562,6 +37562,9 @@
                 "extrajson": {
                     "type": "string"
                 },
+                "foodtype": {
+                    "type": "integer"
+                },
                 "groupcode": {
                     "type": "string"
                 },
@@ -42593,6 +42596,9 @@
         "models.SaleInvoice": {
             "type": "object",
             "properties": {
+                "alcoholamount": {
+                    "type": "number"
+                },
                 "billtaxtype": {
                     "type": "integer"
                 },
@@ -42707,6 +42713,12 @@
                 "doctype": {
                     "type": "integer"
                 },
+                "drinkamount": {
+                    "type": "number"
+                },
+                "foodamount": {
+                    "type": "number"
+                },
                 "fullvataddress": {
                     "type": "string"
                 },
@@ -42767,6 +42779,9 @@
                 },
                 "ordernumber": {
                     "type": "string"
+                },
+                "otheramount": {
+                    "type": "number"
                 },
                 "paycashamount": {
                     "type": "number"
@@ -47694,6 +47709,9 @@
                 },
                 "extrajson": {
                     "type": "string"
+                },
+                "foodtype": {
+                    "type": "integer"
                 },
                 "groupcode": {
                     "type": "string"

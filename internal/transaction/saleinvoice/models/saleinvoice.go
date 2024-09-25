@@ -34,6 +34,10 @@ type SaleInvoice struct {
 	ChequeBookCode   string  `json:"chequebookcode" bson:"chequebookcode"`
 	ChequeDueDate    string  `json:"chequeduedate" bson:"chequeduedate"`
 	ChequeAmount     float64 `json:"chequeamount" bson:"chequeamount"`
+	AlcoholAmount    float64 `json:"alcoholamount" bson:"column:alcoholamount"`
+	OtherAmount      float64 `json:"otheramount" bson:"column:otheramount"`
+	DrinkAmount      float64 `json:"drinkamount" bson:"column:drinkamount"`
+	FoodAmount       float64 `json:"foodamount" bson:"column:foodamount"`
 
 	SaleChannelCode   string  `json:"salechannelcode" bson:"salechannelcode"`
 	SaleChannelGP     float64 `json:"salechannelgp" bson:"salechannelgp"`

@@ -18,10 +18,12 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 
 		stockDetail := models.SaleInvoiceTransactionDetailPG{
 			TransactionDetailPG: models.TransactionDetailPG{
-				GuidFixed:           doc.GuidFixed,
-				DocNo:               doc.DocNo,
-				ShopID:              doc.ShopID,
+				GuidFixed: doc.GuidFixed,
+				DocNo:     doc.DocNo,
+				ShopID:    doc.ShopID,
+
 				LineNumber:          int8(detail.LineNumber),
+				FoodType:            detail.FoodType,
 				DocRef:              detail.DocRef,
 				Barcode:             detail.Barcode,
 				Qty:                 detail.Qty,
@@ -107,6 +109,10 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 			IsBom:          doc.IsBom,
 			BranchCode:     doc.Branch.Code,
 			BranchNames:    *pkgModels.DefaultArrayNameX(doc.Branch.Names),
+			AlcoholAmount:  doc.AlcoholAmount,
+			DrinkAmount:    doc.DrinkAmount,
+			OtherAmount:    doc.OtherAmount,
+			FoodAmount:     doc.FoodAmount,
 		},
 		IsPOS:                        doc.IsPOS,
 		IsBom:                        doc.IsBom,

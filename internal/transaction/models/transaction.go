@@ -161,6 +161,7 @@ type Detail struct {
 	MultiUnit           bool            `json:"multiunit" bson:"multiunit"`
 	SumOfCost           float64         `json:"sumofcost" bson:"sumofcost"`
 	AverageCost         float64         `json:"averagecost" bson:"averagecost"`
+	FoodType            int8            `json:"foodtype" bson:"column:foodtype"`
 	LastStatus          int8            `json:"laststatus" bson:"laststatus"`
 	IsChoice            int8            `json:"ischoice" bson:"ischoice"`
 	IsPos               int8            `json:"ispos" bson:"ispos"`

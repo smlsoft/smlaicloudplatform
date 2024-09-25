@@ -37567,6 +37567,9 @@ const docTemplate = `{
                 "extrajson": {
                     "type": "string"
                 },
+                "foodtype": {
+                    "type": "integer"
+                },
                 "groupcode": {
                     "type": "string"
                 },
@@ -42598,6 +42601,9 @@ const docTemplate = `{
         "models.SaleInvoice": {
             "type": "object",
             "properties": {
+                "alcoholamount": {
+                    "type": "number"
+                },
                 "billtaxtype": {
                     "type": "integer"
                 },
@@ -42712,6 +42718,12 @@ const docTemplate = `{
                 "doctype": {
                     "type": "integer"
                 },
+                "drinkamount": {
+                    "type": "number"
+                },
+                "foodamount": {
+                    "type": "number"
+                },
                 "fullvataddress": {
                     "type": "string"
                 },
@@ -42772,6 +42784,9 @@ const docTemplate = `{
                 },
                 "ordernumber": {
                     "type": "string"
+                },
+                "otheramount": {
+                    "type": "number"
                 },
                 "paycashamount": {
                     "type": "number"
@@ -47699,6 +47714,9 @@ const docTemplate = `{
                 },
                 "extrajson": {
                     "type": "string"
+                },
+                "foodtype": {
+                    "type": "integer"
                 },
                 "groupcode": {
                     "type": "string"
