@@ -1,14 +1,21 @@
 package microservice
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"smlcloudplatform/internal/config"
 	"sync"
+	"time"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
+
+	internalLogger "smlcloudplatform/internal/logger"
 )
 
 // IPersister is interface for persister
@@ -107,9 +114,10 @@ func (pst *Persister) getClient() (*gorm.DB, error) {
 		return nil, err
 	}
 	loggerLevel := pst.GetLeggerLevel()
+	pgLogger := NewPersisterPostgresLogger(loggerLevel)
 	db, err := gorm.Open(postgres.Open(connection), &gorm.Config{
 		SkipDefaultTransaction: true,
-		Logger:                 logger.Default.LogMode(loggerLevel),
+		Logger:                 pgLogger, // logger.Default.LogMode(loggerLevel), //
 		PrepareStmt:            true,
 	})
 	if err != nil {
@@ -354,4 +362,72 @@ func (pst *Persister) Raw(queryStr string, where map[string]interface{}, model i
 
 func (pst *Persister) DBClient() *gorm.DB {
 	return pst.db
+}
+
+type ContextFn func(ctx context.Context) []zapcore.Field
+
+type PersisterPostgresLogger struct {
+	LogLevel                  logger.LogLevel
+	SlowThreshold             time.Duration
+	Context                   ContextFn
+	SkipCallerLookup          bool
+	IgnoreRecordNotFoundError bool
+}
+
+func (l *PersisterPostgresLogger) SetAsDefault() {
+	logger.Default = l
+}
+
+func NewPersisterPostgresLogger(level logger.LogLevel) *PersisterPostgresLogger {
+	return &PersisterPostgresLogger{
+		LogLevel:                  level,
+		SlowThreshold:             100 * time.Millisecond,
+		SkipCallerLookup:          false,
+		IgnoreRecordNotFoundError: false,
+	}
+}
+
+func (l *PersisterPostgresLogger) LogMode(level logger.LogLevel) logger.Interface {
+	newLogger := *l
+	newLogger.LogLevel = level
+	return &newLogger
+}
+
+func (l PersisterPostgresLogger) Info(ctx context.Context, msg string, data ...interface{}) {
+	if l.LogLevel >= logger.Info {
+		internalLogger.GetLogger().Info(msg)
+	}
+}
+
+func (l PersisterPostgresLogger) Warn(ctx context.Context, msg string, data ...interface{}) {
+	if l.LogLevel >= logger.Warn {
+		internalLogger.GetLogger().Warn(msg)
+	}
+}
+
+func (l PersisterPostgresLogger) Error(ctx context.Context, msg string, data ...interface{}) {
+	if l.LogLevel >= logger.Error {
+		internalLogger.GetLogger().Error(msg)
+	}
+}
+
+func (l PersisterPostgresLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+
+	if l.LogLevel <= 0 {
+		return
+	}
+
+	elapsed := time.Since(begin)
+
+	switch {
+	case err != nil && l.LogLevel >= logger.Error && (!l.IgnoreRecordNotFoundError || !errors.Is(err, gorm.ErrRecordNotFound)):
+		sql, rows := fc()
+		internalLogger.GetLogger().Error("trace", zap.Error(err), zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
+	case l.SlowThreshold != 0 && elapsed > l.SlowThreshold && l.LogLevel >= logger.Warn:
+		sql, rows := fc()
+		internalLogger.GetLogger().Warn("trace", zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
+	case l.LogLevel >= logger.Info:
+		sql, rows := fc()
+		internalLogger.GetLogger().Debug("trace", zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
+	}
 }

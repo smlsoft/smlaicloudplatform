@@ -40,11 +40,18 @@ func (f *FirebaseAdapter) ValidateToken(token string) (*UserInfo, error) {
 		return nil, err
 	}
 
+	userName := ""
+	if authToken.Claims["name"] != nil {
+		userName = authToken.Claims["name"].(string)
+	} else {
+		userName = authToken.Claims["email"].(string)
+	}
+
 	userInfo := &UserInfo{
 		SignInProvider: authToken.Firebase.SignInProvider,
 		Email:          authToken.Claims["email"].(string),
 		UserId:         authToken.UID,
-		Name:           authToken.Claims["name"].(string),
+		Name:           userName,
 	}
 
 	return userInfo, nil
