@@ -61,6 +61,7 @@ func NewProductBarcodeHttp(ms *microservice.Microservice, cfg config.IConfig) Pr
 func (h ProductBarcodeHttp) RegisterHttp() {
 
 	h.ms.POST("/product/barcode/bulk", h.SaveBulk)
+	h.ms.POST("/product/barcode/import", h.Import)
 
 	h.ms.GET("/product/barcode", h.SearchProductBarcodePage)
 	h.ms.GET("/product/barcode2", h.SearchProductBarcodePage2)
@@ -957,4 +958,47 @@ func (h ProductBarcodeHttp) searchFilter(queryParam func(string) string) map[str
 	}
 
 	return filters
+}
+
+// Create ProductBarcode import godoc
+// @Description Create ProductBarcode
+// @Tags		ProductBarcode
+// @Param		ProductBarcode  body      []models.ProductBarcode  true  "ProductBarcode"
+// @Accept 		json
+// @Success		201	{object}	common.BulkResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/import [post]
+func (h ProductBarcodeHttp) Import(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	dataReq := []models.ProductBarcode{}
+	err := json.Unmarshal([]byte(input), &dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	bulkResponse, err := h.svc.Import(shopID, authUsername, dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		common.BulkResponse{
+			Success:    true,
+			BulkImport: bulkResponse,
+		},
+	)
+
+	return nil
 }

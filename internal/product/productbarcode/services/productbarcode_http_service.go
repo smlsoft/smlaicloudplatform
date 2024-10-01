@@ -53,6 +53,7 @@ type IProductBarcodeHttpService interface {
 	Export(shopID string, languageCode string, languageHeader map[string]string) ([][]string, error)
 
 	InfoBomView(shopID string, barcode string) (models.ProductBarcodeBOMView, error)
+	Import(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 }
 
 type ProductBarcodeHttpService struct {
@@ -1098,4 +1099,227 @@ func getName(names *[]common.NameX, langCode string) string {
 	}
 
 	return ""
+}
+
+func (svc ProductBarcodeHttpService) Import(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.ProductBarcode](dataList, svc.getDocIDKey)
+
+	itemCodeGuidList := []string{}
+	for _, doc := range payloadList {
+		itemCodeGuidList = append(itemCodeGuidList, doc.Barcode)
+	}
+
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "barcode", itemCodeGuidList)
+
+	if err != nil {
+		return common.BulkImport{}, err
+	}
+
+	foundItemGuidList := []string{}
+	for _, doc := range findItemGuid {
+		foundItemGuidList = append(foundItemGuidList, doc.Barcode)
+	}
+
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.ProductBarcode, models.ProductBarcodeDoc](
+		shopID,
+		authUsername,
+		foundItemGuidList,
+		payloadList,
+		svc.getDocIDKey,
+		func(shopID string, authUsername string, doc models.ProductBarcode) models.ProductBarcodeDoc {
+			newGuid := utils.NewGUID()
+
+			dataDoc := models.ProductBarcodeDoc{}
+
+			dataDoc.GuidFixed = newGuid
+			dataDoc.ShopID = shopID
+			dataDoc.ProductBarcode = doc
+
+			currentTime := time.Now()
+			dataDoc.CreatedBy = authUsername
+			dataDoc.CreatedAt = currentTime
+			return dataDoc
+		},
+	)
+
+	productBarcodeList, err := svc.repo.FindByDocIndentityGuids(ctx, shopID, "barcode", foundItemGuidList)
+
+	// do update
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.ProductBarcode, models.ProductBarcodeDoc](
+		shopID,
+		authUsername,
+		duplicateDataList,
+		svc.getDocIDKey,
+		func(shopID string, guid string) (models.ProductBarcodeDoc, error) {
+			//return svc.repo.FindByDocIndentityGuid(ctx, shopID, "barcode", guid)
+			for _, doc := range productBarcodeList {
+				if doc.Barcode == guid {
+					return doc, nil
+				}
+			}
+			return models.ProductBarcodeDoc{}, nil
+		},
+		func(doc models.ProductBarcodeDoc) bool {
+			return doc.Barcode != ""
+		},
+		func(shopID string, authUsername string, dataReq models.ProductBarcode, doc models.ProductBarcodeDoc) error {
+
+			docReq := models.ProductBarcodeRequest{}
+			docReq.ProductBarcodeBase = dataReq.ProductBarcodeBase
+
+			tempBarcodes := []models.BarcodeRequest{}
+
+			if dataReq.RefBarcodes != nil {
+				for _, docBarcode := range *dataReq.RefBarcodes {
+					tempBarcodes = append(tempBarcodes, models.BarcodeRequest{
+						Barcode:     docBarcode.Barcode,
+						Condition:   docBarcode.Condition,
+						StandValue:  docBarcode.StandValue,
+						DivideValue: docBarcode.DivideValue,
+					})
+				}
+			}
+
+			docReq.RefBarcodes = tempBarcodes
+
+			if dataReq.BusinessTypes != nil {
+				docReq.BusinessTypes = *dataReq.BusinessTypes
+			}
+
+			if dataReq.IgnoreBranches != nil {
+				docReq.IgnoreBranches = *dataReq.IgnoreBranches
+			}
+
+			// svc.UpdateProductBarcode(shopID, doc.GuidFixed, authUsername, docReq)
+
+			// findDoc, err := svc.repo.FindByGuid(ctx, shopID, doc.GuidFixed)
+			// if findDoc.ID == primitive.NilObjectID {
+			// 	return errors.New("document not found")
+			// }
+
+			// findDoc := models.ProductBarcodeDoc{}
+			// for _, productdBarcodeDoc := range productBarcodeList {
+			// 	if productdBarcodeDoc.GuidFixed == doc.GuidFixed {
+			// 		findDoc = productdBarcodeDoc
+			// 	}
+			// }
+
+			// if err != nil {
+			// 	return err
+			// }
+			docData := doc
+			docData.ProductBarcode = docReq.ToProductBarcode()
+			docData.Barcode = doc.Barcode
+			docData.IgnoreBranches = &docReq.IgnoreBranches
+			docData.BusinessTypes = &docReq.BusinessTypes
+
+			docData.UpdatedBy = authUsername
+			docData.UpdatedAt = time.Now()
+
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
+			if err != nil {
+				return nil
+			}
+			return nil
+		},
+	)
+
+	// do insert
+	if len(createDataList) > 0 {
+		svc.repo.Transaction(ctx, func(ctx context.Context) error {
+			for _, doc := range createDataList {
+				docReq := models.ProductBarcodeRequest{}
+				docReq.ProductBarcodeBase = doc.ProductBarcodeBase
+
+				tempBarcodes := []models.BarcodeRequest{}
+
+				if doc.RefBarcodes != nil {
+					for _, docBarcode := range *doc.RefBarcodes {
+						tempBarcodes = append(tempBarcodes, models.BarcodeRequest{
+							Barcode:     docBarcode.Barcode,
+							Condition:   docBarcode.Condition,
+							StandValue:  docBarcode.StandValue,
+							DivideValue: docBarcode.DivideValue,
+						})
+					}
+				}
+
+				if doc.IgnoreBranches != nil {
+					docReq.IgnoreBranches = *doc.IgnoreBranches
+				}
+
+				if doc.BusinessTypes != nil {
+					docReq.BusinessTypes = *doc.BusinessTypes
+				}
+
+				docReq.RefBarcodes = tempBarcodes
+				//_, err = svc.CreateProductBarcode(shopID, authUsername, docReq)
+
+				newGuidFixed := utils.NewGUID()
+				docData := models.ProductBarcodeDoc{}
+				docData.ShopID = shopID
+				docData.GuidFixed = newGuidFixed
+				docData.ProductBarcode = docReq.ToProductBarcode()
+				docData.IgnoreBranches = &docReq.IgnoreBranches
+				docData.BusinessTypes = &docReq.BusinessTypes
+				docData.CreatedBy = authUsername
+				docData.CreatedAt = time.Now()
+
+				_, err = svc.repo.Create(ctx, docData)
+				if err != nil {
+					return err
+				}
+
+			}
+
+			return nil
+		})
+	}
+
+	// ให้ส่งไปสร้าง ส่วนอื่น ๆ โดยใช้ kafka
+	// if len(createDataList) > 0 {
+	// 	err = svc.mqRepo.CreateInBatch(createDataList)
+	// 	if err != nil {
+	// 		return common.BulkImport{}, err
+	// 	}
+	// }
+
+	// if len(updateSuccessDataList) > 0 {
+	// 	err = svc.mqRepo.UpdateInBatch(updateSuccessDataList)
+	// 	if err != nil {
+	// 		return common.BulkImport{}, err
+	// 	}
+	// }
+
+	createDataKey := []string{}
+
+	for _, doc := range createDataList {
+		createDataKey = append(createDataKey, doc.Barcode)
+	}
+
+	payloadDuplicateDataKey := []string{}
+	for _, doc := range payloadDuplicateList {
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Barcode)
+	}
+
+	updateDataKey := []string{}
+	for _, doc := range updateSuccessDataList {
+
+		updateDataKey = append(updateDataKey, doc.Barcode)
+	}
+
+	updateFailDataKey := []string{}
+	for _, doc := range updateFailDataList {
+		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
+	}
+
+	return common.BulkImport{
+		Created:          createDataKey,
+		Updated:          updateDataKey,
+		UpdateFailed:     updateFailDataKey,
+		PayloadDuplicate: payloadDuplicateDataKey,
+	}, nil
 }
