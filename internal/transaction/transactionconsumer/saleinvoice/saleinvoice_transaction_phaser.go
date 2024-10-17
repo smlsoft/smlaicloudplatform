@@ -85,6 +85,8 @@ func (p SalesInvoiceTransactionPhaser) PhaseSaleInvoiceDoc(doc saleInvoiceModel.
 
 			GuidFixed:      doc.GuidFixed,
 			GuidRef:        doc.GuidRef,
+			GuidPos:        doc.GuidPos,
+			DeviceName:     doc.DeviceName,
 			InquiryType:    doc.InquiryType,
 			TransFlag:      44,
 			DocNo:          doc.DocNo,

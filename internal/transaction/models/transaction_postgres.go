@@ -9,38 +9,41 @@ type TransactionPG struct {
 	GuidFixed                string `json:"guidfixed" gorm:"column:guidfixed"`
 	models.ShopIdentity      `bson:"inline"`
 	models.PartitionIdentity `gorm:"embedded;"`
-	InquiryType              int          `json:"inquirytype" gorm:"column:inquirytype"`
-	TransFlag                int8         `json:"transflag" gorm:"column:transflag" `
-	DocNo                    string       `json:"docno" gorm:"column:docno;primaryKey"`
-	DocDate                  time.Time    `json:"docdate" gorm:"column:docdate"`
-	DocRefType               int8         `json:"docreftype" gorm:"column:docreftype"`
-	DocRefNo                 string       `json:"docrefno" gorm:"column:docrefno"`
-	DocRefDate               time.Time    `json:"docrefdate" gorm:"column:docrefdate"`
-	BranchCode               string       `json:"branchcode" gorm:"column:branchcode"`
-	BranchNames              models.JSONB `json:"branchnames" gorm:"column:branchnames;type:jsonb"`
-	Description              string       `json:"description" gorm:"column:description"`
-	TaxDocNo                 string       `json:"taxdocno"  gorm:"column:taxdocno"`
-	TaxDocDate               time.Time    `json:"taxdocdate" gorm:"column:taxdocdate"`
-	IsCancel                 bool         `json:"iscancel" gorm:"column:iscancel"`
-	IsBom                    bool         `json:"isbom" gorm:"column:isbom"`
-	Status                   int8         `json:"status" gorm:"column:status"`
-	VatType                  int8         `json:"vattype" gorm:"column:vattype" `
-	VatRate                  float64      `json:"vatrate" gorm:"column:vatrate"`
-	TotalValue               float64      `json:"totalvalue" gorm:"column:totalvalue"`
-	DiscountWord             string       `json:"discountword" gorm:"column:discountword"`
-	DeliveryAmount           float64      `json:"deliveryamount" gorm:"column:deliveryamount"`
-	TotalDiscount            float64      `json:"totaldiscount" gorm:"column:totaldiscount"`
-	TotalBeforeVat           float64      `json:"totalbeforevat" gorm:"column:totalbeforevat"`
-	TotalVatValue            float64      `json:"totalvatvalue" gorm:"column:totalvatvalue"`
-	TotalExceptVat           float64      `json:"totalexceptvat" gorm:"column:totalexceptvat"`
-	TotalAfterVat            float64      `json:"totalaftervat" gorm:"column:totalaftervat"`
-	TotalAmount              float64      `json:"totalamount" gorm:"column:totalamount"`
-	GuidRef                  string       `json:"guidref" gorm:"column:guidref"`
-	IsManualAmount           bool         `json:"ismanualamount" gorm:"column:ismanualamount"`
-	AlcoholAmount            float64      `json:"alcoholamount" gorm:"column:alcoholamount"`
-	OtherAmount              float64      `json:"otheramount" gorm:"column:otheramount"`
-	DrinkAmount              float64      `json:"drinkamount" gorm:"column:drinkamount"`
-	FoodAmount               float64      `json:"foodamount" gorm:"column:foodamount"`
+	InquiryType              int       `json:"inquirytype" gorm:"column:inquirytype"`
+	TransFlag                int8      `json:"transflag" gorm:"column:transflag" `
+	DocNo                    string    `json:"docno" gorm:"column:docno;primaryKey"`
+	DocDate                  time.Time `json:"docdate" gorm:"column:docdate"`
+	DocRefType               int8      `json:"docreftype" gorm:"column:docreftype"`
+	DocRefNo                 string    `json:"docrefno" gorm:"column:docrefno"`
+	DeviceName               string    `json:"devicename" gorm:"column:devicename"`
+	GuidPos                  string    `json:"guidpos" gorm:"column:guidpos"`
+
+	DocRefDate     time.Time    `json:"docrefdate" gorm:"column:docrefdate"`
+	BranchCode     string       `json:"branchcode" gorm:"column:branchcode"`
+	BranchNames    models.JSONB `json:"branchnames" gorm:"column:branchnames;type:jsonb"`
+	Description    string       `json:"description" gorm:"column:description"`
+	TaxDocNo       string       `json:"taxdocno"  gorm:"column:taxdocno"`
+	TaxDocDate     time.Time    `json:"taxdocdate" gorm:"column:taxdocdate"`
+	IsCancel       bool         `json:"iscancel" gorm:"column:iscancel"`
+	IsBom          bool         `json:"isbom" gorm:"column:isbom"`
+	Status         int8         `json:"status" gorm:"column:status"`
+	VatType        int8         `json:"vattype" gorm:"column:vattype" `
+	VatRate        float64      `json:"vatrate" gorm:"column:vatrate"`
+	TotalValue     float64      `json:"totalvalue" gorm:"column:totalvalue"`
+	DiscountWord   string       `json:"discountword" gorm:"column:discountword"`
+	DeliveryAmount float64      `json:"deliveryamount" gorm:"column:deliveryamount"`
+	TotalDiscount  float64      `json:"totaldiscount" gorm:"column:totaldiscount"`
+	TotalBeforeVat float64      `json:"totalbeforevat" gorm:"column:totalbeforevat"`
+	TotalVatValue  float64      `json:"totalvatvalue" gorm:"column:totalvatvalue"`
+	TotalExceptVat float64      `json:"totalexceptvat" gorm:"column:totalexceptvat"`
+	TotalAfterVat  float64      `json:"totalaftervat" gorm:"column:totalaftervat"`
+	TotalAmount    float64      `json:"totalamount" gorm:"column:totalamount"`
+	GuidRef        string       `json:"guidref" gorm:"column:guidref"`
+	IsManualAmount bool         `json:"ismanualamount" gorm:"column:ismanualamount"`
+	AlcoholAmount  float64      `json:"alcoholamount" gorm:"column:alcoholamount"`
+	OtherAmount    float64      `json:"otheramount" gorm:"column:otheramount"`
+	DrinkAmount    float64      `json:"drinkamount" gorm:"column:drinkamount"`
+	FoodAmount     float64      `json:"foodamount" gorm:"column:foodamount"`
 	// TotalCost                float64                   `json:"totalcost" gorm:"column:totalcost"`
 	// PosID                    string                    `json:"posid" gorm:"column:posid"`
 

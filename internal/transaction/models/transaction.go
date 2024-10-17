@@ -12,6 +12,8 @@ type TransactionHeader struct {
 	DocNo                           string            `json:"docno" bson:"docno"`
 	DocDatetime                     time.Time         `json:"docdatetime" bson:"docdatetime"`
 	GuidRef                         string            `json:"guidref" bson:"guidref"`
+	DeviceName                      string            `json:"devicename" bson:"devicename"`
+	GuidPos                         string            `json:"guidpos" bson:"guidpos"`
 	TransFlag                       int               `json:"transflag" bson:"transflag"`
 	DocRefType                      int8              `json:"docreftype" bson:"docreftype"`
 	DocRefNo                        string            `json:"docrefno" bson:"docrefno"`
