@@ -3362,6 +3362,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -3387,6 +3389,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -3527,6 +3531,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -3552,6 +3558,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -3692,6 +3700,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -3717,6 +3727,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -4224,6 +4236,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -4253,6 +4267,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -4454,6 +4470,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -4479,6 +4497,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -5092,6 +5112,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -5117,6 +5139,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -5253,6 +5277,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -5278,6 +5304,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -5414,6 +5442,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -5439,6 +5469,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -5604,6 +5636,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -5629,6 +5663,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -5769,6 +5805,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -5794,6 +5832,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -5934,6 +5974,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -5959,6 +6001,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -6099,6 +6143,8 @@ definitions:
         type: number
       detailtotaldiscount:
         type: number
+      devicename:
+        type: string
       discountword:
         type: string
       docdatetime:
@@ -6124,6 +6170,8 @@ definitions:
       fullvatprint:
         type: boolean
       fullvattaxid:
+        type: string
+      guidpos:
         type: string
       guidref:
         type: string
@@ -17778,6 +17826,33 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
+  /product/barcode/import:
+    post:
+      consumes:
+      - application/json
+      description: Create ProductBarcode
+      parameters:
+      - description: ProductBarcode
+        in: body
+        name: ProductBarcode
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductBarcode'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
         "401":
           description: Unauthorized
           schema:

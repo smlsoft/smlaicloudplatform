@@ -16042,6 +16042,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/barcode/import": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductBarcode"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/barcode/list": {
             "get": {
                 "security": [
@@ -41416,6 +41460,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -41453,6 +41500,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -41664,6 +41714,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -41701,6 +41754,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -41912,6 +41968,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -41949,6 +42008,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -42697,6 +42759,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -42740,6 +42805,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -43042,6 +43110,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -43079,6 +43150,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -43998,6 +44072,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -44035,6 +44112,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -44240,6 +44320,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -44277,6 +44360,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -44482,6 +44568,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -44519,6 +44608,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -44768,6 +44860,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -44805,6 +44900,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -45016,6 +45114,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -45053,6 +45154,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -45264,6 +45368,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -45301,6 +45408,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
@@ -45512,6 +45622,9 @@ const docTemplate = `{
                 "detailtotaldiscount": {
                     "type": "number"
                 },
+                "devicename": {
+                    "type": "string"
+                },
                 "discountword": {
                     "type": "string"
                 },
@@ -45549,6 +45662,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "fullvattaxid": {
+                    "type": "string"
+                },
+                "guidpos": {
                     "type": "string"
                 },
                 "guidref": {
