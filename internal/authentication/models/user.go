@@ -112,6 +112,7 @@ type UserLoginPhoneNumberRequest struct {
 type UserProfile struct {
 	UsernameField `bson:"inline"`
 	UserDetail    `bson:"inline"`
+	UserPassword  `bson:"inline"`
 	CreatedAt     time.Time `json:"-" bson:"created_at,omitempty"`
 }
 
