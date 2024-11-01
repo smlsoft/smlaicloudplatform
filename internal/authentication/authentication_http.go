@@ -572,6 +572,15 @@ func (h AuthenticationHttp) Update(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update User Profile Password godoc
+// @Summary		Update profile Password
+// @Description	For User Update Profile Password
+// @Tags		Authentication
+// @Param		UserPasswordRequest  body      models.UserPasswordRequest  true  "Update account password"
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Accept 		json
+// @Router		/profile/password [put]
 func (h AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()

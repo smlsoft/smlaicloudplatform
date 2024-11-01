@@ -19308,6 +19308,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/profile/password": {
+            "put": {
+                "description": "For User Update Profile Password",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Update profile Password",
+                "parameters": [
+                    {
+                        "description": "Update account password",
+                        "name": "UserPasswordRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/profileshop": {
             "get": {
                 "security": [
@@ -46669,9 +46706,27 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_internal_authentication_models.UserPasswordRequest": {
+            "type": "object",
+            "required": [
+                "currentpassword",
+                "newpassword"
+            ],
+            "properties": {
+                "currentpassword": {
+                    "type": "string",
+                    "minLength": 5
+                },
+                "newpassword": {
+                    "type": "string",
+                    "minLength": 5
+                }
+            }
+        },
         "smlcloudplatform_internal_authentication_models.UserProfile": {
             "type": "object",
             "required": [
+                "password",
                 "username"
             ],
             "properties": {
@@ -46683,6 +46738,11 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
                 },
                 "registertype": {
                     "type": "string"

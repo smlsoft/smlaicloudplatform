@@ -6857,6 +6857,18 @@ definitions:
     - password
     - username
     type: object
+  smlcloudplatform_internal_authentication_models.UserPasswordRequest:
+    properties:
+      currentpassword:
+        minLength: 5
+        type: string
+      newpassword:
+        minLength: 5
+        type: string
+    required:
+    - currentpassword
+    - newpassword
+    type: object
   smlcloudplatform_internal_authentication_models.UserProfile:
     properties:
       avatar:
@@ -6864,6 +6876,10 @@ definitions:
       dedezoom:
         $ref: '#/definitions/smlcloudplatform_internal_authentication_models.DedeZoom'
       name:
+        type: string
+      password:
+        maxLength: 233
+        minLength: 5
         type: string
       registertype:
         type: string
@@ -6882,6 +6898,7 @@ definitions:
         maxLength: 21
         type: string
     required:
+    - password
     - username
     type: object
   smlcloudplatform_internal_authentication_models.UserProfileReponse:
@@ -19785,6 +19802,30 @@ paths:
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
       summary: Update profile
+      tags:
+      - Authentication
+  /profile/password:
+    put:
+      consumes:
+      - application/json
+      description: For User Update Profile Password
+      parameters:
+      - description: Update account password
+        in: body
+        name: UserPasswordRequest
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_internal_authentication_models.UserPasswordRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Update profile Password
       tags:
       - Authentication
   /profileshop:
