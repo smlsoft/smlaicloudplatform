@@ -24,6 +24,7 @@ type IAuthenticationService interface {
 	LoginWithPhoneNumber(userLoginReq *auth_models.UserLoginPhoneNumberRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	LoginWithPhoneNumberOTP(userLoginReq *auth_models.PhoneNumberOTPRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	Login(userReq *auth_models.UserLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
+	Poslogin(userReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	Register(userRequest auth_models.RegisterEmailRequest) (string, error)
 	ForgotPasswordByPhonenumber(userRequest auth_models.ForgotPasswordPhoneNumberRequest) error
 	Update(username string, userRequest auth_models.UserProfileRequest) error
@@ -180,6 +181,39 @@ func (svc AuthenticationService) Login(userLoginReq *auth_models.UserLoginReques
 	if passwordInvalid {
 		return models.TokenLoginResponse{}, errors.New("username or password is invalid")
 	}
+
+	resultLogin, err := svc.processUserLogin(*findUser, userLoginReq.ShopID, authContext)
+
+	if err != nil {
+		return models.TokenLoginResponse{}, err
+	}
+
+	return resultLogin, nil
+}
+
+func (svc AuthenticationService) Poslogin(userLoginReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error) {
+
+	userLoginReq.Username = utils.NormalizeUsername(userLoginReq.Username)
+
+	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
+	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
+
+	findUser, err := svc.authRepo.FindUser(context.Background(), userLoginReq.Username)
+
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		// svc.ms.Log("Authentication service", err.Error())
+		return models.TokenLoginResponse{}, errors.New("auth: database connect error")
+	}
+
+	if len(findUser.Username) < 1 {
+		return models.TokenLoginResponse{}, errors.New("username or password is invalid")
+	}
+
+	// passwordInvalid := !svc.checkHashPassword(userLoginReq.Password, findUser.Password)
+
+	// if passwordInvalid {
+	// 	return models.TokenLoginResponse{}, errors.New("username or password is invalid")
+	// }
 
 	resultLogin, err := svc.processUserLogin(*findUser, userLoginReq.ShopID, authContext)
 

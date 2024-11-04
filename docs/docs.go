@@ -23,6 +23,42 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/Poslogin": {
+            "post": {
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "User Account",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PosLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/apikeyservice": {
             "post": {
                 "security": [
@@ -40415,6 +40451,23 @@ const docTemplate = `{
                 "phonenumber": {
                     "type": "string",
                     "maxLength": 100
+                }
+            }
+        },
+        "models.PosLoginRequest": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "description": "validate:\"required,alphanum,gte=3,max=233\"",
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 3
                 }
             }
         },

@@ -103,6 +103,11 @@ type UserLoginRequest struct {
 	ShopID        string `json:"shopid,omitempty"`
 }
 
+type PosLoginRequest struct {
+	UsernameField `bson:"inline"`
+	ShopID        string `json:"shopid,omitempty"`
+}
+
 type UserLoginPhoneNumberRequest struct {
 	PhoneNumberField `bson:"inline"`
 	UserPassword     `bson:"inline"`
