@@ -80,7 +80,6 @@ func (h AuthenticationHttp) RegisterHttp() {
 	h.ms.POST("/tokenlogin", h.TokenLogin)
 	h.ms.POST("/logout", h.Logout)
 	h.ms.POST("/refresh", h.RefreshToken)
-
 	h.ms.POST("/register", h.Register)
 	h.ms.POST("/send-phonenumber-otp", h.SendPhoneNumberOTP)
 	h.ms.POST("/forgot-password-phonenumber", h.ForgotPasswordByPhoneNumber)
