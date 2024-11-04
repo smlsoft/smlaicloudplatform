@@ -184,6 +184,7 @@ func main() {
 			"/tokenlogin",
 
 			"/login",
+			"/poslogin",
 			"/login/phone-number",
 			"/register",
 			"/refresh",

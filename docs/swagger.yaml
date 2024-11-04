@@ -7795,29 +7795,6 @@ info:
   title: SML Cloud Platform API
   version: "1.0"
 paths:
-  /Poslogin:
-    post:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: User Account
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/models.PosLoginRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.AuthResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      tags:
-      - Authentication
   /apikeyservice:
     delete:
       consumes:
@@ -16837,6 +16814,29 @@ paths:
       - AccessToken: []
       tags:
       - POSTemp
+  /poslogin:
+    post:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: User Account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.PosLoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      tags:
+      - Authentication
   /product-section/branch:
     delete:
       consumes:

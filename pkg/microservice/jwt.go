@@ -62,6 +62,7 @@ func (jwtService *JwtService) MWFunc() echo.MiddlewareFunc {
 
 			publicPathList := []string{
 				"/login",
+				"/poslogin",
 				"/register",
 			}
 

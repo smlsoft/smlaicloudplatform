@@ -135,6 +135,7 @@ func main() {
 		"/slip/*",
 		"/swagger",
 		"/login",
+		"/poslogin",
 		"/login/phone-number",
 		"/register",
 		"/refresh",

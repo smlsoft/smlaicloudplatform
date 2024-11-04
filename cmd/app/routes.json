@@ -31,6 +31,11 @@
   },
   {
     "method": "POST",
+    "path": "/poslogin",
+    "name": "smlcloudplatform/pkg/microservice.(*Microservice).POST.func1"
+  },
+  {
+    "method": "POST",
     "path": "/register",
     "name": "smlcloudplatform/pkg/microservice.(*Microservice).POST.func1"
   },
