@@ -33,15 +33,20 @@ type Setting struct {
 	BillHeader               *[]models.NameX           `json:"billheader" bson:"billheader"`
 	BillFooter               *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	MediaGUID                string                    `json:"mediaguid" bson:"mediaguid"`
-	timezone.Timezone        `bson:"inline"`
-	TimeForSales             *[]PosSettingTimeForSale          `json:"timeforsales" bson:"timeforsales"`
-	LogoUrl                  string                            `json:"logourl" bson:"logourl"`
-	IsUseCreadit             bool                              `json:"isusecreadit" bson:"isusecreadit"` // ขายเชื่อได้
-	BusinessType             int8                              `json:"businesstype" bson:"businesstype"` // ประเภทธุรกิจ
-	PaymentType              int8                              `json:"paymenttype" bson:"paymenttype"`   // ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
-	IsPOSActive              bool                              `json:"isposactive" bson:"isposactive"`   // ใช้งาน POS
-	SaleChanels              *[]salechannel_models.SaleChannel `json:"salechanels" bson:"salechanels"`
-	ServiceCharge            float64                           `json:"servicecharge" bson:"servicecharge"` // ค่าบริการ
+	CategoryGroupNumber      int                       `json:"categorygroupnumber" bson:"categorygroupnumber"`
+	KitchenGroupNumber       int                       `json:"kitchengroupnumber" bson:"kitchengroupnumber"`
+	TableGroupNumber         int                       `json:"tablegroupnumber" bson:"tablegroupnumber"`
+	ZoneGroupNumber          int                       `json:"zonegroupnumber" bson:"zonegroupnumber"`
+
+	timezone.Timezone `bson:"inline"`
+	TimeForSales      *[]PosSettingTimeForSale          `json:"timeforsales" bson:"timeforsales"`
+	LogoUrl           string                            `json:"logourl" bson:"logourl"`
+	IsUseCreadit      bool                              `json:"isusecreadit" bson:"isusecreadit"` // ขายเชื่อได้
+	BusinessType      int8                              `json:"businesstype" bson:"businesstype"` // ประเภทธุรกิจ
+	PaymentType       int8                              `json:"paymenttype" bson:"paymenttype"`   // ประเภทการชำระเงิน ex. กินก่อนจ่าย จ่ายก่อนกิน
+	IsPOSActive       bool                              `json:"isposactive" bson:"isposactive"`   // ใช้งาน POS
+	SaleChanels       *[]salechannel_models.SaleChannel `json:"salechanels" bson:"salechanels"`
+	ServiceCharge     float64                           `json:"servicecharge" bson:"servicecharge"` // ค่าบริการ
 
 	// ภาษี
 	IsVatRegister bool    `json:"isvatregister" bson:"isvatregister"` // จดทะเบียนภาษี
