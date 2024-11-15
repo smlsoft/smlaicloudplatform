@@ -4689,6 +4689,8 @@ definitions:
       businesstype:
         description: ประเภทธุรกิจ
         type: integer
+      categorygroupnumber:
+        type: integer
       code:
         type: string
       creditcards:
@@ -4721,6 +4723,8 @@ definitions:
       isvatregister:
         description: ภาษี
         type: boolean
+      kitchengroupnumber:
+        type: integer
       location:
         $ref: '#/definitions/models.PosSettingLocation'
       logourl:
@@ -4748,6 +4752,8 @@ definitions:
         items:
           $ref: '#/definitions/models.PosSettingSlip'
         type: array
+      tablegroupnumber:
+        type: integer
       timeforsales:
         items:
           $ref: '#/definitions/models.PosSettingTimeForSale'
@@ -4772,6 +4778,8 @@ definitions:
         type: string
       warehouse:
         $ref: '#/definitions/models.PosSettingWarehouse'
+      zonegroupnumber:
+        type: integer
     required:
     - code
     type: object
@@ -7527,6 +7535,8 @@ definitions:
         uniqueItems: true
       location:
         $ref: '#/definitions/smlcloudplatform_internal_shop_branch_models.Location'
+      machinetype:
+        type: integer
       names:
         items:
           $ref: '#/definitions/models.NameX'

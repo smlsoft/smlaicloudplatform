@@ -43513,6 +43513,9 @@ const docTemplate = `{
                     "description": "ประเภทธุรกิจ",
                     "type": "integer"
                 },
+                "categorygroupnumber": {
+                    "type": "integer"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -43559,6 +43562,9 @@ const docTemplate = `{
                     "description": "ภาษี",
                     "type": "boolean"
                 },
+                "kitchengroupnumber": {
+                    "type": "integer"
+                },
                 "location": {
                     "$ref": "#/definitions/models.PosSettingLocation"
                 },
@@ -43598,6 +43604,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.PosSettingSlip"
                     }
                 },
+                "tablegroupnumber": {
+                    "type": "integer"
+                },
                 "timeforsales": {
                     "type": "array",
                     "items": {
@@ -43631,6 +43640,9 @@ const docTemplate = `{
                 },
                 "warehouse": {
                     "$ref": "#/definitions/models.PosSettingWarehouse"
+                },
+                "zonegroupnumber": {
+                    "type": "integer"
                 }
             }
         },
@@ -47741,6 +47753,9 @@ const docTemplate = `{
                 },
                 "location": {
                     "$ref": "#/definitions/smlcloudplatform_internal_shop_branch_models.Location"
+                },
+                "machinetype": {
+                    "type": "integer"
                 },
                 "names": {
                     "type": "array",
