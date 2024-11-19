@@ -45973,6 +45973,9 @@ const docTemplate = `{
                 },
                 "zone": {
                     "type": "string"
+                },
+                "zonenumber": {
+                    "type": "integer"
                 }
             }
         },
@@ -46009,6 +46012,9 @@ const docTemplate = `{
                 },
                 "zone": {
                     "type": "string"
+                },
+                "zonenumber": {
+                    "type": "integer"
                 }
             }
         },

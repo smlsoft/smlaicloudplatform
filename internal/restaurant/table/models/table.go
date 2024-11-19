@@ -14,6 +14,7 @@ type Table struct {
 	Names       *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Seat        int8            `json:"seat" bson:"seat"`
 	Zone        string          `json:"zone" bson:"zone"`
+	ZoneNumber  int8            `json:"zonenumber" bson:"zonenumber"`
 	XOrder      uint            `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
 }
 

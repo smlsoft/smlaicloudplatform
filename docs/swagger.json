@@ -45968,6 +45968,9 @@
                 },
                 "zone": {
                     "type": "string"
+                },
+                "zonenumber": {
+                    "type": "integer"
                 }
             }
         },
@@ -46004,6 +46007,9 @@
                 },
                 "zone": {
                     "type": "string"
+                },
+                "zonenumber": {
+                    "type": "integer"
                 }
             }
         },

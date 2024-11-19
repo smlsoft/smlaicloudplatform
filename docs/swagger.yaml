@@ -6330,6 +6330,8 @@ definitions:
         type: integer
       zone:
         type: string
+      zonenumber:
+        type: integer
     required:
     - names
     type: object
@@ -6355,6 +6357,8 @@ definitions:
         type: integer
       zone:
         type: string
+      zonenumber:
+        type: integer
     required:
     - names
     type: object
