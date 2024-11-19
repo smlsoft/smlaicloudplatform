@@ -47136,6 +47136,9 @@ const docTemplate = `{
                 "logouri": {
                     "type": "string"
                 },
+                "machinetype": {
+                    "type": "integer"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,

@@ -7120,6 +7120,8 @@ definitions:
         type: array
       logouri:
         type: string
+      machinetype:
+        type: integer
       names:
         items:
           $ref: '#/definitions/models.NameX'
