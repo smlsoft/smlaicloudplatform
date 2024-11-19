@@ -23,6 +23,8 @@ type ITableRepository interface {
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.TableDoc, error)
 	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.TableItemGuid, error)
 	FindByDocIndentityGuid(ctx context.Context, shopID string, columnName string, filters interface{}) (models.TableDoc, error)
+	FindByTwoColumns(ctx context.Context, shopID string, column1 string, value1 interface{}, column2 string, value2 interface{}) (models.TableDoc, error)
+
 	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.TableInfo, int, error)
 	SaveXOrder(ctx context.Context, shopID string, guid string, xorder uint) error
 
@@ -38,6 +40,21 @@ type TableRepository struct {
 	repositories.SearchRepository[models.TableInfo]
 	repositories.GuidRepository[models.TableItemGuid]
 	repositories.ActivityRepository[models.TableActivity, models.TableDeleteActivity]
+}
+
+func (repo TableRepository) FindByTwoColumns(ctx context.Context, shopID string, column1 string, value1 interface{}, column2 string, value2 interface{}) (models.TableDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		column1:  value1,
+		column2:  value2,
+	}
+
+	var result models.TableDoc
+	err := repo.pst.FindOne(ctx, &result, filters, nil, nil)
+	if err != nil {
+		return models.TableDoc{}, err
+	}
+	return result, nil
 }
 
 func NewTableRepository(pst microservice.IPersisterMongo) *TableRepository {

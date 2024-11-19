@@ -62,7 +62,7 @@ func (svc TableService) CreateTable(shopID string, authUsername string, doc mode
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "number", doc.Number)
+	findDoc, err := svc.repo.FindByTwoColumns(ctx, shopID, "number", doc.Number, "groupnumber", doc.GroupNumber)
 
 	if err != nil {
 		return "", err
