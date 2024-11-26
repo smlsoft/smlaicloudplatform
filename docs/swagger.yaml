@@ -4708,6 +4708,10 @@ definitions:
         type: string
       docformattaxinv:
         type: string
+      emails:
+        items:
+          type: string
+        type: array
       employees:
         items:
           $ref: '#/definitions/smlcloudplatform_internal_pos_setting_models.POSEmployee'

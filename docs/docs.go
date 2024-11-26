@@ -43541,6 +43541,12 @@ const docTemplate = `{
                 "docformattaxinv": {
                     "type": "string"
                 },
+                "emails": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "employees": {
                     "type": "array",
                     "items": {
