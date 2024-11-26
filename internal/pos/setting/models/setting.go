@@ -18,6 +18,7 @@ type Setting struct {
 	DocFormatTaxInv          string                    `json:"docformattaxinv" bson:"docformattaxinv"`
 	DocFormatInv             string                    `json:"docformatinv" bson:"docformatinv"`
 	ReceiptForm              string                    `json:"receiptform" bson:"receiptform"`
+	Emails                   *[]string                 `json:"emails" bson:"emails"`
 	Warehouse                PosSettingWarehouse       `json:"warehouse" bson:"warehouse"`
 	Location                 PosSettingLocation        `json:"location" bson:"location"`
 	Branch                   PosSettingBranch          `json:"branch" bson:"branch"`
