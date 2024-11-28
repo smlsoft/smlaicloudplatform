@@ -23,6 +23,53 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/accesstoken": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "list access token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Access Token"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/apikeyservice": {
             "post": {
                 "security": [
@@ -30296,6 +30343,27 @@ const docTemplate = `{
                         "type": "string",
                         "description": "machine code",
                         "name": "machinecode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "YYYY-MM-DD HH:mm:ss",
+                        "description": "Create DateTime After",
+                        "name": "createdatetimeafter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "YYYY-MM-DD HH:mm:ss",
+                        "description": "Update DateTime After",
+                        "name": "updatedatetimeafter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "YYYY-MM-DD HH:mm:ss",
+                        "description": "Create/Update DateTime After",
+                        "name": "createupdateafterdatetime",
                         "in": "query"
                     },
                     {
