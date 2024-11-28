@@ -342,7 +342,9 @@ func (h SaleInvoiceHttp) GetLastPOSDocNo(ctx microservice.IContext) error {
 // @Param		ispos	query	boolean		false  "is POS"
 // @Param		posid 	query	string		false  "POS id"
 // @Param		machinecode query	string		false  "machine code"
-// @Parm		zonegroupnumber query	string		false  "zone group number"
+// @Param		createdatetimeafter query	string		false  "Create DateTime After" Format(YYYY-MM-DD HH:mm:ss)
+// @Param		updatedatetimeafter query	string		false  "Update DateTime After" Format(YYYY-MM-DD HH:mm:ss)
+// @Param		createupdateafterdatetime	query	string		false  "Create/Update DateTime After" Format(YYYY-MM-DD HH:mm:ss)
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -572,6 +574,21 @@ func (h SaleInvoiceHttp) searchFilter(queryParam func(string) string) map[string
 		{
 			Param: "zonegroupnumber",
 			Field: "zonegroupnumber",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "createdatetimeafter",
+			Field: "createdatetimeafter",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "updateafterdatetime",
+			Field: "updateafterdatetime",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "createupdateafterdatetime",
+			Field: "createupdateafterdatetime",
 			Type:  requestfilter.FieldTypeString,
 		},
 	})
