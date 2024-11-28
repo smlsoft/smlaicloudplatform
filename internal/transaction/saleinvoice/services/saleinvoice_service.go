@@ -473,6 +473,60 @@ func (svc SaleInvoiceService) SearchSaleInvoice(shopID string, filters map[strin
 		"docno",
 	}
 
+	if _, ok := filters["createdatetimeafter"]; ok {
+
+		// phase date from YYYY-MM-DD HH:mm:ss to time.Time
+		datePhaseFormst := "2006-01-02 15:04:05"
+		createDateTimeAfter, err := time.Parse(datePhaseFormst, filters["createdatetimeafter"].(string))
+		if err != nil {
+			return []models.SaleInvoiceInfo{}, mongopagination.PaginationData{}, err
+		}
+
+		// append new filter
+		filters["createdat"] = bson.M{"$gt": createDateTimeAfter}
+
+		// remove createdatetimeafter from filters
+		delete(filters, "createdatetimeafter")
+
+	}
+
+	if _, ok := filters["updateafterdatetime"]; ok {
+
+		// phase date from YYYY-MM-DD HH:mm:ss to time.Time
+		datePhaseFormst := "2006-01-02 15:04:05"
+		createDateTimeAfter, err := time.Parse(datePhaseFormst, filters["updateafterdatetime"].(string))
+		if err != nil {
+			return []models.SaleInvoiceInfo{}, mongopagination.PaginationData{}, err
+		}
+
+		// append new filter
+		filters["updatedat"] = bson.M{"$gt": createDateTimeAfter}
+
+		// remove createdatetimeafter from filters
+		delete(filters, "updateafterdatetime")
+
+	}
+
+	if _, ok := filters["createupdateafterdatetime"]; ok {
+
+		// phase date from YYYY-MM-DD HH:mm:ss to time.Time
+		datePhaseFormst := "2006-01-02 15:04:05"
+		createDateTimeAfter, err := time.Parse(datePhaseFormst, filters["createupdateafterdatetime"].(string))
+		if err != nil {
+			return []models.SaleInvoiceInfo{}, mongopagination.PaginationData{}, err
+		}
+
+		// append new filter
+		filters["$or"] = []bson.M{
+			{"createdat": bson.M{"$gt": createDateTimeAfter}},
+			{"updatedat": bson.M{"$gt": createDateTimeAfter}},
+		}
+
+		// remove createdatetimeafter from filters
+		delete(filters, "createupdateafterdatetime")
+
+	}
+
 	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
