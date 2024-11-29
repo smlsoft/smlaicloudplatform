@@ -19,6 +19,7 @@ type OrderSetting struct {
 	// BillHeader *[]models.NameX `json:"billheader" bson:"billheader"`
 	// BillFooter        *[]models.NameX           `json:"billfooter" bson:"billfooter"`
 	MediaGUID string `json:"mediaguid" bson:"mediaguid"`
+
 	// timezone.Timezone `bson:"inline"`
 	TimeForSales        *[]OrderSettingTimeForSale `json:"timeforsales" bson:"timeforsales"` // เวลาขายเอลกอฮอล์
 	LogoUrl             string                     `json:"logourl" bson:"logourl"`
@@ -32,6 +33,7 @@ type OrderSetting struct {
 	KitchenGroupNumber  int                        `json:"kitchengroupnumber" bson:"kitchengroupnumber"`
 	TableGroupNumber    int                        `json:"tablegroupnumber" bson:"tablegroupnumber"`
 	ZoneGroupNumber     int                        `json:"zonegroupnumber" bson:"zonegroupnumber"`
+	Emails              *[]string                  `json:"emails" bson:"emails"`
 
 	// ภาษี
 	IsVatRegister bool    `json:"isvatregister" bson:"isvatregister"` // จดทะเบียนภาษี
