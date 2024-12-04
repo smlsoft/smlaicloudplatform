@@ -908,8 +908,8 @@ func (h ProductBarcodeHttp) searchFilter(queryParam func(string) string) map[str
 			Type:  requestfilter.FieldTypeString,
 		},
 		{
-			Param: "itemtype",
-			Field: "itemtype",
+			Param: "materialtype",
+			Field: "materialtype",
 			Type:  requestfilter.FieldTypeInt,
 		},
 		{
