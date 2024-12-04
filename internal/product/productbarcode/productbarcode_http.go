@@ -913,6 +913,11 @@ func (h ProductBarcodeHttp) searchFilter(queryParam func(string) string) map[str
 			Type:  requestfilter.FieldTypeInt,
 		},
 		{
+			Param: "itemtype",
+			Field: "itemtype",
+			Type:  requestfilter.FieldTypeInt,
+		},
+		{
 			Param: "businesstypecode",
 			Field: "businesstypes.code",
 			Type:  requestfilter.FieldTypeString,
