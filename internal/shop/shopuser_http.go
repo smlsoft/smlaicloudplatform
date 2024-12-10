@@ -93,14 +93,14 @@ func (h ShopMemberHttp) InfoShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	if userInfo.Role != models.ROLE_OWNER {
-		ctx.Response(http.StatusOK, &common.ApiResponse{
-			Success: false,
-			Message: "permission denied",
-		})
+	// if userInfo.Role != models.ROLE_OWNER {
+	// 	ctx.Response(http.StatusOK, &common.ApiResponse{
+	// 		Success: false,
+	// 		Message: "permission denied",
+	// 	})
 
-		return errors.New("permission denied")
-	}
+	// 	return errors.New("permission denied")
+	// }
 
 	username := ctx.Param("username")
 
