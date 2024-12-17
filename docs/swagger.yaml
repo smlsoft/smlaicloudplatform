@@ -19129,10 +19129,6 @@ paths:
         in: query
         name: q
         type: string
-      - description: promotiontype
-        in: query
-        name: promotiontype
-        type: integer
       - description: Page
         in: query
         name: page

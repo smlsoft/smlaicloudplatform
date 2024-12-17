@@ -18156,12 +18156,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "promotiontype",
-                        "name": "promotiontype",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "description": "Page",
                         "name": "page",
                         "in": "query"

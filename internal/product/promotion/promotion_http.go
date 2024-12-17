@@ -272,7 +272,6 @@ func (h PromotionHttp) InfoPromotionByCode(ctx microservice.IContext) error {
 // @Description get list step
 // @Tags		Promotion
 // @Param		q		query	string		false  "Search Value"
-// @Param		promotiontype	query	int		false  "promotiontype"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
