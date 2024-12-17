@@ -25,7 +25,7 @@ type IPromotionHttpService interface {
 	DeletePromotionByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoPromotion(shopID string, guid string) (models.PromotionInfo, error)
 	InfoPromotionByCode(shopID string, code string) (models.PromotionInfo, error)
-	SearchPromotion(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PromotionInfo, mongopagination.PaginationData, error)
+	SearchPromotion(shopID string, pageable micromodels.Pageable) ([]models.PromotionInfo, mongopagination.PaginationData, error)
 	SearchPromotionStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PromotionInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Promotion) (common.BulkImport, error)
 
@@ -83,30 +83,6 @@ func (svc PromotionHttpService) CreatePromotion(shopID string, authUsername stri
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	if docData.Details == nil {
-		docData.Details = &[]models.PromotionDetail{}
-	}
-
-	if docData.ProductBarcode.Names == nil {
-		docData.ProductBarcode.Names = &[]common.NameX{}
-	}
-
-	if docData.ProductBarcode.ItemUnitNames == nil {
-		docData.ProductBarcode.Names = &[]common.NameX{}
-	}
-
-	for idx, detail := range *docData.Details {
-		tempDoc := (*docData.Details)[idx]
-
-		if detail.ProductBarcode.Names == nil {
-			tempDoc.ProductBarcode.Names = &[]common.NameX{}
-		}
-
-		if detail.ProductBarcode.ItemUnitNames == nil {
-			tempDoc.ProductBarcode.ItemUnitNames = &[]common.NameX{}
-		}
-	}
-
 	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
@@ -138,29 +114,6 @@ func (svc PromotionHttpService) UpdatePromotion(shopID string, guid string, auth
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 
-	if docData.Details == nil {
-		docData.Details = &[]models.PromotionDetail{}
-	}
-
-	if docData.ProductBarcode.Names == nil {
-		docData.ProductBarcode.Names = &[]common.NameX{}
-	}
-
-	if docData.ProductBarcode.ItemUnitNames == nil {
-		docData.ProductBarcode.Names = &[]common.NameX{}
-	}
-
-	for idx, detail := range *docData.Details {
-		tempDoc := (*docData.Details)[idx]
-
-		if detail.ProductBarcode.Names == nil {
-			tempDoc.ProductBarcode.Names = &[]common.NameX{}
-		}
-
-		if detail.ProductBarcode.ItemUnitNames == nil {
-			tempDoc.ProductBarcode.ItemUnitNames = &[]common.NameX{}
-		}
-	}
 	err = svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
@@ -250,7 +203,7 @@ func (svc PromotionHttpService) InfoPromotionByCode(shopID string, code string) 
 	return findDoc.PromotionInfo, nil
 }
 
-func (svc PromotionHttpService) SearchPromotion(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PromotionInfo, mongopagination.PaginationData, error) {
+func (svc PromotionHttpService) SearchPromotion(shopID string, pageable micromodels.Pageable) ([]models.PromotionInfo, mongopagination.PaginationData, error) {
 
 	ctx, ctxCancel := svc.getContextTimeout()
 	defer ctxCancel()
@@ -261,7 +214,7 @@ func (svc PromotionHttpService) SearchPromotion(shopID string, filters map[strin
 		"barcode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.PromotionInfo{}, pagination, err

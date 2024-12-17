@@ -41434,77 +41434,58 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "details": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PromotionDetail"
-                    }
+                "customeronly": {
+                    "type": "integer"
                 },
-                "fromdate": {
+                "datebegin": {
                     "type": "string"
                 },
-                "fromtime": {
+                "dateend": {
                     "type": "string"
                 },
-                "ismemberonly": {
-                    "type": "boolean"
+                "discounttext": {
+                    "type": "string"
                 },
-                "isuseinfriday": {
-                    "type": "boolean"
+                "index": {
+                    "type": "integer"
                 },
-                "isuseinmonday": {
-                    "type": "boolean"
+                "limitamount": {
+                    "type": "number"
                 },
-                "isuseinsaturday": {
-                    "type": "boolean"
-                },
-                "isuseinsunday": {
-                    "type": "boolean"
-                },
-                "isuseinthursday": {
-                    "type": "boolean"
-                },
-                "isuseintuesday": {
-                    "type": "boolean"
-                },
-                "isuseinwednesday": {
-                    "type": "boolean"
+                "limitqty": {
+                    "type": "number"
                 },
                 "name": {
                     "type": "string"
                 },
-                "productbarcode": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode"
+                "promotionbarcodeinclude": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PromotionBarcodeInclude"
+                    }
+                },
+                "promotionqty": {
+                    "type": "number"
                 },
                 "promotiontype": {
                     "type": "integer"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "todate": {
-                    "type": "string"
-                },
-                "totime": {
-                    "type": "string"
                 }
             }
         },
-        "models.PromotionDetail": {
+        "models.PromotionBarcodeInclude": {
             "type": "object",
             "properties": {
-                "detailtype": {
-                    "description": "0: discount, 1: buy x get y, 2: buy x get y with discount",
-                    "type": "integer"
+                "includeproduct": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode"
+                    }
                 },
-                "discount": {
-                    "type": "number"
-                },
-                "minimum": {
-                    "type": "number"
-                },
-                "productbarcode": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode"
+                "promotionproduct": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode"
+                    }
                 }
             }
         },
@@ -47635,7 +47616,7 @@ const docTemplate = `{
         "smlcloudplatform_internal_product_promotion_models.ProductBarcode": {
             "type": "object",
             "properties": {
-                "barcode": {
+                "discounttext": {
                     "type": "string"
                 },
                 "guidfixed": {
@@ -47644,26 +47625,20 @@ const docTemplate = `{
                 "itemcode": {
                     "type": "string"
                 },
-                "itemunitcode": {
+                "name": {
                     "type": "string"
                 },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "price": {
+                    "type": "number"
                 },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "qty": {
+                    "type": "number"
                 },
-                "prices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
-                    }
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname": {
+                    "type": "string"
                 }
             }
         },

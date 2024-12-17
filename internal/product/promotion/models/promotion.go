@@ -4,8 +4,6 @@ import (
 	"smlcloudplatform/internal/models"
 	"time"
 
-	productbarcodemodels "smlcloudplatform/internal/product/productbarcode/models"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -13,34 +11,34 @@ const promotionCollectionName = "productPromotions"
 
 type Promotion struct {
 	models.PartitionIdentity `bson:"inline"`
-	PromotionType            int8               `json:"promotiontype" bson:"promotiontype"`
-	Code                     string             `json:"code" bson:"code"`
-	Name                     string             `json:"name" bson:"name"`
-	FromDate                 time.Time          `json:"fromdate" bson:"fromdate"`
-	ToDate                   time.Time          `json:"todate" bson:"todate"`
-	FromTime                 string             `json:"fromtime" bson:"fromtime"`
-	ToTime                   string             `json:"totime" bson:"totime"`
-	IsMemberOnly             bool               `json:"ismemberonly" bson:"ismemberonly"`
-	Remark                   string             `json:"remark" bson:"remark"`
-	IsUseInMonday            bool               `json:"isuseinmonday" bson:"isuseinmonday"`
-	IsUseInTuesday           bool               `json:"isuseintuesday" bson:"isuseintuesday"`
-	IsUseInWednesday         bool               `json:"isuseinwednesday" bson:"isuseinwednesday"`
-	IsUseInThursday          bool               `json:"isuseinthursday" bson:"isuseinthursday"`
-	IsUseInFriday            bool               `json:"isuseinfriday" bson:"isuseinfriday"`
-	IsUseInSaturday          bool               `json:"isuseinsaturday" bson:"isuseinsaturday"`
-	IsUseInSunday            bool               `json:"isuseinsunday" bson:"isuseinsunday"`
-	Details                  *[]PromotionDetail `json:"details" bson:"details"`
-	ProductBarcode           ProductBarcode     `json:"productbarcode" bson:"productbarcode"`
+	PromotionType            int8                       `json:"promotiontype" bson:"promotiontype"`
+	Index                    int64                      `json:"index" bson:"index"`
+	Code                     string                     `json:"code" bson:"code"`
+	Name                     string                     `json:"name" bson:"name"`
+	DateBegin                time.Time                  `json:"datebegin" bson:"datebegin"`
+	DateEnd                  time.Time                  `json:"dateend" bson:"dateend"`
+	CustomerOnly             int8                       `json:"customeronly" bson:"customeronly"`
+	DiscountText             string                     `json:"discounttext" bson:"discounttext"`
+	LimitQty                 float64                    `json:"limitqty" bson:"limitqty"`
+	PromotionQty             float64                    `json:"promotionqty" bson:"promotionqty"`
+	LimitAmount              float64                    `json:"limitamount" bson:"limitamount"`
+	PromotionBarcodeInclude  *[]PromotionBarcodeInclude `json:"promotionbarcodeinclude" bson:"promotionbarcodeinclude"`
+}
+
+type PromotionBarcodeInclude struct {
+	PromotionProduct *[]ProductBarcode `json:"promotionproduct" bson:"promotionproduct"`
+	IncludeProduct   *[]ProductBarcode `json:"includeproduct" bson:"includeproduct"`
 }
 
 type ProductBarcode struct {
-	GuidFixed     string                               `json:"guidfixed" bson:"guidfixed"`
-	Barcode       string                               `json:"barcode" bson:"barcode"`
-	ItemCode      string                               `json:"itemcode" bson:"itemcode"`
-	Names         *[]models.NameX                      `json:"names" bson:"names"`
-	ItemUnitCode  string                               `json:"itemunitcode" bson:"itemunitcode"`
-	ItemUnitNames *[]models.NameX                      `json:"itemunitnames" bson:"itemunitnames"`
-	Prices        *[]productbarcodemodels.ProductPrice `json:"prices" bson:"prices"`
+	GuidFixed    string  `json:"guidfixed" bson:"guidfixed"`
+	DiscountText string  `json:"discounttext" bson:"discounttext"`
+	ItemCode     string  `json:"itemcode" bson:"itemcode"`
+	Name         string  `json:"name" bson:"name"`
+	UnitCode     string  `json:"unitcode" bson:"unitcode"`
+	UnitName     string  `json:"unitname" bson:"unitname"`
+	Price        float64 `json:"price" bson:"price"`
+	Qty          float64 `json:"qty" bson:"qty"`
 }
 
 type PromotionDetail struct {

@@ -3283,54 +3283,41 @@ definitions:
     properties:
       code:
         type: string
-      details:
-        items:
-          $ref: '#/definitions/models.PromotionDetail'
-        type: array
-      fromdate:
+      customeronly:
+        type: integer
+      datebegin:
         type: string
-      fromtime:
+      dateend:
         type: string
-      ismemberonly:
-        type: boolean
-      isuseinfriday:
-        type: boolean
-      isuseinmonday:
-        type: boolean
-      isuseinsaturday:
-        type: boolean
-      isuseinsunday:
-        type: boolean
-      isuseinthursday:
-        type: boolean
-      isuseintuesday:
-        type: boolean
-      isuseinwednesday:
-        type: boolean
+      discounttext:
+        type: string
+      index:
+        type: integer
+      limitamount:
+        type: number
+      limitqty:
+        type: number
       name:
         type: string
-      productbarcode:
-        $ref: '#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode'
+      promotionbarcodeinclude:
+        items:
+          $ref: '#/definitions/models.PromotionBarcodeInclude'
+        type: array
+      promotionqty:
+        type: number
       promotiontype:
         type: integer
-      remark:
-        type: string
-      todate:
-        type: string
-      totime:
-        type: string
     type: object
-  models.PromotionDetail:
+  models.PromotionBarcodeInclude:
     properties:
-      detailtype:
-        description: '0: discount, 1: buy x get y, 2: buy x get y with discount'
-        type: integer
-      discount:
-        type: number
-      minimum:
-        type: number
-      productbarcode:
-        $ref: '#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode'
+      includeproduct:
+        items:
+          $ref: '#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode'
+        type: array
+      promotionproduct:
+        items:
+          $ref: '#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode'
+        type: array
     type: object
   models.Purchase:
     properties:
@@ -7443,26 +7430,22 @@ definitions:
     type: object
   smlcloudplatform_internal_product_promotion_models.ProductBarcode:
     properties:
-      barcode:
+      discounttext:
         type: string
       guidfixed:
         type: string
       itemcode:
         type: string
-      itemunitcode:
+      name:
         type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      prices:
-        items:
-          $ref: '#/definitions/models.ProductPrice'
-        type: array
+      price:
+        type: number
+      qty:
+        type: number
+      unitcode:
+        type: string
+      unitname:
+        type: string
     type: object
   smlcloudplatform_internal_report_reportqueryc_models.ReportParam:
     properties:

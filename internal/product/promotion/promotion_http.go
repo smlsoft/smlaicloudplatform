@@ -286,15 +286,15 @@ func (h PromotionHttp) SearchPromotionPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
-		{
-			Param: "promotiontype",
-			Field: "promotiontype",
-			Type:  requestfilter.FieldTypeInt,
-		},
-	})
+	// filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
+	// 	{
+	// 		Param: "promotiontype",
+	// 		Field: "promotiontype",
+	// 		Type:  requestfilter.FieldTypeInt,
+	// 	},
+	// })
 
-	docList, pagination, err := h.svc.SearchPromotion(shopID, filters, pageable)
+	docList, pagination, err := h.svc.SearchPromotion(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
