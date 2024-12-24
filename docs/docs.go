@@ -41450,7 +41450,10 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "promotionbarcodeinclude": {
                     "type": "array",
@@ -47610,17 +47613,20 @@ const docTemplate = `{
         "smlcloudplatform_internal_product_promotion_models.ProductBarcode": {
             "type": "object",
             "properties": {
+                "barcode": {
+                    "type": "string"
+                },
                 "discounttext": {
                     "type": "string"
                 },
                 "guidfixed": {
                     "type": "string"
                 },
-                "itemcode": {
-                    "type": "string"
-                },
                 "name": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "price": {
                     "type": "number"
@@ -47632,7 +47638,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },

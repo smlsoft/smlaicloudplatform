@@ -3298,7 +3298,9 @@ definitions:
       limitqty:
         type: number
       name:
-        type: string
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       promotionbarcodeinclude:
         items:
           $ref: '#/definitions/models.PromotionBarcodeInclude'
@@ -7430,14 +7432,16 @@ definitions:
     type: object
   smlcloudplatform_internal_product_promotion_models.ProductBarcode:
     properties:
+      barcode:
+        type: string
       discounttext:
         type: string
       guidfixed:
         type: string
-      itemcode:
-        type: string
       name:
-        type: string
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       price:
         type: number
       qty:
@@ -7445,7 +7449,9 @@ definitions:
       unitcode:
         type: string
       unitname:
-        type: string
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   smlcloudplatform_internal_report_reportqueryc_models.ReportParam:
     properties:

@@ -14,7 +14,7 @@ type Promotion struct {
 	PromotionType            int8                       `json:"promotiontype" bson:"promotiontype"`
 	Index                    int64                      `json:"index" bson:"index"`
 	Code                     string                     `json:"code" bson:"code"`
-	Name                     string                     `json:"name" bson:"name"`
+	Name                     *[]models.NameX            `json:"name" bson:"name"`
 	DateBegin                time.Time                  `json:"datebegin" bson:"datebegin"`
 	DateEnd                  time.Time                  `json:"dateend" bson:"dateend"`
 	CustomerOnly             int8                       `json:"customeronly" bson:"customeronly"`
@@ -31,14 +31,14 @@ type PromotionBarcodeInclude struct {
 }
 
 type ProductBarcode struct {
-	GuidFixed    string  `json:"guidfixed" bson:"guidfixed"`
-	DiscountText string  `json:"discounttext" bson:"discounttext"`
-	ItemCode     string  `json:"itemcode" bson:"itemcode"`
-	Name         string  `json:"name" bson:"name"`
-	UnitCode     string  `json:"unitcode" bson:"unitcode"`
-	UnitName     string  `json:"unitname" bson:"unitname"`
-	Price        float64 `json:"price" bson:"price"`
-	Qty          float64 `json:"qty" bson:"qty"`
+	GuidFixed    string          `json:"guidfixed" bson:"guidfixed"`
+	DiscountText string          `json:"discounttext" bson:"discounttext"`
+	Barcode      string          `json:"barcode" bson:"barcode"`
+	Name         *[]models.NameX `json:"name" bson:"name"`
+	UnitCode     string          `json:"unitcode" bson:"unitcode"`
+	UnitName     *[]models.NameX `json:"unitname" bson:"unitname"`
+	Price        float64         `json:"price" bson:"price"`
+	Qty          float64         `json:"qty" bson:"qty"`
 }
 
 type PromotionDetail struct {
