@@ -25,7 +25,7 @@ type IAuthenticationService interface {
 	LoginWithPhoneNumberOTP(userLoginReq *auth_models.PhoneNumberOTPRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	Login(userReq *auth_models.UserLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	Poslogin(userReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
-	LoginEmail(userReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
+	LoginEmail(userReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (string, error)
 	Register(userRequest auth_models.RegisterEmailRequest) (string, error)
 	ForgotPasswordByPhonenumber(userRequest auth_models.ForgotPasswordPhoneNumberRequest) error
 	Update(username string, userRequest auth_models.UserProfileRequest) error
@@ -225,7 +225,7 @@ func (svc AuthenticationService) Poslogin(userLoginReq *auth_models.PosLoginRequ
 	return resultLogin, nil
 }
 
-func (svc AuthenticationService) LoginEmail(userLoginReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error) {
+func (svc AuthenticationService) LoginEmail(userLoginReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (string, error) {
 
 	userLoginReq.Username = utils.NormalizeUsername(userLoginReq.Username)
 
@@ -235,7 +235,7 @@ func (svc AuthenticationService) LoginEmail(userLoginReq *auth_models.PosLoginRe
 	findUser, err := svc.authRepo.FindUser(context.Background(), userLoginReq.Username)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
-		return models.TokenLoginResponse{}, errors.New("auth: database connect error")
+		return "", errors.New("auth: database connect error")
 	}
 
 	if len(findUser.Username) == 0 {
@@ -248,22 +248,21 @@ func (svc AuthenticationService) LoginEmail(userLoginReq *auth_models.PosLoginRe
 
 		_, err := svc.authRepo.CreateUser(context.Background(), user)
 		if err != nil {
-			return models.TokenLoginResponse{}, err
+			return "", err
 		}
 
 		findUser, err = svc.authRepo.FindUser(context.Background(), userLoginReq.Username)
 		if err != nil && err.Error() != "mongo: no documents in result" {
-			return models.TokenLoginResponse{}, err
+			return "", err
 		}
 	}
 
-	resultLogin, err := svc.processUserLogin(*findUser, userLoginReq.ShopID, authContext)
+	tokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_BEARER, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
-		return models.TokenLoginResponse{}, err
+		return "", errors.New("generate token error")
 	}
-
-	return resultLogin, nil
+	return tokenString, nil
 }
 
 func (svc *AuthenticationService) processUserLogin(findUser auth_models.UserDoc, shopID string, authContext models.AuthenticationContext) (models.TokenLoginResponse, error) {

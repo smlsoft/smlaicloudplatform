@@ -276,8 +276,7 @@ func (h AuthenticationHttp) LoginEmail(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, map[string]interface{}{
 		"success": true,
-		"token":   result.Token,
-		"refresh": result.Refresh,
+		"token":   result,
 	})
 
 	return nil
