@@ -185,6 +185,7 @@ func main() {
 
 			"/login",
 			"/poslogin",
+			"/login/email",
 			"/login/phone-number",
 			"/register",
 			"/refresh",
