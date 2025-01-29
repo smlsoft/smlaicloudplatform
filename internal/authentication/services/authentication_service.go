@@ -25,6 +25,7 @@ type IAuthenticationService interface {
 	LoginWithPhoneNumberOTP(userLoginReq *auth_models.PhoneNumberOTPRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	Login(userReq *auth_models.UserLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	Poslogin(userReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
+	LoginEmail(userReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error)
 	Register(userRequest auth_models.RegisterEmailRequest) (string, error)
 	ForgotPasswordByPhonenumber(userRequest auth_models.ForgotPasswordPhoneNumberRequest) error
 	Update(username string, userRequest auth_models.UserProfileRequest) error
@@ -214,6 +215,47 @@ func (svc AuthenticationService) Poslogin(userLoginReq *auth_models.PosLoginRequ
 	// if passwordInvalid {
 	// 	return models.TokenLoginResponse{}, errors.New("username or password is invalid")
 	// }
+
+	resultLogin, err := svc.processUserLogin(*findUser, userLoginReq.ShopID, authContext)
+
+	if err != nil {
+		return models.TokenLoginResponse{}, err
+	}
+
+	return resultLogin, nil
+}
+
+func (svc AuthenticationService) LoginEmail(userLoginReq *auth_models.PosLoginRequest, authContext models.AuthenticationContext) (models.TokenLoginResponse, error) {
+
+	userLoginReq.Username = utils.NormalizeUsername(userLoginReq.Username)
+
+	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
+	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
+
+	findUser, err := svc.authRepo.FindUser(context.Background(), userLoginReq.Username)
+
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return models.TokenLoginResponse{}, errors.New("auth: database connect error")
+	}
+
+	if len(findUser.Username) == 0 {
+		// Register user if not found
+		user := auth_models.UserDoc{}
+		user.Username = userLoginReq.Username
+		user.Password = ""
+		user.UserDetail.Name = userLoginReq.Username
+		user.CreatedAt = svc.timeNow()
+
+		_, err := svc.authRepo.CreateUser(context.Background(), user)
+		if err != nil {
+			return models.TokenLoginResponse{}, err
+		}
+
+		findUser, err = svc.authRepo.FindUser(context.Background(), userLoginReq.Username)
+		if err != nil && err.Error() != "mongo: no documents in result" {
+			return models.TokenLoginResponse{}, err
+		}
+	}
 
 	resultLogin, err := svc.processUserLogin(*findUser, userLoginReq.ShopID, authContext)
 

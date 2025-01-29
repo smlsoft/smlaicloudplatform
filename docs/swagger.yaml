@@ -12487,6 +12487,29 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
+  /loginemail:
+    post:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: User Account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.PosLoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      tags:
+      - Authentication
   /logout:
     post:
       consumes:
@@ -29924,7 +29947,7 @@ paths:
       - AccessToken: []
       tags:
       - Unit
-  /unit/upload-file:
+  /unit/uploadfile:
     post:
       consumes:
       - multipart/form-data

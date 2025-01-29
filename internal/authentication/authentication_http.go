@@ -76,6 +76,7 @@ func (h AuthenticationHttp) RegisterHttp() {
 
 	h.ms.POST("/login", h.Login)
 	h.ms.POST("/poslogin", h.Poslogin)
+	h.ms.POST("/loginemail", h.LoginEmail)
 	h.ms.POST("/login/phone-number", h.LoginWithPhoneNumber)
 	h.ms.POST("/tokenlogin", h.TokenLogin)
 	h.ms.POST("/logout", h.Logout)
@@ -222,6 +223,51 @@ func (h AuthenticationHttp) Poslogin(ctx microservice.IContext) error {
 	}
 
 	result, err := h.authenticationService.Poslogin(userReq, authContext)
+
+	if err != nil {
+		ctx.ResponseError(400, "login failed.")
+		return err
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{
+		"success": true,
+		"token":   result.Token,
+		"refresh": result.Refresh,
+	})
+
+	return nil
+}
+
+// Login Email
+// @Description get struct array by ID
+// @Tags		Authentication
+// @Param		User  body      models.PosLoginRequest  true  "User Account"
+// @Accept 		json
+// @Success		200	{object}	common.AuthResponse
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Router /loginemail [post]
+func (h AuthenticationHttp) LoginEmail(ctx microservice.IContext) error {
+
+	input := ctx.ReadInput()
+
+	userReq := &models.PosLoginRequest{}
+	err := json.Unmarshal([]byte(input), &userReq)
+
+	if err != nil {
+		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	if err = ctx.Validate(userReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	authContext := models.AuthenticationContext{
+		Ip: ctx.RealIp(),
+	}
+
+	result, err := h.authenticationService.LoginEmail(userReq, authContext)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")
