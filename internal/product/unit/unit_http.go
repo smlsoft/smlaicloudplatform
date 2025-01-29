@@ -47,7 +47,6 @@ func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 func (h UnitHttp) RegisterHttp() {
 
 	h.ms.POST("/unit/bulk", h.SaveBulk)
-
 	h.ms.GET("/unit", h.SearchUnit)
 	h.ms.GET("/unit/list", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
@@ -71,7 +70,7 @@ func (h UnitHttp) RegisterHttp() {
 // @Failure     400 {object} map[string]string "file is required"
 // @Failure     500 {object} map[string]string "failed to read file or internal server error"
 // @Security    AccessToken
-// @Router      /unit/upload-file [post]
+// @Router      /unit/uploadfile [post]
 func (h *UnitHttp) UploadFile(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
