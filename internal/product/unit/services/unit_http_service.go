@@ -147,6 +147,7 @@ func (svc *UnitHttpService) ImportUnitsFromFile(file []byte, shopID string, auth
 					Unit: models.Unit{
 						UnitCode: unitCode,
 						Names:    &names,
+						UnitName: common.UnitName{UnitName1: "Import by " + authUsername},
 					},
 				},
 			},
