@@ -12487,7 +12487,7 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
-  /loginemail:
+  /login/email:
     post:
       consumes:
       - application/json

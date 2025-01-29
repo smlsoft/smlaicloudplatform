@@ -125,12 +125,16 @@ func (svc *UnitHttpService) ImportUnitsFromFile(file []byte, shopID string, auth
 		for i, lang := range headers {
 			if lang != "code" && i < len(row) {
 				name := row[i]
-				names = append(names, common.NameX{
-					Code:     &lang,
-					Name:     &name,
-					IsAuto:   false,
-					IsDelete: false,
-				})
+				if name != "" {
+					copiedLang := lang
+					copiedName := name
+					names = append(names, common.NameX{
+						Code:     &copiedLang,
+						Name:     &copiedName,
+						IsAuto:   false,
+						IsDelete: false,
+					})
+				}
 			}
 		}
 

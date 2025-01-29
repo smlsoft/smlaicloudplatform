@@ -76,7 +76,7 @@ func (h AuthenticationHttp) RegisterHttp() {
 
 	h.ms.POST("/login", h.Login)
 	h.ms.POST("/poslogin", h.Poslogin)
-	h.ms.POST("/loginemail", h.LoginEmail)
+	h.ms.POST("/login/email", h.LoginEmail)
 	h.ms.POST("/login/phone-number", h.LoginWithPhoneNumber)
 	h.ms.POST("/tokenlogin", h.TokenLogin)
 	h.ms.POST("/logout", h.Logout)
@@ -245,7 +245,7 @@ func (h AuthenticationHttp) Poslogin(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{object}	common.AuthResponse
 // @Failure		400 {object}	common.AuthResponseFailed
-// @Router /loginemail [post]
+// @Router /login/email [post]
 func (h AuthenticationHttp) LoginEmail(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()

@@ -7484,7 +7484,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/loginemail": {
+        "/login/email": {
             "post": {
                 "description": "get struct array by ID",
                 "consumes": [
