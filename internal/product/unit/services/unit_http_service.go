@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	common "smlcloudplatform/internal/models"
 	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
 	"smlcloudplatform/internal/product/unit/models"
+
 	"smlcloudplatform/internal/product/unit/repositories"
 	"smlcloudplatform/internal/services"
 	"smlcloudplatform/internal/utils"
@@ -18,6 +20,7 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/smlsoft/mongopagination"
+	"github.com/xuri/excelize/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -34,8 +37,8 @@ type IUnitHttpService interface {
 	SearchUnit(shopID string, codeFilters []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	SearchUnitLimit(shopID string, langCode string, codeFilters []string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error)
-
 	GetModuleName() string
+	ImportUnitsFromFile(file []byte, shopID string, authUsername string) (string, error)
 }
 
 type UnitHttpService struct {
@@ -71,6 +74,93 @@ func NewUnitHttpService(
 
 func (svc UnitHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
+func (svc *UnitHttpService) ImportUnitsFromFile(file []byte, shopID string, authUsername string) (string, error) {
+	f, err := excelize.OpenReader(bytes.NewReader(file))
+	if err != nil {
+		return "", fmt.Errorf("failed to open Excel file: %v", err)
+	}
+
+	rows, err := f.GetRows(f.GetSheetName(0))
+	if err != nil {
+		return "", fmt.Errorf("failed to read rows: %v", err)
+	}
+
+	if len(rows) < 2 {
+		return "", fmt.Errorf("the Excel file is empty or missing headers")
+	}
+
+	headers := rows[0]
+	var existingUnitCodes []string
+	var newUnits []models.UnitDoc
+
+	ctx, cancel := svc.getContextTimeout()
+	defer cancel()
+
+	for _, row := range rows[1:] {
+		entry := map[string]string{}
+		for i, value := range row {
+			if i < len(headers) {
+				entry[headers[i]] = value
+			}
+		}
+
+		unitCode, ok := entry["code"]
+		if !ok || unitCode == "" {
+			continue
+		}
+
+		findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "unitcode", unitCode)
+		if err != nil {
+			return "", fmt.Errorf("error checking existing unit code %s: %v", unitCode, err)
+		}
+
+		if findDoc.UnitCode != "" {
+			existingUnitCodes = append(existingUnitCodes, unitCode)
+			continue
+		}
+
+		var names []common.NameX
+		for lang, name := range entry {
+			if lang != "code" {
+				names = append(names, common.NameX{
+					Code:     &lang,
+					Name:     &name,
+					IsAuto:   false,
+					IsDelete: false,
+				})
+			}
+		}
+
+		newUnit := models.UnitDoc{
+			UnitData: models.UnitData{
+
+				ShopIdentity: common.ShopIdentity{ShopID: shopID},
+				UnitInfo: models.UnitInfo{
+					DocIdentity: common.DocIdentity{GuidFixed: utils.NewGUID()},
+					Unit: models.Unit{
+						UnitCode: unitCode,
+						Names:    &names,
+					},
+				},
+			},
+			ActivityDoc: common.ActivityDoc{
+				CreatedBy: "Import by " + authUsername,
+				CreatedAt: time.Now(),
+			},
+		}
+		newUnits = append(newUnits, newUnit)
+	}
+
+	if len(newUnits) > 0 {
+		err = svc.repo.CreateInBatch(ctx, newUnits)
+		if err != nil {
+			return "", fmt.Errorf("failed to insert new units: %v", err)
+		}
+	}
+
+	return fmt.Sprintf("Existing unit codes: %v", existingUnitCodes), nil
 }
 
 func (svc UnitHttpService) CreateUnit(shopID string, authUsername string, doc models.Unit) (string, error) {

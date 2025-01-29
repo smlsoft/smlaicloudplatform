@@ -60,6 +60,44 @@ func (h UnitHttp) RegisterHttp() {
 	h.ms.DELETE("/unit", h.DeleteByGUIDs)
 }
 
+func (h *UnitHttp) UploadFile(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+
+	file, err := ctx.FormFile("excelfile")
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, map[string]string{"error": "file is required"})
+		return nil
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		ctx.Response(http.StatusInternalServerError, map[string]string{"error": "failed to open file"})
+		return nil
+	}
+	defer src.Close()
+
+	// log.Printf("uploadDate: %s, effectDate: %s, dealers: %v", uploadDate, effectDate, dealers)
+
+	// อ่านไฟล์เป็น byte
+	fileBytes := make([]byte, file.Size)
+	_, err = src.Read(fileBytes)
+	if err != nil {
+		ctx.Response(http.StatusInternalServerError, map[string]string{"error": "failed to read file"})
+		return nil
+	}
+
+	// Process file และบันทึกข้อมูล
+	result, err := h.svc.ImportUnitsFromFile(fileBytes, shopID, authUsername)
+	if err != nil {
+		ctx.Response(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return nil
+	}
+
+	ctx.Response(http.StatusOK, result)
+	return nil
+}
+
 // Create Unit godoc
 // @Description Create Unit
 // @Tags		Unit
