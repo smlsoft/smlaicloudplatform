@@ -35319,6 +35319,60 @@ const docTemplate = `{
                 }
             }
         },
+        "/unit/upload-file": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Upload an Excel file to import units",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Excel file containing unit data",
+                        "name": "excelfile",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Existing unit codes: [EA, PACK, BOX]",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "file is required",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "failed to read file or internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/unit/{id}": {
             "get": {
                 "security": [
@@ -35482,60 +35536,6 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/upload-file": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Upload an Excel file to import units",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Excel file containing unit data",
-                        "name": "excelfile",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Existing unit codes: [EA, PACK, BOX]",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "file is required",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "failed to read file or internal server error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
                         }
                     }
                 }

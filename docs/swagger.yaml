@@ -29924,7 +29924,7 @@ paths:
       - AccessToken: []
       tags:
       - Unit
-  /upload-file:
+  /unit/upload-file:
     post:
       consumes:
       - multipart/form-data

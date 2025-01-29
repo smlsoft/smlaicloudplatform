@@ -51,6 +51,7 @@ func (h UnitHttp) RegisterHttp() {
 	h.ms.GET("/unit", h.SearchUnit)
 	h.ms.GET("/unit/list", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
+	h.ms.POST("/unit/uploadfile", h.UploadFile)
 	h.ms.GET("/unit/:id", h.InfoUnit)
 	h.ms.GET("/unit/by-code", h.InfoArray)
 	h.ms.GET("/unit/master", h.InfoArrayMaster)
@@ -70,7 +71,7 @@ func (h UnitHttp) RegisterHttp() {
 // @Failure     400 {object} map[string]string "file is required"
 // @Failure     500 {object} map[string]string "failed to read file or internal server error"
 // @Security    AccessToken
-// @Router      /upload-file [post]
+// @Router      /unit/upload-file [post]
 func (h *UnitHttp) UploadFile(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
