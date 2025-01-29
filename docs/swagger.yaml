@@ -29924,6 +29924,40 @@ paths:
       - AccessToken: []
       tags:
       - Unit
+  /upload-file:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an Excel file to import units
+      parameters:
+      - description: Excel file containing unit data
+        in: formData
+        name: excelfile
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Existing unit codes: [EA, PACK, BOX]'
+          schema:
+            type: string
+        "400":
+          description: file is required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: failed to read file or internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /upload/images:
     post:
       consumes:

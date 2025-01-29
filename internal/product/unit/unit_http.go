@@ -60,6 +60,17 @@ func (h UnitHttp) RegisterHttp() {
 	h.ms.DELETE("/unit", h.DeleteByGUIDs)
 }
 
+// Upload File godoc
+// @Description Upload an Excel file to import units
+// @Tags        Unit
+// @Param       excelfile  formData  file  true  "Excel file containing unit data"
+// @Accept      multipart/form-data
+// @Produce     json
+// @Success     200 {string} string "Existing unit codes: [EA, PACK, BOX]"
+// @Failure     400 {object} map[string]string "file is required"
+// @Failure     500 {object} map[string]string "failed to read file or internal server error"
+// @Security    AccessToken
+// @Router      /upload-file [post]
 func (h *UnitHttp) UploadFile(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
