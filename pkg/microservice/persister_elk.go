@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"sync"
 
 	elk "github.com/elastic/go-elasticsearch/v8"

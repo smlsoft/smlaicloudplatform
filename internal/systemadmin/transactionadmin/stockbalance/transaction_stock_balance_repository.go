@@ -2,8 +2,8 @@ package stockbalance
 
 import (
 	"context"
-	stockBalanceProductModels "smlcloudplatform/internal/transaction/stockbalance/models"
-	"smlcloudplatform/pkg/microservice"
+	stockBalanceProductModels "smlaicloudplatform/internal/transaction/stockbalance/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

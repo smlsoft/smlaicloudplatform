@@ -6,56 +6,56 @@ docker_build_authen:
 	docker build -t authenticationservice -f ./cmd/authenticationservice/Dockerfile .
 
 docker_build_authen_and_ship:
-	docker build -t smlsoft/smlcloudplatform:authen -f ./cmd/authenticationservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:authen
+	docker build -t smlsoft/smlaicloudplatform:authen -f ./cmd/authenticationservice/Dockerfile .
+	docker push smlsoft/smlaicloudplatform:authen
 
 docker_build_swagger_and_ship:
 	swag init
-	docker build -t smlsoft/smlcloudplatform:swagger .
-	docker push smlsoft/smlcloudplatform:swagger
+	docker build -t smlsoft/smlaicloudplatform:swagger .
+	docker push smlsoft/smlaicloudplatform:swagger
 
 docker_build_shop_and_ship:
-	docker build -t smlsoft/smlcloudplatform:shop -f ./cmd/shopservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:shop
+	docker build -t smlsoft/smlaicloudplatform:shop -f ./cmd/shopservice/Dockerfile .
+	docker push smlsoft/smlaicloudplatform:shop
 
 docker_build_inventory:
-	docker build -t smlsoft/smlcloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
+	docker build -t smlsoft/smlaicloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
 
 docker_build_inventory_and_ship:
-	docker build -t smlsoft/smlcloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:inventory
+	docker build -t smlsoft/smlaicloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
+	docker push smlsoft/smlaicloudplatform:inventory
 
 docker_build_inventoryimport_and_ship:
-	docker build -t smlsoft/smlcloudplatform:inventoryimport -f ./cmd/inventoryimportservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:inventoryimport
+	docker build -t smlsoft/smlaicloudplatform:inventoryimport -f ./cmd/inventoryimportservice/Dockerfile .
+	docker push smlsoft/smlaicloudplatform:inventoryimport
 
 docker_build_masterservice_and_ship:
-	docker build -t smlsoft/smlcloudplatform:masterdata -f ./cmd/masterdataservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:masterdata
+	docker build -t smlsoft/smlaicloudplatform:masterdata -f ./cmd/masterdataservice/Dockerfile .
+	docker push smlsoft/smlaicloudplatform:masterdata
 
 docker_build_imageservice_and_ship:
-	docker build -t smlsoft/smlcloudplatform:imageuploadservice -f ./cmd/imageuploadservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:imageuploadservice
+	docker build -t smlsoft/smlaicloudplatform:imageuploadservice -f ./cmd/imageuploadservice/Dockerfile .
+	docker push smlsoft/smlaicloudplatform:imageuploadservice
 
 docker_build_imageservice:
-	docker build -t smlsoft/smlcloudplatform:imageuploadservice -f ./cmd/imageuploadservice/Dockerfile .
+	docker build -t smlsoft/smlaicloudplatform:imageuploadservice -f ./cmd/imageuploadservice/Dockerfile .
 
 docker_build_memberservice_and_ship:
-	docker build -t smlsoft/smlcloudplatform:member -f ./cmd/memberservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:member
+	docker build -t smlsoft/smlaicloudplatform:member -f ./cmd/memberservice/Dockerfile .
+	docker push smlsoft/smlaicloudplatform:member
 
 run_docker_cluster:
 	docker start zookeeper server-redis-1 server-mongodb-1 kafka
 
 docker_build_app_dev:
 	swag init
-	docker build -t smlsoft/smlcloudplatform:appdev .
-	docker push smlsoft/smlcloudplatform:appdev
+	docker build -t smlsoft/smlaicloudplatform:appdev .
+	docker push smlsoft/smlaicloudplatform:appdev
 
 docker_build_api_dev:
 	swag init
-	docker build -t smlsoft/smlcloudplatform:apidev .
-	docker push smlsoft/smlcloudplatform:apidev
+	docker build -t smlsoft/smlaicloudplatform:apidev .
+	docker push smlsoft/smlaicloudplatform:apidev
 
 run_app_dev:
 	swag init
@@ -98,7 +98,7 @@ run_m1_stagging_migrationdb:
 
 docker_m1_build_api_dev:
 	swag init
-	docker buildx build --platform linux/amd64 --push -t smlsoft/smlcloudplatform:apidev . -f DockerfileM1
+	docker buildx build --platform linux/amd64 --push -t smlsoft/smlaicloudplatform:apidev . -f DockerfileM1
 
 run_test_m1:
 	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" POSTGRES_HOST=192.168.2.209 POSTGRES_PORT=5432 POSTGRES_DB_NAME=smldev POSTGRES_USERNAME=postgres POSTGRES_PASSWORD=sml go test -v --tags dynamic ./internal/vfgl/journalreport/journal_report_repository_test.go

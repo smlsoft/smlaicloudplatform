@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IShopMemberHttp interface{}

@@ -1,18 +1,18 @@
 package systemadmin
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/systemadmin/accountadmin"
-	"smlcloudplatform/internal/systemadmin/chartofaccountadmin"
-	"smlcloudplatform/internal/systemadmin/creditoradmin"
-	"smlcloudplatform/internal/systemadmin/datamigration"
-	"smlcloudplatform/internal/systemadmin/debtoradmin"
-	journal "smlcloudplatform/internal/systemadmin/journaladmin"
-	"smlcloudplatform/internal/systemadmin/productadmin"
-	"smlcloudplatform/internal/systemadmin/servicetools"
-	"smlcloudplatform/internal/systemadmin/shopadmin"
-	"smlcloudplatform/internal/systemadmin/transactionadmin"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/systemadmin/accountadmin"
+	"smlaicloudplatform/internal/systemadmin/chartofaccountadmin"
+	"smlaicloudplatform/internal/systemadmin/creditoradmin"
+	"smlaicloudplatform/internal/systemadmin/datamigration"
+	"smlaicloudplatform/internal/systemadmin/debtoradmin"
+	journal "smlaicloudplatform/internal/systemadmin/journaladmin"
+	"smlaicloudplatform/internal/systemadmin/productadmin"
+	"smlaicloudplatform/internal/systemadmin/servicetools"
+	"smlaicloudplatform/internal/systemadmin/shopadmin"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 const SYSTEM_ADMIN_ROUTE_PREFIX = "/systemadm"

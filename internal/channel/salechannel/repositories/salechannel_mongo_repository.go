@@ -2,10 +2,10 @@ package repositories
 
 import (
 	"context"
-	"smlcloudplatform/internal/channel/salechannel/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/channel/salechannel/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"

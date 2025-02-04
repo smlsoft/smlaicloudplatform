@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ITableDesign interface {

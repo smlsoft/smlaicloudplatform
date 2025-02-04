@@ -1,11 +1,11 @@
 package stockprocess_test
 
 import (
-	"smlcloudplatform/internal/config"
-	productbarcoderepository "smlcloudplatform/internal/product/productbarcode/repositories"
-	"smlcloudplatform/internal/stockprocess"
-	"smlcloudplatform/internal/stockprocess/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	productbarcoderepository "smlaicloudplatform/internal/product/productbarcode/repositories"
+	"smlaicloudplatform/internal/stockprocess"
+	"smlaicloudplatform/internal/stockprocess/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 )
 

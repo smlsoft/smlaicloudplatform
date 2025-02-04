@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	stockProcessModels "smlcloudplatform/internal/stockprocess/models"
-	"smlcloudplatform/pkg/microservice"
+	stockProcessModels "smlaicloudplatform/internal/stockprocess/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 const STOCK_PROCESS_KEY = "STKPROCESS"

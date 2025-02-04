@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
 	"github.com/jellydator/ttlcache/v3"

@@ -3,10 +3,10 @@ package saleinvoicereturn
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	adminModels "smlcloudplatform/internal/systemadmin/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	adminModels "smlaicloudplatform/internal/systemadmin/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISaleInvoiceReturnTransactionAdminHttp interface {

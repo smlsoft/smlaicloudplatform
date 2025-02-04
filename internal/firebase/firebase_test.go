@@ -1,7 +1,7 @@
 package firebase_test
 
 import (
-	"smlcloudplatform/internal/firebase"
+	"smlaicloudplatform/internal/firebase"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

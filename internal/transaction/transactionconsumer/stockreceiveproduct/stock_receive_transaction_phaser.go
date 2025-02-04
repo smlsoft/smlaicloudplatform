@@ -3,9 +3,9 @@ package stockreceiveproduct
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	stockReceiveModels "smlcloudplatform/internal/transaction/stockreceiveproduct/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	stockReceiveModels "smlaicloudplatform/internal/transaction/stockreceiveproduct/models"
 )
 
 type StockReceiveTransactionPhaser struct{}

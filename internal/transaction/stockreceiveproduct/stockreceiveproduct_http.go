@@ -3,16 +3,16 @@ package stockreceiveproduct
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	trancache "smlcloudplatform/internal/transaction/repositories"
-	"smlcloudplatform/internal/transaction/stockreceiveproduct/models"
-	"smlcloudplatform/internal/transaction/stockreceiveproduct/repositories"
-	"smlcloudplatform/internal/transaction/stockreceiveproduct/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	trancache "smlaicloudplatform/internal/transaction/repositories"
+	"smlaicloudplatform/internal/transaction/stockreceiveproduct/models"
+	"smlaicloudplatform/internal/transaction/stockreceiveproduct/repositories"
+	"smlaicloudplatform/internal/transaction/stockreceiveproduct/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockReceiveProductHttp interface{}

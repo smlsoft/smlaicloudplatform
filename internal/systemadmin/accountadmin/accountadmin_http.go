@@ -1,9 +1,9 @@
 package accountadmin
 
 import (
-	"smlcloudplatform/internal/config"
-	goMicroModel "smlcloudplatform/internal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	goMicroModel "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IAccountAdminHttp interface {

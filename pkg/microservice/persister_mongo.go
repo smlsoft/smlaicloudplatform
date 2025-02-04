@@ -14,8 +14,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/pkg/microservice/models"
 )
 
 // IPersister is interface for persister

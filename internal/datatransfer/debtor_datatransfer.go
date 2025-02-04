@@ -2,11 +2,11 @@ package datatransfer
 
 import (
 	"context"
-	"smlcloudplatform/internal/debtaccount/debtor/models"
-	debtorRepository "smlcloudplatform/internal/debtaccount/debtor/repositories"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/debtaccount/debtor/models"
+	debtorRepository "smlaicloudplatform/internal/debtaccount/debtor/repositories"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"

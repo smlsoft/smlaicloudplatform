@@ -3,8 +3,8 @@ package models
 import (
 	"time"
 
-	"smlcloudplatform/internal/models"
-	timezone "smlcloudplatform/internal/models/timezone"
+	"smlaicloudplatform/internal/models"
+	timezone "smlaicloudplatform/internal/models/timezone"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

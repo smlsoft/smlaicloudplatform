@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "SMLCloudPlatform Inventory API",
+    "description": "smlaicloudplatform Inventory API",
     "version": "1.0.0",
-    "title": "SMLCloudPlatform Inventory API",
+    "title": "smlaicloudplatform Inventory API",
     "contact": {
       "email": "dev@smlsoft.com"
     },

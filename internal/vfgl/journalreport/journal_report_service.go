@@ -3,9 +3,9 @@ package journalreport
 import (
 	"context"
 	"fmt"
-	chartofaccountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/journalreport/models"
-	"smlcloudplatform/internal/vfgl/journalreport/usecase"
+	chartofaccountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/journalreport/models"
+	"smlaicloudplatform/internal/vfgl/journalreport/usecase"
 	"time"
 
 	"github.com/shopspring/decimal"

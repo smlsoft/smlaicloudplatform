@@ -1,9 +1,9 @@
 package debtorpayment_test
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
-	models "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/debtorpayment"
+	pkgModels "smlaicloudplatform/internal/models"
+	models "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/debtorpayment"
 	"testing"
 	"time"
 

@@ -3,9 +3,9 @@ package stocktransfer
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	stocktransfermodels "smlcloudplatform/internal/transaction/stocktransfer/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	stocktransfermodels "smlaicloudplatform/internal/transaction/stocktransfer/models"
 )
 
 type StockTransferTransactionPhaser struct{}

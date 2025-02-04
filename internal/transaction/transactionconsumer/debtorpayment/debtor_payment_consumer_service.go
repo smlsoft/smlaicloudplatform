@@ -1,8 +1,8 @@
 package debtorpayment
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
-	models "smlcloudplatform/internal/transaction/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	models "smlaicloudplatform/internal/transaction/models"
 )
 
 type IDebtorPaymentConsumerService interface {

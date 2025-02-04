@@ -2,12 +2,12 @@ package productadmin
 
 import (
 	"context"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	productBarcodeModel "smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	productBarcodeModel "smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"

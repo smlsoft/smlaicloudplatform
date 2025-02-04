@@ -1,8 +1,8 @@
 package middlewares
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
 	"strings"
 	"time"
 

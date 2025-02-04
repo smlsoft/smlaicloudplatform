@@ -1,7 +1,7 @@
 package services_test
 
 import (
-	"smlcloudplatform/internal/smsreceive/smstransaction/services"
+	"smlaicloudplatform/internal/smsreceive/smstransaction/services"
 	"testing"
 
 	"github.com/tj/assert"
@@ -9,13 +9,13 @@ import (
 
 /*
 import (
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/smsreceive/smstransaction/models"
-	"smlcloudplatform/internal/smsreceive/smstransaction/services"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/smsreceive/smstransaction/models"
+	"smlaicloudplatform/internal/smsreceive/smstransaction/services"
 	"testing"
 	"time"
 
-	utilmock "smlcloudplatform/mock"
+	utilmock "smlaicloudplatform/mock"
 
 	"github.com/smlsoft/mongopagination"
 	"github.com/stretchr/testify/assert"

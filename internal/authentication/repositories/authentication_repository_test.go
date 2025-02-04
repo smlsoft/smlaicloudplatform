@@ -3,11 +3,11 @@ package repositories_test
 import (
 	"context"
 	"os"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/internal/authentication/repositories"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/internal/authentication/repositories"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 	"time"
 

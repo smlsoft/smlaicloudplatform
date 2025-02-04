@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IChartOfAccountPgRepository interface {

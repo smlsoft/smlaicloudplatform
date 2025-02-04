@@ -3,14 +3,14 @@ package transportchannel
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/channel/transportchannel/models"
-	"smlcloudplatform/internal/channel/transportchannel/repositories"
-	"smlcloudplatform/internal/channel/transportchannel/services"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/channel/transportchannel/models"
+	"smlaicloudplatform/internal/channel/transportchannel/repositories"
+	"smlaicloudplatform/internal/channel/transportchannel/services"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ITransportChannelHttp interface{}

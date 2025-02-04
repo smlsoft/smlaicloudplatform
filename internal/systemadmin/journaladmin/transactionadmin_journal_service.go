@@ -2,9 +2,9 @@ package journal
 
 import (
 	"context"
-	journalRepositories "smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	journalRepositories "smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 )
 

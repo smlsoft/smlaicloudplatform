@@ -3,10 +3,10 @@ package journalreport
 import (
 	"fmt"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/vfgl/journalreport/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/vfgl/journalreport/models"
+	"smlaicloudplatform/pkg/microservice"
 	"strings"
 	"time"
 )

@@ -3,15 +3,15 @@ package productcategory
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/productcategory/models"
-	"smlcloudplatform/internal/product/productcategory/repositories"
-	"smlcloudplatform/internal/product/productcategory/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/productcategory/models"
+	"smlaicloudplatform/internal/product/productcategory/repositories"
+	"smlaicloudplatform/internal/product/productcategory/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IProductCategoryHttp interface{}

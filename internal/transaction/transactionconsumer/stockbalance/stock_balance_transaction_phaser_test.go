@@ -1,8 +1,8 @@
 package stockbalance_test
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/stockbalance"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/stockbalance"
 	"testing"
 
 	"github.com/tj/assert"

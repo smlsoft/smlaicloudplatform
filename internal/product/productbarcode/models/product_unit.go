@@ -1,6 +1,6 @@
 package models
 
-import "smlcloudplatform/internal/models"
+import "smlaicloudplatform/internal/models"
 
 type ProductUnit struct {
 	UnitCode string          `json:"unitCode" bson:"unitCode"`

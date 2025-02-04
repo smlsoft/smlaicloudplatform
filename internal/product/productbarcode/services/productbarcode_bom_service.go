@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
-	"smlcloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/product/productbarcode/models"
 )
 
 func (svc ProductBarcodeHttpService) InfoBomView(shopID string, barcode string) (models.ProductBarcodeBOMView, error) {

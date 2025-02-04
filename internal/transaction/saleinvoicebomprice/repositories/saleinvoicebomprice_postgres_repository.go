@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"gorm.io/gorm"
 )

@@ -2,8 +2,8 @@ package stocktransfer
 
 import (
 	"context"
-	stocktransfermodels "smlcloudplatform/internal/transaction/stocktransfer/models"
-	"smlcloudplatform/pkg/microservice"
+	stocktransfermodels "smlaicloudplatform/internal/transaction/stocktransfer/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

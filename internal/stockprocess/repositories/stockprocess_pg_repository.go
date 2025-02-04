@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	stockModel "smlcloudplatform/internal/stockprocess/models"
-	"smlcloudplatform/pkg/microservice"
+	stockModel "smlaicloudplatform/internal/stockprocess/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockProcessPGRepository interface {

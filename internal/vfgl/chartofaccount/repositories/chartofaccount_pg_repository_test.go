@@ -3,11 +3,11 @@ package repositories_test
 import (
 	"database/sql"
 	"regexp"
-	"smlcloudplatform/internal/mocktest"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/mocktest"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

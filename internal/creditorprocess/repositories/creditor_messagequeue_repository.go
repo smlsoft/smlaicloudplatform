@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/creditorprocess/config"
-	"smlcloudplatform/internal/creditorprocess/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/creditorprocess/config"
+	"smlaicloudplatform/internal/creditorprocess/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ICreditorProcessMessageQueueRepository interface {

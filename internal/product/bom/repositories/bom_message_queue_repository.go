@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/product/bom/config"
-	"smlcloudplatform/internal/product/bom/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/bom/config"
+	"smlaicloudplatform/internal/product/bom/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IBomMessageQueueRepository interface {

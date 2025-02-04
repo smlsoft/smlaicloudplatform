@@ -2,7 +2,7 @@ package reportquery_test
 
 import (
 	"reflect"
-	"smlcloudplatform/internal/reportquery"
+	"smlaicloudplatform/internal/reportquery"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/bson"

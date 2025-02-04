@@ -3,14 +3,14 @@ package sectiondepartment
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/productsection/sectiondepartment/models"
-	"smlcloudplatform/internal/productsection/sectiondepartment/repositories"
-	"smlcloudplatform/internal/productsection/sectiondepartment/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/productsection/sectiondepartment/models"
+	"smlaicloudplatform/internal/productsection/sectiondepartment/repositories"
+	"smlaicloudplatform/internal/productsection/sectiondepartment/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISectionDepartmentHttp interface{}

@@ -3,10 +3,10 @@ package services
 import (
 	"context"
 	"errors"
-	"smlcloudplatform/internal/shopcoupon/models"
-	"smlcloudplatform/internal/shopcoupon/repositories"
-	"smlcloudplatform/internal/utils"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/shopcoupon/models"
+	"smlaicloudplatform/internal/shopcoupon/repositories"
+	"smlaicloudplatform/internal/utils"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"

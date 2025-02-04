@@ -1,9 +1,9 @@
 package services_test
 
 import (
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/services"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

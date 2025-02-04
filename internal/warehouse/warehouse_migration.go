@@ -1,9 +1,9 @@
 package warehouse
 
 import (
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/warehouse/models"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/warehouse/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 func MigrationDatabase(ms *microservice.Microservice, cfg pkgConfig.IConfig) error {

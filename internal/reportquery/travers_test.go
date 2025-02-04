@@ -2,7 +2,7 @@ package reportquery_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/reportquery"
+	"smlaicloudplatform/internal/reportquery"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

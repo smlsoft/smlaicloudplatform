@@ -2,7 +2,7 @@ name: Build Consumer
 on: [workflow_dispatch]
 env: 
     REGISTRY: ghcr.io
-    IMAGE_NAME: smlsoft/smlcloudconsumer
+    IMAGE_NAME: smlsoft/smlaicloudconsumer
     DISCORD_CHANNEL: "1139124359731093614"
    
 jobs:

@@ -1,8 +1,8 @@
 package services
 
 import (
-	"smlcloudplatform/internal/product/bom/models"
-	"smlcloudplatform/internal/product/bom/repositories"
+	"smlaicloudplatform/internal/product/bom/models"
+	"smlaicloudplatform/internal/product/bom/repositories"
 )
 
 type IBOMConsumerService interface {

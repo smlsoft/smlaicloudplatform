@@ -2,14 +2,14 @@ package creditor
 
 import (
 	"encoding/json"
-	creditorConfig "smlcloudplatform/internal/debtaccount/creditor/config"
-	"smlcloudplatform/internal/debtaccount/creditor/models"
-	"smlcloudplatform/internal/debtaccount/creditor/repositories"
-	"smlcloudplatform/internal/debtaccount/creditor/services"
-	"smlcloudplatform/pkg/microservice"
+	creditorConfig "smlaicloudplatform/internal/debtaccount/creditor/config"
+	"smlaicloudplatform/internal/debtaccount/creditor/models"
+	"smlaicloudplatform/internal/debtaccount/creditor/repositories"
+	"smlaicloudplatform/internal/debtaccount/creditor/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	pkgConfig "smlcloudplatform/internal/config"
+	pkgConfig "smlaicloudplatform/internal/config"
 )
 
 type CreditorConsumer struct {

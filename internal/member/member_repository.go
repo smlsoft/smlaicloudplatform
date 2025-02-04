@@ -2,11 +2,11 @@ package member
 
 import (
 	"context"
-	"smlcloudplatform/internal/member/models"
-	"smlcloudplatform/internal/utils/search"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/member/models"
+	"smlaicloudplatform/internal/utils/search"
+	"smlaicloudplatform/pkg/microservice"
 
-	micro_models "smlcloudplatform/pkg/microservice/models"
+	micro_models "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"

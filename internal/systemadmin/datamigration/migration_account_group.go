@@ -3,7 +3,7 @@ package datamigration
 import (
 	"context"
 	"encoding/json"
-	accountGroupModels "smlcloudplatform/internal/vfgl/accountgroup/models"
+	accountGroupModels "smlaicloudplatform/internal/vfgl/accountgroup/models"
 )
 
 func (m *MigrationService) InitCenterAccountGroup() error {

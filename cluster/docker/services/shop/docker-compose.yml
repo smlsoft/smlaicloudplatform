@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   shop:
-    image: smlsoft/smlcloudplatform:shop
+    image: smlsoft/smlaicloudplatform:shop
     restart: always
     expose:
       - 8080

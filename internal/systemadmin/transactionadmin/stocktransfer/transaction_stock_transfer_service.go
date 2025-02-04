@@ -2,8 +2,8 @@ package stocktransfer
 
 import (
 	"context"
-	stocktransferrepositories "smlcloudplatform/internal/transaction/stocktransfer/repositories"
-	"smlcloudplatform/pkg/microservice"
+	stocktransferrepositories "smlaicloudplatform/internal/transaction/stocktransfer/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

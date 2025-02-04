@@ -2,10 +2,10 @@ package repositories
 
 import (
 	"context"
-	"smlcloudplatform/internal/utils/mogoutil"
-	"smlcloudplatform/internal/utils/search"
-	"smlcloudplatform/pkg/microservice"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/utils/mogoutil"
+	"smlaicloudplatform/internal/utils/search"
+	"smlaicloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	m "github.com/veer66/mapkha"

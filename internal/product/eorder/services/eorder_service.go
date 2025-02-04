@@ -2,17 +2,17 @@ package services
 
 import (
 	"context"
-	salechannel_models "smlcloudplatform/internal/channel/salechannel/models"
-	salechannel_repo "smlcloudplatform/internal/channel/salechannel/repositories"
-	notify_repositories "smlcloudplatform/internal/notify/repositories"
-	order_device_repo "smlcloudplatform/internal/order/device/repositories"
-	order_setting_repo "smlcloudplatform/internal/order/setting/repositories"
-	branch_repo "smlcloudplatform/internal/organization/branch/repositories"
-	media_repo "smlcloudplatform/internal/pos/media/repositories"
-	"smlcloudplatform/internal/product/eorder/models"
-	"smlcloudplatform/internal/restaurant/kitchen"
-	"smlcloudplatform/internal/restaurant/table"
-	"smlcloudplatform/internal/shop"
+	salechannel_models "smlaicloudplatform/internal/channel/salechannel/models"
+	salechannel_repo "smlaicloudplatform/internal/channel/salechannel/repositories"
+	notify_repositories "smlaicloudplatform/internal/notify/repositories"
+	order_device_repo "smlaicloudplatform/internal/order/device/repositories"
+	order_setting_repo "smlaicloudplatform/internal/order/setting/repositories"
+	branch_repo "smlaicloudplatform/internal/organization/branch/repositories"
+	media_repo "smlaicloudplatform/internal/pos/media/repositories"
+	"smlaicloudplatform/internal/product/eorder/models"
+	"smlaicloudplatform/internal/restaurant/kitchen"
+	"smlaicloudplatform/internal/restaurant/table"
+	"smlaicloudplatform/internal/shop"
 	"time"
 )
 

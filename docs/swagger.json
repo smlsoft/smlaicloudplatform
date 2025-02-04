@@ -4813,7 +4813,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_shop_employee_models.EmployeeRequestPassword"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_shop_employee_models.EmployeeRequestPassword"
                         }
                     }
                 ],
@@ -7430,7 +7430,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.ShopUserInfo"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.ShopUserInfo"
                             }
                         }
                     },
@@ -7459,7 +7459,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserLoginRequest"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserLoginRequest"
                         }
                     }
                 ],
@@ -10669,7 +10669,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_organization_branch_models.Branch"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_organization_branch_models.Branch"
                         }
                     }
                 ],
@@ -10754,7 +10754,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_organization_branch_models.Branch"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_organization_branch_models.Branch"
                             }
                         }
                     }
@@ -10944,7 +10944,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_organization_branch_models.Branch"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_organization_branch_models.Branch"
                         }
                     }
                 ],
@@ -11073,7 +11073,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_organization_businesstype_models.BusinessType"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_organization_businesstype_models.BusinessType"
                         }
                     }
                 ],
@@ -11158,7 +11158,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_organization_businesstype_models.BusinessType"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_organization_businesstype_models.BusinessType"
                             }
                         }
                     }
@@ -11372,7 +11372,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_organization_businesstype_models.BusinessType"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_organization_businesstype_models.BusinessType"
                         }
                     }
                 ],
@@ -11501,7 +11501,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_organization_department_models.Department"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_organization_department_models.Department"
                         }
                     }
                 ],
@@ -11586,7 +11586,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_organization_department_models.Department"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_organization_department_models.Department"
                             }
                         }
                     }
@@ -11777,7 +11777,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_organization_department_models.Department"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_organization_department_models.Department"
                         }
                     }
                 ],
@@ -13275,7 +13275,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_pos_media_models.Media"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_pos_media_models.Media"
                         }
                     }
                 ],
@@ -13360,7 +13360,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_pos_media_models.Media"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_pos_media_models.Media"
                             }
                         }
                     }
@@ -13544,7 +13544,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_pos_media_models.Media"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_pos_media_models.Media"
                         }
                     }
                 ],
@@ -15891,7 +15891,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductBarcode"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductBarcode"
                             }
                         }
                     }
@@ -16132,7 +16132,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductBarcode"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductBarcode"
                             }
                         }
                     }
@@ -17400,7 +17400,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
                         }
                     }
                 ],
@@ -17485,7 +17485,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
                             }
                         }
                     }
@@ -17624,7 +17624,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
                         }
                     }
                 ],
@@ -17709,7 +17709,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_product_productgroup_models.ProductGroup"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
                         }
                     }
                 ],
@@ -18640,7 +18640,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_product_producttype_models.ProductType"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_producttype_models.ProductType"
                         }
                     }
                 ],
@@ -18725,7 +18725,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_product_producttype_models.ProductType"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_product_producttype_models.ProductType"
                             }
                         }
                     }
@@ -18909,7 +18909,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_product_producttype_models.ProductType"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_producttype_models.ProductType"
                         }
                     }
                 ],
@@ -19321,7 +19321,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserProfileReponse"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserProfileReponse"
                             }
                         }
                     },
@@ -19349,7 +19349,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserProfileRequest"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserProfileRequest"
                         }
                     }
                 ],
@@ -19386,7 +19386,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserPasswordRequest"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserPasswordRequest"
                         }
                     }
                 ],
@@ -19426,7 +19426,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserProfileReponse"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserProfileReponse"
                             }
                         }
                     },
@@ -19644,7 +19644,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportqueryc_models.ReportQuery"
                         }
                     }
                 ],
@@ -19685,7 +19685,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportqueryc_models.ReportQuery"
                         }
                     }
                 ],
@@ -19777,7 +19777,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportqueryc_models.ReportQuery"
                         }
                     }
                 ],
@@ -20002,7 +20002,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportqueryc_models.ReportQuery"
                         }
                     }
                 ],
@@ -20080,7 +20080,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -20121,7 +20121,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -20213,7 +20213,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -20438,7 +20438,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportQuery"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -20567,7 +20567,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_restaurant_device_models.Device"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_restaurant_device_models.Device"
                         }
                     }
                 ],
@@ -20652,7 +20652,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_restaurant_device_models.Device"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_restaurant_device_models.Device"
                             }
                         }
                     }
@@ -20797,7 +20797,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_restaurant_device_models.Device"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_restaurant_device_models.Device"
                         }
                     }
                 ],
@@ -23897,7 +23897,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.ShopSelectRequest"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.ShopSelectRequest"
                         }
                     }
                 ],
@@ -24129,7 +24129,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_shop_branch_models.Branch"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_shop_branch_models.Branch"
                         }
                     }
                 ],
@@ -24315,7 +24315,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_shop_branch_models.Branch"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_shop_branch_models.Branch"
                         }
                     }
                 ],
@@ -24444,7 +24444,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_shop_employee_models.EmployeeRequestRegister"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_shop_employee_models.EmployeeRequestRegister"
                         }
                     }
                 ],
@@ -24669,7 +24669,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_shop_employee_models.EmployeeRequestUpdate"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_shop_employee_models.EmployeeRequestUpdate"
                         }
                     }
                 ],
@@ -24747,7 +24747,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserRoleRequest"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserRoleRequest"
                         }
                     }
                 ],
@@ -25080,7 +25080,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_images_models.Image"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_images_models.Image"
                             }
                         }
                     },
@@ -27088,7 +27088,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_task_models.TaskStatus"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_task_models.TaskStatus"
                         }
                     }
                 ],
@@ -32246,7 +32246,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail"
                         }
                     }
                 ],
@@ -32542,7 +32542,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail"
+                            "$ref": "#/definitions/smlaicloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail"
                         }
                     }
                 ],
@@ -35601,7 +35601,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_images_models.Image"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_images_models.Image"
                             }
                         }
                     },
@@ -35655,7 +35655,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_internal_images_models.Image"
+                                "$ref": "#/definitions/smlaicloudplatform_internal_images_models.Image"
                             }
                         }
                     },
@@ -37027,7 +37027,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_payment_bookbank_models.Image"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_payment_bookbank_models.Image"
                     }
                 },
                 "names": {
@@ -37488,12 +37488,12 @@
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_creditor_models.Address"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_creditor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_creditor_models.Address"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_creditor_models.Address"
                     }
                 },
                 "auth": {
@@ -37526,7 +37526,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_creditor_models.Image"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_creditor_models.Image"
                     }
                 },
                 "ismember": {
@@ -37574,12 +37574,12 @@
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_customer_models.Address"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_customer_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_customer_models.Address"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_customer_models.Address"
                     }
                 },
                 "branchnumber": {
@@ -37609,7 +37609,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_customer_models.Image"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_customer_models.Image"
                     }
                 },
                 "iscreditor": {
@@ -37688,12 +37688,12 @@
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_debtor_models.Address"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_debtor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_debtor_models.Address"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_debtor_models.Address"
                     }
                 },
                 "auth": {
@@ -37726,7 +37726,7 @@
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_debtaccount_debtor_models.Image"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_debtaccount_debtor_models.Image"
                     }
                 },
                 "ismember": {
@@ -40995,7 +40995,7 @@
                     }
                 },
                 "producttype": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductType"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductType"
                 },
                 "qty": {
                     "type": "number"
@@ -41560,13 +41560,13 @@
                 "includeproduct": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_promotion_models.ProductBarcode"
                     }
                 },
                 "promotionproduct": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_product_promotion_models.ProductBarcode"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_promotion_models.ProductBarcode"
                     }
                 }
             }
@@ -42632,7 +42632,7 @@
                     "type": "string"
                 },
                 "dedezoom": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.DedeZoom"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.DedeZoom"
                 },
                 "email": {
                     "type": "string",
@@ -43640,7 +43640,7 @@
                 "employees": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_pos_setting_models.POSEmployee"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_pos_setting_models.POSEmployee"
                     }
                 },
                 "isejournal": {
@@ -46014,7 +46014,7 @@
                 "devices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_storefront_models.Device"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_storefront_models.Device"
                     }
                 },
                 "name1": {
@@ -46621,7 +46621,7 @@
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_warehouse_models.Location"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_warehouse_models.Location"
                     }
                 },
                 "names": {
@@ -46792,7 +46792,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.DedeZoom": {
+        "smlaicloudplatform_internal_authentication_models.DedeZoom": {
             "type": "object",
             "properties": {
                 "address": {
@@ -46806,7 +46806,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.ShopSelectRequest": {
+        "smlaicloudplatform_internal_authentication_models.ShopSelectRequest": {
             "type": "object",
             "required": [
                 "shopid"
@@ -46817,7 +46817,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.ShopUserInfo": {
+        "smlaicloudplatform_internal_authentication_models.ShopUserInfo": {
             "type": "object",
             "properties": {
                 "branchcode": {
@@ -46843,14 +46843,14 @@
                     }
                 },
                 "role": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserRole"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserRole"
                 },
                 "shopid": {
                     "type": "string"
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.UserLoginRequest": {
+        "smlaicloudplatform_internal_authentication_models.UserLoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -46873,7 +46873,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.UserPasswordRequest": {
+        "smlaicloudplatform_internal_authentication_models.UserPasswordRequest": {
             "type": "object",
             "required": [
                 "currentpassword",
@@ -46890,7 +46890,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.UserProfile": {
+        "smlaicloudplatform_internal_authentication_models.UserProfile": {
             "type": "object",
             "required": [
                 "password",
@@ -46901,7 +46901,7 @@
                     "type": "string"
                 },
                 "dedezoom": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.DedeZoom"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.DedeZoom"
                 },
                 "name": {
                     "type": "string"
@@ -46935,25 +46935,25 @@
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.UserProfileReponse": {
+        "smlaicloudplatform_internal_authentication_models.UserProfileReponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserProfile"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserProfile"
                 },
                 "success": {
                     "type": "boolean"
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.UserProfileRequest": {
+        "smlaicloudplatform_internal_authentication_models.UserProfileRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
                     "type": "string"
                 },
                 "dedezoom": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.DedeZoom"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.DedeZoom"
                 },
                 "name": {
                     "type": "string"
@@ -46976,7 +46976,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_authentication_models.UserRole": {
+        "smlaicloudplatform_internal_authentication_models.UserRole": {
             "type": "integer",
             "enum": [
                 0,
@@ -46994,14 +46994,14 @@
                 "ROLE_OWNER"
             ]
         },
-        "smlcloudplatform_internal_authentication_models.UserRoleRequest": {
+        "smlaicloudplatform_internal_authentication_models.UserRoleRequest": {
             "type": "object",
             "properties": {
                 "editusername": {
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_authentication_models.UserRole"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_authentication_models.UserRole"
                 },
                 "shopid": {
                     "type": "string"
@@ -47011,7 +47011,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_debtaccount_creditor_models.Address": {
+        "smlaicloudplatform_internal_debtaccount_creditor_models.Address": {
             "type": "object",
             "properties": {
                 "address": {
@@ -47058,7 +47058,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_debtaccount_creditor_models.Image": {
+        "smlaicloudplatform_internal_debtaccount_creditor_models.Image": {
             "type": "object",
             "properties": {
                 "uri": {
@@ -47069,7 +47069,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_debtaccount_customer_models.Address": {
+        "smlaicloudplatform_internal_debtaccount_customer_models.Address": {
             "type": "object",
             "properties": {
                 "address": {
@@ -47116,7 +47116,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_debtaccount_customer_models.Image": {
+        "smlaicloudplatform_internal_debtaccount_customer_models.Image": {
             "type": "object",
             "properties": {
                 "uri": {
@@ -47127,7 +47127,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_debtaccount_debtor_models.Address": {
+        "smlaicloudplatform_internal_debtaccount_debtor_models.Address": {
             "type": "object",
             "properties": {
                 "address": {
@@ -47174,7 +47174,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_debtaccount_debtor_models.Image": {
+        "smlaicloudplatform_internal_debtaccount_debtor_models.Image": {
             "type": "object",
             "properties": {
                 "uri": {
@@ -47185,7 +47185,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_images_models.Image": {
+        "smlaicloudplatform_internal_images_models.Image": {
             "type": "object",
             "properties": {
                 "uri": {
@@ -47193,7 +47193,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_organization_branch_models.Branch": {
+        "smlaicloudplatform_internal_organization_branch_models.Branch": {
             "type": "object",
             "required": [
                 "names"
@@ -47223,7 +47223,7 @@
                 "departments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_organization_branch_models.Department"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_organization_branch_models.Department"
                     }
                 },
                 "imageuri": {
@@ -47254,7 +47254,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_organization_branch_models.Department": {
+        "smlaicloudplatform_internal_organization_branch_models.Department": {
             "type": "object",
             "properties": {
                 "code": {
@@ -47269,7 +47269,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_organization_businesstype_models.BusinessType": {
+        "smlaicloudplatform_internal_organization_businesstype_models.BusinessType": {
             "type": "object",
             "required": [
                 "names"
@@ -47291,7 +47291,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_organization_department_models.Department": {
+        "smlaicloudplatform_internal_organization_department_models.Department": {
             "type": "object",
             "required": [
                 "names"
@@ -47310,7 +47310,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_payment_bookbank_models.Image": {
+        "smlaicloudplatform_internal_payment_bookbank_models.Image": {
             "type": "object",
             "properties": {
                 "uri": {
@@ -47321,7 +47321,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_pos_media_models.Media": {
+        "smlaicloudplatform_internal_pos_media_models.Media": {
             "type": "object",
             "properties": {
                 "code": {
@@ -47341,7 +47341,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_pos_setting_models.POSEmployee": {
+        "smlaicloudplatform_internal_pos_setting_models.POSEmployee": {
             "type": "object",
             "properties": {
                 "code": {
@@ -47361,7 +47361,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode": {
+        "smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode": {
             "type": "object",
             "required": [
                 "barcode"
@@ -47406,7 +47406,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_product_productbarcode_models.ProductBarcode": {
+        "smlaicloudplatform_internal_product_productbarcode_models.ProductBarcode": {
             "type": "object",
             "required": [
                 "barcode",
@@ -47424,7 +47424,7 @@
                 "bom": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_product_productbarcode_models.BOMProductBarcode"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode"
                     }
                 },
                 "businesstypes": {
@@ -47581,7 +47581,7 @@
                     }
                 },
                 "producttype": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_product_productbarcode_models.ProductType"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductType"
                 },
                 "qty": {
                     "type": "number"
@@ -47640,7 +47640,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_product_productbarcode_models.ProductType": {
+        "smlaicloudplatform_internal_product_productbarcode_models.ProductType": {
             "type": "object",
             "properties": {
                 "code": {
@@ -47657,7 +47657,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_product_productgroup_models.ProductGroup": {
+        "smlaicloudplatform_internal_product_productgroup_models.ProductGroup": {
             "type": "object",
             "required": [
                 "names"
@@ -47676,7 +47676,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_product_producttype_models.ProductType": {
+        "smlaicloudplatform_internal_product_producttype_models.ProductType": {
             "type": "object",
             "required": [
                 "names"
@@ -47695,7 +47695,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_product_promotion_models.ProductBarcode": {
+        "smlaicloudplatform_internal_product_promotion_models.ProductBarcode": {
             "type": "object",
             "properties": {
                 "barcode": {
@@ -47730,7 +47730,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_report_reportqueryc_models.ReportParam": {
+        "smlaicloudplatform_internal_report_reportqueryc_models.ReportParam": {
             "type": "object",
             "properties": {
                 "name": {
@@ -47741,7 +47741,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_report_reportqueryc_models.ReportQuery": {
+        "smlaicloudplatform_internal_report_reportqueryc_models.ReportQuery": {
             "type": "object",
             "required": [
                 "code"
@@ -47761,7 +47761,7 @@
                 "params": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_report_reportqueryc_models.ReportParam"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_report_reportqueryc_models.ReportParam"
                     }
                 },
                 "sql": {
@@ -47769,7 +47769,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_report_reportquerym_models.ReportParam": {
+        "smlaicloudplatform_internal_report_reportquerym_models.ReportParam": {
             "type": "object",
             "properties": {
                 "name": {
@@ -47780,7 +47780,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_report_reportquerym_models.ReportQuery": {
+        "smlaicloudplatform_internal_report_reportquerym_models.ReportQuery": {
             "type": "object",
             "required": [
                 "code"
@@ -47812,12 +47812,12 @@
                 "params": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_report_reportquerym_models.ReportParam"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_report_reportquerym_models.ReportParam"
                     }
                 }
             }
         },
-        "smlcloudplatform_internal_restaurant_device_models.Device": {
+        "smlaicloudplatform_internal_restaurant_device_models.Device": {
             "type": "object",
             "required": [
                 "code",
@@ -47840,7 +47840,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_shop_branch_models.Branch": {
+        "smlaicloudplatform_internal_shop_branch_models.Branch": {
             "type": "object",
             "required": [
                 "names"
@@ -47853,11 +47853,11 @@
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_internal_shop_branch_models.Department"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_shop_branch_models.Department"
                     }
                 },
                 "location": {
-                    "$ref": "#/definitions/smlcloudplatform_internal_shop_branch_models.Location"
+                    "$ref": "#/definitions/smlaicloudplatform_internal_shop_branch_models.Location"
                 },
                 "machinetype": {
                     "type": "integer"
@@ -47876,7 +47876,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_shop_branch_models.Department": {
+        "smlaicloudplatform_internal_shop_branch_models.Department": {
             "type": "object",
             "required": [
                 "code",
@@ -47896,7 +47896,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_shop_branch_models.Location": {
+        "smlaicloudplatform_internal_shop_branch_models.Location": {
             "type": "object",
             "properties": {
                 "lat": {
@@ -47907,7 +47907,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_shop_employee_models.EmployeeRequestPassword": {
+        "smlaicloudplatform_internal_shop_employee_models.EmployeeRequestPassword": {
             "type": "object",
             "properties": {
                 "code": {
@@ -47921,7 +47921,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_shop_employee_models.EmployeeRequestRegister": {
+        "smlaicloudplatform_internal_shop_employee_models.EmployeeRequestRegister": {
             "type": "object",
             "properties": {
                 "branches": {
@@ -47965,7 +47965,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_shop_employee_models.EmployeeRequestUpdate": {
+        "smlaicloudplatform_internal_shop_employee_models.EmployeeRequestUpdate": {
             "type": "object",
             "properties": {
                 "branches": {
@@ -48006,7 +48006,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_storefront_models.Device": {
+        "smlaicloudplatform_internal_storefront_models.Device": {
             "type": "object",
             "properties": {
                 "os": {
@@ -48017,7 +48017,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_task_models.TaskStatus": {
+        "smlaicloudplatform_internal_task_models.TaskStatus": {
             "type": "object",
             "properties": {
                 "status": {
@@ -48025,7 +48025,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail": {
+        "smlaicloudplatform_internal_transaction_stockbalancedetail_models.StockBalanceDetail": {
             "type": "object",
             "required": [
                 "docno"
@@ -48219,7 +48219,7 @@
                 }
             }
         },
-        "smlcloudplatform_internal_warehouse_models.Location": {
+        "smlaicloudplatform_internal_warehouse_models.Location": {
             "type": "object",
             "required": [
                 "names"

@@ -3,11 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/internal/vfgl/journal/services"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/internal/vfgl/journal/services"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 var repo repositories.JournalPgRepository

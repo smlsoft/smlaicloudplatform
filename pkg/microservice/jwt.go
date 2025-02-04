@@ -3,7 +3,7 @@ package microservice
 import (
 	"fmt"
 	"net/http"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/pkg/microservice/models"
 	"strings"
 	"time"
 

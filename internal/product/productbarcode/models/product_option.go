@@ -1,6 +1,6 @@
 package models
 
-import "smlcloudplatform/internal/models"
+import "smlaicloudplatform/internal/models"
 
 type ProductOption struct {
 	GUID       string           `json:"guid" bson:"guid"`

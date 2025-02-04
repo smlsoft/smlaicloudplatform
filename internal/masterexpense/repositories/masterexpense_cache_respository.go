@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"fmt"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

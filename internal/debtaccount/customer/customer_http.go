@@ -3,15 +3,15 @@ package customer
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/debtaccount/customer/models"
-	"smlcloudplatform/internal/debtaccount/customer/repositories"
-	"smlcloudplatform/internal/debtaccount/customer/services"
-	repositoriesGroup "smlcloudplatform/internal/debtaccount/customergroup/repositories"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/debtaccount/customer/models"
+	"smlaicloudplatform/internal/debtaccount/customer/repositories"
+	"smlaicloudplatform/internal/debtaccount/customer/services"
+	repositoriesGroup "smlaicloudplatform/internal/debtaccount/customergroup/repositories"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ICustomerHttp interface{}

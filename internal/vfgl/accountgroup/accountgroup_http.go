@@ -3,14 +3,14 @@ package accountgroup
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/vfgl/accountgroup/models"
-	"smlcloudplatform/internal/vfgl/accountgroup/repositories"
-	"smlcloudplatform/internal/vfgl/accountgroup/services"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/vfgl/accountgroup/models"
+	"smlaicloudplatform/internal/vfgl/accountgroup/repositories"
+	"smlaicloudplatform/internal/vfgl/accountgroup/services"
+	"smlaicloudplatform/pkg/microservice"
 
-	common "smlcloudplatform/internal/models"
+	common "smlaicloudplatform/internal/models"
 )
 
 type AccountGroupHttp struct {

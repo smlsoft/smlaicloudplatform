@@ -1,8 +1,8 @@
 package models
 
 import (
-	"smlcloudplatform/internal/models"
-	common "smlcloudplatform/internal/models"
+	"smlaicloudplatform/internal/models"
+	common "smlaicloudplatform/internal/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

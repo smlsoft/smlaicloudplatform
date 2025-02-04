@@ -3,12 +3,12 @@ package services
 import (
 	"context"
 	"errors"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/importdata"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/importdata"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"

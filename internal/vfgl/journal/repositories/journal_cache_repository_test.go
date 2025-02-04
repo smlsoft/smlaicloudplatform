@@ -1,9 +1,9 @@
 package repositories_test
 
 import (
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 )
 

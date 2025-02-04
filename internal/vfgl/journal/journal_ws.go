@@ -3,18 +3,18 @@ package journal
 import (
 	"encoding/json"
 	"net/http"
-	documentimageRepo "smlcloudplatform/internal/documentwarehouse/documentimage/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/vfgl/journal/config"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/internal/vfgl/journal/services"
-	"smlcloudplatform/pkg/microservice"
+	documentimageRepo "smlaicloudplatform/internal/documentwarehouse/documentimage/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/vfgl/journal/config"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/internal/vfgl/journal/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 	"unicode/utf8"
 
-	msConfig "smlcloudplatform/internal/config"
+	msConfig "smlaicloudplatform/internal/config"
 
 	"github.com/gorilla/websocket"
 )

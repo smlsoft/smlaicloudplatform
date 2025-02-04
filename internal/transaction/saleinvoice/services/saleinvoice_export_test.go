@@ -2,10 +2,10 @@ package services_test
 
 import (
 	"encoding/json"
-	pkg_models "smlcloudplatform/internal/models"
-	trans_models "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/saleinvoice/models"
-	"smlcloudplatform/internal/transaction/saleinvoice/services"
+	pkg_models "smlaicloudplatform/internal/models"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/saleinvoice/models"
+	"smlaicloudplatform/internal/transaction/saleinvoice/services"
 	"testing"
 	"time"
 

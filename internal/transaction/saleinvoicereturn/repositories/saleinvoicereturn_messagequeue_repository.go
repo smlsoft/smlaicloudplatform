@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/saleinvoicereturn/config"
-	"smlcloudplatform/internal/transaction/saleinvoicereturn/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/saleinvoicereturn/config"
+	"smlaicloudplatform/internal/transaction/saleinvoicereturn/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISaleInvoiceReturnMessageQueueRepository interface {

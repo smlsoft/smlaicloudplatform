@@ -2,10 +2,10 @@ package debtoradmin
 
 import (
 	"context"
-	debtorRepositories "smlcloudplatform/internal/debtaccount/debtor/repositories"
-	debtorProcessModels "smlcloudplatform/internal/debtorprocess/models"
-	debtorProcessRepository "smlcloudplatform/internal/debtorprocess/repositories"
-	"smlcloudplatform/pkg/microservice"
+	debtorRepositories "smlaicloudplatform/internal/debtaccount/debtor/repositories"
+	debtorProcessModels "smlaicloudplatform/internal/debtorprocess/models"
+	debtorProcessRepository "smlaicloudplatform/internal/debtorprocess/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

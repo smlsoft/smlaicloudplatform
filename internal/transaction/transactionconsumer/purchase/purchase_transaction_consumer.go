@@ -2,19 +2,19 @@ package purchase
 
 import (
 	"encoding/json"
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/transaction/models"
-	purchaseConfig "smlcloudplatform/internal/transaction/purchase/config"
-	"smlcloudplatform/internal/transaction/transactionconsumer/creditortransaction"
-	"smlcloudplatform/internal/transaction/transactionconsumer/services"
-	"smlcloudplatform/internal/transaction/transactionconsumer/stocktransaction"
-	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	"smlaicloudplatform/internal/transaction/models"
+	purchaseConfig "smlaicloudplatform/internal/transaction/purchase/config"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/creditortransaction"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/services"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/stocktransaction"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/usecases"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	trans_models "smlcloudplatform/internal/transaction/models"
-	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	transaction_payment_consume "smlaicloudplatform/internal/transaction/transactionconsumer/payment"
 )
 
 type PurchaseTransactionConsumer struct {

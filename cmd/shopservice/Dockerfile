@@ -1,5 +1,5 @@
 
-## smlsoft/smlcloudplatform:shop
+## smlsoft/smlaicloudplatform:shop
 ##
 ## Builder
 ##

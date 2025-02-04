@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   inventory:
-    image: smlsoft/smlcloudplatform:imageuploadservice
+    image: smlsoft/smlaicloudplatform:imageuploadservice
     restart: always
     expose:
       - 8080

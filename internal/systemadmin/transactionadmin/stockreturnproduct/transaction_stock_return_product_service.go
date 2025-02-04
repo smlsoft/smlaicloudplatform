@@ -2,8 +2,8 @@ package stockreturnproduct
 
 import (
 	"context"
-	stockreturnproductrepositories "smlcloudplatform/internal/transaction/stockreturnproduct/repositories"
-	"smlcloudplatform/pkg/microservice"
+	stockreturnproductrepositories "smlaicloudplatform/internal/transaction/stockreturnproduct/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

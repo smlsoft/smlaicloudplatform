@@ -3,10 +3,10 @@ package shop
 import (
 	"context"
 	"errors"
-	auth_model "smlcloudplatform/internal/authentication/models"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/shop/models"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	auth_model "smlaicloudplatform/internal/authentication/models"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/shop/models"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"

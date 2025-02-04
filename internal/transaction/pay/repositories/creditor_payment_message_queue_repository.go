@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/pay/config"
-	"smlcloudplatform/internal/transaction/pay/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/pay/config"
+	"smlaicloudplatform/internal/transaction/pay/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ICreditorPaymentMessageQueueRepository interface {

@@ -2,8 +2,8 @@ package services_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/productimport/models"
-	"smlcloudplatform/internal/productimport/services"
+	"smlaicloudplatform/internal/productimport/models"
+	"smlaicloudplatform/internal/productimport/services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

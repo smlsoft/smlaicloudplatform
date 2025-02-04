@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 	_ "net/http/pprof"
-	"smlcloudplatform/internal/authentication"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/vfgl/journal"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/authentication"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/vfgl/journal"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

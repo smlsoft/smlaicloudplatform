@@ -11,11 +11,11 @@
 #       - docker/build:
 #           # deploy: false
 #           #dockerfile: Dockerfile-K8S
-#           image: smlsoft/smlcloudplatform
+#           image: smlsoft/smlaicloudplatform
 #           #use-docker-credentials-store: true
 #           tag: apidev
 #       - docker/push:
-#           image: smlsoft/smlcloudplatform
+#           image: smlsoft/smlaicloudplatform
 #           tag: apidev
           
 #   deploy-dev:
@@ -34,11 +34,11 @@
 #       - docker/build:
 #           # deploy: false
 #           #dockerfile: Dockerfile-K8S
-#           image: smlsoft/smlcloudplatform
+#           image: smlsoft/smlaicloudplatform
 #           #use-docker-credentials-store: true
 #           tag: apiprod
 #       - docker/push:
-#           image: smlsoft/smlcloudplatform
+#           image: smlsoft/smlaicloudplatform
 #           tag: apiprod
 #   deploy-prod-cluster:
 #     executor: docker/machine

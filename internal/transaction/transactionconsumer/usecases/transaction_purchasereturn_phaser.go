@@ -3,10 +3,10 @@ package usecases
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
 
-	purchaseReturnModels "smlcloudplatform/internal/transaction/purchasereturn/models"
+	purchaseReturnModels "smlaicloudplatform/internal/transaction/purchasereturn/models"
 )
 
 type StockTransactionPurchaseReturnPhaser struct{}

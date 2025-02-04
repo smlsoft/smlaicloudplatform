@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"math"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/pkg/microservice"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 )
 
 type IProductBarcodeClickhouseRepository interface {

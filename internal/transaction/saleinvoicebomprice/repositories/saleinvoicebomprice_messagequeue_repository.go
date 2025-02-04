@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/config"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/config"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISaleInvoiceBOMPriceMessageQueueRepository interface {

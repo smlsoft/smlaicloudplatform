@@ -2,14 +2,14 @@ package saleinvoicebomprice
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/config"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/models"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/services"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/config"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/models"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/repositories"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	pkgConfig "smlcloudplatform/internal/config"
+	pkgConfig "smlaicloudplatform/internal/config"
 )
 
 type SaleInvoiceBomPriceConsumer struct {

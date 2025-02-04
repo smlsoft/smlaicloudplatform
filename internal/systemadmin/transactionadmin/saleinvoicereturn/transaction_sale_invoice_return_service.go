@@ -2,8 +2,8 @@ package saleinvoicereturn
 
 import (
 	"context"
-	saleInvoiceReturnRepo "smlcloudplatform/internal/transaction/saleinvoicereturn/repositories"
-	"smlcloudplatform/pkg/microservice"
+	saleInvoiceReturnRepo "smlaicloudplatform/internal/transaction/saleinvoicereturn/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

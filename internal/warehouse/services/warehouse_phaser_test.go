@@ -1,7 +1,7 @@
 package services_test
 
 import (
-	"smlcloudplatform/internal/warehouse/services"
+	"smlaicloudplatform/internal/warehouse/services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

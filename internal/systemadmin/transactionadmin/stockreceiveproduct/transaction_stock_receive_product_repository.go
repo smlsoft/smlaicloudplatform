@@ -2,8 +2,8 @@ package stockreceiveproduct
 
 import (
 	"context"
-	stockReceiveProductModels "smlcloudplatform/internal/transaction/stockreceiveproduct/models"
-	"smlcloudplatform/pkg/microservice"
+	stockReceiveProductModels "smlaicloudplatform/internal/transaction/stockreceiveproduct/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

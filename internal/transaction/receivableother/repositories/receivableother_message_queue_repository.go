@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/receivableother/config"
-	"smlcloudplatform/internal/transaction/receivableother/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/receivableother/config"
+	"smlaicloudplatform/internal/transaction/receivableother/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IReceivableOtherMessageQueueRepository interface {

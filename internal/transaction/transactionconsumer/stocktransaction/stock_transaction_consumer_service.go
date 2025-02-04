@@ -1,10 +1,10 @@
 package stocktransaction
 
 import (
-	"smlcloudplatform/internal/logger"
-	stockProcessRepository "smlcloudplatform/internal/stockprocess/repositories"
-	"smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/logger"
+	stockProcessRepository "smlaicloudplatform/internal/stockprocess/repositories"
+	"smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"gorm.io/gorm"
 )

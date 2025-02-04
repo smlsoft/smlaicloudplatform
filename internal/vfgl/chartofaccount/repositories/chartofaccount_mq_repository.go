@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/vfgl/chartofaccount/config"
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/config"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IChartOfAccountMQRepository interface {

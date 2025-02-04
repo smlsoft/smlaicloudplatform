@@ -3,16 +3,16 @@ package paid
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/paid/models"
-	"smlcloudplatform/internal/transaction/paid/repositories"
-	"smlcloudplatform/internal/transaction/paid/services"
-	trancache "smlcloudplatform/internal/transaction/repositories"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/paid/models"
+	"smlaicloudplatform/internal/transaction/paid/repositories"
+	"smlaicloudplatform/internal/transaction/paid/services"
+	trancache "smlaicloudplatform/internal/transaction/repositories"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IPaidHttp interface{}

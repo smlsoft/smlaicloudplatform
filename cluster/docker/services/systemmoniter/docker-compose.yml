@@ -34,7 +34,7 @@ services:
     expose:
       - 8080
     environment:
-      - KAFKA_CLUSTERS_0_NAME=smlcloudplatform-kafka
+      - KAFKA_CLUSTERS_0_NAME=smlaicloudplatform-kafka
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
       - SERVER_SERVLET_CONTEXT_PATH=/kafkaui

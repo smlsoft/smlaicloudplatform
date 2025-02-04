@@ -3,14 +3,14 @@ package staff
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/restaurant/staff/models"
-	"smlcloudplatform/internal/restaurant/staff/repositories"
-	"smlcloudplatform/internal/restaurant/staff/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/restaurant/staff/models"
+	"smlaicloudplatform/internal/restaurant/staff/repositories"
+	"smlaicloudplatform/internal/restaurant/staff/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStaffHttp interface{}

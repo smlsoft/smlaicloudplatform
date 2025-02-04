@@ -3,10 +3,10 @@ package option_test
 import (
 	"context"
 	"os"
-	"smlcloudplatform/internal/product/option"
-	"smlcloudplatform/internal/product/option/models"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/option"
+	"smlaicloudplatform/internal/product/option/models"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 )
 

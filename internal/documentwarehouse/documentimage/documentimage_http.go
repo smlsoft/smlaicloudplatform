@@ -8,17 +8,17 @@ import (
 	"strings"
 	"time"
 
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/documentwarehouse/documentimage/models"
-	"smlcloudplatform/internal/documentwarehouse/documentimage/repositories"
-	"smlcloudplatform/internal/documentwarehouse/documentimage/services"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/models"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/repositories"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/services"
+	"smlaicloudplatform/pkg/microservice"
 
-	journalRepo "smlcloudplatform/internal/vfgl/journal/repositories"
-	journalSvc "smlcloudplatform/internal/vfgl/journal/services"
+	journalRepo "smlaicloudplatform/internal/vfgl/journal/repositories"
+	journalSvc "smlaicloudplatform/internal/vfgl/journal/services"
 
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

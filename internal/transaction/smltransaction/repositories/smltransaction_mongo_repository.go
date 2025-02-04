@@ -2,9 +2,9 @@ package repositories
 
 import (
 	"context"
-	"smlcloudplatform/internal/transaction/smltransaction/models"
-	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/transaction/smltransaction/models"
+	"smlaicloudplatform/pkg/microservice"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"

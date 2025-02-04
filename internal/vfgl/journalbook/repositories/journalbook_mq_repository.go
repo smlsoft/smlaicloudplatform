@@ -1,11 +1,11 @@
 package repositories
 
 import (
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/vfgl/journalbook/config"
-	"smlcloudplatform/internal/vfgl/journalbook/models"
-	"smlcloudplatform/pkg/microservice"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/vfgl/journalbook/config"
+	"smlaicloudplatform/internal/vfgl/journalbook/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IJournalBookMqRepository interface {

@@ -4,9 +4,9 @@ package shop
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/pkg/microservice"
-	"smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
 	"strconv"
 	"time"
 

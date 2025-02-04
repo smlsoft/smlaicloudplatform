@@ -3,7 +3,7 @@ package datamigration
 import (
 	"context"
 	"encoding/json"
-	journalBookModels "smlcloudplatform/internal/vfgl/journalbook/models"
+	journalBookModels "smlaicloudplatform/internal/vfgl/journalbook/models"
 )
 
 func (m *MigrationService) InitJournalBookCenter() error {

@@ -1,7 +1,7 @@
 package stockcalculator_test
 
 import (
-	"smlcloudplatform/pkg/stockcalculator"
+	"smlaicloudplatform/pkg/stockcalculator"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

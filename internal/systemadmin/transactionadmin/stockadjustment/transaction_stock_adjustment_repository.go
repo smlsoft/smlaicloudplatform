@@ -2,8 +2,8 @@ package stockadjustment
 
 import (
 	"context"
-	stockadjustmentmodels "smlcloudplatform/internal/transaction/stockadjustment/models"
-	"smlcloudplatform/pkg/microservice"
+	stockadjustmentmodels "smlaicloudplatform/internal/transaction/stockadjustment/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

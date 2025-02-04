@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/vfgl/journal/config"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/vfgl/journal/config"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IJournalMqRepository interface {

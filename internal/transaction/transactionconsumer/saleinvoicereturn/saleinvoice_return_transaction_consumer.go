@@ -2,19 +2,19 @@ package saleinvoicereturn
 
 import (
 	"encoding/json"
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/transaction/models"
-	saleInvoiceReturnConfig "smlcloudplatform/internal/transaction/saleinvoicereturn/config"
-	"smlcloudplatform/internal/transaction/transactionconsumer/debtortransaction"
-	"smlcloudplatform/internal/transaction/transactionconsumer/services"
-	"smlcloudplatform/internal/transaction/transactionconsumer/stocktransaction"
-	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	"smlaicloudplatform/internal/transaction/models"
+	saleInvoiceReturnConfig "smlaicloudplatform/internal/transaction/saleinvoicereturn/config"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/debtortransaction"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/services"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/stocktransaction"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/usecases"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	trans_models "smlcloudplatform/internal/transaction/models"
-	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	transaction_payment_consume "smlaicloudplatform/internal/transaction/transactionconsumer/payment"
 )
 
 type SaleInvoiceReturnTransactionConsumer struct {

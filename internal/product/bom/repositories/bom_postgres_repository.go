@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/product/bom/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/bom/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"gorm.io/gorm"
 )

@@ -2,10 +2,10 @@ package creditorpayment
 
 import (
 	"encoding/json"
-	models "smlcloudplatform/internal/transaction/models"
+	models "smlaicloudplatform/internal/transaction/models"
 
-	pkgModels "smlcloudplatform/internal/models"
-	creditorpaymentmodels "smlcloudplatform/internal/transaction/pay/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	creditorpaymentmodels "smlaicloudplatform/internal/transaction/pay/models"
 )
 
 type CreditorPaymentTransactionPhaser struct{}

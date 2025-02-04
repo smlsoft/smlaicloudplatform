@@ -1,14 +1,14 @@
 package stockpickupproduct
 
 import (
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/transaction/models"
-	stockpickupproductconfig "smlcloudplatform/internal/transaction/stockpickupproduct/config"
-	"smlcloudplatform/internal/transaction/transactionconsumer/services"
-	"smlcloudplatform/internal/transaction/transactionconsumer/stocktransaction"
-	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	"smlaicloudplatform/internal/transaction/models"
+	stockpickupproductconfig "smlaicloudplatform/internal/transaction/stockpickupproduct/config"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/services"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/stocktransaction"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/usecases"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

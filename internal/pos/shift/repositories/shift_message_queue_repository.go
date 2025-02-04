@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/pos/shift/config"
-	"smlcloudplatform/internal/pos/shift/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/pos/shift/config"
+	"smlaicloudplatform/internal/pos/shift/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IShiftMessageQueueRepository interface {

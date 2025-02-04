@@ -2,7 +2,7 @@ package microservice_test
 
 import (
 	"fmt"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"gorm.io/gorm/clause"

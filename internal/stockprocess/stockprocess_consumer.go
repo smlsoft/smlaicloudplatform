@@ -2,12 +2,12 @@ package stockprocess
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/config"
-	productBarcodeRepositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	stockProcessConfig "smlcloudplatform/internal/stockprocess/config"
-	"smlcloudplatform/internal/stockprocess/models"
-	"smlcloudplatform/internal/stockprocess/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	productBarcodeRepositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	stockProcessConfig "smlaicloudplatform/internal/stockprocess/config"
+	"smlaicloudplatform/internal/stockprocess/models"
+	"smlaicloudplatform/internal/stockprocess/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

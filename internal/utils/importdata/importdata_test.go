@@ -2,7 +2,7 @@ package importdata_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/utils/importdata"
+	"smlaicloudplatform/internal/utils/importdata"
 	"testing"
 
 	"github.com/stretchr/testify/require"

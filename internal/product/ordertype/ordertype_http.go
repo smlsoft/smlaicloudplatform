@@ -3,15 +3,15 @@ package ordertype
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/ordertype/models"
-	"smlcloudplatform/internal/product/ordertype/repositories"
-	"smlcloudplatform/internal/product/ordertype/services"
-	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/ordertype/models"
+	"smlaicloudplatform/internal/product/ordertype/repositories"
+	"smlaicloudplatform/internal/product/ordertype/services"
+	productbarcode_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IOrderTypeHttp interface{}

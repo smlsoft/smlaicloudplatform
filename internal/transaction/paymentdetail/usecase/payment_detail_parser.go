@@ -3,8 +3,8 @@ package usecase
 import (
 	"encoding/json"
 	"regexp"
-	transmodels "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/paymentdetail/models"
+	transmodels "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/paymentdetail/models"
 )
 
 func ParseTransactionToPaymentDetail(other transmodels.TransactionMessageQueue) ([]models.TransactionPaymentDetail, error) {

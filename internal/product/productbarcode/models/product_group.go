@@ -1,6 +1,6 @@
 package models
 
-import "smlcloudplatform/internal/models"
+import "smlaicloudplatform/internal/models"
 
 type ProductGroup struct {
 	Code  string          `json:"code" bson:"code"`

@@ -3,12 +3,12 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	shopModel "smlcloudplatform/internal/shop/models"
-	accountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	journalModels "smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	shopModel "smlaicloudplatform/internal/shop/models"
+	accountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	journalModels "smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IMigrationAPI interface {

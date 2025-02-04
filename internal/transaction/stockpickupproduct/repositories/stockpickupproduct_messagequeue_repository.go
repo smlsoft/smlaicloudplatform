@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/stockpickupproduct/config"
-	"smlcloudplatform/internal/transaction/stockpickupproduct/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/stockpickupproduct/config"
+	"smlaicloudplatform/internal/transaction/stockpickupproduct/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockPickupProductMessageQueueRepository interface {

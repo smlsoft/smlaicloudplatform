@@ -1,9 +1,9 @@
 package services
 
 import (
-	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/warehouse/models"
-	"smlcloudplatform/internal/warehouse/repositories"
+	"smlaicloudplatform/internal/logger"
+	"smlaicloudplatform/internal/warehouse/models"
+	"smlaicloudplatform/internal/warehouse/repositories"
 )
 
 type IWarehouseConsumerService interface {

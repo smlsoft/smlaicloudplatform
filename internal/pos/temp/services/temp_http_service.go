@@ -1,7 +1,7 @@
 package services
 
 import (
-	"smlcloudplatform/internal/pos/temp/repositories"
+	"smlaicloudplatform/internal/pos/temp/repositories"
 	"time"
 )
 

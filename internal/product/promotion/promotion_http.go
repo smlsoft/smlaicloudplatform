@@ -3,15 +3,15 @@ package promotion
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/promotion/models"
-	"smlcloudplatform/internal/product/promotion/repositories"
-	"smlcloudplatform/internal/product/promotion/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/promotion/models"
+	"smlaicloudplatform/internal/product/promotion/repositories"
+	"smlaicloudplatform/internal/product/promotion/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IPromotionHttp interface{}

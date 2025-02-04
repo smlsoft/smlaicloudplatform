@@ -3,8 +3,8 @@ package datamigration
 import (
 	"context"
 	"encoding/json"
-	chartOfAccountKafkaConfig "smlcloudplatform/internal/vfgl/chartofaccount/config"
-	accountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
+	chartOfAccountKafkaConfig "smlaicloudplatform/internal/vfgl/chartofaccount/config"
+	accountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
 )
 
 func (m *MigrationService) ImportChartOfAccount(charts []accountModel.ChartOfAccountDoc) error {

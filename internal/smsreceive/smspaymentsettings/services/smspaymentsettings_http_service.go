@@ -3,11 +3,11 @@ package services
 import (
 	"context"
 	"errors"
-	smspatternsrepo "smlcloudplatform/internal/smsreceive/smspatterns/repositories"
-	"smlcloudplatform/internal/smsreceive/smspaymentsettings/models"
-	"smlcloudplatform/internal/smsreceive/smspaymentsettings/repositories"
-	"smlcloudplatform/internal/utils"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	smspatternsrepo "smlaicloudplatform/internal/smsreceive/smspatterns/repositories"
+	"smlaicloudplatform/internal/smsreceive/smspaymentsettings/models"
+	"smlaicloudplatform/internal/smsreceive/smspaymentsettings/repositories"
+	"smlaicloudplatform/internal/utils"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"

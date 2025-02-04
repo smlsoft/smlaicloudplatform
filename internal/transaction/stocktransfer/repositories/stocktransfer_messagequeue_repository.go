@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/stocktransfer/config"
-	"smlcloudplatform/internal/transaction/stocktransfer/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/stocktransfer/config"
+	"smlaicloudplatform/internal/transaction/stocktransfer/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockTransferMessageQueueRepository interface {

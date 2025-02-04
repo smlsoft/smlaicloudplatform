@@ -2,14 +2,14 @@ package bom
 
 import (
 	"encoding/json"
-	bomConfig "smlcloudplatform/internal/product/bom/config"
-	"smlcloudplatform/internal/product/bom/models"
-	"smlcloudplatform/internal/product/bom/repositories"
-	"smlcloudplatform/internal/product/bom/services"
-	"smlcloudplatform/pkg/microservice"
+	bomConfig "smlaicloudplatform/internal/product/bom/config"
+	"smlaicloudplatform/internal/product/bom/models"
+	"smlaicloudplatform/internal/product/bom/repositories"
+	"smlaicloudplatform/internal/product/bom/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	pkgConfig "smlcloudplatform/internal/config"
+	pkgConfig "smlaicloudplatform/internal/config"
 )
 
 type BOMConsumer struct {

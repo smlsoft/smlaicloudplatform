@@ -1,9 +1,9 @@
 package migration
 
 import (
-	"smlcloudplatform/internal/config"
-	vfgl "smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	vfgl "smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 func StartMigrateModel(ms *microservice.Microservice, cfg config.IConfig) error {

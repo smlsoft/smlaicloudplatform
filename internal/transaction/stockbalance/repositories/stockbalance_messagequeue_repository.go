@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/stockbalance/config"
-	"smlcloudplatform/internal/transaction/stockbalance/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/stockbalance/config"
+	"smlaicloudplatform/internal/transaction/stockbalance/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockBalanceMessageQueueRepository interface {

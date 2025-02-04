@@ -3,7 +3,7 @@ package microservice
 import (
 	"context"
 	"fmt"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"sync"
 
 	"github.com/ClickHouse/clickhouse-go/v2"

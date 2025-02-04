@@ -1,7 +1,7 @@
 package usecase_test
 
 import (
-	"smlcloudplatform/internal/vfgl/journalreport/usecase"
+	"smlaicloudplatform/internal/vfgl/journalreport/usecase"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

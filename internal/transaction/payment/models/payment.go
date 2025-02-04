@@ -1,7 +1,7 @@
 package models
 
 import (
-	"smlcloudplatform/internal/models"
+	"smlaicloudplatform/internal/models"
 	"time"
 
 	"github.com/google/go-cmp/cmp"

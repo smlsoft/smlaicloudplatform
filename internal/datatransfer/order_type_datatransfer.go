@@ -2,11 +2,11 @@ package datatransfer
 
 import (
 	"context"
-	"smlcloudplatform/internal/product/ordertype/models"
-	orderTypeRepository "smlcloudplatform/internal/product/ordertype/repositories"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/product/ordertype/models"
+	orderTypeRepository "smlaicloudplatform/internal/product/ordertype/repositories"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"

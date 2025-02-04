@@ -3,14 +3,14 @@ package device
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/order/device/models"
-	"smlcloudplatform/internal/order/device/repositories"
-	"smlcloudplatform/internal/order/device/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/order/device/models"
+	"smlaicloudplatform/internal/order/device/repositories"
+	"smlaicloudplatform/internal/order/device/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

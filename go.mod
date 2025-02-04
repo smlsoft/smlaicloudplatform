@@ -1,4 +1,4 @@
-module smlcloudplatform
+module smlaicloudplatform
 
 go 1.18
 

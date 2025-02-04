@@ -2,10 +2,10 @@ package media
 
 import (
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/pkg/microservice"
 
-	common "smlcloudplatform/internal/models"
+	common "smlaicloudplatform/internal/models"
 )
 
 type IMediaHTTP interface {

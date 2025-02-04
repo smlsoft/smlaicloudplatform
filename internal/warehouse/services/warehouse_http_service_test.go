@@ -3,10 +3,10 @@ package services_test
 import (
 	"context"
 	"errors"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/warehouse/models"
-	"smlcloudplatform/internal/warehouse/services"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/warehouse/models"
+	"smlaicloudplatform/internal/warehouse/services"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"testing"
 	"time"
 

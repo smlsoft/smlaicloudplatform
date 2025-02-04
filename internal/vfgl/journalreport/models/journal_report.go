@@ -1,7 +1,7 @@
 package models
 
 import (
-	chartofaccountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
+	chartofaccountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
 	"time"
 )
 

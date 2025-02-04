@@ -1,8 +1,8 @@
 package models
 
 import (
-	"smlcloudplatform/internal/models"
-	printerModel "smlcloudplatform/internal/restaurant/printer/models"
+	"smlaicloudplatform/internal/models"
+	printerModel "smlaicloudplatform/internal/restaurant/printer/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

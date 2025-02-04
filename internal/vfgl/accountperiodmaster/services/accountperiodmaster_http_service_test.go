@@ -2,8 +2,8 @@ package services_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/vfgl/accountperiodmaster/models"
-	"smlcloudplatform/internal/vfgl/accountperiodmaster/services"
+	"smlaicloudplatform/internal/vfgl/accountperiodmaster/models"
+	"smlaicloudplatform/internal/vfgl/accountperiodmaster/services"
 	"testing"
 	"time"
 

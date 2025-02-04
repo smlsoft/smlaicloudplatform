@@ -3,10 +3,10 @@ package repositories_test
 import (
 	"encoding/json"
 	"os"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

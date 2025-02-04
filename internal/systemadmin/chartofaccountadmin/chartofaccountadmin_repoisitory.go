@@ -2,9 +2,9 @@ package chartofaccountadmin
 
 import (
 	"context"
-	chartOfAccountModels "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	chartOfAccountModels "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"

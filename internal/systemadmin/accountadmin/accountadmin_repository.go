@@ -2,7 +2,7 @@ package accountadmin
 
 import (
 	"context"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

@@ -1,8 +1,8 @@
 package services
 
 import (
-	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
-	trans_models "smlcloudplatform/internal/transaction/models"
+	productbarcode_models "smlaicloudplatform/internal/product/productbarcode/models"
+	trans_models "smlaicloudplatform/internal/transaction/models"
 )
 
 type StockTransferParser struct{}

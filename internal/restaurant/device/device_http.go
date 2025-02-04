@@ -3,14 +3,14 @@ package device
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/restaurant/device/models"
-	"smlcloudplatform/internal/restaurant/device/repositories"
-	"smlcloudplatform/internal/restaurant/device/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/restaurant/device/models"
+	"smlaicloudplatform/internal/restaurant/device/repositories"
+	"smlaicloudplatform/internal/restaurant/device/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IDeviceHttp interface{}

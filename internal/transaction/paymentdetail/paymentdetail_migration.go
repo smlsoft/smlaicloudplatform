@@ -1,9 +1,9 @@
 package paymentdetail
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/transaction/paymentdetail/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/transaction/paymentdetail/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 func MigrationDatabase(ms *microservice.Microservice, cfg config.IConfig) error {

@@ -2,12 +2,12 @@ package shop_test
 
 import (
 	"context"
-	auth_model "smlcloudplatform/internal/authentication/models"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/shop"
-	"smlcloudplatform/internal/shop/models"
-	utilmock "smlcloudplatform/mock"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	auth_model "smlaicloudplatform/internal/authentication/models"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/shop"
+	"smlaicloudplatform/internal/shop/models"
+	utilmock "smlaicloudplatform/mock"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"testing"
 	"time"
 

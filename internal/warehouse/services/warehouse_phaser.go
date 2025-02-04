@@ -2,7 +2,7 @@ package services
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/warehouse/models"
+	"smlaicloudplatform/internal/warehouse/models"
 )
 
 type WarehousePhaser struct{}

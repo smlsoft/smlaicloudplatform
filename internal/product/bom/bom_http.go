@@ -2,16 +2,16 @@ package bom
 
 import (
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/bom/repositories"
-	"smlcloudplatform/internal/product/bom/services"
-	product_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	saleinvoicebom_repositories "smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
-	saleinvoicebom_services "smlcloudplatform/internal/transaction/saleinvoicebomprice/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/bom/repositories"
+	"smlaicloudplatform/internal/product/bom/services"
+	product_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	saleinvoicebom_repositories "smlaicloudplatform/internal/transaction/saleinvoicebomprice/repositories"
+	saleinvoicebom_services "smlaicloudplatform/internal/transaction/saleinvoicebomprice/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IBOMHttp interface{}

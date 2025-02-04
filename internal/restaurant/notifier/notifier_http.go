@@ -3,13 +3,13 @@ package notifier
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/restaurant/notifier/models"
-	"smlcloudplatform/internal/restaurant/notifier/repositories"
-	"smlcloudplatform/internal/restaurant/notifier/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/restaurant/notifier/models"
+	"smlaicloudplatform/internal/restaurant/notifier/repositories"
+	"smlaicloudplatform/internal/restaurant/notifier/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

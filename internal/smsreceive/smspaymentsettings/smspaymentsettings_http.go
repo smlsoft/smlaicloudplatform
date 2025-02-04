@@ -3,14 +3,14 @@ package smspaymentsettings
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	smspatternsrepo "smlcloudplatform/internal/smsreceive/smspatterns/repositories"
-	"smlcloudplatform/internal/smsreceive/smspaymentsettings/models"
-	"smlcloudplatform/internal/smsreceive/smspaymentsettings/repositories"
-	"smlcloudplatform/internal/smsreceive/smspaymentsettings/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	smspatternsrepo "smlaicloudplatform/internal/smsreceive/smspatterns/repositories"
+	"smlaicloudplatform/internal/smsreceive/smspaymentsettings/models"
+	"smlaicloudplatform/internal/smsreceive/smspaymentsettings/repositories"
+	"smlaicloudplatform/internal/smsreceive/smspaymentsettings/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISmsPaymentSettingsHttp interface{}

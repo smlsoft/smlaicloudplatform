@@ -2,7 +2,7 @@ package datatransfer
 
 import (
 	"context"
-	shopModule "smlcloudplatform/internal/shop"
+	shopModule "smlaicloudplatform/internal/shop"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

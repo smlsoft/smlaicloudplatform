@@ -2,7 +2,7 @@ name: Build Deploy API Member Dev 🤖
 on: [workflow_dispatch]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: smlsoft/smlcloudmemberapi
+  IMAGE_NAME: smlsoft/smlaicloudmemberapi
   DISCORD_CHANNEL: "1139124359731093614"
 
 jobs:
@@ -64,5 +64,5 @@ jobs:
         run: |
             SHORT_SHA="${GITHUB_SHA::7}"
             BOT_TOKEN="${{ secrets.DISCORD_BOT }}"
-            curl -X POST -H "Content-Type: application/json" -H "Authorization: Bot $BOT_TOKEN" -d "{\"content\": \"🚀 New SMLCloudPlatform API Member Develop deploy available: $REGISTRY/$IMAGE_NAME:sha-$SHORT_SHA\"}" https://discordapp.com/api/channels/$DISCORD_CHANNEL/messages
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: Bot $BOT_TOKEN" -d "{\"content\": \"🚀 New SMLAICloudPlatform API Member Develop deploy available: $REGISTRY/$IMAGE_NAME:sha-$SHORT_SHA\"}" https://discordapp.com/api/channels/$DISCORD_CHANNEL/messages
           

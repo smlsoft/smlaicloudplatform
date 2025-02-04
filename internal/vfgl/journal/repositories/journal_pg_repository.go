@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"gorm.io/gorm/clause"
 )

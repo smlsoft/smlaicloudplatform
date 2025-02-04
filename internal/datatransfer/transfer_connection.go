@@ -1,6 +1,6 @@
 package datatransfer
 
-import "smlcloudplatform/pkg/microservice"
+import "smlaicloudplatform/pkg/microservice"
 
 type IDataTransferConnection interface {
 	GetSourceConnection() microservice.IPersisterMongo

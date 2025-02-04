@@ -3,9 +3,9 @@ package stockpickupproduct
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	stockPickupModels "smlcloudplatform/internal/transaction/stockpickupproduct/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	stockPickupModels "smlaicloudplatform/internal/transaction/stockpickupproduct/models"
 )
 
 type StockPickUpTransactionPhaser struct{}

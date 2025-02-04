@@ -3,13 +3,13 @@ package smltransaction
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/smltransaction/models"
-	"smlcloudplatform/internal/transaction/smltransaction/repositories"
-	"smlcloudplatform/internal/transaction/smltransaction/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/smltransaction/models"
+	"smlaicloudplatform/internal/transaction/smltransaction/repositories"
+	"smlaicloudplatform/internal/transaction/smltransaction/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

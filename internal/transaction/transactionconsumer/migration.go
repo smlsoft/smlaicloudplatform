@@ -1,9 +1,9 @@
 package transactionconsumer
 
 import (
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 func MigrationDatabase(ms *microservice.Microservice, cfg pkgConfig.IConfig) error {

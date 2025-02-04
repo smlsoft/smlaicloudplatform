@@ -2,9 +2,9 @@ package repositories_test
 
 import (
 	"context"
-	"smlcloudplatform/internal/vfgl/accountperiodmaster/repositories"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/accountperiodmaster/repositories"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 	"time"
 )

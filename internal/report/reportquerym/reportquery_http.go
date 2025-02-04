@@ -3,13 +3,13 @@ package reportquerym
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/report/reportquerym/models"
-	"smlcloudplatform/internal/report/reportquerym/repositories"
-	"smlcloudplatform/internal/report/reportquerym/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/report/reportquerym/models"
+	"smlaicloudplatform/internal/report/reportquerym/repositories"
+	"smlaicloudplatform/internal/report/reportquerym/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IReportQueryHttp interface{}

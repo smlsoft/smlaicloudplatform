@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   cloud_authentication:
-    image: smlsoft/smlcloudplatform:authen-1.0
+    image: smlsoft/smlaicloudplatform:authen-1.0
     expose:
       - 8080
     environment:

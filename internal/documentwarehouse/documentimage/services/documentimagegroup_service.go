@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"smlcloudplatform/internal/documentwarehouse/documentimage/models"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/models"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"sort"
 	"time"
 

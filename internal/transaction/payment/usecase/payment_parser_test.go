@@ -2,10 +2,10 @@ package usecase_test
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/models"
-	transmodels "smlcloudplatform/internal/transaction/models"
-	payment_models "smlcloudplatform/internal/transaction/payment/models"
-	"smlcloudplatform/internal/transaction/payment/usecase"
+	"smlaicloudplatform/internal/models"
+	transmodels "smlaicloudplatform/internal/transaction/models"
+	payment_models "smlaicloudplatform/internal/transaction/payment/models"
+	"smlaicloudplatform/internal/transaction/payment/usecase"
 
 	"testing"
 

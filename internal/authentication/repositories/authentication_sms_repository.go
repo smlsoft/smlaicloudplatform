@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

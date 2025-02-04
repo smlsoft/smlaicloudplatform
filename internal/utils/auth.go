@@ -3,8 +3,8 @@ package utils
 import (
 	"context"
 	"fmt"
-	"smlcloudplatform/internal/shop/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/shop/models"
+	"smlaicloudplatform/pkg/microservice"
 	"strings"
 	"time"
 

@@ -2,9 +2,9 @@ package datamigration
 
 import (
 	"context"
-	"smlcloudplatform/internal/shop"
-	shopModel "smlcloudplatform/internal/shop/models"
-	"smlcloudplatform/internal/utils"
+	"smlaicloudplatform/internal/shop"
+	shopModel "smlaicloudplatform/internal/shop/models"
+	"smlaicloudplatform/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

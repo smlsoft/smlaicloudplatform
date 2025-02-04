@@ -1,9 +1,9 @@
 package repositories_test
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/stockprocess/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/stockprocess/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

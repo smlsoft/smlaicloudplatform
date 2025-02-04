@@ -2,13 +2,13 @@ package services
 
 import (
 	"context"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/internal/product/productbarcode/repositories"
-	"smlcloudplatform/internal/product/productbarcode/usecases"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/product/productbarcode/repositories"
+	"smlaicloudplatform/internal/product/productbarcode/usecases"
+	"smlaicloudplatform/pkg/microservice"
 
-	commonModels "smlcloudplatform/internal/models"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	commonModels "smlaicloudplatform/internal/models"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 )
 
 type IProductBarcodeConsumeService interface {

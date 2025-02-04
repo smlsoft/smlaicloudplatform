@@ -1,6 +1,6 @@
 package models
 
-import "smlcloudplatform/internal/models"
+import "smlaicloudplatform/internal/models"
 
 type KitchenProductBarcode struct {
 	Barcode  string           `json:"barcode" bson:"barcode"`

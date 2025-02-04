@@ -3,9 +3,9 @@ package datatransfer
 import (
 	"context"
 	"fmt"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 
-	"smlcloudplatform/internal/shop"
+	"smlaicloudplatform/internal/shop"
 )
 
 type DBTransfer struct {

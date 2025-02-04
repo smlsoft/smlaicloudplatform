@@ -5,8 +5,8 @@ import (
 	"mime/multipart"
 	"net/http"
 	"runtime"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/pkg/microservice/models"
 	"strings"
 	"time"
 

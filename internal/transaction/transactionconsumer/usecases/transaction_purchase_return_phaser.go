@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"smlcloudplatform/internal/transaction/models"
-	purchaseReturnModels "smlcloudplatform/internal/transaction/purchasereturn/models"
+	"smlaicloudplatform/internal/transaction/models"
+	purchaseReturnModels "smlaicloudplatform/internal/transaction/purchasereturn/models"
 )
 
 type PurchaseReturnTransactionPhaser struct{}

@@ -1,8 +1,8 @@
 package services
 
 import (
-	"smlcloudplatform/internal/debtaccount/debtor/models"
-	"smlcloudplatform/internal/debtaccount/debtor/repositories"
+	"smlaicloudplatform/internal/debtaccount/debtor/models"
+	"smlaicloudplatform/internal/debtaccount/debtor/repositories"
 )
 
 type IDebtorConsumerService interface {

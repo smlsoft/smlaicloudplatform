@@ -9,7 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"strings"
 )
 

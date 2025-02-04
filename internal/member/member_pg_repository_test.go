@@ -2,10 +2,10 @@ package member_test
 
 import (
 	"os"
-	"smlcloudplatform/internal/member"
-	"smlcloudplatform/internal/member/models"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/member"
+	"smlaicloudplatform/internal/member/models"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 )
 

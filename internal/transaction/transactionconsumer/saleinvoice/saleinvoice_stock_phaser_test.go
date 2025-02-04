@@ -1,9 +1,9 @@
 package saleinvoice_test
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/saleinvoice"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/saleinvoice"
 	"testing"
 	"time"
 

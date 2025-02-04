@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"strings"
 	"sync"
 

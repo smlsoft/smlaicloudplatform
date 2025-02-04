@@ -5,8 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	tf "smlcloudplatform/internal/datatransfer"
-	"smlcloudplatform/pkg/microservice"
+	tf "smlaicloudplatform/internal/datatransfer"
+	"smlaicloudplatform/pkg/microservice"
 
 	"github.com/joho/godotenv"
 )

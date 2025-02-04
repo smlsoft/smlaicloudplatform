@@ -2,9 +2,9 @@ package saleinvoice
 
 import (
 	"context"
-	saleInvoiceRepository "smlcloudplatform/internal/transaction/saleinvoice/repositories"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	saleInvoiceRepository "smlaicloudplatform/internal/transaction/saleinvoice/repositories"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"

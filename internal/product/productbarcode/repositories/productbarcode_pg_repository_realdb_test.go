@@ -2,15 +2,15 @@ package repositories_test
 
 import (
 	"os"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/internal/product/productbarcode/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/product/productbarcode/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"strconv"
 	"testing"
 	"time"
 
-	commonModel "smlcloudplatform/internal/models"
+	commonModel "smlaicloudplatform/internal/models"
 
 	"github.com/stretchr/testify/assert"
 )

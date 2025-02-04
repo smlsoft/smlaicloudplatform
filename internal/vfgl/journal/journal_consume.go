@@ -2,12 +2,12 @@ package journal
 
 import (
 	"encoding/json"
-	sysConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/vfgl/journal/config"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/internal/vfgl/journal/services"
-	"smlcloudplatform/pkg/microservice"
+	sysConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/vfgl/journal/config"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/internal/vfgl/journal/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

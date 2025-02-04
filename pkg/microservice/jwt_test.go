@@ -1,8 +1,8 @@
 package microservice
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/pkg/microservice/models"
 	"testing"
 )
 

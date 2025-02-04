@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"mime/multipart"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISlipImageStorageImageRepository interface {

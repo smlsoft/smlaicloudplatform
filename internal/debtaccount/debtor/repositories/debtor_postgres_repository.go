@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	debtorModels "smlcloudplatform/internal/debtaccount/debtor/models"
-	"smlcloudplatform/pkg/microservice"
+	debtorModels "smlaicloudplatform/internal/debtaccount/debtor/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"gorm.io/gorm"
 )

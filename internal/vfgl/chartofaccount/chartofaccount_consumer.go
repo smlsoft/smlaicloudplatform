@@ -2,12 +2,12 @@ package chartofaccount
 
 import (
 	"encoding/json"
-	msConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/vfgl/chartofaccount/config"
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/repositories"
-	"smlcloudplatform/internal/vfgl/chartofaccount/services"
-	"smlcloudplatform/pkg/microservice"
+	msConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/config"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

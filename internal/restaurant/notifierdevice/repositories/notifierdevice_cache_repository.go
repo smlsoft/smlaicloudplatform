@@ -2,8 +2,8 @@ package repositories
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/restaurant/notifierdevice/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/restaurant/notifierdevice/models"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/paid/config"
-	"smlcloudplatform/internal/transaction/paid/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/paid/config"
+	"smlaicloudplatform/internal/transaction/paid/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IDebtorPaymentMessageQueueRepository interface {

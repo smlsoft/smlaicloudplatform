@@ -1,9 +1,9 @@
 package purchase_test
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/purchase"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/purchase"
 	"testing"
 	"time"
 

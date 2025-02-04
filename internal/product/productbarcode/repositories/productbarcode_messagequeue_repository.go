@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/product/productbarcode/config"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/productbarcode/config"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IProductBarcodeMessageQueueRepository interface {

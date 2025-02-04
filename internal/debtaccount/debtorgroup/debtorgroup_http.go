@@ -3,14 +3,14 @@ package debtorgroup
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/debtaccount/debtorgroup/models"
-	"smlcloudplatform/internal/debtaccount/debtorgroup/repositories"
-	"smlcloudplatform/internal/debtaccount/debtorgroup/services"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/debtaccount/debtorgroup/models"
+	"smlaicloudplatform/internal/debtaccount/debtorgroup/repositories"
+	"smlaicloudplatform/internal/debtaccount/debtorgroup/services"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IDebtorGroupHttp interface{}

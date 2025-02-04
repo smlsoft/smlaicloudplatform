@@ -3,13 +3,13 @@ package settings
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/restaurant/settings/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/restaurant/settings/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 )
 
 type IRestaurantSettingsHttp interface{}

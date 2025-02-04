@@ -3,14 +3,14 @@ package member
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	"smlcloudplatform/internal/member/models"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/shop"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	"smlaicloudplatform/internal/member/models"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/shop"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

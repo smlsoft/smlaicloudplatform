@@ -3,14 +3,14 @@ package employee
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/shop/employee/models"
-	"smlcloudplatform/internal/shop/employee/repositories"
-	"smlcloudplatform/internal/shop/employee/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/shop/employee/models"
+	"smlaicloudplatform/internal/shop/employee/repositories"
+	"smlaicloudplatform/internal/shop/employee/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IEmployeeHttp interface{}

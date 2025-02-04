@@ -2,24 +2,24 @@ package saleinvoice
 
 import (
 	"encoding/json"
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	saleInvoiceConfig "smlcloudplatform/internal/transaction/saleinvoice/config"
-	"smlcloudplatform/internal/transaction/transactionconsumer/debtortransaction"
-	"smlcloudplatform/internal/transaction/transactionconsumer/services"
-	"smlcloudplatform/internal/transaction/transactionconsumer/stocktransaction"
-	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	saleInvoiceConfig "smlaicloudplatform/internal/transaction/saleinvoice/config"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/debtortransaction"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/services"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/stocktransaction"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/usecases"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	trans_models "smlcloudplatform/internal/transaction/models"
-	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	transaction_payment_consume "smlaicloudplatform/internal/transaction/transactionconsumer/payment"
 
-	productbom_repositories "smlcloudplatform/internal/product/bom/repositories"
-	productbom_services "smlcloudplatform/internal/product/bom/services"
-	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	saleinvoicebomprice_repositories "smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
-	saleinvoicebomprice_services "smlcloudplatform/internal/transaction/saleinvoicebomprice/services"
+	productbom_repositories "smlaicloudplatform/internal/product/bom/repositories"
+	productbom_services "smlaicloudplatform/internal/product/bom/services"
+	productbarcode_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	saleinvoicebomprice_repositories "smlaicloudplatform/internal/transaction/saleinvoicebomprice/repositories"
+	saleinvoicebomprice_services "smlaicloudplatform/internal/transaction/saleinvoicebomprice/services"
 )
 
 type SaleInvoiceTransactionConsumer struct {

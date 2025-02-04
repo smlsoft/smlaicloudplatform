@@ -3,14 +3,14 @@ package media
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/pos/media/models"
-	"smlcloudplatform/internal/pos/media/repositories"
-	"smlcloudplatform/internal/pos/media/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/pos/media/models"
+	"smlaicloudplatform/internal/pos/media/repositories"
+	"smlaicloudplatform/internal/pos/media/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

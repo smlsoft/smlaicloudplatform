@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/transaction/payment/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/transaction/payment/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IPaymentRepository interface {

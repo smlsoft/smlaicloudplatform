@@ -3,14 +3,14 @@ package qrpayment
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/payment/qrpayment/models"
-	"smlcloudplatform/internal/payment/qrpayment/repositories"
-	"smlcloudplatform/internal/payment/qrpayment/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/payment/qrpayment/models"
+	"smlaicloudplatform/internal/payment/qrpayment/repositories"
+	"smlaicloudplatform/internal/payment/qrpayment/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IQrPaymentHttp interface{}

@@ -3,9 +3,9 @@ package stockreturnproduct
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	stockReturnProductModels "smlcloudplatform/internal/transaction/stockreturnproduct/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	stockReturnProductModels "smlaicloudplatform/internal/transaction/stockreturnproduct/models"
 )
 
 type StockReturnTransactionPhaser struct{}

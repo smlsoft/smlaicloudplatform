@@ -1,9 +1,9 @@
 package models
 
 import (
-	"smlcloudplatform/internal/models"
+	"smlaicloudplatform/internal/models"
 
-	optionModel "smlcloudplatform/internal/product/option/models"
+	optionModel "smlaicloudplatform/internal/product/option/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

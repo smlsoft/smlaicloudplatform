@@ -1,7 +1,7 @@
 package services
 
 import (
-	"smlcloudplatform/internal/mastersync/repositories"
+	"smlaicloudplatform/internal/mastersync/repositories"
 	"time"
 )
 

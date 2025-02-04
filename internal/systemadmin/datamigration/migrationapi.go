@@ -3,18 +3,18 @@ package datamigration
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	shopModel "smlcloudplatform/internal/shop/models"
-	adminModels "smlcloudplatform/internal/systemadmin/models"
-	accountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	journalModels "smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	shopModel "smlaicloudplatform/internal/shop/models"
+	adminModels "smlaicloudplatform/internal/systemadmin/models"
+	accountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	journalModels "smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	productBarcodeConfig "smlcloudplatform/internal/product/productbarcode/config"
-	chartOfAccountConfig "smlcloudplatform/internal/vfgl/chartofaccount/config"
-	journalConfig "smlcloudplatform/internal/vfgl/journal/config"
+	productBarcodeConfig "smlaicloudplatform/internal/product/productbarcode/config"
+	chartOfAccountConfig "smlaicloudplatform/internal/vfgl/chartofaccount/config"
+	journalConfig "smlaicloudplatform/internal/vfgl/journal/config"
 )
 
 type IMigrationAPI interface {

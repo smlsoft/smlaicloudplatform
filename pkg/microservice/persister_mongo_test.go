@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice/models"
 	"testing"
 
 	"github.com/tj/assert"

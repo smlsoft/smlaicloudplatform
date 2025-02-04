@@ -2,8 +2,8 @@ package purchase
 
 import (
 	"context"
-	purchaseModels "smlcloudplatform/internal/transaction/purchase/models"
-	"smlcloudplatform/pkg/microservice"
+	purchaseModels "smlaicloudplatform/internal/transaction/purchase/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

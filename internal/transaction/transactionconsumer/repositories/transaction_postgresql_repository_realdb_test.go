@@ -5,12 +5,12 @@ package repositories_test
 // 	"strconv"
 // 	"testing"
 // 	"time"
-// 	"smlcloudplatform/internal/transaction/models"
-// 	"smlcloudplatform/internal/transaction/transactionconsumer/repositories"
-// 	"smlcloudplatform/internal/config"
-// 	"smlcloudplatform/pkg/microservice"
+// 	"smlaicloudplatform/internal/transaction/models"
+// 	"smlaicloudplatform/internal/transaction/transactionconsumer/repositories"
+// 	"smlaicloudplatform/internal/config"
+// 	"smlaicloudplatform/pkg/microservice"
 
-// 	commonModel "smlcloudplatform/internal/models"
+// 	commonModel "smlaicloudplatform/internal/models"
 
 // 	"github.com/tj/assert"
 // )

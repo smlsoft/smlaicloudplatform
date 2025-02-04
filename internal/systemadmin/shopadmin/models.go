@@ -1,7 +1,7 @@
 package shopadmin
 
 import (
-	"smlcloudplatform/internal/models"
+	"smlaicloudplatform/internal/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"

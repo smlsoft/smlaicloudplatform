@@ -3,13 +3,13 @@ package optionpattern
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/optionpattern/models"
-	"smlcloudplatform/internal/product/optionpattern/repositories"
-	"smlcloudplatform/internal/product/optionpattern/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/optionpattern/models"
+	"smlaicloudplatform/internal/product/optionpattern/repositories"
+	"smlaicloudplatform/internal/product/optionpattern/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IOptionPatternHttp interface{}

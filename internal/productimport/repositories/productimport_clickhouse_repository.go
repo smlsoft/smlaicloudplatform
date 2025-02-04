@@ -3,9 +3,9 @@ package repositories
 import (
 	"context"
 	"fmt"
-	"smlcloudplatform/internal/productimport/models"
-	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/productimport/models"
+	"smlaicloudplatform/pkg/microservice"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/fatih/structs"
 )

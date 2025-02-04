@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"sync"
 	"time"
 
@@ -15,7 +15,7 @@ import (
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 
-	internalLogger "smlcloudplatform/internal/logger"
+	internalLogger "smlaicloudplatform/internal/logger"
 )
 
 // IPersister is interface for persister

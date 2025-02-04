@@ -1,7 +1,7 @@
 package serializer_test
 
 // import (
-// 	"smlcloudplatform/pkg/serializer"
+// 	"smlaicloudplatform/pkg/serializer"
 // 	"testing"
 // 	"time"
 

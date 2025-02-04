@@ -2,10 +2,10 @@ package creditoradmin
 
 import (
 	"context"
-	creditorProcessModels "smlcloudplatform/internal/creditorprocess/models"
-	creditorProcessRepositories "smlcloudplatform/internal/creditorprocess/repositories"
-	creditorRepositories "smlcloudplatform/internal/debtaccount/creditor/repositories"
-	"smlcloudplatform/pkg/microservice"
+	creditorProcessModels "smlaicloudplatform/internal/creditorprocess/models"
+	creditorProcessRepositories "smlaicloudplatform/internal/creditorprocess/repositories"
+	creditorRepositories "smlaicloudplatform/internal/debtaccount/creditor/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

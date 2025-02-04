@@ -2,15 +2,15 @@ package purchase
 
 import (
 	"encoding/json"
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	payConfig "smlcloudplatform/internal/transaction/pay/config"
-	"smlcloudplatform/internal/transaction/transactionconsumer/services"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	payConfig "smlaicloudplatform/internal/transaction/pay/config"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	trans_models "smlcloudplatform/internal/transaction/models"
-	transaction_payment_consume "smlcloudplatform/internal/transaction/transactionconsumer/payment"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	transaction_payment_consume "smlaicloudplatform/internal/transaction/transactionconsumer/payment"
 )
 
 type PayTransactionConsumer struct {

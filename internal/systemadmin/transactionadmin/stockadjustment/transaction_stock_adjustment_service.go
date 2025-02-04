@@ -2,8 +2,8 @@ package stockadjustment
 
 import (
 	"context"
-	stockAdjustmentRepositories "smlcloudplatform/internal/transaction/stockadjustment/repositories"
-	"smlcloudplatform/pkg/microservice"
+	stockAdjustmentRepositories "smlaicloudplatform/internal/transaction/stockadjustment/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

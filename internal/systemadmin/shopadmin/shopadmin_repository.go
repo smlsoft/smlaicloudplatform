@@ -2,8 +2,8 @@ package shopadmin
 
 import (
 	"context"
-	shopModels "smlcloudplatform/internal/shop/models"
-	"smlcloudplatform/pkg/microservice"
+	shopModels "smlaicloudplatform/internal/shop/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

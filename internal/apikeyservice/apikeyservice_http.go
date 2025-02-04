@@ -3,11 +3,11 @@ package apikeyservice
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/apikeyservice/models"
-	"smlcloudplatform/internal/apikeyservice/services"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/apikeyservice/models"
+	"smlaicloudplatform/internal/apikeyservice/services"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

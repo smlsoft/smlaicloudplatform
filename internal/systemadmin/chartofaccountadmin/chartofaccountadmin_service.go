@@ -2,9 +2,9 @@ package chartofaccountadmin
 
 import (
 	"context"
-	chartOfAccountRepositories "smlcloudplatform/internal/vfgl/chartofaccount/repositories"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	chartOfAccountRepositories "smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 )
 

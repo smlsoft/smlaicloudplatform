@@ -1,7 +1,7 @@
 package requestfilter_test
 
 import (
-	"smlcloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/internal/utils/requestfilter"
 	"testing"
 	"time"
 

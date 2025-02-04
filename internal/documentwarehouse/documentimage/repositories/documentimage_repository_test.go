@@ -1,9 +1,9 @@
 package repositories_test
 
 import (
-	"smlcloudplatform/internal/documentwarehouse/documentimage/repositories"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/repositories"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 )
 

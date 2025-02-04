@@ -4,9 +4,9 @@ import (
 	"mime"
 	"mime/multipart"
 	"path/filepath"
-	"smlcloudplatform/internal/media/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/media/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 	"strings"
 )
 

@@ -2,11 +2,11 @@ package datatransfer
 
 import (
 	"context"
-	"smlcloudplatform/internal/repositories"
-	restaurantRepository "smlcloudplatform/internal/restaurant/settings"
-	"smlcloudplatform/internal/restaurant/settings/models"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/repositories"
+	restaurantRepository "smlaicloudplatform/internal/restaurant/settings"
+	"smlaicloudplatform/internal/restaurant/settings/models"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"

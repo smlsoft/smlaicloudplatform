@@ -2,9 +2,9 @@ package stockbalance
 
 import (
 	"context"
-	stockBalanceModels "smlcloudplatform/internal/transaction/stockbalance/models"
-	stockReceiveProductRepositories "smlcloudplatform/internal/transaction/stockbalance/repositories"
-	"smlcloudplatform/pkg/microservice"
+	stockBalanceModels "smlaicloudplatform/internal/transaction/stockbalance/models"
+	stockReceiveProductRepositories "smlaicloudplatform/internal/transaction/stockbalance/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

@@ -2,8 +2,8 @@ package creditorpayment
 
 import (
 	"context"
-	creditorPaymentModels "smlcloudplatform/internal/transaction/pay/models"
-	"smlcloudplatform/pkg/microservice"
+	creditorPaymentModels "smlaicloudplatform/internal/transaction/pay/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ICreditorPaymentTransactionAdminRepository interface {

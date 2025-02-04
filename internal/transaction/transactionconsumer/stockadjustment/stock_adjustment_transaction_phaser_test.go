@@ -1,9 +1,9 @@
 package stockadjustment_test
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/stockadjustment"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/stockadjustment"
 	"testing"
 	"time"
 

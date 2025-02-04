@@ -3,19 +3,19 @@ package productbarcode
 import (
 	"context"
 	"encoding/json"
-	"smlcloudplatform/internal/logger"
-	ordertype_config "smlcloudplatform/internal/product/ordertype/config"
-	"smlcloudplatform/internal/product/productbarcode/config"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/internal/product/productbarcode/services"
-	"smlcloudplatform/internal/product/productbarcode/usecases"
-	productgroup_config "smlcloudplatform/internal/product/productgroup/config"
-	producttype_config "smlcloudplatform/internal/product/producttype/config"
-	unit_config "smlcloudplatform/internal/product/unit/config"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/logger"
+	ordertype_config "smlaicloudplatform/internal/product/ordertype/config"
+	"smlaicloudplatform/internal/product/productbarcode/config"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/product/productbarcode/services"
+	"smlaicloudplatform/internal/product/productbarcode/usecases"
+	productgroup_config "smlaicloudplatform/internal/product/productgroup/config"
+	producttype_config "smlaicloudplatform/internal/product/producttype/config"
+	unit_config "smlaicloudplatform/internal/product/unit/config"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	msConfig "smlcloudplatform/internal/config"
+	msConfig "smlaicloudplatform/internal/config"
 )
 
 type IProductBarcodeConsumer interface {

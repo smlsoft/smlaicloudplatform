@@ -3,14 +3,14 @@ package zonedesign
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/shopdesign/zonedesign/models"
-	"smlcloudplatform/internal/shopdesign/zonedesign/repositories"
-	"smlcloudplatform/internal/shopdesign/zonedesign/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/shopdesign/zonedesign/models"
+	"smlaicloudplatform/internal/shopdesign/zonedesign/repositories"
+	"smlaicloudplatform/internal/shopdesign/zonedesign/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 
-	common "smlcloudplatform/internal/models"
+	common "smlaicloudplatform/internal/models"
 )
 
 type ZoneDesignHttp struct {

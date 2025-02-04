@@ -1,9 +1,9 @@
 package productbarcode
 
 import (
-	msConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/pkg/microservice"
+	msConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 func MigrationDatabase(ms *microservice.Microservice, cfg msConfig.IConfig) error {

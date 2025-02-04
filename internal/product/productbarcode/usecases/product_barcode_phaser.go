@@ -2,7 +2,7 @@ package usecases
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/product/productbarcode/models"
 )
 
 type IProductBarcodePhaser interface {

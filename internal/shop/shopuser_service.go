@@ -3,9 +3,9 @@ package shop
 import (
 	"context"
 	"errors"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/internal/utils"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/internal/utils"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 )

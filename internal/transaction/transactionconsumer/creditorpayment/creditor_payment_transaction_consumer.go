@@ -1,13 +1,13 @@
 package creditorpayment
 
 import (
-	"smlcloudplatform/internal/config"
-	pkgConfig "smlcloudplatform/internal/config"
-	models "smlcloudplatform/internal/transaction/models"
-	creditorPaymentConfig "smlcloudplatform/internal/transaction/pay/config"
-	"smlcloudplatform/internal/transaction/transactionconsumer/services"
-	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	pkgConfig "smlaicloudplatform/internal/config"
+	models "smlaicloudplatform/internal/transaction/models"
+	creditorPaymentConfig "smlaicloudplatform/internal/transaction/pay/config"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/services"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/usecases"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

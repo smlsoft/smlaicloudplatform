@@ -2,9 +2,9 @@ package repositories_test
 
 import (
 	"os"
-	"smlcloudplatform/internal/vfgl/chartofaccount/repositories"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

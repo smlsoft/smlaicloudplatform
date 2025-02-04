@@ -1,13 +1,13 @@
 package payment
 
 import (
-	trans_models "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/pkg/microservice"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/pkg/microservice"
 
-	transaction_payment_repositories "smlcloudplatform/internal/transaction/payment/repositories"
-	transaction_payment_usecase "smlcloudplatform/internal/transaction/payment/usecase"
-	transaction_payment_detail_repositories "smlcloudplatform/internal/transaction/paymentdetail/repositories"
-	transaction_payment_detail_usecase "smlcloudplatform/internal/transaction/paymentdetail/usecase"
+	transaction_payment_repositories "smlaicloudplatform/internal/transaction/payment/repositories"
+	transaction_payment_usecase "smlaicloudplatform/internal/transaction/payment/usecase"
+	transaction_payment_detail_repositories "smlaicloudplatform/internal/transaction/paymentdetail/repositories"
+	transaction_payment_detail_usecase "smlaicloudplatform/internal/transaction/paymentdetail/usecase"
 )
 
 type IPaymentUsecase interface {

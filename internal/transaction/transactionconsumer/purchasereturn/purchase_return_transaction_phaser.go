@@ -2,9 +2,9 @@ package purchasereturn
 
 import (
 	"encoding/json"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	purchasereturnmodels "smlcloudplatform/internal/transaction/purchasereturn/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	purchasereturnmodels "smlaicloudplatform/internal/transaction/purchasereturn/models"
 )
 
 // type IPurchaseReturnTransactionPhaser interface {

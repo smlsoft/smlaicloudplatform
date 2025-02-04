@@ -3,17 +3,17 @@ package stockreturnproduct
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	trans_cache "smlcloudplatform/internal/transaction/repositories"
-	"smlcloudplatform/internal/transaction/stockreturnproduct/models"
-	"smlcloudplatform/internal/transaction/stockreturnproduct/repositories"
-	"smlcloudplatform/internal/transaction/stockreturnproduct/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	productbarcode_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	trans_cache "smlaicloudplatform/internal/transaction/repositories"
+	"smlaicloudplatform/internal/transaction/stockreturnproduct/models"
+	"smlaicloudplatform/internal/transaction/stockreturnproduct/repositories"
+	"smlaicloudplatform/internal/transaction/stockreturnproduct/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockReturnProductHttp interface{}

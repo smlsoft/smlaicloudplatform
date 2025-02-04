@@ -2,12 +2,12 @@ package images
 
 import (
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/images/models"
-	common "smlcloudplatform/internal/models"
-	productbarcode_repo "smlcloudplatform/internal/product/productbarcode/repositories"
-	slipimage_repo "smlcloudplatform/internal/slipimage/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/images/models"
+	common "smlaicloudplatform/internal/models"
+	productbarcode_repo "smlaicloudplatform/internal/product/productbarcode/repositories"
+	slipimage_repo "smlaicloudplatform/internal/slipimage/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"strconv"
 	"time"
 )

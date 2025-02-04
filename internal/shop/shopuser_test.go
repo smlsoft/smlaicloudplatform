@@ -3,9 +3,9 @@ package shop_test
 import (
 	"context"
 	"os"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/internal/shop"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/internal/shop"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 )
 

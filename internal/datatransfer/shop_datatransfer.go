@@ -3,7 +3,7 @@ package datatransfer
 import (
 	"context"
 	"fmt"
-	shopModule "smlcloudplatform/internal/shop"
+	shopModule "smlaicloudplatform/internal/shop"
 )
 
 type ShopDataTransfer struct {

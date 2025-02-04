@@ -3,14 +3,14 @@ package sectionbranch
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/productsection/sectionbranch/models"
-	"smlcloudplatform/internal/productsection/sectionbranch/repositories"
-	"smlcloudplatform/internal/productsection/sectionbranch/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/productsection/sectionbranch/models"
+	"smlaicloudplatform/internal/productsection/sectionbranch/repositories"
+	"smlaicloudplatform/internal/productsection/sectionbranch/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISectionBranchHttp interface{}

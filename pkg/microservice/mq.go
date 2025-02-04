@@ -3,8 +3,8 @@ package microservice
 import (
 	"context"
 	"fmt"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"

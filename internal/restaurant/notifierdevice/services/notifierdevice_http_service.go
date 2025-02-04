@@ -3,10 +3,10 @@ package services
 import (
 	"context"
 	"errors"
-	"smlcloudplatform/internal/restaurant/notifierdevice/models"
-	"smlcloudplatform/internal/restaurant/notifierdevice/repositories"
-	"smlcloudplatform/internal/utils"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/restaurant/notifierdevice/models"
+	"smlaicloudplatform/internal/restaurant/notifierdevice/repositories"
+	"smlaicloudplatform/internal/utils"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"

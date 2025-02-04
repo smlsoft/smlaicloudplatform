@@ -1,7 +1,7 @@
 package round_test
 
 import (
-	"smlcloudplatform/pkg/round"
+	"smlaicloudplatform/pkg/round"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

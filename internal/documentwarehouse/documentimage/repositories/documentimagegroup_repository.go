@@ -2,12 +2,12 @@ package repositories
 
 import (
 	"context"
-	"smlcloudplatform/internal/documentwarehouse/documentimage/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/utils/mogoutil"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/utils/mogoutil"
+	"smlaicloudplatform/pkg/microservice"
 
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"

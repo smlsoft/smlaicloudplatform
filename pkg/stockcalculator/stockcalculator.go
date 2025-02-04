@@ -2,7 +2,7 @@ package stockcalculator
 
 import (
 	"math"
-	"smlcloudplatform/pkg/round"
+	"smlaicloudplatform/pkg/round"
 )
 
 type IStockCalculator interface {

@@ -2,7 +2,7 @@ package logger
 
 import (
 	"os"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"sync"
 	"time"
 

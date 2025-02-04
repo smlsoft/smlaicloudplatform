@@ -3,11 +3,11 @@ package repositories_test
 import (
 	"database/sql"
 	"os"
-	"smlcloudplatform/internal/mocktest"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/mocktest"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 	"time"
 

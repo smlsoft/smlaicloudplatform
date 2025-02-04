@@ -2,8 +2,8 @@ package services
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/repositories"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
 
 	"gorm.io/gorm"
 )

@@ -1,6 +1,6 @@
 package services
 
-import "smlcloudplatform/pkg/microservice"
+import "smlaicloudplatform/pkg/microservice"
 
 type ITransactionDocConsumer interface {
 	ConsumeOnCreateOrUpdate(ctx microservice.IContext) error

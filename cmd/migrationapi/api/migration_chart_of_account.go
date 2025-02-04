@@ -2,8 +2,8 @@ package api
 
 import (
 	"context"
-	accountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	chartofaccountrepositories "smlcloudplatform/internal/vfgl/chartofaccount/repositories"
+	accountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	chartofaccountrepositories "smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
 )
 
 func (m *MigrationService) ImportChartOfAccount(charts []accountModel.ChartOfAccountDoc) error {

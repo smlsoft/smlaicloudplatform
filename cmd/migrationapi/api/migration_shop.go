@@ -2,11 +2,11 @@ package api
 
 import (
 	"context"
-	"smlcloudplatform/internal/shop"
+	"smlaicloudplatform/internal/shop"
 
-	auth_model "smlcloudplatform/internal/authentication/models"
-	shop_model "smlcloudplatform/internal/shop/models"
-	"smlcloudplatform/internal/utils"
+	auth_model "smlaicloudplatform/internal/authentication/models"
+	shop_model "smlaicloudplatform/internal/shop/models"
+	"smlaicloudplatform/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

@@ -3,11 +3,11 @@ package services
 import (
 	"context"
 	"errors"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/paymentmaster/models"
-	"smlcloudplatform/internal/paymentmaster/repositories"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/importdata"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/paymentmaster/models"
+	"smlaicloudplatform/internal/paymentmaster/repositories"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/importdata"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"

@@ -1,15 +1,15 @@
 package debtorpayment
 
 import (
-	"smlcloudplatform/internal/config"
-	models "smlcloudplatform/internal/transaction/models"
-	debtorPaymentConfig "smlcloudplatform/internal/transaction/paid/config"
-	"smlcloudplatform/internal/transaction/transactionconsumer/services"
-	"smlcloudplatform/internal/transaction/transactionconsumer/usecases"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	models "smlaicloudplatform/internal/transaction/models"
+	debtorPaymentConfig "smlaicloudplatform/internal/transaction/paid/config"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/services"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/usecases"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	pkgConfig "smlcloudplatform/internal/config"
+	pkgConfig "smlaicloudplatform/internal/config"
 )
 
 type DebtorPaymentTransactionConsumer struct {

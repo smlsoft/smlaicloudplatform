@@ -1,7 +1,7 @@
 version: "3"
 services:
   mainsvc:
-    image: "smlcloudplatform"
+    image: "smlaicloudplatform"
     build:
       context: .
       dockerfile: Dockerfile
@@ -23,7 +23,7 @@ services:
       - POSTGRES_LOGGER_LEVEL=debug
 
     volumes:
-      - /Users/userplant/Dev/smlcloudplatform/cmd/app/ca-certificate.crt:/root/ca-certificate.crt:ro
+      - /Users/userplant/Dev/smlaicloudplatform/cmd/app/ca-certificate.crt:/root/ca-certificate.crt:ro
     networks:
       - "cloud"
 networks:

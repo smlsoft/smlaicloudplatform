@@ -1,8 +1,8 @@
 package models
 
 import (
-	"smlcloudplatform/internal/models"
-	chartofaccount_models "smlcloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/models"
+	chartofaccount_models "smlaicloudplatform/internal/vfgl/chartofaccount/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

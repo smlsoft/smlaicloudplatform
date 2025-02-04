@@ -3,9 +3,9 @@ package microservice
 import (
 	"fmt"
 	"net/http"
-	"smlcloudplatform/internal/encrypt"
-	"smlcloudplatform/pkg/memorycache"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/encrypt"
+	"smlaicloudplatform/pkg/memorycache"
+	"smlaicloudplatform/pkg/microservice/models"
 	"strconv"
 	"strings"
 	"time"

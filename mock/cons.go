@@ -1,3 +1,3 @@
 package mock
 
-const projectDirName = "smlcloudplatform"
+const projectDirName = "smlaicloudplatform"

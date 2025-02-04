@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/stockreturnproduct/config"
-	"smlcloudplatform/internal/transaction/stockreturnproduct/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/stockreturnproduct/config"
+	"smlaicloudplatform/internal/transaction/stockreturnproduct/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockReturnProductMessageQueueRepository interface {

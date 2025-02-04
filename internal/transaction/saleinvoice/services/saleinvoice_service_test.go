@@ -1,16 +1,16 @@
 package services_test
 
 // import (
-// 	"smlcloudplatform/internal/config"
-// 	"smlcloudplatform/internal/transaction/saleinvoice/models"
-// 	"smlcloudplatform/internal/transaction/saleinvoice/repositories"
-// 	"smlcloudplatform/internal/transaction/saleinvoice/services"
-// 	"smlcloudplatform/pkg/microservice"
+// 	"smlaicloudplatform/internal/config"
+// 	"smlaicloudplatform/internal/transaction/saleinvoice/models"
+// 	"smlaicloudplatform/internal/transaction/saleinvoice/repositories"
+// 	"smlaicloudplatform/internal/transaction/saleinvoice/services"
+// 	"smlaicloudplatform/pkg/microservice"
 // 	"testing"
 
-// 	mastersync "smlcloudplatform/internal/mastersync/repositories"
-// 	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
-// 	trans_cache "smlcloudplatform/internal/transaction/repositories"
+// 	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+// 	productbarcode_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+// 	trans_cache "smlaicloudplatform/internal/transaction/repositories"
 
 // 	"github.com/stretchr/testify/require"
 // )

@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"strings"
 	"sync"
 	"time"

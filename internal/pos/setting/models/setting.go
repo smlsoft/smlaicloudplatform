@@ -1,9 +1,9 @@
 package models
 
 import (
-	salechannel_models "smlcloudplatform/internal/channel/salechannel/models"
-	"smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/models/timezone"
+	salechannel_models "smlaicloudplatform/internal/channel/salechannel/models"
+	"smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/models/timezone"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

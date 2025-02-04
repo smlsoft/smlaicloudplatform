@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 
 	"gorm.io/gorm/clause"
 )

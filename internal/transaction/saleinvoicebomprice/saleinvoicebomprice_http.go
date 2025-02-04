@@ -2,13 +2,13 @@ package saleinvoicebomprice
 
 import (
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/repositories"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISaleInvoiceBomPriceHttp interface{}

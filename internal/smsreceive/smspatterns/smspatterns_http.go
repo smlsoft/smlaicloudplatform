@@ -3,13 +3,13 @@ package smspatterns
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/smsreceive/smspatterns/models"
-	"smlcloudplatform/internal/smsreceive/smspatterns/repositories"
-	"smlcloudplatform/internal/smsreceive/smspatterns/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/smsreceive/smspatterns/models"
+	"smlaicloudplatform/internal/smsreceive/smspatterns/repositories"
+	"smlaicloudplatform/internal/smsreceive/smspatterns/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISmsPatternsHttp interface{}

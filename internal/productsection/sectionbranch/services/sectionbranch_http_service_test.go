@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"smlcloudplatform/internal/productsection/sectionbranch/models"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/productsection/sectionbranch/models"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/smlsoft/mongopagination"
 	"github.com/stretchr/testify/assert"

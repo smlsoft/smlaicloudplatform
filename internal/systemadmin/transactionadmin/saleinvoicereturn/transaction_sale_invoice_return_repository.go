@@ -2,8 +2,8 @@ package saleinvoicereturn
 
 import (
 	"context"
-	saleInvoiceReturnModels "smlcloudplatform/internal/transaction/saleinvoicereturn/models"
-	"smlcloudplatform/pkg/microservice"
+	saleInvoiceReturnModels "smlaicloudplatform/internal/transaction/saleinvoicereturn/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

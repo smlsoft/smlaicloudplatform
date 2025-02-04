@@ -2,7 +2,7 @@ name: Build API Image
 on: [workflow_dispatch]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: smlsoft/smlcloudmediaapi
+  IMAGE_NAME: smlsoft/smlaicloudmediaapi
   DISCORD_CHANNEL: "1139124359731093614"
 
 jobs:
@@ -44,5 +44,5 @@ jobs:
         run: |
             SHORT_SHA="${GITHUB_SHA::7}"
             BOT_TOKEN="${{ secrets.DISCORD_BOT }}"
-            curl -X POST -H "Content-Type: application/json" -H "Authorization: Bot $BOT_TOKEN" -d "{\"content\": \"🚀 Build SMLCloudPlatform Image available: $REGISTRY/$IMAGE_NAME:sha-$SHORT_SHA\"}" https://discordapp.com/api/channels/$DISCORD_CHANNEL/messages
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: Bot $BOT_TOKEN" -d "{\"content\": \"🚀 Build SMLAICloudPlatform Image available: $REGISTRY/$IMAGE_NAME:sha-$SHORT_SHA\"}" https://discordapp.com/api/channels/$DISCORD_CHANNEL/messages
       

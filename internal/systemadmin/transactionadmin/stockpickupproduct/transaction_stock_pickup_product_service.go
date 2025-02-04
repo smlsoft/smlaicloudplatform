@@ -2,8 +2,8 @@ package stockpickupproduct
 
 import (
 	"context"
-	stockPickupProductRepositories "smlcloudplatform/internal/transaction/stockpickupproduct/repositories"
-	"smlcloudplatform/pkg/microservice"
+	stockPickupProductRepositories "smlaicloudplatform/internal/transaction/stockpickupproduct/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

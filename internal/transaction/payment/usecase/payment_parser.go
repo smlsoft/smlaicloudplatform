@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	transmodels "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/payment/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	transmodels "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/payment/models"
 )
 
 func ParseTransactionToPayment(other transmodels.TransactionMessageQueue) (models.TransactionPayment, error) {

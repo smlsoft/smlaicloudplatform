@@ -2,11 +2,11 @@ package productadmin
 
 import (
 	"context"
-	productBarcodeRepositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	stockProcessModels "smlcloudplatform/internal/stockprocess/models"
-	stockProcessRepository "smlcloudplatform/internal/stockprocess/repositories"
-	"smlcloudplatform/pkg/microservice"
-	msModels "smlcloudplatform/pkg/microservice/models"
+	productBarcodeRepositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	stockProcessModels "smlaicloudplatform/internal/stockprocess/models"
+	stockProcessRepository "smlaicloudplatform/internal/stockprocess/repositories"
+	"smlaicloudplatform/pkg/microservice"
+	msModels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 )
 

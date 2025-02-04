@@ -1,9 +1,9 @@
 package stockadjustment
 
 import (
-	"smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStockAdjustmentTransactionPGRepository interface {

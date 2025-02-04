@@ -2,8 +2,8 @@ package stockpickupproduct
 
 import (
 	"context"
-	stockPickupProductModels "smlcloudplatform/internal/transaction/stockpickupproduct/models"
-	"smlcloudplatform/pkg/microservice"
+	stockPickupProductModels "smlaicloudplatform/internal/transaction/stockpickupproduct/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

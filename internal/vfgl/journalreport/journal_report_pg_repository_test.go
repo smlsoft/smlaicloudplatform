@@ -3,11 +3,11 @@ package journalreport_test
 import (
 	"fmt"
 	"os"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/vfgl/journalreport"
-	"smlcloudplatform/internal/vfgl/journalreport/models"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/vfgl/journalreport"
+	"smlaicloudplatform/internal/vfgl/journalreport/models"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 	"time"
 

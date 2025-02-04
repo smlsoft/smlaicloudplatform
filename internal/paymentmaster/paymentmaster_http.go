@@ -3,12 +3,12 @@ package paymentmaster
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/paymentmaster/models"
-	"smlcloudplatform/internal/paymentmaster/repositories"
-	"smlcloudplatform/internal/paymentmaster/services"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/paymentmaster/models"
+	"smlaicloudplatform/internal/paymentmaster/repositories"
+	"smlaicloudplatform/internal/paymentmaster/services"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IPaymentMasterHttp interface{}

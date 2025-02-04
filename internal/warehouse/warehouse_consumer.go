@@ -1,12 +1,12 @@
 package warehouse
 
 import (
-	pkgConfig "smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/warehouse/config"
-	"smlcloudplatform/internal/warehouse/repositories"
-	"smlcloudplatform/internal/warehouse/services"
-	"smlcloudplatform/pkg/microservice"
+	pkgConfig "smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	"smlaicloudplatform/internal/warehouse/config"
+	"smlaicloudplatform/internal/warehouse/repositories"
+	"smlaicloudplatform/internal/warehouse/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   inventory:
-    image: smlsoft/smlcloudplatform:masterdata
+    image: smlsoft/smlaicloudplatform:masterdata
     restart: always
     expose:
       - 8080

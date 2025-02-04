@@ -3,13 +3,13 @@ package storefront
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/storefront/models"
-	"smlcloudplatform/internal/storefront/repositories"
-	"smlcloudplatform/internal/storefront/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/storefront/models"
+	"smlaicloudplatform/internal/storefront/repositories"
+	"smlaicloudplatform/internal/storefront/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IStorefrontHttp interface{}

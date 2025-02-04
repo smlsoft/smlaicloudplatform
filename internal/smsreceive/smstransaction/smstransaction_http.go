@@ -3,15 +3,15 @@ package smstransaction
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	smspatternsRepo "smlcloudplatform/internal/smsreceive/smspatterns/repositories"
-	smssetingsRepo "smlcloudplatform/internal/smsreceive/smspaymentsettings/repositories"
-	"smlcloudplatform/internal/smsreceive/smstransaction/models"
-	"smlcloudplatform/internal/smsreceive/smstransaction/repositories"
-	"smlcloudplatform/internal/smsreceive/smstransaction/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	smspatternsRepo "smlaicloudplatform/internal/smsreceive/smspatterns/repositories"
+	smssetingsRepo "smlaicloudplatform/internal/smsreceive/smspaymentsettings/repositories"
+	"smlaicloudplatform/internal/smsreceive/smstransaction/models"
+	"smlaicloudplatform/internal/smsreceive/smstransaction/repositories"
+	"smlaicloudplatform/internal/smsreceive/smstransaction/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISmsTransactionHttp interface{}

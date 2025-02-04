@@ -1,8 +1,8 @@
 package repositories
 
 // import (
-// 	"smlcloudplatform/internal/transaction/models"
-// 	"smlcloudplatform/pkg/microservice"
+// 	"smlaicloudplatform/internal/transaction/models"
+// 	"smlaicloudplatform/pkg/microservice"
 
 // 	"gorm.io/gorm/clause"
 // )

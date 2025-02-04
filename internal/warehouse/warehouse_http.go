@@ -3,14 +3,14 @@ package warehouse
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/warehouse/models"
-	"smlcloudplatform/internal/warehouse/repositories"
-	"smlcloudplatform/internal/warehouse/services"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/warehouse/models"
+	"smlaicloudplatform/internal/warehouse/repositories"
+	"smlaicloudplatform/internal/warehouse/services"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IWarehouseHttp interface{}

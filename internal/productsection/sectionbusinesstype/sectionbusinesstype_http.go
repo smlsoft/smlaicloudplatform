@@ -3,14 +3,14 @@ package sectionbusinesstype
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/productsection/sectionbusinesstype/models"
-	"smlcloudplatform/internal/productsection/sectionbusinesstype/repositories"
-	"smlcloudplatform/internal/productsection/sectionbusinesstype/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/productsection/sectionbusinesstype/models"
+	"smlaicloudplatform/internal/productsection/sectionbusinesstype/repositories"
+	"smlaicloudplatform/internal/productsection/sectionbusinesstype/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISectionBusinessTypeHttp interface{}

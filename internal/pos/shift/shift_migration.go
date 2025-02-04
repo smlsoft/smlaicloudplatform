@@ -1,9 +1,9 @@
 package shift
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/pos/shift/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/pos/shift/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 func MigrationDatabase(ms *microservice.Microservice, cfg config.IConfig) {

@@ -1,8 +1,8 @@
 package member
 
 import (
-	"smlcloudplatform/internal/member/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/member/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IMemberPGRepository interface {

@@ -2,8 +2,8 @@ package creditoradmin
 
 import (
 	"context"
-	creditorModels "smlcloudplatform/internal/debtaccount/creditor/models"
-	"smlcloudplatform/pkg/microservice"
+	creditorModels "smlaicloudplatform/internal/debtaccount/creditor/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

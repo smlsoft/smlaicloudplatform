@@ -3,14 +3,14 @@ package journalbook
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/vfgl/journalbook/models"
-	"smlcloudplatform/internal/vfgl/journalbook/repositories"
-	"smlcloudplatform/internal/vfgl/journalbook/services"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/vfgl/journalbook/models"
+	"smlaicloudplatform/internal/vfgl/journalbook/repositories"
+	"smlaicloudplatform/internal/vfgl/journalbook/services"
+	"smlaicloudplatform/pkg/microservice"
 
-	common "smlcloudplatform/internal/models"
+	common "smlaicloudplatform/internal/models"
 )
 
 type JournalBookHttp struct {

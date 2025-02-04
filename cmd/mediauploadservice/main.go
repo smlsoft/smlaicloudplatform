@@ -1,9 +1,9 @@
 package main
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/media"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/media"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

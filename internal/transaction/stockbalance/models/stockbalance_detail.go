@@ -1,6 +1,6 @@
 package models
 
-import trans_models "smlcloudplatform/internal/transaction/models"
+import trans_models "smlaicloudplatform/internal/transaction/models"
 
 const stockbalanceDetailCollectionName = "transactionStockBalanceDetails"
 

@@ -3,16 +3,16 @@ package creditor
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/debtaccount/creditor/models"
-	"smlcloudplatform/internal/debtaccount/creditor/repositories"
-	"smlcloudplatform/internal/debtaccount/creditor/services"
-	repositoriesGroup "smlcloudplatform/internal/debtaccount/creditorgroup/repositories"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/debtaccount/creditor/models"
+	"smlaicloudplatform/internal/debtaccount/creditor/repositories"
+	"smlaicloudplatform/internal/debtaccount/creditor/services"
+	repositoriesGroup "smlaicloudplatform/internal/debtaccount/creditorgroup/repositories"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ICreditorHttp interface{}

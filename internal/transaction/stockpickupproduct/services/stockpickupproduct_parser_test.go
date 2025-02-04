@@ -1,10 +1,10 @@
 package services_test
 
 import (
-	pkg_models "smlcloudplatform/internal/models"
-	productbarcode_models "smlcloudplatform/internal/product/productbarcode/models"
-	trans_models "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/stockpickupproduct/services"
+	pkg_models "smlaicloudplatform/internal/models"
+	productbarcode_models "smlaicloudplatform/internal/product/productbarcode/models"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/stockpickupproduct/services"
 	"testing"
 
 	"github.com/stretchr/testify/require"

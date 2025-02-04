@@ -3,14 +3,14 @@ package filestatus
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/filestatus/models"
-	"smlcloudplatform/internal/filestatus/repositories"
-	"smlcloudplatform/internal/filestatus/services"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/filestatus/models"
+	"smlaicloudplatform/internal/filestatus/repositories"
+	"smlaicloudplatform/internal/filestatus/services"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

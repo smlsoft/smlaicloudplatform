@@ -3,9 +3,9 @@ package stockbalance
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	stockBalanceModels "smlcloudplatform/internal/transaction/stockbalance/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	stockBalanceModels "smlaicloudplatform/internal/transaction/stockbalance/models"
 )
 
 type StockBalanceTransactionPhaser struct{}

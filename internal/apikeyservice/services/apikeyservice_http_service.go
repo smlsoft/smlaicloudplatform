@@ -1,8 +1,8 @@
 package services
 
 import (
-	"smlcloudplatform/pkg/microservice"
-	micromodel "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/pkg/microservice"
+	micromodel "smlaicloudplatform/pkg/microservice/models"
 	"time"
 )
 

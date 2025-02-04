@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   swaggerapi:
-    image: smlsoft/smlcloudplatform:swagger
+    image: smlsoft/smlaicloudplatform:swagger
     expose:
       - 8080
     environment:

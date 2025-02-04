@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/pkg/microservice"
 
 	"github.com/joho/godotenv"
 )

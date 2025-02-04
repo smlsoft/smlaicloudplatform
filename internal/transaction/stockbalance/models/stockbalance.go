@@ -1,8 +1,8 @@
 package models
 
 import (
-	"smlcloudplatform/internal/models"
-	trans_models "smlcloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/models"
+	trans_models "smlaicloudplatform/internal/transaction/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

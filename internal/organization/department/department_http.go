@@ -3,14 +3,14 @@ package department
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/organization/department/models"
-	"smlcloudplatform/internal/organization/department/repositories"
-	"smlcloudplatform/internal/organization/department/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/organization/department/models"
+	"smlaicloudplatform/internal/organization/department/repositories"
+	"smlaicloudplatform/internal/organization/department/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IDepartmentHttp interface{}

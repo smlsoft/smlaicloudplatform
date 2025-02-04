@@ -3,14 +3,14 @@ package bankmaster
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/payment/bankmaster/models"
-	"smlcloudplatform/internal/payment/bankmaster/repositories"
-	"smlcloudplatform/internal/payment/bankmaster/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/payment/bankmaster/models"
+	"smlaicloudplatform/internal/payment/bankmaster/repositories"
+	"smlaicloudplatform/internal/payment/bankmaster/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IBankMasterHttp interface{}

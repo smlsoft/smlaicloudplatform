@@ -2,8 +2,8 @@ package usecases_test
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/internal/product/productbarcode/usecases"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/product/productbarcode/usecases"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

@@ -2,8 +2,8 @@ package usecase_test
 
 import (
 	"errors"
-	"smlcloudplatform/internal/transaction/paymentdetail/models"
-	"smlcloudplatform/internal/transaction/paymentdetail/usecase"
+	"smlaicloudplatform/internal/transaction/paymentdetail/models"
+	"smlaicloudplatform/internal/transaction/paymentdetail/usecase"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

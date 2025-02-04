@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/product/ordertype/config"
-	"smlcloudplatform/internal/product/ordertype/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/ordertype/config"
+	"smlaicloudplatform/internal/product/ordertype/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IOrderTypeMessageQueueRepository interface {

@@ -2,7 +2,7 @@ package microservice
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/logger"
+	"smlaicloudplatform/internal/logger"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )

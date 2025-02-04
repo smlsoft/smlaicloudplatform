@@ -1,11 +1,11 @@
 package repositories
 
 import (
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/vfgl/accountgroup/config"
-	"smlcloudplatform/internal/vfgl/accountgroup/models"
-	"smlcloudplatform/pkg/microservice"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/vfgl/accountgroup/config"
+	"smlaicloudplatform/internal/vfgl/accountgroup/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IAccountGroupMqRepository interface {

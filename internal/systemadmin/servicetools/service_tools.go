@@ -5,20 +5,20 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/shop"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	"smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/shop"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	commonModel "smlcloudplatform/internal/models"
-	shopModel "smlcloudplatform/internal/shop/models"
-	accountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	chartofaccountrepositories "smlcloudplatform/internal/vfgl/chartofaccount/repositories"
+	commonModel "smlaicloudplatform/internal/models"
+	shopModel "smlaicloudplatform/internal/shop/models"
+	accountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	chartofaccountrepositories "smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
 
-	journalBookModel "smlcloudplatform/internal/vfgl/journalbook/models"
-	journalbookRepo "smlcloudplatform/internal/vfgl/journalbook/repositories"
+	journalBookModel "smlaicloudplatform/internal/vfgl/journalbook/models"
+	journalbookRepo "smlaicloudplatform/internal/vfgl/journalbook/repositories"
 )
 
 type IServiceTools interface {

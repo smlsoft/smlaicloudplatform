@@ -1,11 +1,11 @@
 package creditorpayment_test
 
 import (
-	"smlcloudplatform/internal/config"
-	pkgModels "smlcloudplatform/internal/models"
-	models "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/creditorpayment"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	pkgModels "smlaicloudplatform/internal/models"
+	models "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/creditorpayment"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

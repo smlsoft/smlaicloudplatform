@@ -3,17 +3,17 @@ package branch
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/organization/branch/models"
-	"smlcloudplatform/internal/organization/branch/repositories"
-	"smlcloudplatform/internal/organization/branch/services"
-	businessTypeRepositories "smlcloudplatform/internal/organization/businesstype/repositories"
-	deparmentRepositories "smlcloudplatform/internal/organization/department/repositories"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/organization/branch/models"
+	"smlaicloudplatform/internal/organization/branch/repositories"
+	"smlaicloudplatform/internal/organization/branch/services"
+	businessTypeRepositories "smlaicloudplatform/internal/organization/businesstype/repositories"
+	deparmentRepositories "smlaicloudplatform/internal/organization/department/repositories"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IBranchHttp interface{}

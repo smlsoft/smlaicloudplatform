@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/warehouse/config"
-	"smlcloudplatform/internal/warehouse/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/warehouse/config"
+	"smlaicloudplatform/internal/warehouse/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IWarehouseMessageQueueRepository interface {

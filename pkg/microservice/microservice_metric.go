@@ -1,6 +1,6 @@
 package microservice
 
-import "smlcloudplatform/internal/middlewares"
+import "smlaicloudplatform/internal/middlewares"
 
 func (ms *Microservice) getHttpMetricsCb() middlewares.MiddlewareMetricsCb {
 	return func(err error) {

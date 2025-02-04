@@ -2,10 +2,10 @@ package debtorpayment
 
 import (
 	"encoding/json"
-	"smlcloudplatform/internal/transaction/models"
-	debtorpaymentmodels "smlcloudplatform/internal/transaction/paid/models"
+	"smlaicloudplatform/internal/transaction/models"
+	debtorpaymentmodels "smlaicloudplatform/internal/transaction/paid/models"
 
-	pkgModels "smlcloudplatform/internal/models"
+	pkgModels "smlaicloudplatform/internal/models"
 )
 
 type DebtorPaymentTransactionPhaser struct{}

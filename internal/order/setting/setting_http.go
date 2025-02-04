@@ -3,14 +3,14 @@ package order
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/order/setting/models"
-	"smlcloudplatform/internal/order/setting/repositories"
-	"smlcloudplatform/internal/order/setting/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/order/setting/models"
+	"smlaicloudplatform/internal/order/setting/repositories"
+	"smlaicloudplatform/internal/order/setting/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISettingHttp interface{}

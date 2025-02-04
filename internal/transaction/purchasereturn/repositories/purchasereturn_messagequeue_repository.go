@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/internal/transaction/purchasereturn/config"
-	"smlcloudplatform/internal/transaction/purchasereturn/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/internal/transaction/purchasereturn/config"
+	"smlaicloudplatform/internal/transaction/purchasereturn/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IPurchaseReturnMessageQueueRepository interface {

@@ -3,51 +3,51 @@ package mastersync
 import (
 	"fmt"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 	"strings"
 	"time"
 
-	"smlcloudplatform/internal/restaurant/kitchen"
-	"smlcloudplatform/internal/restaurant/printer"
-	"smlcloudplatform/internal/restaurant/table"
-	"smlcloudplatform/internal/restaurant/zone"
+	"smlaicloudplatform/internal/restaurant/kitchen"
+	"smlaicloudplatform/internal/restaurant/printer"
+	"smlaicloudplatform/internal/restaurant/table"
+	"smlaicloudplatform/internal/restaurant/zone"
 
-	"smlcloudplatform/internal/mastersync/services"
+	"smlaicloudplatform/internal/mastersync/services"
 
-	employeeRepo "smlcloudplatform/internal/shop/employee/repositories"
-	employeeService "smlcloudplatform/internal/shop/employee/services"
+	employeeRepo "smlaicloudplatform/internal/shop/employee/repositories"
+	employeeService "smlaicloudplatform/internal/shop/employee/services"
 
-	productcategoryRepo "smlcloudplatform/internal/product/productcategory/repositories"
-	productcategoryService "smlcloudplatform/internal/product/productcategory/services"
+	productcategoryRepo "smlaicloudplatform/internal/product/productcategory/repositories"
+	productcategoryService "smlaicloudplatform/internal/product/productcategory/services"
 
-	productbarcodeRepo "smlcloudplatform/internal/product/productbarcode/repositories"
-	productbarcodeService "smlcloudplatform/internal/product/productbarcode/services"
+	productbarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
+	productbarcodeService "smlaicloudplatform/internal/product/productbarcode/services"
 
-	productunitRepo "smlcloudplatform/internal/product/unit/repositories"
-	productunitService "smlcloudplatform/internal/product/unit/services"
+	productunitRepo "smlaicloudplatform/internal/product/unit/repositories"
+	productunitService "smlaicloudplatform/internal/product/unit/services"
 
-	bankmasterRepo "smlcloudplatform/internal/payment/bankmaster/repositories"
-	bankmasterService "smlcloudplatform/internal/payment/bankmaster/services"
+	bankmasterRepo "smlaicloudplatform/internal/payment/bankmaster/repositories"
+	bankmasterService "smlaicloudplatform/internal/payment/bankmaster/services"
 
-	bookbankRepo "smlcloudplatform/internal/payment/bookbank/repositories"
-	bookbankService "smlcloudplatform/internal/payment/bookbank/services"
+	bookbankRepo "smlaicloudplatform/internal/payment/bookbank/repositories"
+	bookbankService "smlaicloudplatform/internal/payment/bookbank/services"
 
-	qrpaymentRepo "smlcloudplatform/internal/payment/qrpayment/repositories"
-	qrpaymentService "smlcloudplatform/internal/payment/qrpayment/services"
+	qrpaymentRepo "smlaicloudplatform/internal/payment/qrpayment/repositories"
+	qrpaymentService "smlaicloudplatform/internal/payment/qrpayment/services"
 
-	restaurantDeviceRepo "smlcloudplatform/internal/restaurant/device/repositories"
-	restaurantDeviceService "smlcloudplatform/internal/restaurant/device/services"
+	restaurantDeviceRepo "smlaicloudplatform/internal/restaurant/device/repositories"
+	restaurantDeviceService "smlaicloudplatform/internal/restaurant/device/services"
 
-	restaurantStaffRepo "smlcloudplatform/internal/restaurant/staff/repositories"
-	restaurantStaffService "smlcloudplatform/internal/restaurant/staff/services"
+	restaurantStaffRepo "smlaicloudplatform/internal/restaurant/staff/repositories"
+	restaurantStaffService "smlaicloudplatform/internal/restaurant/staff/services"
 
-	ordertype_repo "smlcloudplatform/internal/product/ordertype/repositories"
-	ordertype_service "smlcloudplatform/internal/product/ordertype/services"
+	ordertype_repo "smlaicloudplatform/internal/product/ordertype/repositories"
+	ordertype_service "smlaicloudplatform/internal/product/ordertype/services"
 
-	"smlcloudplatform/internal/mastersync/repositories"
+	"smlaicloudplatform/internal/mastersync/repositories"
 )
 
 type MasterSyncHttp struct {

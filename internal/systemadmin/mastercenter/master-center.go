@@ -2,12 +2,12 @@ package mastercenter
 
 import (
 	"context"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/shop"
-	shopModel "smlcloudplatform/internal/shop/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/shop"
+	shopModel "smlaicloudplatform/internal/shop/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

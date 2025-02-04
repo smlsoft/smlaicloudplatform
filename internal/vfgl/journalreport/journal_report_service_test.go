@@ -3,13 +3,13 @@ package journalreport_test
 import (
 	"context"
 	"fmt"
-	chartofaccountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/journalreport"
-	"smlcloudplatform/internal/vfgl/journalreport/models"
+	chartofaccountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/journalreport"
+	"smlaicloudplatform/internal/vfgl/journalreport/models"
 	"testing"
 	"time"
 
-	mocktest "smlcloudplatform/mock"
+	mocktest "smlaicloudplatform/mock"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

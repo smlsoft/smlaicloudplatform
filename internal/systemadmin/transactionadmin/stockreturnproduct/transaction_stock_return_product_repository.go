@@ -2,8 +2,8 @@ package stockreturnproduct
 
 import (
 	"context"
-	stockreturnproductmodels "smlcloudplatform/internal/transaction/stockreturnproduct/models"
-	"smlcloudplatform/pkg/microservice"
+	stockreturnproductmodels "smlaicloudplatform/internal/transaction/stockreturnproduct/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

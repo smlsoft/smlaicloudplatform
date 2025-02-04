@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/product/productgroup/config"
-	"smlcloudplatform/internal/product/productgroup/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/product/productgroup/config"
+	"smlaicloudplatform/internal/product/productgroup/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IProductGroupMessageQueueRepository interface {

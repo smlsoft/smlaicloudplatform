@@ -3,15 +3,15 @@ package services_test
 import (
 	"encoding/json"
 	"fmt"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/internal/vfgl/journal/services"
-	"smlcloudplatform/pkg/microservice"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/internal/vfgl/journal/services"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 	"time"
 
-	msmock "smlcloudplatform/mock"
+	msmock "smlaicloudplatform/mock"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

@@ -3,9 +3,9 @@ package stockadjustment
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	stockAdjustmentModels "smlcloudplatform/internal/transaction/stockadjustment/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	stockAdjustmentModels "smlaicloudplatform/internal/transaction/stockadjustment/models"
 )
 
 type StockAdjustmentTransactionPhaser struct{}

@@ -1,6 +1,6 @@
 package usecases
 
-import "smlcloudplatform/internal/transaction/models"
+import "smlaicloudplatform/internal/transaction/models"
 
 type ITransactionPhaser[T any] interface {
 	PhaseSingleDoc(input string) (*T, error)

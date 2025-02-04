@@ -14,11 +14,11 @@ import (
 	"syscall"
 	"time"
 
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/logger"
-	"smlcloudplatform/internal/middlewares"
-	"smlcloudplatform/pkg/microservice/models"
-	msValidator "smlcloudplatform/pkg/validator"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/logger"
+	"smlaicloudplatform/internal/middlewares"
+	"smlaicloudplatform/pkg/microservice/models"
+	msValidator "smlaicloudplatform/pkg/validator"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gorilla/websocket"
@@ -430,7 +430,7 @@ func (ms *Microservice) HttpPreRemoveTrailingSlash() {
 
 func (ms *Microservice) HttpUsePrometheus() {
 	ms.Logger.Info("Start Prometheus.")
-	p := prometheus.NewPrometheus("smlcloudplatform", nil)
+	p := prometheus.NewPrometheus("smlaicloudplatform", nil)
 	p.Use(ms.echo)
 }
 

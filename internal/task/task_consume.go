@@ -3,13 +3,13 @@ package task
 import (
 	"encoding/json"
 	"fmt"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/documentwarehouse/documentimage/models"
-	repositoriesDocumentImage "smlcloudplatform/internal/documentwarehouse/documentimage/repositories"
-	servicesDocumentImage "smlcloudplatform/internal/documentwarehouse/documentimage/services"
-	"smlcloudplatform/internal/task/repositories"
-	"smlcloudplatform/internal/task/services"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/models"
+	repositoriesDocumentImage "smlaicloudplatform/internal/documentwarehouse/documentimage/repositories"
+	servicesDocumentImage "smlaicloudplatform/internal/documentwarehouse/documentimage/services"
+	"smlaicloudplatform/internal/task/repositories"
+	"smlaicloudplatform/internal/task/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

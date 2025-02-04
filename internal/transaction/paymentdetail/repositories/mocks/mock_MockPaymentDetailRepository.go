@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	models "smlcloudplatform/internal/transaction/paymentdetail/models"
+	models "smlaicloudplatform/internal/transaction/paymentdetail/models"
 
 	mock "github.com/stretchr/testify/mock"
 )

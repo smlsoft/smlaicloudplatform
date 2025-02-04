@@ -1,8 +1,8 @@
 package stocktransaction
 
 import (
-	stockprocessmodels "smlcloudplatform/internal/stockprocess/models"
-	stocktransactionmodels "smlcloudplatform/internal/transaction/models"
+	stockprocessmodels "smlaicloudplatform/internal/stockprocess/models"
+	stocktransactionmodels "smlaicloudplatform/internal/transaction/models"
 )
 
 type IStockProcessTransactionPhaser interface {

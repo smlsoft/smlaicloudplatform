@@ -3,11 +3,11 @@ package services_test
 import (
 	"context"
 	"errors"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/internal/authentication/services"
-	"smlcloudplatform/internal/firebase"
-	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/internal/authentication/services"
+	"smlaicloudplatform/internal/firebase"
+	"smlaicloudplatform/pkg/microservice"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"testing"
 	"time"
 

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"smlcloudplatform/internal/vfgl/journalreport"
-	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/journalreport"
+	"smlaicloudplatform/mock"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

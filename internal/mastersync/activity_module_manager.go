@@ -1,9 +1,9 @@
 package mastersync
 
 import (
-	"smlcloudplatform/internal/models"
-	"smlcloudplatform/pkg/microservice"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/models"
+	"smlaicloudplatform/pkg/microservice"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"strings"
 	"time"
 

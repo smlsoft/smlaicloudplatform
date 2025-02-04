@@ -1,7 +1,7 @@
 package models
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
+	pkgModels "smlaicloudplatform/internal/models"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"

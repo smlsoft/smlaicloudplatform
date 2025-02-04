@@ -3,11 +3,11 @@ package shopadmin
 import (
 	"encoding/json"
 	"fmt"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/pkg/microservice"
 
-	goMicroModels "smlcloudplatform/internal/models"
-	shopModels "smlcloudplatform/internal/shop/models"
+	goMicroModels "smlaicloudplatform/internal/models"
+	shopModels "smlaicloudplatform/internal/shop/models"
 )
 
 type IShopAdminHttp interface {

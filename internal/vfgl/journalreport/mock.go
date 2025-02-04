@@ -1,8 +1,8 @@
 package journalreport
 
 import (
-	chartofaccountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/journalreport/models"
+	chartofaccountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/journalreport/models"
 	"time"
 )
 

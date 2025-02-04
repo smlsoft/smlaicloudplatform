@@ -3,14 +3,14 @@ package chartofaccount
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/repositories"
-	"smlcloudplatform/internal/vfgl/chartofaccount/services"
-	journalRepo "smlcloudplatform/internal/vfgl/journal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/services"
+	journalRepo "smlaicloudplatform/internal/vfgl/journal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"strings"
 )
 

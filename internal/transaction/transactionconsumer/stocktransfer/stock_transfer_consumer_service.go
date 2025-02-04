@@ -1,8 +1,8 @@
 package stocktransfer
 
 import (
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
 )
 
 type IStockTransferTransactionConsumerService interface {

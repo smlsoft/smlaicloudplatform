@@ -2,7 +2,7 @@ name: Build Migration
 on: [workflow_dispatch]
 env: 
     REGISTRY: ghcr.io
-    IMAGE_NAME: smlsoft/smlcloudmigration
+    IMAGE_NAME: smlsoft/smlaicloudmigration
    
 jobs:
   build-and-push:

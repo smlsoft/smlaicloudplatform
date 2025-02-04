@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/documentwarehouse/documentimage/config"
-	"smlcloudplatform/internal/documentwarehouse/documentimage/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/config"
+	"smlaicloudplatform/internal/documentwarehouse/documentimage/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type DocumentImageMessageQueueRepository struct {

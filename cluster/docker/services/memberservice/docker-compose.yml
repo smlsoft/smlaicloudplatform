@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   memberservice:
-    image: smlsoft/smlcloudplatform:member
+    image: smlsoft/smlaicloudplatform:member
     restart: always
     expose:
       - 8080

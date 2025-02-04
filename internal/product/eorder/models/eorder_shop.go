@@ -1,13 +1,13 @@
 package models
 
 import (
-	salechannel_models "smlcloudplatform/internal/channel/salechannel/models"
-	notify_models "smlcloudplatform/internal/notify/models"
-	device_models "smlcloudplatform/internal/order/device/models"
-	order_models "smlcloudplatform/internal/order/setting/models"
-	branch_models "smlcloudplatform/internal/organization/branch/models"
-	"smlcloudplatform/internal/pos/media/models"
-	kitchen_models "smlcloudplatform/internal/restaurant/kitchen/models"
+	salechannel_models "smlaicloudplatform/internal/channel/salechannel/models"
+	notify_models "smlaicloudplatform/internal/notify/models"
+	device_models "smlaicloudplatform/internal/order/device/models"
+	order_models "smlaicloudplatform/internal/order/setting/models"
+	branch_models "smlaicloudplatform/internal/organization/branch/models"
+	"smlaicloudplatform/internal/pos/media/models"
+	kitchen_models "smlaicloudplatform/internal/restaurant/kitchen/models"
 )
 
 type EOrderShop struct {

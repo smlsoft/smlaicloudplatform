@@ -2,7 +2,7 @@ package config_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/config"
+	"smlaicloudplatform/internal/config"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

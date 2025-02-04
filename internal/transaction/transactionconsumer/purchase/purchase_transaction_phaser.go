@@ -3,9 +3,9 @@ package purchase
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	purchaseModels "smlcloudplatform/internal/transaction/purchase/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	purchaseModels "smlaicloudplatform/internal/transaction/purchase/models"
 )
 
 type PurchaseTransactionPhaser struct{}

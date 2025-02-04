@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/transaction/smltransaction/config"
-	"smlcloudplatform/internal/transaction/smltransaction/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/transaction/smltransaction/config"
+	"smlaicloudplatform/internal/transaction/smltransaction/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ISMLTransactionMessageQueueRepository interface {

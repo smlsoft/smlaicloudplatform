@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	shiftModels "smlcloudplatform/internal/pos/shift/models"
-	"smlcloudplatform/pkg/microservice"
+	shiftModels "smlaicloudplatform/internal/pos/shift/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"gorm.io/gorm"
 )

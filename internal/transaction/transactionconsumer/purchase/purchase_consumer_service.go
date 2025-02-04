@@ -1,9 +1,9 @@
 package purchase
 
 import (
-	"smlcloudplatform/internal/logger"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/logger"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
 )
 
 type IPurchaseTransactionConsumerService interface {

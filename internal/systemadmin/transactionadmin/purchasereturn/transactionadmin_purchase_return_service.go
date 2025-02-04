@@ -2,8 +2,8 @@ package purchasereturn
 
 import (
 	"context"
-	purchaseReturnRepository "smlcloudplatform/internal/transaction/purchasereturn/repositories"
-	"smlcloudplatform/pkg/microservice"
+	purchaseReturnRepository "smlaicloudplatform/internal/transaction/purchasereturn/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

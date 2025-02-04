@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/pkg/microservice/models"
 	"strconv"
 	"strings"
 )

@@ -1,11 +1,11 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/repositories"
-	config "smlcloudplatform/internal/stockprocess/config"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/repositories"
+	config "smlaicloudplatform/internal/stockprocess/config"
+	"smlaicloudplatform/pkg/microservice"
 
-	models "smlcloudplatform/internal/stockprocess/models"
+	models "smlaicloudplatform/internal/stockprocess/models"
 )
 
 type IStockProcessMessageQueueRepository interface {

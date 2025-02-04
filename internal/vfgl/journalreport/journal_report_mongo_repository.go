@@ -2,8 +2,8 @@ package journalreport
 
 import (
 	"context"
-	"smlcloudplatform/internal/vfgl/journalreport/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/vfgl/journalreport/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

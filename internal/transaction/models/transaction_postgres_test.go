@@ -1,8 +1,8 @@
 package models_test
 
 import (
-	commonModel "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
+	commonModel "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
 	"testing"
 
 	"github.com/tj/assert"

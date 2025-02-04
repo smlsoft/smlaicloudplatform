@@ -1,20 +1,20 @@
 package transactionadmin
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/creditorpayment"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/debtorpayment"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/purchase"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/purchasereturn"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/saleinvoice"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/saleinvoicereturn"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/stockadjustment"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/stockbalance"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/stockpickupproduct"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/stockreceiveproduct"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/stockreturnproduct"
-	"smlcloudplatform/internal/systemadmin/transactionadmin/stocktransfer"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/creditorpayment"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/debtorpayment"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/purchase"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/purchasereturn"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/saleinvoice"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/saleinvoicereturn"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/stockadjustment"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/stockbalance"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/stockpickupproduct"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/stockreceiveproduct"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/stockreturnproduct"
+	"smlaicloudplatform/internal/systemadmin/transactionadmin/stocktransfer"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type ITransactionAdminHttp interface {

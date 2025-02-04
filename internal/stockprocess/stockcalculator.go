@@ -1,11 +1,11 @@
 package stockprocess
 
 import (
-	"smlcloudplatform/internal/logger"
-	productBarcodeRepositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	stockModel "smlcloudplatform/internal/stockprocess/models"
-	"smlcloudplatform/internal/stockprocess/repositories"
-	"smlcloudplatform/pkg/stockcalculator"
+	"smlaicloudplatform/internal/logger"
+	productBarcodeRepositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	stockModel "smlaicloudplatform/internal/stockprocess/models"
+	"smlaicloudplatform/internal/stockprocess/repositories"
+	"smlaicloudplatform/pkg/stockcalculator"
 )
 
 var log logger.ILogger

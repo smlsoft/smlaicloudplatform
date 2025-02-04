@@ -2,8 +2,8 @@ package shop_test
 
 import (
 	"context"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/internal/shop"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/internal/shop"
 	"testing"
 
 	"github.com/stretchr/testify/require"

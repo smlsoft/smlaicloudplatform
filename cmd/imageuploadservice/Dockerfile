@@ -1,5 +1,5 @@
 
-## smlsoft/smlcloudplatform:imagesservice
+## smlsoft/smlaicloudplatform:imagesservice
 ##
 ## Builder
 ##

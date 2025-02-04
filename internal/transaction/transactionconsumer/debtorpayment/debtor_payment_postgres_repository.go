@@ -1,9 +1,9 @@
 package debtorpayment
 
 import (
-	models "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/repositories"
-	"smlcloudplatform/pkg/microservice"
+	models "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IDebtorPaymentTransactionPGRepository interface {

@@ -2,8 +2,8 @@ package purchase
 
 import (
 	"errors"
-	"smlcloudplatform/internal/transaction/models"
-	payment_models "smlcloudplatform/internal/transaction/payment/models"
+	"smlaicloudplatform/internal/transaction/models"
+	payment_models "smlaicloudplatform/internal/transaction/payment/models"
 )
 
 type PaymentTransactionPhaser struct{}

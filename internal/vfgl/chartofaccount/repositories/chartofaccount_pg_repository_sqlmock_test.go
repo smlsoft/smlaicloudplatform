@@ -3,8 +3,8 @@ package repositories_test
 import (
 	"database/sql"
 	"regexp"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/vfgl/chartofaccount/models"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/vfgl/chartofaccount/models"
 	"testing"
 
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"

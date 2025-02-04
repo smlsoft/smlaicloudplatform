@@ -5,8 +5,8 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/pkg/microservice/models"
 
 	"github.com/labstack/echo/v4"
 )

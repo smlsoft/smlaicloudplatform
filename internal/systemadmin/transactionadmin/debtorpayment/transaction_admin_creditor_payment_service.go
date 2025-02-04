@@ -2,8 +2,8 @@ package debtorpayment
 
 import (
 	"context"
-	debtorPaymentRepository "smlcloudplatform/internal/transaction/paid/repositories"
-	"smlcloudplatform/pkg/microservice"
+	debtorPaymentRepository "smlaicloudplatform/internal/transaction/paid/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

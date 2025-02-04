@@ -2,14 +2,14 @@ package shift
 
 import (
 	"encoding/json"
-	shiftConfig "smlcloudplatform/internal/pos/shift/config"
-	"smlcloudplatform/internal/pos/shift/models"
-	"smlcloudplatform/internal/pos/shift/repositories"
-	"smlcloudplatform/internal/pos/shift/services"
-	"smlcloudplatform/pkg/microservice"
+	shiftConfig "smlaicloudplatform/internal/pos/shift/config"
+	"smlaicloudplatform/internal/pos/shift/models"
+	"smlaicloudplatform/internal/pos/shift/repositories"
+	"smlaicloudplatform/internal/pos/shift/services"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 
-	pkgConfig "smlcloudplatform/internal/config"
+	pkgConfig "smlaicloudplatform/internal/config"
 )
 
 type ShiftConsumer struct {

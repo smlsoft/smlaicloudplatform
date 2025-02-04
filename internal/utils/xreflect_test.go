@@ -1,7 +1,7 @@
 package utils_test
 
 import (
-	"smlcloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils"
 	"testing"
 )
 

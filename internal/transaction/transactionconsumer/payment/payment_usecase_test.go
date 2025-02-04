@@ -1,16 +1,16 @@
 package payment_test
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/models"
-	payment_repositories "smlcloudplatform/internal/transaction/payment/repositories"
-	payment_usecase "smlcloudplatform/internal/transaction/payment/usecase"
-	"smlcloudplatform/internal/transaction/transactionconsumer/payment"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/models"
+	payment_repositories "smlaicloudplatform/internal/transaction/payment/repositories"
+	payment_usecase "smlaicloudplatform/internal/transaction/payment/usecase"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/payment"
 
-	trans_models "smlcloudplatform/internal/transaction/models"
-	paymentdetail_repositories "smlcloudplatform/internal/transaction/paymentdetail/repositories"
-	paymentdetail_usecase "smlcloudplatform/internal/transaction/paymentdetail/usecase"
-	"smlcloudplatform/pkg/microservice"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	paymentdetail_repositories "smlaicloudplatform/internal/transaction/paymentdetail/repositories"
+	paymentdetail_usecase "smlaicloudplatform/internal/transaction/paymentdetail/usecase"
+	"smlaicloudplatform/pkg/microservice"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

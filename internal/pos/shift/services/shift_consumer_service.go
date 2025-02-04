@@ -1,8 +1,8 @@
 package services
 
 import (
-	"smlcloudplatform/internal/pos/shift/models"
-	"smlcloudplatform/internal/pos/shift/repositories"
+	"smlaicloudplatform/internal/pos/shift/models"
+	"smlaicloudplatform/internal/pos/shift/repositories"
 )
 
 type IShiftConsumerService interface {

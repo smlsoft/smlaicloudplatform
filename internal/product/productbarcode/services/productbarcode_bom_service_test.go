@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/productbarcode/models"
-	"smlcloudplatform/internal/product/productbarcode/services"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/productbarcode/models"
+	"smlaicloudplatform/internal/product/productbarcode/services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

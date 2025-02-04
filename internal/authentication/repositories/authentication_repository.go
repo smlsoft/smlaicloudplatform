@@ -2,8 +2,8 @@ package repositories
 
 import (
 	"context"
-	"smlcloudplatform/internal/authentication/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/authentication/models"
+	"smlaicloudplatform/pkg/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

@@ -2,9 +2,9 @@ package services
 
 import (
 	"fmt"
-	common "smlcloudplatform/internal/models"
-	trans_models "smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/saleinvoice/models"
+	common "smlaicloudplatform/internal/models"
+	trans_models "smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/saleinvoice/models"
 	"time"
 )
 

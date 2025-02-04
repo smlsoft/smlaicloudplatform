@@ -1,8 +1,8 @@
 package services
 
 import (
-	"smlcloudplatform/internal/debtaccount/creditor/models"
-	"smlcloudplatform/internal/debtaccount/creditor/repositories"
+	"smlaicloudplatform/internal/debtaccount/creditor/models"
+	"smlaicloudplatform/internal/debtaccount/creditor/repositories"
 )
 
 type ICreditorConsumerService interface {

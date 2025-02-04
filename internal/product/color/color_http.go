@@ -3,13 +3,13 @@ package color
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/product/color/models"
-	"smlcloudplatform/internal/product/color/repositories"
-	"smlcloudplatform/internal/product/color/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/product/color/models"
+	"smlaicloudplatform/internal/product/color/repositories"
+	"smlaicloudplatform/internal/product/color/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IColorHttp interface{}

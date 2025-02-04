@@ -1,8 +1,8 @@
 package services
 
 import (
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/models"
-	"smlcloudplatform/internal/transaction/saleinvoicebomprice/repositories"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/models"
+	"smlaicloudplatform/internal/transaction/saleinvoicebomprice/repositories"
 )
 
 type ISaleInvoiceBomPriceConsumerService interface {

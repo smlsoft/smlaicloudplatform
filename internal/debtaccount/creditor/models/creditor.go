@@ -1,8 +1,8 @@
 package models
 
 import (
-	groupModels "smlcloudplatform/internal/debtaccount/creditorgroup/models"
-	"smlcloudplatform/internal/models"
+	groupModels "smlaicloudplatform/internal/debtaccount/creditorgroup/models"
+	"smlaicloudplatform/internal/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

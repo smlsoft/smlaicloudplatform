@@ -2,7 +2,7 @@ package search_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/utils/search"
+	"smlaicloudplatform/internal/utils/search"
 	"testing"
 )
 

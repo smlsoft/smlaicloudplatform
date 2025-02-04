@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   authentication:
-    image: smlsoft/smlcloudplatform:authen
+    image: smlsoft/smlaicloudplatform:authen
     restart: always
     expose:
       - 8080

@@ -2,7 +2,7 @@ package encrypt_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/encrypt"
+	"smlaicloudplatform/internal/encrypt"
 	"testing"
 )
 

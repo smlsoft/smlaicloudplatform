@@ -1,9 +1,9 @@
 package main
 
 import (
-	"smlcloudplatform/internal/config"
-	"smlcloudplatform/internal/product/productbarcode"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	"smlaicloudplatform/internal/product/productbarcode"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 func main() {

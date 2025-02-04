@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"smlcloudplatform/internal/transaction/payment/models"
-	"smlcloudplatform/internal/transaction/payment/repositories"
+	"smlaicloudplatform/internal/transaction/payment/models"
+	"smlaicloudplatform/internal/transaction/payment/repositories"
 )
 
 type IPaymentUsecase interface {

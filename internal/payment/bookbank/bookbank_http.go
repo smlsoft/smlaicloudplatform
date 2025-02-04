@@ -3,14 +3,14 @@ package bookbank
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/payment/bookbank/models"
-	"smlcloudplatform/internal/payment/bookbank/repositories"
-	"smlcloudplatform/internal/payment/bookbank/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/payment/bookbank/models"
+	"smlaicloudplatform/internal/payment/bookbank/repositories"
+	"smlaicloudplatform/internal/payment/bookbank/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IBookBankHttp interface{}

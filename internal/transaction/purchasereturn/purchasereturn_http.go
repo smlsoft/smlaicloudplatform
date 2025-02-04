@@ -3,17 +3,17 @@ package purchasereturn
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	productbarcode_repositories "smlcloudplatform/internal/product/productbarcode/repositories"
-	"smlcloudplatform/internal/transaction/purchasereturn/models"
-	"smlcloudplatform/internal/transaction/purchasereturn/repositories"
-	"smlcloudplatform/internal/transaction/purchasereturn/services"
-	trancache "smlcloudplatform/internal/transaction/repositories"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/internal/utils/requestfilter"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	productbarcode_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
+	"smlaicloudplatform/internal/transaction/purchasereturn/models"
+	"smlaicloudplatform/internal/transaction/purchasereturn/repositories"
+	"smlaicloudplatform/internal/transaction/purchasereturn/services"
+	trancache "smlaicloudplatform/internal/transaction/repositories"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IPurchaseReturnHttp interface{}

@@ -3,9 +3,9 @@ package option
 import (
 	"context"
 	"errors"
-	"smlcloudplatform/internal/product/option/models"
-	"smlcloudplatform/internal/utils"
-	micromodels "smlcloudplatform/pkg/microservice/models"
+	"smlaicloudplatform/internal/product/option/models"
+	"smlaicloudplatform/internal/utils"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"

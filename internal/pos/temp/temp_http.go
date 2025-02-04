@@ -2,13 +2,13 @@ package temp
 
 import (
 	"net/http"
-	"smlcloudplatform/internal/config"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/pos/temp/repositories"
-	"smlcloudplatform/internal/pos/temp/services"
+	"smlaicloudplatform/internal/config"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/pos/temp/repositories"
+	"smlaicloudplatform/internal/pos/temp/services"
 	"strings"
 
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IPOSTempHttp interface{}

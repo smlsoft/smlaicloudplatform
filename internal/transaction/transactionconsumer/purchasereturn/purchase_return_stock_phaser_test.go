@@ -1,12 +1,12 @@
 package purchasereturn_test
 
 import (
-	"smlcloudplatform/internal/transaction/models"
-	"smlcloudplatform/internal/transaction/transactionconsumer/purchasereturn"
+	"smlaicloudplatform/internal/transaction/models"
+	"smlaicloudplatform/internal/transaction/transactionconsumer/purchasereturn"
 	"testing"
 	"time"
 
-	pkgModels "smlcloudplatform/internal/models"
+	pkgModels "smlaicloudplatform/internal/models"
 
 	"github.com/stretchr/testify/assert"
 )

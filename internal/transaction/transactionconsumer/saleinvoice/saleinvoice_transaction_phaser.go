@@ -3,9 +3,9 @@ package saleinvoice
 import (
 	"encoding/json"
 	"errors"
-	pkgModels "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/transaction/models"
-	saleInvoiceModel "smlcloudplatform/internal/transaction/saleinvoice/models"
+	pkgModels "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/transaction/models"
+	saleInvoiceModel "smlaicloudplatform/internal/transaction/saleinvoice/models"
 )
 
 type SalesInvoiceTransactionPhaser struct{}

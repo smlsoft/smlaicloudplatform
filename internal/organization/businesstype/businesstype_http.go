@@ -3,14 +3,14 @@ package businesstype
 import (
 	"encoding/json"
 	"net/http"
-	"smlcloudplatform/internal/config"
-	mastersync "smlcloudplatform/internal/mastersync/repositories"
-	common "smlcloudplatform/internal/models"
-	"smlcloudplatform/internal/organization/businesstype/models"
-	"smlcloudplatform/internal/organization/businesstype/repositories"
-	"smlcloudplatform/internal/organization/businesstype/services"
-	"smlcloudplatform/internal/utils"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/config"
+	mastersync "smlaicloudplatform/internal/mastersync/repositories"
+	common "smlaicloudplatform/internal/models"
+	"smlaicloudplatform/internal/organization/businesstype/models"
+	"smlaicloudplatform/internal/organization/businesstype/repositories"
+	"smlaicloudplatform/internal/organization/businesstype/services"
+	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IBusinessTypeHttp interface{}

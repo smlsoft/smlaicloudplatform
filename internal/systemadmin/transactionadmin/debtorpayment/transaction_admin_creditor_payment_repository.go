@@ -2,8 +2,8 @@ package debtorpayment
 
 import (
 	"context"
-	debtorPaymentModels "smlcloudplatform/internal/transaction/paid/models"
-	"smlcloudplatform/pkg/microservice"
+	debtorPaymentModels "smlaicloudplatform/internal/transaction/paid/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IDebtorPaymentTransactionAdminRepository interface {

@@ -2,8 +2,8 @@ package stockreceiveproduct
 
 import (
 	"context"
-	stockReceiveProductRepositories "smlcloudplatform/internal/transaction/stockreceiveproduct/repositories"
-	"smlcloudplatform/pkg/microservice"
+	stockReceiveProductRepositories "smlaicloudplatform/internal/transaction/stockreceiveproduct/repositories"
+	"smlaicloudplatform/pkg/microservice"
 	"time"
 )
 

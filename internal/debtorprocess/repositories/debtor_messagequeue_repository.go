@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"smlcloudplatform/internal/debtorprocess/config"
-	"smlcloudplatform/internal/debtorprocess/models"
-	"smlcloudplatform/internal/repositories"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/debtorprocess/config"
+	"smlaicloudplatform/internal/debtorprocess/models"
+	"smlaicloudplatform/internal/repositories"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IDebtorProcessMessageQueueRepository interface {

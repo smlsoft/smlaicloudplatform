@@ -1,6 +1,6 @@
 package models
 
-import "smlcloudplatform/internal/models"
+import "smlaicloudplatform/internal/models"
 
 type TableDesign struct {
 	Index        int `json:"index" bson:"index" validate:"required"`

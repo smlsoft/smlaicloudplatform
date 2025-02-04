@@ -1,18 +1,18 @@
 package datamigration
 
 import (
-	"smlcloudplatform/internal/shop"
-	shopModel "smlcloudplatform/internal/shop/models"
-	accountGroupRepositories "smlcloudplatform/internal/vfgl/accountgroup/repositories"
-	accountModel "smlcloudplatform/internal/vfgl/chartofaccount/models"
-	chartofaccountrepositories "smlcloudplatform/internal/vfgl/chartofaccount/repositories"
-	journalBookRepositories "smlcloudplatform/internal/vfgl/journalbook/repositories"
+	"smlaicloudplatform/internal/shop"
+	shopModel "smlaicloudplatform/internal/shop/models"
+	accountGroupRepositories "smlaicloudplatform/internal/vfgl/accountgroup/repositories"
+	accountModel "smlaicloudplatform/internal/vfgl/chartofaccount/models"
+	chartofaccountrepositories "smlaicloudplatform/internal/vfgl/chartofaccount/repositories"
+	journalBookRepositories "smlaicloudplatform/internal/vfgl/journalbook/repositories"
 
-	// chartOfAccountServices "smlcloudplatform/internal/vfgl/chartofaccount/services"
+	// chartOfAccountServices "smlaicloudplatform/internal/vfgl/chartofaccount/services"
 
-	"smlcloudplatform/internal/logger"
-	journalModels "smlcloudplatform/internal/vfgl/journal/models"
-	"smlcloudplatform/pkg/microservice"
+	"smlaicloudplatform/internal/logger"
+	journalModels "smlaicloudplatform/internal/vfgl/journal/models"
+	"smlaicloudplatform/pkg/microservice"
 )
 
 type IMigrationService interface {
