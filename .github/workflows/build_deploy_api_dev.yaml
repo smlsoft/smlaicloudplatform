@@ -53,7 +53,7 @@ jobs:
           echo ${{ github.sha }}
           sed -i "s|ghcr.io/smlsoft/smlaicloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlaicloudapi:sha-${GITHUB_SHA::7}|g" smlaicloud-api-dev/deployment.yaml
           git add -A
-          git commit -am "Update dedepos-api-dev sha-${GITHUB_SHA::7}"
+          git commit -am "Update smlaicloud-api-dev sha-${GITHUB_SHA::7}"
       - run: echo ${{ github }}
       - run: git push origin main
   # notify-deploy:
