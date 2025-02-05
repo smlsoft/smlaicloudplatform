@@ -11,47 +11,28 @@ const branchCollectionName = "organizationBranches"
 type Branch struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string             `json:"code" bson:"code"`
-	CompanyNames             *[]models.NameX    `json:"companynames" bson:"companynames"`
-	MachineType              int                `json:"machinetype" bson:"machinetype"`
 	Names                    *[]models.NameX    `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Departments              *[]Department      `json:"departments" bson:"departments"`
-	BusinessTypes            *[]string          `json:"businesstypes" bson:"businesstypes"`
-	ImageURI                 string             `json:"imageuri" bson:"imageuri"`
-	LogoURI                  string             `json:"logouri" bson:"logouri"`
-	Languages                *[]string          `json:"languages" bson:"languages"`
-	Contact                  Contact            `json:"contact" bson:"contact"`
-	POS                      BranchPOS          `json:"pos" bson:"pos"`
+	DataLanguage             string             `json:"datalanguage" bson:"datalanguage"`
+	Address                  []models.NameX     `json:"address" bson:"addressx"`
+	PhoneNumber              string             `json:"phonenumber" bson:"phonenumber"`
+	Latitude                 float64            `json:"latitude" bson:"latitude"`
+	Longitude                float64            `json:"longitude" bson:"longitude"`
+	TaxID                    string             `json:"taxid" bson:"taxid"`
 	BusinessType             BranchBusinessType `json:"businesstype" bson:"businesstype"`
+	BusinessTypes            *[]string          `json:"businesstypes" bson:"businesstypes"`
+	VatRate                  float64            `json:"vatrate" bson:"vatrate"`
+	IsHeadOffice             bool               `json:"isheadoffice" bson:"isheadoffice"`
+	IsTaxByAddress           bool               `json:"istaxbyaddress" bson:"istaxbyaddress"`
+	TaxAddress               []models.NameX     `json:"taxaddress" bson:"taxaddress"`
+	Email                    string             `json:"email" bson:"email"`
+	VatTypeSale              int8               `json:"vattypesale" bson:"vattypesale"`
 }
 
 type BranchBusinessType struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
 	Names              *[]models.NameX `json:"names" bson:"names"`
-}
-
-type BranchPOS struct {
-	TaxID               string  `json:"taxid" bson:"taxid"`
-	IsBom               bool    `json:"isbom" bson:"isbom"`
-	VatRate             float64 `json:"vatrate" bson:"vatrate"`
-	VatTypeSale         int8    `json:"vattypesale" bson:"vattypesale"`
-	VatTypePurchase     int8    `json:"vattypepurchase" bson:"vattypepurchase"`
-	InquiryTypeSale     int8    `json:"inquirytypesale" bson:"inquirytypesale"`
-	InquiryTypePurchase int8    `json:"inquirytypepurchase" bson:"inquirytypepurchase"`
-	HeaderReceiptPOS    string  `json:"headerreceiptpos" bson:"headerreceiptpos"`
-	FooterReceiptPOS    string  `json:"footerreceiptpos" bson:"footerreceiptpos"`
-}
-
-type Contact struct {
-	Address         []models.NameX `json:"address" bson:"addressx"`
-	CountryCode     string         `json:"countrycode" bson:"countrycode"`
-	ProvinceCode    string         `json:"provincecode" bson:"provincecode"`
-	DistrictCode    string         `json:"districtcode" bson:"districtcode"`
-	SubDistrictCode string         `json:"subdistrictcode" bson:"subdistrictcode"`
-	ZipCode         string         `json:"zipcode" bson:"zipcode"`
-	PhoneNumber     string         `json:"phonenumber" bson:"phonenumber"`
-	Latitude        float64        `json:"latitude" bson:"latitude"`
-	Longitude       float64        `json:"longitude" bson:"longitude"`
 }
 
 type BranchInfo struct {
