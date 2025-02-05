@@ -274,27 +274,6 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
     type: object
-  models.BranchPOS:
-    properties:
-      footerreceiptpos:
-        type: string
-      headerreceiptpos:
-        type: string
-      inquirytypepurchase:
-        type: integer
-      inquirytypesale:
-        type: integer
-      isbom:
-        type: boolean
-      taxid:
-        type: string
-      vatrate:
-        type: number
-      vattypepurchase:
-        type: integer
-      vattypesale:
-        type: integer
-    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -516,27 +495,19 @@ definitions:
       comment:
         type: string
     type: object
-  models.Contact:
+  models.Company:
     properties:
-      address:
+      apikey:
+        type: string
+      code:
+        type: string
+      companynames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      countrycode:
+      imageuri:
         type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
+      logouri:
         type: string
     type: object
   models.CreditorAuth:
@@ -1659,6 +1630,15 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.Language:
+    properties:
+      code:
+        type: string
+      languages:
+        items:
+          type: string
+        type: array
     type: object
   models.LanguageConfig:
     properties:
@@ -7095,6 +7075,10 @@ definitions:
     type: object
   smlaicloudplatform_internal_organization_branch_models.Branch:
     properties:
+      address:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       businesstype:
         $ref: '#/definitions/models.BranchBusinessType'
       businesstypes:
@@ -7103,34 +7087,40 @@ definitions:
         type: array
       code:
         type: string
-      companynames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      contact:
-        $ref: '#/definitions/models.Contact'
+      datalanguage:
+        type: string
       departments:
         items:
           $ref: '#/definitions/smlaicloudplatform_internal_organization_branch_models.Department'
         type: array
-      imageuri:
+      email:
         type: string
-      languages:
-        items:
-          type: string
-        type: array
-      logouri:
-        type: string
-      machinetype:
-        type: integer
+      isheadoffice:
+        type: boolean
+      istaxbyaddress:
+        type: boolean
+      latitude:
+        type: number
+      longitude:
+        type: number
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true
-      pos:
-        $ref: '#/definitions/models.BranchPOS'
+      phonenumber:
+        type: string
+      taxaddress:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      taxid:
+        type: string
+      vatrate:
+        type: number
+      vattypesale:
+        type: integer
     required:
     - names
     type: object
@@ -14938,6 +14928,261 @@ paths:
       - AccessToken: []
       tags:
       - BusinessType
+  /organization/company:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Company
+      parameters:
+      - description: Company GUIDs
+        in: body
+        name: Company
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: business type code
+        in: query
+        name: businesstypecode
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+    post:
+      consumes:
+      - application/json
+      description: Create Company
+      parameters:
+      - description: Company
+        in: body
+        name: Company
+        required: true
+        schema:
+          $ref: '#/definitions/models.Company'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+  /organization/company/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Company
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+    get:
+      consumes:
+      - application/json
+      description: get Company info by guidfixed
+      parameters:
+      - description: Company guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+    put:
+      consumes:
+      - application/json
+      description: Update Company
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Company
+        in: body
+        name: Company
+        required: true
+        schema:
+          $ref: '#/definitions/models.Company'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+  /organization/company/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Company
+      parameters:
+      - description: Company
+        in: body
+        name: Company
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Company'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+  /organization/company/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Company info by Code
+      parameters:
+      - description: Company Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
+  /organization/company/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: business type code
+        in: query
+        name: businesstypecode
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Company
   /organization/department:
     delete:
       consumes:
@@ -15190,6 +15435,253 @@ paths:
       - AccessToken: []
       tags:
       - Department
+  /organization/language:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Language
+      parameters:
+      - description: Language GUIDs
+        in: body
+        name: Language
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+    post:
+      consumes:
+      - application/json
+      description: Create Language
+      parameters:
+      - description: Language
+        in: body
+        name: Language
+        required: true
+        schema:
+          $ref: '#/definitions/models.Language'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+  /organization/language/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Language
+      parameters:
+      - description: Language ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+    get:
+      consumes:
+      - application/json
+      description: get Language info by guidfixed
+      parameters:
+      - description: Language guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+    put:
+      consumes:
+      - application/json
+      description: Update Language
+      parameters:
+      - description: Language ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Language
+        in: body
+        name: Language
+        required: true
+        schema:
+          $ref: '#/definitions/models.Language'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+  /organization/language/{languageCode}:
+    get:
+      consumes:
+      - application/json
+      description: get Language info by Code
+      parameters:
+      - description: Language Code
+        in: path
+        name: languageCode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+  /organization/language/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Language
+      parameters:
+      - description: Language
+        in: body
+        name: Language
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Language'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
+  /organization/language/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Language
   /payment/bankmaster:
     delete:
       consumes:
