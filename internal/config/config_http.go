@@ -24,7 +24,7 @@ func (c *HttpConfig) Port() string {
 		return servicePort
 	}
 
-	return getEnv("HTTP_PORT", "8081")
+	return getEnv("HTTP_PORT", "8080")
 }
 
 func (c *HttpConfig) PathPrefix() string {

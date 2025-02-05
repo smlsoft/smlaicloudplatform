@@ -51,9 +51,9 @@ jobs:
           git config --global user.email "smlsoftdev@gmail.com"
           git config --global user.name "smlsoftdev"
           echo ${{ github.sha }}
-          sed -i "s|ghcr.io/smlsoft/smlaicloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlaicloudapi:sha-${GITHUB_SHA::7}|g" dedepos-api-dev/deployment.yaml
+          sed -i "s|ghcr.io/smlsoft/smlaicloudapi:sha-.\{7\}|ghcr.io/smlsoft/smlaicloudapi:sha-${GITHUB_SHA::7}|g" smlaicloud-api-dev/deployment.yaml
           git add -A
-          git commit -am "Update dedepos-api-dev sha-${GITHUB_SHA::7}"
+          git commit -am "Update smlaicloud-api-dev sha-${GITHUB_SHA::7}"
       - run: echo ${{ github }}
       - run: git push origin main
   notify-deploy:
