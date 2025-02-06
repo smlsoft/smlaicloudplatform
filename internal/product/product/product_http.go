@@ -182,7 +182,6 @@ func (h ProductHttp) DeleteProductByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
-
 	input := ctx.ReadInput()
 
 	docReq := []string{}
