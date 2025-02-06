@@ -2747,6 +2747,39 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Product:
+    properties:
+      code:
+        type: string
+      dimensions:
+        items:
+          $ref: '#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension'
+        type: array
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      manufacturercode:
+        type: string
+      manufacturerguid:
+        type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      vattype:
+        type: integer
+    required:
+    - names
+    type: object
   models.ProductBarcodeBranch:
     properties:
       code:
@@ -2818,7 +2851,7 @@ definitions:
         type: string
       dimensions:
         items:
-          $ref: '#/definitions/models.ProductDimension'
+          $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductDimension'
         type: array
       discount:
         type: string
@@ -3050,30 +3083,6 @@ definitions:
     required:
     - names
     - refunitnames
-    type: object
-  models.ProductDimension:
-    properties:
-      guidfixed:
-        type: string
-      isdisabled:
-        type: boolean
-      item:
-        $ref: '#/definitions/models.ProductDimensionItem'
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  models.ProductDimensionItem:
-    properties:
-      guidfixed:
-        type: string
-      isdisabled:
-        type: boolean
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
     type: object
   models.ProductImage:
     properties:
@@ -7195,6 +7204,30 @@ definitions:
           type: string
         type: array
     type: object
+  smlaicloudplatform_internal_product_product_models.ProductDimension:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      item:
+        $ref: '#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimensionItem'
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  smlaicloudplatform_internal_product_product_models.ProductDimensionItem:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
   smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode:
     properties:
       barcode:
@@ -7252,7 +7285,7 @@ definitions:
         type: string
       dimensions:
         items:
-          $ref: '#/definitions/models.ProductDimension'
+          $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductDimension'
         type: array
       discount:
         type: string
@@ -7382,6 +7415,30 @@ definitions:
     required:
     - barcode
     - names
+    type: object
+  smlaicloudplatform_internal_product_productbarcode_models.ProductDimension:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      item:
+        $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductDimensionItem'
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  smlaicloudplatform_internal_product_productbarcode_models.ProductDimensionItem:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   smlaicloudplatform_internal_product_productbarcode_models.ProductType:
     properties:
@@ -19614,6 +19671,253 @@ paths:
       - AccessToken: []
       tags:
       - OrderType
+  /product/products:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: Product GUIDs
+        in: body
+        name: Product
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: get Product info by guidfixed
+      parameters:
+      - description: Product guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      description: Update Product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/products/{productsCode}:
+    get:
+      consumes:
+      - application/json
+      description: get Product info by Code
+      parameters:
+      - description: Product Code
+        in: path
+        name: productsCode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/products/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Product'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/products/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /product/promotion:
     delete:
       consumes:
