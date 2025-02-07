@@ -11,6 +11,7 @@ type ProductImportHeader struct {
 
 type ProductImportRaw struct {
 	Barcode        string  `json:"barcode" ch:"barcode"`
+	Code           string  `json:"code" ch:"code"`
 	Name           string  `json:"name" ch:"name"`
 	UnitCode       string  `json:"unitcode" ch:"unitcode"`
 	Price          float64 `json:"price" ch:"price"`

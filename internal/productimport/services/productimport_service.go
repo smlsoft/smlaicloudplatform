@@ -149,6 +149,7 @@ func (svc *ProductImportService) ImportFromFile(shopID string, authUsername stri
 		"Price",
 		"Price Member",
 		"Price Delivery",
+		"Code",
 	}
 
 	isNotfoundColumn := false
@@ -226,6 +227,7 @@ func (svc *ProductImportService) prepareData(shopID string, taskID string, rowNu
 	dataDoc.Barcode = doc[colIdx["Barcode"]]
 	dataDoc.Name = doc[colIdx["Name"]]
 	dataDoc.UnitCode = doc[colIdx["Unit Code"]]
+	dataDoc.Code = doc[colIdx["Code"]]
 
 	dataDoc.Price = price
 	dataDoc.PriceMember = priceMember

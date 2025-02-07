@@ -189,8 +189,8 @@ func (repo ProductImportClickHouseRepository) CreateInBatch(ctx context.Context,
 
 func (repo ProductImportClickHouseRepository) Update(ctx context.Context, shopID string, guid string, doc models.ProductImportRaw) error {
 	return repo.pst.Exec(ctx,
-		"ALTER TABLE productbarcodeimport UPDATE barcode = ?, name = ?, unitcode = ?,  price = ? , pricemember = ? WHERE shopid = ? AND guidfixed = ?",
-		doc.Barcode, doc.Name, doc.UnitCode, doc.Price, doc.PriceMember, shopID, guid)
+		"ALTER TABLE productbarcodeimport UPDATE barcode = ?, name = ?, unitcode = ?,  price = ? , pricemember = ?,code = ? WHERE shopid = ? AND guidfixed = ?",
+		doc.Barcode, doc.Name, doc.UnitCode, doc.Price, doc.PriceMember, doc.Code, shopID, guid)
 }
 
 func (repo ProductImportClickHouseRepository) DeleteByGUID(ctx context.Context, shopID string, guid string) error {
