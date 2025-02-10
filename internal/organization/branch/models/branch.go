@@ -27,6 +27,12 @@ type Branch struct {
 	TaxAddress               []models.NameX     `json:"taxaddress" bson:"taxaddress"`
 	Email                    string             `json:"email" bson:"email"`
 	VatTypeSale              int8               `json:"vattypesale" bson:"vattypesale"`
+	VatTypePurchase          int8               `json:"vattypepurchase" bson:"vattypepurchase"`
+	IsBom                    bool               `json:"isbom" bson:"isbom"`
+	InquiryTypeSale          int8               `json:"inquirytypesale" bson:"inquirytypesale"`
+	InquiryTypePurchase      int8               `json:"inquirytypepurchase" bson:"inquirytypepurchase"`
+	HeaderReceiptPos         string             `json:"headerreceiptpos" bson:"headerreceiptpos"`
+	FooterReceiptPos         string             `json:"footerreceiptpos" bson:"footerreceiptpos"`
 }
 
 type BranchBusinessType struct {
