@@ -33,6 +33,9 @@ type Branch struct {
 	InquiryTypePurchase      int8               `json:"inquirytypepurchase" bson:"inquirytypepurchase"`
 	HeaderReceiptPos         string             `json:"headerreceiptpos" bson:"headerreceiptpos"`
 	FooterReceiptPos         string             `json:"footerreceiptpos" bson:"footerreceiptpos"`
+	CompanyNames             *[]models.NameX    `json:"companynames" bson:"companynames"`
+	ImageURI                 string             `json:"imageuri" bson:"imageuri"`
+	LogoURI                  string             `json:"logouri" bson:"logouri"`
 }
 
 type BranchBusinessType struct {
