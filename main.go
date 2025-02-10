@@ -31,6 +31,7 @@ import (
 	order_setting "smlaicloudplatform/internal/order/setting"
 	"smlaicloudplatform/internal/organization/branch"
 	"smlaicloudplatform/internal/organization/businesstype"
+	"smlaicloudplatform/internal/organization/company"
 	"smlaicloudplatform/internal/organization/department"
 	"smlaicloudplatform/internal/payment/bankmaster"
 	"smlaicloudplatform/internal/payment/bookbank"
@@ -46,6 +47,7 @@ import (
 	"smlaicloudplatform/internal/product/option"
 	"smlaicloudplatform/internal/product/optionpattern"
 	"smlaicloudplatform/internal/product/ordertype"
+	products "smlaicloudplatform/internal/product/product"
 	"smlaicloudplatform/internal/product/productbarcode"
 	"smlaicloudplatform/internal/product/productcategory"
 	"smlaicloudplatform/internal/product/productgroup"
@@ -249,6 +251,7 @@ func main() {
 			color.NewColorHttp(ms, cfg),
 
 			//product
+			products.NewProductHttp(ms, cfg),
 			productcategory.NewProductCategoryHttp(ms, cfg),
 			productbarcode.NewProductBarcodeHttp(ms, cfg),
 			// product.NewProductHttp(ms, cfg),
@@ -301,6 +304,7 @@ func main() {
 			branch.NewBranchHttp(ms, cfg),
 			department.NewDepartmentHttp(ms, cfg),
 			businesstype.NewBusinessTypeHttp(ms, cfg),
+			company.NewCompanyHttp(ms, cfg),
 
 			//transaction
 			purchase.NewPurchaseHttp(ms, cfg),
