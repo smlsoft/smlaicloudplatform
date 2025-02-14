@@ -3088,6 +3088,27 @@ definitions:
     - names
     - refunitnames
     type: object
+  models.ProductGroupPg:
+    properties:
+      code:
+        type: string
+      createdat:
+        type: string
+      createdby:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      shopid:
+        type: string
+      updatedat:
+        type: string
+      updatedby:
+        type: string
+    type: object
   models.ProductImage:
     properties:
       uri:
@@ -7472,19 +7493,6 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-    type: object
-  smlaicloudplatform_internal_product_productgroup_models.ProductGroup:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   smlaicloudplatform_internal_product_producttype_models.ProductType:
     properties:
@@ -19175,277 +19183,6 @@ paths:
       - AccessToken: []
       tags:
       - ProductCategory
-  /product/group:
-    delete:
-      consumes:
-      - application/json
-      description: Delete ProductGroup
-      parameters:
-      - description: ProductGroup GUIDs
-        in: body
-        name: ProductGroup
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: page
-        in: query
-        name: page
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-    post:
-      consumes:
-      - application/json
-      description: Create ProductGroup
-      parameters:
-      - description: ProductGroup
-        in: body
-        name: ProductGroup
-        required: true
-        schema:
-          $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-  /product/group/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete ProductGroup
-      parameters:
-      - description: ProductGroup ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: ProductGroup ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-    put:
-      consumes:
-      - application/json
-      description: Update ProductGroup
-      parameters:
-      - description: ProductGroup ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: ProductGroup
-        in: body
-        name: ProductGroup
-        required: true
-        schema:
-          $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-  /product/group/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create ProductGroup
-      parameters:
-      - description: ProductGroup
-        in: body
-        name: ProductGroup
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BulkResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-  /product/group/by-code:
-    get:
-      consumes:
-      - application/json
-      description: get Product Group by code array
-      parameters:
-      - description: 'Code filter, json array encode '
-        in: query
-        name: codes
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-  /product/group/list:
-    get:
-      consumes:
-      - application/json
-      description: search limit offset
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: lang
-        in: query
-        name: lang
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
-  /product/group/save:
-    post:
-      consumes:
-      - application/json
-      description: Save ProductGroup
-      parameters:
-      - description: ProductGroup
-        in: body
-        name: ProductGroup
-        required: true
-        schema:
-          $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - ProductGroup
   /product/order-type:
     delete:
       consumes:
@@ -20438,6 +20175,202 @@ paths:
       - AccessToken: []
       tags:
       - ProductType
+  /productgroup:
+    get:
+      consumes:
+      - application/json
+      description: ค้นหารายการ Product Group
+      parameters:
+      - description: คำค้นหา (optional)
+        in: query
+        name: q
+        type: string
+      - description: 'หมายเลขหน้า (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'จำนวนรายการต่อหน้า (default: 10)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ProductGroupPg'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      summary: Search Product Groups
+      tags:
+      - ProductGroup
+    post:
+      consumes:
+      - application/json
+      description: สร้าง Product Group ใหม่
+      parameters:
+      - description: รายละเอียด Product Group
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductGroupPg'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductGroupPg'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      summary: Create Product Group
+      tags:
+      - ProductGroup
+  /productgroup/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: ลบ Product Group ตามรหัส
+      parameters:
+      - description: รหัส Product Group
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      summary: Delete Product Group
+      tags:
+      - ProductGroup
+    get:
+      consumes:
+      - application/json
+      description: ดึงข้อมูล Product Group ตามรหัส
+      parameters:
+      - description: รหัส Product Group
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductGroupPg'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      summary: Get Product Group
+      tags:
+      - ProductGroup
+    put:
+      consumes:
+      - application/json
+      description: อัปเดตข้อมูล Product Group
+      parameters:
+      - description: รหัส Product Group
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ข้อมูล Product Group ที่ต้องการอัปเดต
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductGroupPg'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductGroupPg'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      summary: Update Product Group
+      tags:
+      - ProductGroup
   /productimport:
     post:
       consumes:

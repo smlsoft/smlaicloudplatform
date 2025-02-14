@@ -2,17 +2,19 @@ package productgroup
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
-	"net/url"
 	"smlaicloudplatform/internal/config"
-	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 	common "smlaicloudplatform/internal/models"
-	productbarcode_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
 	"smlaicloudplatform/internal/product/productgroup/models"
 	"smlaicloudplatform/internal/product/productgroup/repositories"
 	"smlaicloudplatform/internal/product/productgroup/services"
+
 	"smlaicloudplatform/internal/utils"
 	"smlaicloudplatform/pkg/microservice"
+	"strings"
+	"time"
 )
 
 type IProductGroupHttp interface{}
@@ -24,16 +26,9 @@ type ProductGroupHttp struct {
 }
 
 func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) ProductGroupHttp {
-	prod := ms.Producer(cfg.MQConfig())
-	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	cache := ms.Cacher(cfg.CacherConfig())
-
-	repo := repositories.NewProductGroupRepository(pst)
-	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
-	repoMessageQueue := repositories.NewProductGroupMessageQueueRepository(prod)
-
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductGroupHttpService(repo, repoMessageQueue, repoProductBarcode, cfg.ProductGroupServiceConfig(), masterSyncCacheRepo)
+	pst := ms.Persister(cfg.PersisterConfig())
+	repo := repositories.NewProductGroupPGRepository(pst)
+	svc := services.NewProductGroupHttpService(repo)
 
 	return ProductGroupHttp{
 		ms:  ms,
@@ -44,395 +39,262 @@ func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) Prod
 
 func (h ProductGroupHttp) RegisterHttp() {
 
-	h.ms.POST("/product/group/bulk", h.SaveBulk)
-
-	h.ms.GET("/product/group", h.SearchProductGroupPage)
-	h.ms.GET("/product/group/list", h.SearchProductGroupStep)
-	h.ms.POST("/product/group", h.CreateProductGroup)
-	h.ms.POST("/product/group/save", h.SaveProductGroup)
-	h.ms.GET("/product/group/:id", h.InfoProductGroup)
-	h.ms.GET("/product/group/by-code", h.InfoArray)
-	h.ms.PUT("/product/group/:id", h.UpdateProductGroup)
-	h.ms.DELETE("/product/group/:id", h.DeleteProductGroup)
-	h.ms.DELETE("/product/group", h.DeleteProductGroupByGUIDs)
+	h.ms.GET("/productgroup", h.Search)
+	h.ms.POST("/productgroup", h.Create)
+	h.ms.GET("/productgroup/:id", h.Info)
+	h.ms.PUT("/productgroup/:id", h.Update)
+	h.ms.DELETE("/productgroup/:id", h.Delete)
 }
 
-// Create ProductGroup godoc
-// @Description Create ProductGroup
-// @Tags		ProductGroup
-// @Param		ProductGroup  body      models.ProductGroup  true  "ProductGroup"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group [post]
-func (h ProductGroupHttp) CreateProductGroup(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-	input := ctx.ReadInput()
-
-	docReq := &models.ProductGroup{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	idx, err := h.svc.CreateProductGroup(shopID, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
-	})
-	return nil
-}
-
-// Save ProductGroup godoc
-// @Description Save ProductGroup
-// @Tags		ProductGroup
-// @Param		ProductGroup  body      models.ProductGroup  true  "ProductGroup"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group/save [post]
-func (h ProductGroupHttp) SaveProductGroup(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-	input := ctx.ReadInput()
-
-	docReq := &models.ProductGroup{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	idx, err := h.svc.SaveProductGroup(shopID, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
-	})
-	return nil
-}
-
-// Update ProductGroup godoc
-// @Description Update ProductGroup
-// @Tags		ProductGroup
-// @Param		id  path      string  true  "ProductGroup ID"
-// @Param		ProductGroup  body      models.ProductGroup  true  "ProductGroup"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group/{id} [put]
-func (h ProductGroupHttp) UpdateProductGroup(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
-	id := ctx.Param("id")
-	input := ctx.ReadInput()
-
-	docReq := &models.ProductGroup{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.svc.UpdateProductGroup(shopID, id, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
-
-	return nil
-}
-
-// Delete ProductGroup godoc
-// @Description Delete ProductGroup
-// @Tags		ProductGroup
-// @Param		id  path      string  true  "ProductGroup ID"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group/{id} [delete]
-func (h ProductGroupHttp) DeleteProductGroup(ctx microservice.IContext) error {
+// Search Product Groups godoc
+// @Summary     Search Product Groups
+// @Description ค้นหารายการ Product Group
+// @Tags        ProductGroup
+// @Param       q    query    string  false "คำค้นหา (optional)"
+// @Param       page     query    int     false "หมายเลขหน้า (default: 1)"
+// @Param       limit    query    int     false "จำนวนรายการต่อหน้า (default: 10)"
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} common.ApiResponse{data=[]models.ProductGroupPg}
+// @Failure     400 {object} common.ApiResponse
+// @Failure     401 {object} common.ApiResponse
+// @Security    AccessToken
+// @Router      /productgroup [get]
+func (h ProductGroupHttp) Search(ctx microservice.IContext) error { // ✅ แก้ไขให้ return error
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
-	authUsername := userInfo.Username
-
-	id := ctx.Param("id")
-
-	err := h.svc.DeleteProductGroup(shopID, id, authUsername)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
-
-	return nil
-}
-
-// Delete ProductGroup godoc
-// @Description Delete ProductGroup
-// @Tags		ProductGroup
-// @Param		ProductGroup  body      []string  true  "ProductGroup GUIDs"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group [delete]
-func (h ProductGroupHttp) DeleteProductGroupByGUIDs(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-	authUsername := userInfo.Username
-
-	input := ctx.ReadInput()
-
-	docReq := []string{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.svc.DeleteProductGroupByGUIDs(shopID, authUsername, docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-	})
-
-	return nil
-}
-
-// Get ProductGroup godoc
-// @Description get struct array by ID
-// @Tags		ProductGroup
-// @Param		id  path      string  true  "ProductGroup ID"
-// @Accept 		json
-// @Success		200	{object}	common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group/{id} [get]
-func (h ProductGroupHttp) InfoProductGroup(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	id := ctx.Param("id")
-
-	h.ms.Logger.Debugf("Get ProductGroup %v", id)
-	doc, err := h.svc.InfoProductGroup(shopID, id)
-
-	if err != nil {
-		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    doc,
-	})
-	return nil
-}
-
-// Get Product Group By code array godoc
-// @Description get Product Group by code array
-// @Tags		Unit
-// @Param		codes	query	string		false  "Code filter, json array encode "
-// @Accept 		json
-// @Success		200	{object}	common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group/by-code [get]
-func (h ProductGroupHttp) InfoArray(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	docReq := []string{}
-	err = json.Unmarshal([]byte(codesReq), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-	// where to filter array
-	doc, err := h.svc.InfoWTFArray(shopID, docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    doc,
-	})
-	return nil
-}
-
-// List ProductGroup godoc
-// @Description get struct array by ID
-// @Tags		ProductGroup
-// @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "page"
-// @Param		limit	query	integer		false  "limit"
-// @Accept 		json
-// @Success		200	{array}		common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group [get]
-func (h ProductGroupHttp) SearchProductGroupPage(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchProductGroup(shopID, map[string]interface{}{}, pageable)
-
+	datas, pagination, err := h.svc.ProductGroupList(shopID, pageable.Query, pageable.Page, pageable.Limit)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
+		return err // ✅ Return error แทนการ return เปล่า
 	}
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success:    true,
-		Data:       docList,
 		Pagination: pagination,
+		Data:       datas,
 	})
 	return nil
 }
 
-// List ProductGroup godoc
-// @Description search limit offset
-// @Tags		ProductGroup
-// @Param		q		query	string		false  "Search Value"
-// @Param		offset	query	integer		false  "offset"
-// @Param		limit	query	integer		false  "limit"
-// @Param		lang	query	string		false  "lang"
-// @Accept 		json
-// @Success		200	{array}		common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group/list [get]
-func (h ProductGroupHttp) SearchProductGroupStep(ctx microservice.IContext) error {
+// Create Product Group godoc
+// @Summary     Create Product Group
+// @Description สร้าง Product Group ใหม่
+// @Tags        ProductGroup
+// @Param       request body models.ProductGroupPg true "รายละเอียด Product Group"
+// @Accept      json
+// @Produce     json
+// @Success     201 {object} common.ApiResponse{data=models.ProductGroupPg}
+// @Failure     400 {object} common.ApiResponse
+// @Failure     401 {object} common.ApiResponse
+// @Security    AccessToken
+// @Router      /productgroup [post]
+func (h ProductGroupHttp) Create(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
+	shopID := strings.TrimSpace(userInfo.ShopID)
 
-	pageableStep := utils.GetPageableStep(ctx.QueryParam)
+	// ✅ อ่าน JSON Request Body
+	input := strings.TrimSpace(ctx.ReadInput())
+	if input == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Invalid input: Empty request body")
+		return errors.New("Invalid input: Empty request body")
+	}
 
-	lang := ctx.QueryParam("lang")
+	// ✅ Debug: ตรวจสอบ input ก่อนทำ Unmarshal
+	fmt.Println("Received Input:", input)
 
-	docList, total, err := h.svc.SearchProductGroupStep(shopID, lang, pageableStep)
-
+	// ✅ แปลง JSON เป็น struct
+	newProductGroup := &models.ProductGroupPg{}
+	err := json.Unmarshal([]byte(input), newProductGroup)
 	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		ctx.ResponseError(http.StatusBadRequest, "Invalid JSON format: "+err.Error())
 		return err
 	}
 
+	// ✅ กำหนดค่า `ShopID` จาก `userInfo`
+	newProductGroup.ShopID = shopID
+	newProductGroup.GuidFixed = utils.NewGUID() // สร้าง GUID สำหรับ Product Group
+
+	// ✅ ตรวจสอบค่า `Code`
+	newProductGroup.Code = strings.TrimSpace(newProductGroup.Code)
+	if newProductGroup.Code == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Code is required")
+		return errors.New("Code is required")
+	}
+
+	// ✅ ตรวจสอบ Validation
+	if err = ctx.Validate(newProductGroup); err != nil {
+		ctx.ResponseError(http.StatusBadRequest, "Validation failed: "+err.Error())
+		return err
+	}
+
+	// ✅ กำหนดค่า `CreatedBy` และ `CreatedAt`
+	newProductGroup.CreatedBy = userInfo.Username
+	newProductGroup.CreatedAt = time.Now()
+
+	// ✅ Debug: ตรวจสอบค่าก่อนสร้าง Product Group
+	fmt.Println("Creating Product Group:", newProductGroup)
+
+	// ✅ เรียก Service เพื่อสร้าง Product Group
+	err = h.svc.Create(newProductGroup)
+	if err != nil {
+		ctx.ResponseError(http.StatusInternalServerError, err.Error())
+		return err
+	}
+
+	// ✅ ตอบกลับ Client
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		Message: "Product Group created successfully",
+		Data:    newProductGroup,
+	})
+	return nil
+}
+
+// Get Product Group godoc
+// @Summary     Get Product Group
+// @Description ดึงข้อมูล Product Group ตามรหัส
+// @Tags        ProductGroup
+// @Param       id path string true "รหัส Product Group"
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} common.ApiResponse{data=models.ProductGroupPg}
+// @Failure     400 {object} common.ApiResponse
+// @Failure     404 {object} common.ApiResponse
+// @Security    AccessToken
+// @Router      /productgroup/{id} [get]
+func (h ProductGroupHttp) Info(ctx microservice.IContext) error {
+	// ✅ ดึง `Code` จาก URL
+	code := strings.TrimSpace(ctx.Param("id"))
+	userInfo := ctx.UserInfo()
+	shopID := strings.TrimSpace(userInfo.ShopID)
+
+	// ✅ ตรวจสอบว่ามีค่า `Code` หรือไม่
+	if code == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Product Group Code is required")
+		return errors.New("Product Group Code is required")
+	}
+
+	// ✅ ดึงข้อมูลจาก Service
+	productGroup, err := h.svc.Get(shopID, code)
+	if err != nil {
+		ctx.ResponseError(http.StatusNotFound, "Product Group not found")
+		return err
+	}
+
+	// ✅ ส่ง Response กลับ
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
-		Data:    docList,
-		Total:   total,
+		Data:    productGroup,
 	})
 	return nil
 }
 
-// Create ProductGroup Bulk godoc
-// @Description Create ProductGroup
-// @Tags		ProductGroup
-// @Param		ProductGroup  body      []models.ProductGroup  true  "ProductGroup"
-// @Accept 		json
-// @Success		201	{object}	common.BulkResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/group/bulk [post]
-func (h ProductGroupHttp) SaveBulk(ctx microservice.IContext) error {
-
+// Update Product Group godoc
+// @Summary     Update Product Group
+// @Description อัปเดตข้อมูล Product Group
+// @Tags        ProductGroup
+// @Param       id    path  string  true  "รหัส Product Group"
+// @Param       request body  models.ProductGroupPg true "ข้อมูล Product Group ที่ต้องการอัปเดต"
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} common.ApiResponse{data=models.ProductGroupPg}
+// @Failure     400 {object} common.ApiResponse
+// @Failure     401 {object} common.ApiResponse
+// @Failure     404 {object} common.ApiResponse
+// @Security    AccessToken
+// @Router      /productgroup/{id} [put]
+func (h ProductGroupHttp) Update(ctx microservice.IContext) error {
+	// ✅ ดึง `Code` จาก URL
+	code := strings.TrimSpace(ctx.Param("id"))
 	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
+	shopID := strings.TrimSpace(userInfo.ShopID)
 
-	input := ctx.ReadInput()
+	// ✅ ตรวจสอบว่ามีค่า `Code` หรือไม่
+	if code == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Product Group Code is required")
+		return errors.New("Product Group Code is required")
+	}
 
-	dataReq := []models.ProductGroup{}
-	err := json.Unmarshal([]byte(input), &dataReq)
+	// ✅ อ่าน JSON Request Body
+	input := strings.TrimSpace(ctx.ReadInput())
+	if input == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Invalid input: Empty request body")
+		return errors.New("Invalid input: Empty request body")
+	}
 
+	// ✅ แปลง JSON เป็น struct
+	updateData := &models.ProductGroupPg{}
+	err := json.Unmarshal([]byte(input), updateData)
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
+		ctx.ResponseError(http.StatusBadRequest, "Invalid JSON format: "+err.Error())
 		return err
 	}
 
-	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
+	// ✅ ตรวจสอบ Validation
+	if err = ctx.Validate(updateData); err != nil {
+		ctx.ResponseError(http.StatusBadRequest, "Validation failed: "+err.Error())
 		return err
 	}
 
-	ctx.Response(
-		http.StatusCreated,
-		common.BulkResponse{
-			Success:    true,
-			BulkImport: bulkResponse,
-		},
-	)
+	// ✅ กำหนดค่า `UpdatedBy` และ `UpdatedAt`
+	updateData.UpdatedBy = userInfo.Username
+	updateData.UpdatedAt = time.Now()
 
+	// ✅ อัปเดตข้อมูล
+	err = h.svc.Update(shopID, code, updateData)
+	if err != nil {
+		ctx.ResponseError(http.StatusInternalServerError, err.Error())
+		return err
+	}
+
+	// ✅ ส่ง Response กลับ
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Message: "Product Group updated successfully",
+		Data:    updateData,
+	})
+	return nil
+}
+
+// Delete Product Group godoc
+// @Summary     Delete Product Group
+// @Description ลบ Product Group ตามรหัส
+// @Tags        ProductGroup
+// @Param       id path string true "รหัส Product Group"
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} common.ApiResponse
+// @Failure     400 {object} common.ApiResponse
+// @Failure     401 {object} common.ApiResponse
+// @Failure     404 {object} common.ApiResponse
+// @Security    AccessToken
+// @Router      /productgroup/{id} [delete]
+func (h ProductGroupHttp) Delete(ctx microservice.IContext) error {
+	// ✅ ดึง `Code` จาก URL
+	code := strings.TrimSpace(ctx.Param("id"))
+	userInfo := ctx.UserInfo()
+	shopID := strings.TrimSpace(userInfo.ShopID)
+
+	// ✅ ตรวจสอบว่ามีค่า `Code` หรือไม่
+	if code == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Product Group Code is required")
+		return errors.New("Product Group Code is required")
+	}
+
+	// ✅ ลบข้อมูล
+	err := h.svc.Delete(shopID, code)
+	if err != nil {
+		ctx.ResponseError(http.StatusInternalServerError, err.Error())
+		return err
+	}
+
+	// ✅ ส่ง Response กลับ
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Message: "Product Group deleted successfully",
+	})
 	return nil
 }
