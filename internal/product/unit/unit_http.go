@@ -2,18 +2,18 @@ package unit
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
-	"net/url"
 	"smlaicloudplatform/internal/config"
-	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 	common "smlaicloudplatform/internal/models"
-	productbarcode_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
 	"smlaicloudplatform/internal/product/unit/models"
 	"smlaicloudplatform/internal/product/unit/repositories"
 	"smlaicloudplatform/internal/product/unit/services"
 	"smlaicloudplatform/internal/utils"
 	"smlaicloudplatform/pkg/microservice"
 	"strings"
+	"time"
 )
 
 type IUnitHttp interface{}
@@ -25,17 +25,9 @@ type UnitHttp struct {
 }
 
 func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
-	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	cache := ms.Cacher(cfg.CacherConfig())
-	prod := ms.Producer(cfg.MQConfig())
-
-	repo := repositories.NewUnitRepository(pst)
-	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
-
-	repoMessageQueue := repositories.NewUnitMessageQueueRepository(prod)
-
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewUnitHttpService(repo, repoProductBarcode, repoMessageQueue, masterSyncCacheRepo)
+	pst := ms.Persister(cfg.PersisterConfig())
+	repo := repositories.NewUnitPGRepository(pst)
+	svc := services.NewUnitHttpService(repo)
 
 	return UnitHttp{
 		ms:  ms,
@@ -46,528 +38,279 @@ func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 
 func (h UnitHttp) RegisterHttp() {
 
-	h.ms.POST("/unit/bulk", h.SaveBulk)
 	h.ms.GET("/unit", h.SearchUnit)
-	h.ms.GET("/unit/list", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
-	h.ms.POST("/unit/uploadfile", h.UploadFile)
 	h.ms.GET("/unit/:id", h.InfoUnit)
-	h.ms.GET("/unit/by-code", h.InfoArray)
-	h.ms.GET("/unit/master", h.InfoArrayMaster)
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
-	h.ms.PATCH("/unit/:id", h.UpdateFieldUnit)
 	h.ms.DELETE("/unit/:id", h.DeleteUnit)
-	h.ms.DELETE("/unit", h.DeleteByGUIDs)
 }
 
-// Upload File godoc
-// @Description Upload an Excel file to import units
-// @Tags        Unit
-// @Param       excelfile  formData  file  true  "Excel file containing unit data"
-// @Accept      multipart/form-data
-// @Produce     json
-// @Success     200 {string} string "Existing unit codes: [EA, PACK, BOX]"
-// @Failure     400 {object} map[string]string "file is required"
-// @Failure     500 {object} map[string]string "failed to read file or internal server error"
-// @Security    AccessToken
-// @Router      /unit/uploadfile [post]
-func (h *UnitHttp) UploadFile(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-
-	file, err := ctx.FormFile("excelfile")
-	if err != nil {
-		ctx.Response(http.StatusBadRequest, map[string]string{"error": "file is required"})
-		return nil
-	}
-
-	src, err := file.Open()
-	if err != nil {
-		ctx.Response(http.StatusInternalServerError, map[string]string{"error": "failed to open file"})
-		return nil
-	}
-	defer src.Close()
-
-	// log.Printf("uploadDate: %s, effectDate: %s, dealers: %v", uploadDate, effectDate, dealers)
-
-	// อ่านไฟล์เป็น byte
-	fileBytes := make([]byte, file.Size)
-	_, err = src.Read(fileBytes)
-	if err != nil {
-		ctx.Response(http.StatusInternalServerError, map[string]string{"error": "failed to read file"})
-		return nil
-	}
-
-	// Process file และบันทึกข้อมูล
-	result, err := h.svc.ImportUnitsFromFile(fileBytes, shopID, authUsername)
-	if err != nil {
-		ctx.Response(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-		return nil
-	}
-
-	ctx.Response(http.StatusOK, result)
-	return nil
-}
-
-// Create Unit godoc
-// @Description Create Unit
+// SearchUnit godoc
+// @Summary		Search units
+// @Description Search units with pagination
 // @Tags		Unit
-// @Param		Unit  body      models.Unit  true  "Unit"
 // @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit [post]
-func (h UnitHttp) CreateUnit(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-	input := ctx.ReadInput()
-
-	docReq := &models.Unit{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	idx, err := h.svc.CreateUnit(shopID, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
-	})
-	return nil
-}
-
-// Update Unit godoc
-// @Description Update Unit
-// @Tags		Unit
-// @Param		id  path      string  true  "Unit ID"
-// @Param		Unit  body      models.Unit  true  "Unit"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/{id} [put]
-func (h UnitHttp) UpdateUnit(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
-	id := ctx.Param("id")
-	if len(id) < 1 {
-		ctx.ResponseError(http.StatusBadRequest, "guid is empty")
-		return nil
-	}
-
-	input := ctx.ReadInput()
-
-	docReq := &models.Unit{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.svc.UpdateUnit(shopID, id, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
-
-	return nil
-}
-
-// Update Field Unit godoc
-// @Description Update Unit
-// @Tags		Unit
-// @Param		id  path      string  true  "Unit ID"
-// @Param		Unit  body      models.Unit  true  "Unit"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/{id} [patch]
-func (h UnitHttp) UpdateFieldUnit(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
-	id := ctx.Param("id")
-
-	if len(id) < 1 {
-		ctx.ResponseError(http.StatusBadRequest, "guid is empty")
-		return nil
-	}
-
-	input := ctx.ReadInput()
-
-	docReq := &models.Unit{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.svc.UpdateFieldUnit(shopID, id, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
-
-	return nil
-}
-
-// Get Unit godoc
-// @Description get struct array by ID
-// @Tags		Unit
-// @Param		id  path      string  true  "Unit ID"
-// @Accept 		json
-// @Success		200	{object}	common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/{id} [get]
-func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
+// @Produce 	json
+// @Param		q query string false "keyword"
+// @Param		page query int false "Page number"
+// @Param		limit query int false "Items per page"
+// @Success		200 {object} common.ApiResponse{data=[]models.UnitPg}
+// @Failure		400 {object} common.ApiResponse
+// @Failure		401 {object} common.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/unit [get]
+func (h UnitHttp) SearchUnit(ctx microservice.IContext) error { // ✅ แก้ไขให้ return error
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
-
-	id := ctx.Param("id")
-
-	if len(id) < 1 {
-		ctx.ResponseError(http.StatusBadRequest, "guid is empty")
-		return nil
-	}
-
-	h.ms.Logger.Debugf("Get Unit %v", id)
-	doc, err := h.svc.InfoUnit(shopID, id)
-
-	if err != nil {
-		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    doc,
-	})
-	return nil
-}
-
-// Get Unit By unit code array godoc
-// @Description get unit by unit code array
-// @Tags		Unit
-// @Param		codes	query	string		false  "Code filter, json array encode "
-// @Accept 		json
-// @Success		200	{object}	common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/by-code [get]
-func (h UnitHttp) InfoArray(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	docReq := []string{}
-	err = json.Unmarshal([]byte(codesReq), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	// where to filter array
-	doc, err := h.svc.InfoUnitWTFArray(shopID, docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    doc,
-	})
-	return nil
-}
-
-// Get Master Unit By code array godoc
-// @Description get master Unit by code array
-// @Tags		Unit
-// @Param		codes	query	string		false  "Code filter, json array encode "
-// @Accept 		json
-// @Success		200	{object}	common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/master [get]
-func (h UnitHttp) InfoArrayMaster(ctx microservice.IContext) error {
-	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	docReq := []string{}
-	err = json.Unmarshal([]byte(codesReq), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	// where to filter array master
-	doc, err := h.svc.InfoWTFArrayMaster(docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    doc,
-	})
-	return nil
-}
-
-// List Unit godoc
-// @Description get struct array by ID
-// @Tags		Unit
-// @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "page "
-// @Param		limit	query	integer		false  "liumit "
-// @Param		unitcode	query	string		false  "unitcode filter ex. \"u001,u002,u003\""
-// @Accept 		json
-// @Success		200	{array}		common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit [get]
-func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	unitCode := ctx.QueryParam("unitcode")
-
-	unitCodeFilters := []string{}
-	if len(unitCode) > 0 {
-		unitCodeFilters = strings.Split(unitCode, ",")
-	}
-
-	docList, pagination, err := h.svc.SearchUnit(shopID, unitCodeFilters, pageable)
-
+	units, pagination, err := h.svc.UnitList(shopID, pageable.Query, pageable.Page, pageable.Limit)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
+		return err // ✅ Return error แทนการ return เปล่า
 	}
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success:    true,
-		Data:       docList,
 		Pagination: pagination,
+		Data:       units,
 	})
 	return nil
 }
 
-// List Unit godoc
-// @Description search limit offset
+// CreateUnit godoc
+// @Summary		Create a new unit
+// @Description Create a new unit with details
 // @Tags		Unit
-// @Param		q		query	string		false  "Search Value"
-// @Param		offset	query	integer		false  "offset"
-// @Param		limit	query	integer		false  "limit"
-// @Param		lang	query	string		false  "lang ex. en,th"
-// @Param		unitcode	query	string		false  "unitcode filter ex. \"u001,u002,u003\" "
 // @Accept 		json
-// @Success		200	{array}		common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/list [get]
-func (h UnitHttp) SearchUnitLimit(ctx microservice.IContext) error {
+// @Produce 	json
+// @Param		Unit  body      models.UnitPg  true  "Unit data"
+// @Success		201 {object} common.ApiResponse{data=models.UnitPg}
+// @Failure		400 {object} common.ApiResponse
+// @Failure		401 {object} common.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/unit [post]
+func (h UnitHttp) CreateUnit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
+	shopID := strings.TrimSpace(userInfo.ShopID)
 
-	pageableStep := utils.GetPageableStep(ctx.QueryParam)
-
-	lang := ctx.QueryParam("lang")
-
-	unitCode := ctx.QueryParam("unitcode")
-
-	unitCodeFilters := []string{}
-	if len(unitCode) > 0 {
-		unitCodeFilters = strings.Split(unitCode, ",")
+	// ✅ อ่าน JSON Request Body
+	input := strings.TrimSpace(ctx.ReadInput())
+	if input == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Invalid input: Empty request body")
+		return errors.New("Invalid input: Empty request body")
 	}
 
-	docList, total, err := h.svc.SearchUnitLimit(shopID, lang, unitCodeFilters, pageableStep)
+	// ✅ Debug: ตรวจสอบ input ก่อนทำ Unmarshal
+	fmt.Println("Received Input:", input)
 
+	// ✅ แปลง JSON เป็น struct
+	newUnit := &models.UnitPg{}
+	err := json.Unmarshal([]byte(input), newUnit)
 	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		ctx.ResponseError(http.StatusBadRequest, "Invalid JSON format: "+err.Error())
 		return err
 	}
 
+	// ✅ กำหนดค่า `ShopID` จาก `userInfo`
+	newUnit.ShopID = shopID
+	newUnit.GuidFixed = utils.NewGUID()
+
+	// ✅ ตรวจสอบค่า `UnitCode`
+	newUnit.UnitCode = strings.TrimSpace(newUnit.UnitCode)
+	if newUnit.UnitCode == "" {
+		ctx.ResponseError(http.StatusBadRequest, "UnitCode is required")
+		return errors.New("UnitCode is required")
+	}
+
+	// ✅ ตรวจสอบ Validation
+	if err = ctx.Validate(newUnit); err != nil {
+		ctx.ResponseError(http.StatusBadRequest, "Validation failed: "+err.Error())
+		return err
+	}
+
+	// ✅ กำหนดค่า `CreatedBy` และ `CreatedAt`
+	newUnit.CreatedBy = userInfo.Username
+	newUnit.CreatedAt = time.Now()
+
+	// ✅ Debug: ตรวจสอบค่าก่อนสร้าง Unit
+	fmt.Println("Creating Unit:", newUnit)
+
+	// ✅ เรียก Service เพื่อสร้าง Unit
+	err = h.svc.Create(newUnit)
+	if err != nil {
+		ctx.ResponseError(http.StatusInternalServerError, err.Error())
+		return err
+	}
+
+	// ✅ ตอบกลับ Client
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		Message: "Unit created successfully",
+		Data:    newUnit,
+	})
+	return nil
+}
+
+// InfoUnit godoc
+// @Summary		Get unit details
+// @Description Get unit details by ID
+// @Tags		Unit
+// @Accept 		json
+// @Produce 	json
+// @Param		id path string true "Unit ID"
+// @Success		200 {object} common.ApiResponse{data=models.UnitPg}
+// @Failure		400 {object} common.ApiResponse
+// @Failure		404 {object} common.ApiResponse
+// @Security	AccessToken
+// @Router		/unit/{id} [get]
+func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
+	// ✅ ดึงค่า `id` จาก URL Parameter
+	unitID := strings.TrimSpace(ctx.Param("id"))
+	userInfo := ctx.UserInfo()
+	shopID := strings.TrimSpace(userInfo.ShopID)
+
+	// ✅ ตรวจสอบว่า `id` ถูกส่งมาหรือไม่
+	if unitID == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Unit ID is required")
+		return errors.New("Unit ID is required")
+	}
+
+	// ✅ Debug: ดูค่าที่รับเข้ามา
+	fmt.Println("Fetching Unit - ShopID:", shopID, "UnitID:", unitID)
+
+	// ✅ เรียก Service เพื่อดึงข้อมูล Unit
+	unit, err := h.svc.GetUnit(shopID, unitID)
+	if err != nil {
+		ctx.ResponseError(http.StatusNotFound, "Unit not found")
+		return err
+	}
+
+	// ✅ ตอบกลับข้อมูล
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
-		Data:    docList,
-		Total:   total,
+		Data:    unit,
 	})
 	return nil
 }
 
-// Create Unit Bulk godoc
-// @Description Create Unit
+// UpdateUnit godoc
+// @Summary		Update an existing unit
+// @Description Update an existing unit by ID
 // @Tags		Unit
-// @Param		Unit  body      []models.Unit  true  "Unit"
 // @Accept 		json
-// @Success		201	{object}	common.BulkResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/bulk [post]
-func (h UnitHttp) SaveBulk(ctx microservice.IContext) error {
-
+// @Produce 	json
+// @Param		id path string true "Unit ID"
+// @Param		Unit body models.UnitPg true "Updated unit data"
+// @Success		200 {object} common.ApiResponse{data=models.UnitPg}
+// @Failure		400 {object} common.ApiResponse
+// @Failure		404 {object} common.ApiResponse
+// @Security	AccessToken
+// @Router		/unit/{id} [put]
+func (h UnitHttp) UpdateUnit(ctx microservice.IContext) error {
+	// ✅ ดึงค่า `id` จาก URL Parameter
+	unitID := strings.TrimSpace(ctx.Param("id"))
 	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
+	shopID := strings.TrimSpace(userInfo.ShopID)
 
-	input := ctx.ReadInput()
+	// ✅ ตรวจสอบว่า `id` ถูกส่งมาหรือไม่
+	if unitID == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Unit ID is required")
+		return errors.New("Unit ID is required")
+	}
 
-	dataReq := []models.Unit{}
-	err := json.Unmarshal([]byte(input), &dataReq)
+	// ✅ อ่าน JSON Request Body
+	input := strings.TrimSpace(ctx.ReadInput())
+	if input == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Invalid input: Empty request body")
+		return errors.New("Invalid input: Empty request body")
+	}
 
+	// ✅ Debug: ตรวจสอบ input ก่อนทำ Unmarshal
+	fmt.Println("Received Input:", input)
+
+	// ✅ แปลง JSON เป็น struct
+	updateData := &models.UnitPg{}
+	err := json.Unmarshal([]byte(input), updateData)
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
+		ctx.ResponseError(http.StatusBadRequest, "Invalid JSON format: "+err.Error())
 		return err
 	}
 
-	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
+	// ✅ ตรวจสอบค่า `UnitCode`
+	updateData.UnitCode = strings.TrimSpace(updateData.UnitCode)
+	if updateData.UnitCode == "" {
+		ctx.ResponseError(http.StatusBadRequest, "UnitCode is required")
+		return errors.New("UnitCode is required")
+	}
 
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
+	// ✅ ตรวจสอบ Validation
+	if err = ctx.Validate(updateData); err != nil {
+		ctx.ResponseError(http.StatusBadRequest, "Validation failed: "+err.Error())
 		return err
 	}
 
-	ctx.Response(
-		http.StatusCreated,
-		common.BulkResponse{
-			Success:    true,
-			BulkImport: bulkResponse,
-		},
-	)
+	// ✅ กำหนดค่า `UpdatedBy` และ `UpdatedAt`
+	updateData.UpdatedBy = userInfo.Username
+	updateData.UpdatedAt = time.Now()
 
+	// ✅ Debug: ตรวจสอบค่าก่อนอัปเดต Unit
+	fmt.Println("Updating Unit:", updateData)
+
+	// ✅ เรียก Service เพื่ออัปเดต Unit
+	err = h.svc.Update(shopID, unitID, updateData)
+	if err != nil {
+		ctx.ResponseError(http.StatusInternalServerError, err.Error())
+		return err
+	}
+
+	// ✅ ตอบกลับ Client
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Message: "Unit updated successfully",
+		Data:    updateData,
+	})
 	return nil
 }
 
-// Delete Unit godoc
-// @Description Delete Unit
+// DeleteUnit godoc
+// @Summary		Delete a unit
+// @Description Delete a unit by ID
 // @Tags		Unit
-// @Param		id  path      string  true  "Unit ID"
 // @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/{id} [delete]
+// @Produce 	json
+// @Param		id path string true "Unit ID"
+// @Success		200 {object} common.ApiResponse
+// @Failure		400 {object} common.ApiResponse
+// @Failure		404 {object} common.ApiResponse
+// @Security	AccessToken
+// @Router		/unit/{id} [delete]
 func (h UnitHttp) DeleteUnit(ctx microservice.IContext) error {
+	// ✅ ดึงค่า `id` จาก URL Parameter
+	unitID := strings.TrimSpace(ctx.Param("id"))
 	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-	authUsername := userInfo.Username
+	shopID := strings.TrimSpace(userInfo.ShopID)
 
-	id := ctx.Param("id")
-
-	if len(id) < 1 {
-		ctx.ResponseError(http.StatusBadRequest, "unit guid is empty")
-		return nil
+	// ✅ ตรวจสอบว่า `id` ถูกส่งมาหรือไม่
+	if unitID == "" {
+		ctx.ResponseError(http.StatusBadRequest, "Unit ID is required")
+		return errors.New("Unit ID is required")
 	}
 
-	err := h.svc.DeleteUnit(shopID, id, authUsername)
+	// ✅ Debug: ดูค่าที่รับเข้ามา
+	fmt.Println("Deleting Unit - ShopID:", shopID, "UnitID:", unitID)
 
+	// ✅ เรียก Service เพื่อลบ Unit
+	err := h.svc.Delete(shopID, unitID)
 	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		ctx.ResponseError(http.StatusInternalServerError, err.Error())
 		return err
 	}
 
+	// ✅ ตอบกลับ Client
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
-		ID:      id,
+		Message: "Unit deleted successfully",
 	})
-
-	return nil
-}
-
-// Delete Unit By GUIDs godoc
-// @Description Delete Unit
-// @Tags		Unit
-// @Param		Unit  body      []string  true  "Unit GUIDs"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit [delete]
-func (h UnitHttp) DeleteByGUIDs(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-	authUsername := userInfo.Username
-
-	input := ctx.ReadInput()
-
-	docReq := []string{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.svc.DeleteUnitByGUIDs(shopID, authUsername, docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-	})
-
 	return nil
 }

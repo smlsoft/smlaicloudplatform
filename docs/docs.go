@@ -36243,334 +36243,9 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get struct array by ID",
+                "description": "Search units with pagination",
                 "consumes": [
                     "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "page ",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "liumit ",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "unitcode filter ex. \\",
-                        "name": "unitcode",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Unit",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "description": "Unit",
-                        "name": "Unit",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Unit"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Unit",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "description": "Unit GUIDs",
-                        "name": "Unit",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/unit/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Unit",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "description": "Unit",
-                        "name": "Unit",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Unit"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.BulkResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/unit/by-code": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get unit by unit code array",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Code filter, json array encode ",
-                        "name": "codes",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/unit/list": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "search limit offset",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "lang ex. en,th",
-                        "name": "lang",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "unitcode filter ex. \\",
-                        "name": "unitcode",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/unit/master": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get master Unit by code array",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Code filter, json array encode ",
-                        "name": "codes",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/unit/uploadfile": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Upload an Excel file to import units",
-                "consumes": [
-                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -36578,38 +36253,120 @@ const docTemplate = `{
                 "tags": [
                     "Unit"
                 ],
+                "summary": "Search units",
                 "parameters": [
                     {
-                        "type": "file",
-                        "description": "Excel file containing unit data",
-                        "name": "excelfile",
-                        "in": "formData",
-                        "required": true
+                        "type": "string",
+                        "description": "keyword",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Existing unit codes: [EA, PACK, BOX]",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.ApiResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.UnitPg"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "file is required",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
-                    "500": {
-                        "description": "failed to read file or internal server error",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create a new unit with details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "summary": "Create a new unit",
+                "parameters": [
+                    {
+                        "description": "Unit data",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UnitPg"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.ApiResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UnitPg"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -36622,13 +36379,144 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get struct array by ID",
+                "description": "Get unit details by ID",
                 "consumes": [
+                    "application/json"
+                ],
+                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Unit"
                 ],
+                "summary": "Get unit details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.ApiResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UnitPg"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update an existing unit by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "summary": "Update an existing unit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated unit data",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UnitPg"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.ApiResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UnitPg"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete a unit by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "summary": "Delete a unit",
                 "parameters": [
                     {
                         "type": "string",
@@ -36645,139 +36533,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Unit",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Unit ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Unit",
-                        "name": "Unit",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Unit"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Unit",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Unit ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Unit",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Unit ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Unit",
-                        "name": "Unit",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Unit"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     }
                 }
@@ -41939,6 +41704,12 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
@@ -42449,6 +42220,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "barcode": {
+                    "type": "string"
+                },
+                "code": {
                     "type": "string"
                 },
                 "isduplicate": {
@@ -47666,38 +47440,34 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Unit": {
+        "models.UnitPg": {
             "type": "object",
-            "required": [
-                "names",
-                "unitcode"
-            ],
             "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "createdby": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "shopid": {
+                    "type": "string"
+                },
                 "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitname1": {
                     "type": "string"
                 },
-                "unitname2": {
+                "updatedat": {
                     "type": "string"
                 },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
+                "updatedby": {
                     "type": "string"
                 }
             }
@@ -48410,6 +48180,12 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "companynames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "datalanguage": {
                     "type": "string"
                 },
@@ -48422,6 +48198,24 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "footerreceiptpos": {
+                    "type": "string"
+                },
+                "headerreceiptpos": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "inquirytypepurchase": {
+                    "type": "integer"
+                },
+                "inquirytypesale": {
+                    "type": "integer"
+                },
+                "isbom": {
+                    "type": "boolean"
+                },
                 "isheadoffice": {
                     "type": "boolean"
                 },
@@ -48430,6 +48224,9 @@ const docTemplate = `{
                 },
                 "latitude": {
                     "type": "number"
+                },
+                "logouri": {
+                    "type": "string"
                 },
                 "longitude": {
                     "type": "number"
@@ -48456,6 +48253,9 @@ const docTemplate = `{
                 },
                 "vatrate": {
                     "type": "number"
+                },
+                "vattypepurchase": {
+                    "type": "integer"
                 },
                 "vattypesale": {
                     "type": "integer"

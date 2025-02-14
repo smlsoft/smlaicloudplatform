@@ -26,9 +26,6 @@ import (
 	productbarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
 	productbarcodeService "smlaicloudplatform/internal/product/productbarcode/services"
 
-	productunitRepo "smlaicloudplatform/internal/product/unit/repositories"
-	productunitService "smlaicloudplatform/internal/product/unit/services"
-
 	bankmasterRepo "smlaicloudplatform/internal/payment/bankmaster/repositories"
 	bankmasterService "smlaicloudplatform/internal/payment/bankmaster/services"
 
@@ -87,8 +84,8 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit
-	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), repoProductBarcode, nil, masterSyncCacheRepo)
-	activityModuleManager.Add(svcProductUnit)
+	// svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitPGRepository(pstPg))
+	// activityModuleManager.Add(svcProductUnit)
 
 	// Kitchen
 	repoKitchen := kitchen.NewKitchenRepository(pst)

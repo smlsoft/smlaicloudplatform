@@ -2749,6 +2749,10 @@ definitions:
     type: object
   models.Product:
     properties:
+      barcodes:
+        items:
+          type: string
+        type: array
       code:
         type: string
       dimensions:
@@ -3094,6 +3098,8 @@ definitions:
   models.ProductImport:
     properties:
       barcode:
+        type: string
+      code:
         type: string
       isduplicate:
         type: boolean
@@ -6594,30 +6600,26 @@ definitions:
       success:
         type: boolean
     type: object
-  models.Unit:
+  models.UnitPg:
     properties:
+      createdat:
+        type: string
+      createdby:
+        type: string
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
+      shopid:
+        type: string
       unitcode:
-        maxLength: 100
         type: string
-      unitname1:
+      updatedat:
         type: string
-      unitname2:
+      updatedby:
         type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
-    required:
-    - names
-    - unitcode
     type: object
   models.UserLoginPhoneNumberRequest:
     properties:
@@ -7096,6 +7098,10 @@ definitions:
         type: array
       code:
         type: string
+      companynames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       datalanguage:
         type: string
       departments:
@@ -7104,12 +7110,26 @@ definitions:
         type: array
       email:
         type: string
+      footerreceiptpos:
+        type: string
+      headerreceiptpos:
+        type: string
+      imageuri:
+        type: string
+      inquirytypepurchase:
+        type: integer
+      inquirytypesale:
+        type: integer
+      isbom:
+        type: boolean
       isheadoffice:
         type: boolean
       istaxbyaddress:
         type: boolean
       latitude:
         type: number
+      logouri:
+        type: string
       longitude:
         type: number
       names:
@@ -7128,6 +7148,8 @@ definitions:
         type: string
       vatrate:
         type: number
+      vattypepurchase:
+        type: integer
       vattypesale:
         type: integer
     required:
@@ -30438,343 +30460,191 @@ paths:
       tags:
       - TransportChannel
   /unit:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Unit
-      parameters:
-      - description: Unit GUIDs
-        in: body
-        name: Unit
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
     get:
       consumes:
       - application/json
-      description: get struct array by ID
+      description: Search units with pagination
       parameters:
-      - description: Search Value
+      - description: keyword
         in: query
         name: q
         type: string
-      - description: 'page '
+      - description: Page number
         in: query
         name: page
         type: integer
-      - description: 'liumit '
+      - description: Items per page
         in: query
         name: limit
         type: integer
-      - description: unitcode filter ex. \
-        in: query
-        name: unitcode
-        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.UnitPg'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: Search units
       tags:
       - Unit
     post:
       consumes:
       - application/json
-      description: Create Unit
+      description: Create a new unit with details
       parameters:
-      - description: Unit
+      - description: Unit data
         in: body
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/models.Unit'
+          $ref: '#/definitions/models.UnitPg'
+      produces:
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UnitPg'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: Create a new unit
       tags:
       - Unit
   /unit/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete Unit
+      description: Delete a unit by ID
       parameters:
       - description: Unit ID
         in: path
         name: id
         required: true
         type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-    get:
-      consumes:
+      produces:
       - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Unit ID
-        in: path
-        name: id
-        required: true
-        type: string
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
+        "400":
+          description: Bad Request
           schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
+            $ref: '#/definitions/models.ApiResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
       security:
       - AccessToken: []
+      summary: Delete a unit
       tags:
       - Unit
-    patch:
+    get:
       consumes:
       - application/json
-      description: Update Unit
+      description: Get unit details by ID
       parameters:
       - description: Unit ID
         in: path
         name: id
         required: true
         type: string
-      - description: Unit
-        in: body
-        name: Unit
-        required: true
-        schema:
-          $ref: '#/definitions/models.Unit'
+      produces:
+      - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UnitPg'
+              type: object
+        "400":
+          description: Bad Request
           schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
+            $ref: '#/definitions/models.ApiResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
       security:
       - AccessToken: []
+      summary: Get unit details
       tags:
       - Unit
     put:
       consumes:
       - application/json
-      description: Update Unit
+      description: Update an existing unit by ID
       parameters:
       - description: Unit ID
         in: path
         name: id
         required: true
         type: string
-      - description: Unit
+      - description: Updated unit data
         in: body
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/models.Unit'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-  /unit/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create Unit
-      parameters:
-      - description: Unit
-        in: body
-        name: Unit
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Unit'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BulkResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-  /unit/by-code:
-    get:
-      consumes:
-      - application/json
-      description: get unit by unit code array
-      parameters:
-      - description: 'Code filter, json array encode '
-        in: query
-        name: codes
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-  /unit/list:
-    get:
-      consumes:
-      - application/json
-      description: search limit offset
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: lang ex. en,th
-        in: query
-        name: lang
-        type: string
-      - description: unitcode filter ex. \
-        in: query
-        name: unitcode
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-  /unit/master:
-    get:
-      consumes:
-      - application/json
-      description: get master Unit by code array
-      parameters:
-      - description: 'Code filter, json array encode '
-        in: query
-        name: codes
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-  /unit/uploadfile:
-    post:
-      consumes:
-      - multipart/form-data
-      description: Upload an Excel file to import units
-      parameters:
-      - description: Excel file containing unit data
-        in: formData
-        name: excelfile
-        required: true
-        type: file
+          $ref: '#/definitions/models.UnitPg'
       produces:
       - application/json
       responses:
         "200":
-          description: 'Existing unit codes: [EA, PACK, BOX]'
+          description: OK
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UnitPg'
+              type: object
         "400":
-          description: file is required
+          description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: failed to read file or internal server error
+            $ref: '#/definitions/models.ApiResponse'
+        "404":
+          description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ApiResponse'
       security:
       - AccessToken: []
+      summary: Update an existing unit
       tags:
       - Unit
   /upload/images:

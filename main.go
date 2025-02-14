@@ -246,7 +246,7 @@ func main() {
 			employee.NewEmployeeHttp(ms, cfg), member.NewMemberHttp(ms, cfg),
 
 			option.NewOptionHttp(ms, cfg),
-			unit.NewUnitHttp(ms, cfg),
+
 			optionpattern.NewOptionPatternHttp(ms, cfg),
 			color.NewColorHttp(ms, cfg),
 
@@ -257,6 +257,7 @@ func main() {
 			// product.NewProductHttp(ms, cfg),
 			productgroup.NewProductGroupHttp(ms, cfg),
 			producttype.NewProductTypeHttp(ms, cfg),
+			unit.NewUnitHttp(ms, cfg),
 
 			images.NewImagesHttp(ms, cfg, imagePersister),
 
@@ -406,6 +407,7 @@ func main() {
 		creditorpayment_consumer.MigrationDatabase(ms, cfg)
 		debtorpayment_consumer.MigrationDatabase(ms, cfg)
 		warehouse.MigrationDatabase(ms, cfg)
+		unit.MigrationDatabase(ms, cfg)
 
 		// debt account
 		creditor.MigrationDatabase(ms, cfg)

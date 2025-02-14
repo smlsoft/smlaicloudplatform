@@ -19,6 +19,28 @@ type Product struct {
 	ManufacturerNames        *[]models.NameX    `json:"manufacturernames" bson:"manufacturernames"`
 	Dimensions               []ProductDimension `json:"dimensions" bson:"dimensions"`
 	VatType                  int8               `json:"vattype" bson:"vattype"`
+	Barcodes                 []string           `json:"barcodes,omitempty"`
+}
+
+type JSONB []models.NameX
+
+type ProductPg struct {
+	ShopID                   string `json:"shopid" gorm:"column:shopid;primaryKey"`
+	models.PartitionIdentity `gorm:"embedded;"`
+	Barcode                  string  `json:"barcode" gorm:"column:barcode;primaryKey"`
+	Names                    JSONB   `json:"names"  gorm:"column:names;type:jsonb" `
+	UnitCode                 string  `json:"itemunitcode" gorm:"column:unitcode"`
+	UnitNames                JSONB   `json:"itemunitnames" gorm:"column:unitnames;type:jsonb"`
+	BalanceQty               float64 `json:"balanceqty" gorm:"column:balanceqty"`
+	MainBarcodeRef           string  `json:"mainbarcoderef" gorm:"column:mainbarcoderef"`
+	StandValue               float64 `json:"standvalue" gorm:"column:standvalue"`
+	DivideValue              float64 `json:"dividevalue" gorm:"column:dividevalue"`
+	BalanceAmount            float64 `json:"balanceamount" gorm:"column:balanceamount"`
+	AverageCost              float64 `json:"averagecost" gorm:"column:averagecost"`
+}
+
+func (ProductPg) TableName() string {
+	return "productbarcode"
 }
 
 type ProductDimension struct {
