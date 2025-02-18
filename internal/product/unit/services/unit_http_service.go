@@ -45,7 +45,7 @@ func (svc UnitHttpService) GetModuleName() string {
 func (svc UnitHttpService) GetUnit(shopID string, unitCode string) (*models.UnitPg, error) {
 	ctx, cancel := svc.getContextTimeout()
 	defer cancel()
-	unit, err := svc.repo.FindByUnitCode(ctx, shopID, unitCode)
+	unit, err := svc.repo.Get(ctx, shopID, unitCode)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func (svc UnitHttpService) Create(doc *models.UnitPg) error {
 	}
 
 	// ✅ ตรวจสอบว่ามีอยู่แล้วหรือไม่
-	existingUnit, err := svc.repo.Get(doc.ShopID, doc.UnitCode)
+	existingUnit, err := svc.repo.FindByUnitCode(ctx, doc.ShopID, doc.UnitCode)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return err // ❌ ถ้า error ไม่ใช่ "ไม่พบข้อมูล" ให้คืนค่า error ทันที
 	}

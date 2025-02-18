@@ -9,7 +9,7 @@ import (
 )
 
 type IUnitPGRepository interface {
-	Get(shopID string, unitcode string) (*models.UnitPg, error)
+	Get(ctx context.Context, shopID string, unitcode string) (*models.UnitPg, error)
 	FindByUnitCode(ctx context.Context, shopID string, unitcode string) (*models.UnitPg, error)
 	FindByUnitCodes(ctx context.Context, shopID string, unitcodes []string) ([]models.UnitPg, error)
 	UnitList(ctx context.Context, shopID string, name string, page int, pageSize int) ([]models.UnitPg, int64, error)
@@ -63,7 +63,7 @@ func (repo *UnitPGRepository) UnitList(ctx context.Context, shopID string, name 
 	return units, totalRecords, nil
 }
 
-func (repo *UnitPGRepository) Get(shopID string, unitcode string) (*models.UnitPg, error) {
+func (repo *UnitPGRepository) Get(ctx context.Context, shopID string, unitcode string) (*models.UnitPg, error) {
 	var result models.UnitPg
 	_, err := repo.pst.First(&result, "shopid=? AND guidfixed=?", shopID, unitcode)
 	if err != nil {
