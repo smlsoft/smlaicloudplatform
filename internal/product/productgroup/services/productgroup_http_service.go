@@ -106,7 +106,7 @@ func (svc ProductGroupHttpService) Create(doc *models.ProductGroupPg) error {
 	}
 
 	// ✅ ตรวจสอบว่ามีอยู่แล้วหรือไม่
-	existingProductGroup, err := svc.repo.Get(doc.ShopID, doc.Code)
+	existingProductGroup, err := svc.repo.FindByProductGroupCode(ctx, doc.ShopID, doc.Code)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return err // ❌ ถ้า error ไม่ใช่ "ไม่พบข้อมูล" ให้คืนค่า error ทันที
 	}

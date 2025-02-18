@@ -66,7 +66,7 @@ func (repo *ProductGroupPGRepository) ProductGroupList(ctx context.Context, shop
 
 func (repo *ProductGroupPGRepository) Get(shopID string, code string) (*models.ProductGroupPg, error) {
 	var result models.ProductGroupPg
-	_, err := repo.pst.First(&result, "shopid=? AND code=?", shopID, code)
+	_, err := repo.pst.First(&result, "shopid=? AND guidfixed=?", shopID, code)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -116,8 +116,8 @@ func (repo *ProductGroupPGRepository) Create(ctx context.Context, doc *models.Pr
 // ✅ **Update (UPDATE)**
 func (repo *ProductGroupPGRepository) Update(ctx context.Context, shopID string, code string, doc *models.ProductGroupPg) error {
 	err := repo.pst.Update(&doc, map[string]interface{}{
-		"shopid": shopID,
-		"code":   code,
+		"shopid":    shopID,
+		"guidfixed": code,
 	})
 	if err != nil {
 		return err
@@ -128,8 +128,8 @@ func (repo *ProductGroupPGRepository) Update(ctx context.Context, shopID string,
 // ✅ **Delete (DELETE)**
 func (repo *ProductGroupPGRepository) Delete(ctx context.Context, shopID string, code string) error {
 	err := repo.pst.Delete(&models.ProductGroupPg{}, map[string]interface{}{
-		"shopid": shopID,
-		"code":   code,
+		"shopid":    shopID,
+		"guidfixed": code,
 	})
 	if err != nil {
 		return err
