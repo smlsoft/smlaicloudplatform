@@ -46,7 +46,7 @@ func (svc ProductGroupHttpService) GetModuleName() string {
 func (svc ProductGroupHttpService) Get(shopID string, unitCode string) (*models.ProductGroupPg, error) {
 	ctx, cancel := svc.getContextTimeout()
 	defer cancel()
-	unit, err := svc.repo.FindByProductGroupCode(ctx, shopID, unitCode)
+	unit, err := svc.repo.Get(ctx, shopID, unitCode)
 	if err != nil {
 		return nil, err
 	}

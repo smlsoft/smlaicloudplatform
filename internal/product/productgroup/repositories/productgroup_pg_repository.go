@@ -10,7 +10,7 @@ import (
 )
 
 type IProductGroupPGRepository interface {
-	Get(shopID string, code string) (*models.ProductGroupPg, error)
+	Get(ctx context.Context, shopID string, code string) (*models.ProductGroupPg, error)
 	FindByProductGroupCode(ctx context.Context, shopID string, code string) (*models.ProductGroupPg, error)
 	FindByProductGroupCodes(ctx context.Context, shopID string, codes []string) ([]models.ProductGroupPg, error)
 	ProductGroupList(ctx context.Context, shopID string, name string, page int, pageSize int) ([]models.ProductGroupPg, int64, error)
@@ -64,7 +64,7 @@ func (repo *ProductGroupPGRepository) ProductGroupList(ctx context.Context, shop
 	return units, totalRecords, nil
 }
 
-func (repo *ProductGroupPGRepository) Get(shopID string, code string) (*models.ProductGroupPg, error) {
+func (repo *ProductGroupPGRepository) Get(ctx context.Context, shopID string, code string) (*models.ProductGroupPg, error) {
 	var result models.ProductGroupPg
 	_, err := repo.pst.First(&result, "shopid=? AND guidfixed=?", shopID, code)
 	if err != nil {
