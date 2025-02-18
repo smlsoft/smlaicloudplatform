@@ -65,7 +65,7 @@ func (repo *UnitPGRepository) UnitList(ctx context.Context, shopID string, name 
 
 func (repo *UnitPGRepository) Get(shopID string, unitcode string) (*models.UnitPg, error) {
 	var result models.UnitPg
-	_, err := repo.pst.First(&result, "shopid=? AND unitcode=?", shopID, unitcode)
+	_, err := repo.pst.First(&result, "shopid=? AND guidfixed=?", shopID, unitcode)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -115,8 +115,8 @@ func (repo *UnitPGRepository) Create(ctx context.Context, doc *models.UnitPg) er
 // ✅ **Update (UPDATE)**
 func (repo *UnitPGRepository) Update(ctx context.Context, shopID string, unitcode string, doc *models.UnitPg) error {
 	err := repo.pst.Update(&doc, map[string]interface{}{
-		"shopid":   shopID,
-		"unitcode": unitcode,
+		"shopid":    shopID,
+		"guidfixed": unitcode,
 	})
 	if err != nil {
 		return err
@@ -127,8 +127,8 @@ func (repo *UnitPGRepository) Update(ctx context.Context, shopID string, unitcod
 // ✅ **Delete (DELETE)**
 func (repo *UnitPGRepository) Delete(ctx context.Context, shopID string, unitcode string) error {
 	err := repo.pst.Delete(&models.UnitPg{}, map[string]interface{}{
-		"shopid":   shopID,
-		"unitcode": unitcode,
+		"shopid":    shopID,
+		"guidfixed": unitcode,
 	})
 	if err != nil {
 		return err
