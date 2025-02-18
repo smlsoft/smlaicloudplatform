@@ -271,7 +271,7 @@ func (repo *ProductPGRepository) Update(ctx context.Context, shopID string, code
 	// ✅ อัปเดต Dimensions โดยลบของเก่าทิ้งแล้วเพิ่มใหม่
 	err = repo.pst.Delete(&models.ProductDimensionPg{}, map[string]interface{}{
 		"shopid":       shopID,
-		"product_guid": doc.GuidFixed,
+		"product_guid": code,
 	})
 	if err != nil {
 		return err
@@ -279,13 +279,23 @@ func (repo *ProductPGRepository) Update(ctx context.Context, shopID string, code
 
 	// ✅ เพิ่ม Dimensions ใหม่
 	for _, dimension := range doc.Dimensions {
+		if dimension.GuidFixed == "" {
+			return errors.New("DimensionGuid cannot be empty")
+		}
+
 		productDimension := models.ProductDimensionPg{
-			ShopID:        doc.ShopID,
+			ShopID:        doc.ShopID, // 🔥 ตรวจสอบให้แน่ใจว่า `shopid` มีค่า
 			ProductGuid:   doc.GuidFixed,
 			DimensionGuid: dimension.GuidFixed,
 		}
+
+		// ✅ Debug Log ก่อน Insert
+		fmt.Printf("Before Insert: %+v\n", productDimension)
+
+		// ✅ บันทึกค่าเข้า `product_dimensions`
 		err = repo.pst.Create(&productDimension)
 		if err != nil {
+			fmt.Printf("Error inserting product_dimension: %v\n", err)
 			return err
 		}
 	}
