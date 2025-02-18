@@ -284,7 +284,7 @@ func (repo *ProductPGRepository) Update(ctx context.Context, shopID string, code
 		}
 
 		productDimension := models.ProductDimensionPg{
-			ShopID:        doc.ShopID, // 🔥 ตรวจสอบให้แน่ใจว่า `shopid` มีค่า
+			ShopID:        shopID, // 🔥 ตรวจสอบให้แน่ใจว่า `shopid` มีค่า
 			ProductGuid:   doc.GuidFixed,
 			DimensionGuid: dimension.GuidFixed,
 		}
