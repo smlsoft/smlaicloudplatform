@@ -42135,6 +42135,12 @@ const docTemplate = `{
                 "groupguid": {
                     "type": "string"
                 },
+                "groupname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -42143,6 +42149,12 @@ const docTemplate = `{
                 },
                 "manufacturerguid": {
                     "type": "string"
+                },
+                "manufacturername": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "names": {
                     "type": "array",

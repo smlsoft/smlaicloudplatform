@@ -3,7 +3,10 @@ package services
 import (
 	"context"
 	"errors"
+	"log"
 	"math"
+	credit "smlaicloudplatform/internal/debtaccount/creditor/models"
+	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	"smlaicloudplatform/internal/product/product/models"
 	"smlaicloudplatform/internal/product/product/repositories"
 	"smlaicloudplatform/internal/utils"
@@ -23,13 +26,15 @@ type IProductHttpService interface {
 
 type ProductHttpService struct {
 	repo           repositories.IProductPGRepository
+	repomg         creditorRepo.CreditorRepository
 	contextTimeout time.Duration
 }
 
 // ✅ **สร้าง Service**
-func NewProductHttpService(repo repositories.IProductPGRepository) *ProductHttpService {
+func NewProductHttpService(repo repositories.IProductPGRepository, repomg creditorRepo.CreditorRepository) *ProductHttpService {
 	return &ProductHttpService{
 		repo:           repo,
+		repomg:         repomg,
 		contextTimeout: 15 * time.Second,
 	}
 }
@@ -51,6 +56,17 @@ func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.Pr
 	product, err := svc.repo.Get(ctx, shopID, code)
 	if err != nil {
 		return nil, err
+	}
+
+	// ดึง manu ถ้ามี manufacturerguid
+	if *product.ManufacturerGUID != "" {
+		findDoc := credit.CreditorDoc{}
+		findDoc, err := svc.repomg.FindByGuid(ctx, shopID, *product.ManufacturerGUID)
+		if err != nil {
+			log.Printf("Error: %v", err)
+		}
+
+		product.ManufacturerName = *findDoc.Names
 	}
 
 	return product, nil

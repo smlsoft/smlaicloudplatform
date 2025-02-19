@@ -3185,12 +3185,20 @@ definitions:
         type: array
       groupguid:
         type: string
+      groupname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       guidfixed:
         type: string
       itemtype:
         type: integer
       manufacturerguid:
         type: string
+      manufacturername:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       names:
         items:
           $ref: '#/definitions/models.NameX'

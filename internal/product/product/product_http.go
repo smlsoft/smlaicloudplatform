@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlaicloudplatform/internal/config"
+	creditorepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	common "smlaicloudplatform/internal/models"
 	"smlaicloudplatform/internal/product/product/models"
 	"smlaicloudplatform/internal/product/product/repositories"
@@ -27,8 +28,10 @@ type ProductHttp struct {
 // ✅ **สร้าง New ProductHttp**
 func NewProductHttp(ms *microservice.Microservice, cfg config.IConfig) ProductHttp {
 	pst := ms.Persister(cfg.PersisterConfig())
+	pstmg := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := repositories.NewProductPGRepository(pst)
-	svc := services.NewProductHttpService(repo)
+	repomg := creditorepo.NewCreditorRepository(pstmg)
+	svc := services.NewProductHttpService(repo, *repomg)
 
 	return ProductHttp{
 		ms:  ms,

@@ -42130,6 +42130,12 @@
                 "groupguid": {
                     "type": "string"
                 },
+                "groupname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -42138,6 +42144,12 @@
                 },
                 "manufacturerguid": {
                     "type": "string"
+                },
+                "manufacturername": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "names": {
                     "type": "array",

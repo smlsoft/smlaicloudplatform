@@ -6,6 +6,7 @@ import (
 	"fmt"
 	dimension "smlaicloudplatform/internal/dimension/models"
 	"smlaicloudplatform/internal/product/product/models"
+	group "smlaicloudplatform/internal/product/productgroup/models"
 	"smlaicloudplatform/pkg/microservice"
 	"time"
 
@@ -41,6 +42,18 @@ func (repo *ProductPGRepository) Get(ctx context.Context, shopID string, code st
 		First(&product).Error
 	if err != nil {
 		return nil, err
+	}
+
+	// ดึง group name ถ้ามี groupguid
+	if *product.GroupGuid != "" {
+		var group group.ProductGroupPg
+		err = repo.pst.DBClient().
+			Where("shopid = ? AND guidfixed = ?", shopID, product.GroupGuid).
+			First(&group).Error
+		if err != nil {
+			return nil, err
+		}
+		product.GroupName = group.Names
 	}
 
 	// ✅ ดึง Dimensions ที่สัมพันธ์กับ Product
