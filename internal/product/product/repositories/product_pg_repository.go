@@ -7,6 +7,9 @@ import (
 	dimension "smlaicloudplatform/internal/dimension/models"
 	"smlaicloudplatform/internal/product/product/models"
 	"smlaicloudplatform/pkg/microservice"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type IProductPGRepository interface {
@@ -224,33 +227,48 @@ func (repo *ProductPGRepository) ProductList(ctx context.Context, shopID string,
 }
 
 func (repo *ProductPGRepository) Create(ctx context.Context, doc *models.ProductPg) error {
+	// ✅ ตรวจสอบค่า `shopid` ก่อนบันทึก
+	if doc.ShopID == "" {
+		return errors.New("ShopID cannot be empty")
+	}
+	if doc.GuidFixed == "" {
+		return errors.New("Product GuidFixed cannot be empty")
+	}
+
+	// ✅ บันทึก Product
 	err := repo.pst.Create(doc)
 	if err != nil {
 		return err
 	}
 
 	// ✅ Debug ก่อน Insert
-	fmt.Printf("Creating product dimensions for ShopID: %s, ProductGuid: %s\n", doc.ShopID, doc.GuidFixed)
+	fmt.Printf("✅ Creating product dimensions for ShopID: %s, ProductGuid: %s\n", doc.ShopID, doc.GuidFixed)
 
 	// ✅ เพิ่ม Dimensions ลงใน Pivot Table
 	for _, dimension := range doc.Dimensions {
 		if dimension.GuidFixed == "" {
-			return errors.New("DimensionGuid cannot be empty")
+			fmt.Println("❌ DimensionGuid is empty, skipping dimension:", dimension)
+			continue
+		}
+
+		// ✅ ตรวจสอบว่าค่า `shopid` ถูกต้อง
+		if dimension.ShopID == "" {
+			dimension.ShopID = doc.ShopID
 		}
 
 		productDimension := models.ProductDimensionPg{
-			ShopID:        doc.ShopID, // 🔥 ตรวจสอบให้แน่ใจว่า `shopid` มีค่า
+			ShopID:        doc.ShopID, // ✅ ตรวจสอบให้แน่ใจว่า `shopid` มีค่า
 			ProductGuid:   doc.GuidFixed,
 			DimensionGuid: dimension.GuidFixed,
 		}
 
 		// ✅ Debug Log ก่อน Insert
-		fmt.Printf("Before Insert: %+v\n", productDimension)
+		fmt.Printf("📝 Before Insert: %+v\n", productDimension)
 
 		// ✅ บันทึกค่าเข้า `product_dimensions`
 		err = repo.pst.Create(&productDimension)
 		if err != nil {
-			fmt.Printf("Error inserting product_dimension: %v\n", err)
+			fmt.Printf("❌ Error inserting product_dimension: %v\n", err)
 			return err
 		}
 	}
@@ -260,19 +278,45 @@ func (repo *ProductPGRepository) Create(ctx context.Context, doc *models.Product
 
 // ✅ **Update (อัปเดต Product)**
 func (repo *ProductPGRepository) Update(ctx context.Context, shopID string, code string, doc *models.ProductPg) error {
-	err := repo.pst.Update(&doc, map[string]interface{}{
-		"shopid":    shopID,
-		"guidfixed": code,
-	})
+	// ✅ ดึงข้อมูล Product ก่อนอัปเดต
+	var existingProduct models.ProductPg
+	err := repo.pst.DBClient().
+		Where("shopid = ? AND guidfixed = ?", shopID, code).
+		First(&existingProduct).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("Product not found")
+		}
+		return err
+	}
+
+	// ✅ ตั้งค่า UpdatedAt
+	doc.UpdatedAt = time.Now()
+
+	// ✅ อัปเดตข้อมูลโดยใช้ `map[string]interface{}` เพื่อให้แน่ใจว่าค่าที่เป็น "" และ 0 จะถูกอัปเดต
+	updateData := map[string]interface{}{
+		"names":            doc.Names,
+		"groupguid":        doc.GroupGuid,
+		"unitguid":         doc.UnitGuid,
+		"itemtype":         doc.ItemType,
+		"manufacturerguid": doc.ManufacturerGUID,
+		"updatedat":        doc.UpdatedAt,
+		"updatedby":        doc.UpdatedBy,
+	}
+
+	err = repo.pst.DBClient().
+		Model(&models.ProductPg{}).
+		Where("shopid = ? AND guidfixed = ?", shopID, code).
+		Updates(updateData).Error
 	if err != nil {
 		return err
 	}
 
-	// ✅ อัปเดต Dimensions โดยลบของเก่าทิ้งแล้วเพิ่มใหม่
-	err = repo.pst.Delete(&models.ProductDimensionPg{}, map[string]interface{}{
-		"shopid":       shopID,
-		"product_guid": code,
-	})
+	// ✅ ลบ Dimensions เก่าออกก่อน
+	err = repo.pst.DBClient().
+		Where("shopid = ? AND product_guid = ?", shopID, code).
+		Delete(&models.ProductDimensionPg{}).Error
 	if err != nil {
 		return err
 	}
@@ -284,16 +328,12 @@ func (repo *ProductPGRepository) Update(ctx context.Context, shopID string, code
 		}
 
 		productDimension := models.ProductDimensionPg{
-			ShopID:        shopID, // 🔥 ตรวจสอบให้แน่ใจว่า `shopid` มีค่า
+			ShopID:        shopID,
 			ProductGuid:   doc.GuidFixed,
 			DimensionGuid: dimension.GuidFixed,
 		}
 
-		// ✅ Debug Log ก่อน Insert
-		fmt.Printf("Before Insert: %+v\n", productDimension)
-
-		// ✅ บันทึกค่าเข้า `product_dimensions`
-		err = repo.pst.Create(&productDimension)
+		err = repo.pst.DBClient().Create(&productDimension).Error
 		if err != nil {
 			fmt.Printf("Error inserting product_dimension: %v\n", err)
 			return err

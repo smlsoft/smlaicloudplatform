@@ -13,10 +13,10 @@ type ProductPg struct {
 	GuidFixed                string `json:"guidfixed" gorm:"column:guidfixed"`
 	models.PartitionIdentity `gorm:"embedded;"`
 	Names                    models.JSONB            `json:"names"  gorm:"column:names;type:jsonb"`
-	GroupGuid                string                  `json:"groupguid" gorm:"column:groupguid"`
-	UnitGuid                 string                  `json:"unitguid" gorm:"column:unitguid"`
-	ItemType                 int8                    `json:"itemtype" gorm:"column:itemtype"`
-	ManufacturerGUID         string                  `json:"manufacturerguid" gorm:"column:manufacturerguid"`
+	GroupGuid                *string                 `json:"groupguid,omitempty" gorm:"column:groupguid;default:null"`
+	UnitGuid                 *string                 `json:"unitguid,omitempty" gorm:"column:unitguid;default:null"`
+	ItemType                 int8                    `json:"itemtype" gorm:"column:itemtype;default:0"`
+	ManufacturerGUID         *string                 `json:"manufacturerguid,omitempty" gorm:"column:manufacturerguid;default:null"`
 	Dimensions               []dimension.DimensionPg `json:"dimensions" gorm:"-"`
 	CreatedAt                time.Time               `json:"createdat" gorm:"column:createdat"`
 	UpdatedAt                time.Time               `json:"updatedat" gorm:"column:updatedat"`

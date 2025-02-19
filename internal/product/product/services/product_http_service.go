@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/smlsoft/mongopagination"
-	"gorm.io/gorm"
 )
 
 type IProductHttpService interface {
@@ -113,14 +112,20 @@ func (svc ProductHttpService) Create(doc *models.ProductPg) error {
 		doc.GuidFixed = utils.NewGUID() // 🔥 สร้าง GUID ใหม่
 	}
 
-	// ✅ ตรวจสอบว่ามีอยู่แล้วหรือไม่
-	existingProduct, err := svc.repo.Get(ctx, doc.ShopID, doc.Code)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return err
+	// ✅ ตรวจสอบค่าที่เป็น "" และตั้งค่าให้เป็น nil
+	if doc.GroupGuid != nil && *doc.GroupGuid == "" {
+		doc.GroupGuid = nil
+	}
+	if doc.UnitGuid != nil && *doc.UnitGuid == "" {
+		doc.UnitGuid = nil
+	}
+	if doc.ManufacturerGUID != nil && *doc.ManufacturerGUID == "" {
+		doc.ManufacturerGUID = nil
 	}
 
-	if existingProduct != nil {
-		return errors.New("Product already exists")
+	// ✅ กำหนดค่าเริ่มต้นให้ `itemtype` หากไม่ได้ส่งมา
+	if doc.ItemType == 0 {
+		doc.ItemType = 0
 	}
 
 	// ✅ ตั้งค่าเวลาก่อนสร้าง
@@ -128,7 +133,7 @@ func (svc ProductHttpService) Create(doc *models.ProductPg) error {
 	doc.UpdatedAt = time.Now()
 
 	// ✅ เรียก `Create()`
-	err = svc.repo.Create(ctx, doc)
+	err := svc.repo.Create(ctx, doc)
 	if err != nil {
 		return err
 	}
@@ -145,8 +150,10 @@ func (svc ProductHttpService) Update(shopID string, code string, doc *models.Pro
 		return errors.New("ShopID and Code are required")
 	}
 
+	// ✅ ตั้งค่า UpdatedAt
 	doc.UpdatedAt = time.Now()
 
+	// ✅ เรียก Repository เพื่ออัปเดตข้อมูล
 	err := svc.repo.Update(ctx, shopID, code, doc)
 	if err != nil {
 		return err
