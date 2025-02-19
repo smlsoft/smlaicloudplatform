@@ -12,14 +12,14 @@ import (
 const productBarcodeCollectionName = "productBarcodes"
 
 type ProductBarcodeBase struct {
-	ItemCode   string          `json:"itemcode" bson:"itemcode"`
-	Barcode    string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
-	GroupGuid  string          `json:"groupguid" bson:"groupguid"`
-	GroupCode  string          `json:"groupcode" bson:"groupcode"`
-	GroupNames *[]models.NameX `json:"groupnames" bson:"groupnames"`
-	Names      *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSorts     *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
-
+	ItemCode        string           `json:"itemcode" bson:"itemcode"`
+	Barcode         string           `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	GroupGuid       string           `json:"groupguid" bson:"groupguid"`
+	GroupCode       string           `json:"groupcode" bson:"groupcode"`
+	GroupNames      *[]models.NameX  `json:"groupnames" bson:"groupnames"`
+	Names           *[]models.NameX  `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	XSorts          *[]models.XSort  `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
+	ItemGuid        string           `json:"itemguid" bson:"itemguid"`
 	ItemUnitCode    string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames   *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames"`
 	ItemUnitSize    float64          `json:"itemunitsize" bson:"itemunitsize"`
