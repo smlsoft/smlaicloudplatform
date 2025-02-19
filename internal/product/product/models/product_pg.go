@@ -20,6 +20,7 @@ type ProductPg struct {
 	Dimensions               []dimension.DimensionPg `json:"dimensions" gorm:"-"`
 	GroupCode                *string                 `json:"groupcode" gorm:"-"`
 	GroupName                models.JSONB            `json:"groupname" gorm:"-"`
+	ManufacturerCode         *string                 `json:"manufacturercode" gorm:"-"`
 	ManufacturerName         []models.NameX          `json:"manufacturername" gorm:"-"`
 	CreatedAt                time.Time               `json:"createdat" gorm:"column:createdat"`
 	UpdatedAt                time.Time               `json:"updatedat" gorm:"column:updatedat"`

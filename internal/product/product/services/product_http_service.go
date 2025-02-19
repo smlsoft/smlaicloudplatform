@@ -61,6 +61,7 @@ func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.Pr
 	if product.ManufacturerGUID != nil && strings.TrimSpace(*product.ManufacturerGUID) != "" {
 		findDoc, err := svc.repomg.FindByGuid(ctx, shopID, *product.ManufacturerGUID)
 		if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
+			product.ManufacturerCode = &findDoc.Code
 			product.ManufacturerName = *findDoc.Names
 		}
 	}
