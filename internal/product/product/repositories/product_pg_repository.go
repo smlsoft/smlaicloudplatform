@@ -8,6 +8,7 @@ import (
 	"smlaicloudplatform/internal/product/product/models"
 	group "smlaicloudplatform/internal/product/productgroup/models"
 	"smlaicloudplatform/pkg/microservice"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -44,17 +45,16 @@ func (repo *ProductPGRepository) Get(ctx context.Context, shopID string, code st
 		return nil, err
 	}
 
-	// ดึง group name ถ้ามี groupguid
-	if *product.GroupGuid != "" {
+	// ✅ ดึง group name ถ้ามี groupguid และไม่เป็นค่าว่าง
+	if product.GroupGuid != nil && strings.TrimSpace(*product.GroupGuid) != "" {
 		var group group.ProductGroupPg
 		err = repo.pst.DBClient().
-			Where("shopid = ? AND guidfixed = ?", shopID, product.GroupGuid).
+			Where("shopid = ? AND guidfixed = ?", shopID, *product.GroupGuid).
 			First(&group).Error
-		if err != nil {
-			return nil, err
+		if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
+			product.GroupCode = &group.Code
+			product.GroupName = group.Names
 		}
-		product.GroupCode = &group.Code
-		product.GroupName = group.Names
 	}
 
 	// ✅ ดึง Dimensions ที่สัมพันธ์กับ Product

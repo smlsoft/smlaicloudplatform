@@ -3,13 +3,12 @@ package services
 import (
 	"context"
 	"errors"
-	"log"
 	"math"
-	credit "smlaicloudplatform/internal/debtaccount/creditor/models"
 	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	"smlaicloudplatform/internal/product/product/models"
 	"smlaicloudplatform/internal/product/product/repositories"
 	"smlaicloudplatform/internal/utils"
+	"strings"
 	"time"
 
 	"github.com/smlsoft/mongopagination"
@@ -58,15 +57,12 @@ func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.Pr
 		return nil, err
 	}
 
-	// ดึง manu ถ้ามี manufacturerguid
-	if *product.ManufacturerGUID != "" {
-		findDoc := credit.CreditorDoc{}
+	// ✅ ดึง manufacturer ถ้ามี manufacturerguid และไม่เป็นค่าว่าง
+	if product.ManufacturerGUID != nil && strings.TrimSpace(*product.ManufacturerGUID) != "" {
 		findDoc, err := svc.repomg.FindByGuid(ctx, shopID, *product.ManufacturerGUID)
-		if err != nil {
-			log.Printf("Error: %v", err)
+		if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
+			product.ManufacturerName = *findDoc.Names
 		}
-
-		product.ManufacturerName = *findDoc.Names
 	}
 
 	return product, nil

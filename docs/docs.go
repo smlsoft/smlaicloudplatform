@@ -41639,6 +41639,9 @@ const docTemplate = `{
                 "groupcode": {
                     "type": "string"
                 },
+                "groupguid": {
+                    "type": "string"
+                },
                 "groupnames": {
                     "type": "array",
                     "items": {
@@ -41688,6 +41691,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
                     "type": "string"
                 },
                 "itemtype": {
@@ -42131,6 +42137,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.DimensionPg"
                     }
+                },
+                "groupcode": {
+                    "type": "string"
                 },
                 "groupguid": {
                     "type": "string"
@@ -48326,6 +48335,9 @@ const docTemplate = `{
                 "groupcode": {
                     "type": "string"
                 },
+                "groupguid": {
+                    "type": "string"
+                },
                 "groupnames": {
                     "type": "array",
                     "items": {
@@ -48375,6 +48387,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
                     "type": "string"
                 },
                 "itemtype": {

@@ -41634,6 +41634,9 @@
                 "groupcode": {
                     "type": "string"
                 },
+                "groupguid": {
+                    "type": "string"
+                },
                 "groupnames": {
                     "type": "array",
                     "items": {
@@ -41683,6 +41686,9 @@
                     "type": "boolean"
                 },
                 "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
                     "type": "string"
                 },
                 "itemtype": {
@@ -42126,6 +42132,9 @@
                     "items": {
                         "$ref": "#/definitions/models.DimensionPg"
                     }
+                },
+                "groupcode": {
+                    "type": "string"
                 },
                 "groupguid": {
                     "type": "string"
@@ -48321,6 +48330,9 @@
                 "groupcode": {
                     "type": "string"
                 },
+                "groupguid": {
+                    "type": "string"
+                },
                 "groupnames": {
                     "type": "array",
                     "items": {
@@ -48370,6 +48382,9 @@
                     "type": "boolean"
                 },
                 "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
                     "type": "string"
                 },
                 "itemtype": {
