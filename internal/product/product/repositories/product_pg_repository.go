@@ -249,22 +249,8 @@ func (repo *ProductPGRepository) Create(ctx context.Context, doc *models.Product
 		return errors.New("Product GuidFixed cannot be empty")
 	}
 
-	createData := map[string]interface{}{
-		"shopid":           doc.ShopID,
-		"guidfixed":        doc.GuidFixed,
-		"names":            doc.Names,
-		"groupguid":        doc.GroupGuid,
-		"unitguid":         doc.UnitGuid,
-		"itemtype":         doc.ItemType,
-		"manufacturerGUID": doc.ManufacturerGUID,
-		"createdat":        doc.CreatedAt,
-		"createdby":        doc.CreatedBy,
-		"updatedat":        doc.UpdatedAt,
-		"updatedby":        doc.UpdatedBy,
-	}
-
 	// ✅ บันทึก Product
-	err := repo.pst.Create(createData)
+	err := repo.pst.Create(doc)
 	if err != nil {
 		return err
 	}
