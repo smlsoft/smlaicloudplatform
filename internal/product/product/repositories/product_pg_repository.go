@@ -53,6 +53,7 @@ func (repo *ProductPGRepository) Get(ctx context.Context, shopID string, code st
 		if err != nil {
 			return nil, err
 		}
+		product.GroupCode = &group.Code
 		product.GroupName = group.Names
 	}
 

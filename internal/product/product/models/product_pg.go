@@ -18,6 +18,7 @@ type ProductPg struct {
 	ItemType                 int8                    `json:"itemtype" gorm:"column:itemtype;default:0"`
 	ManufacturerGUID         *string                 `json:"manufacturerguid,omitempty" gorm:"column:manufacturerguid;default:null"`
 	Dimensions               []dimension.DimensionPg `json:"dimensions" gorm:"-"`
+	GroupCode                *string                 `json:"groupcode" gorm:"-"`
 	GroupName                models.JSONB            `json:"groupname" gorm:"-"`
 	ManufacturerName         []models.NameX          `json:"manufacturername" gorm:"-"`
 	CreatedAt                time.Time               `json:"createdat" gorm:"column:createdat"`
