@@ -37752,6 +37752,32 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Barcodes": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductPrice"
+                    }
+                }
+            }
+        },
         "models.BarcodesModifyReqesut": {
             "type": "object"
         },
@@ -41752,7 +41778,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -42123,6 +42149,12 @@ const docTemplate = `{
         "models.ProductPg": {
             "type": "object",
             "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
@@ -42156,6 +42188,9 @@ const docTemplate = `{
                 "itemtype": {
                     "type": "integer"
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -42182,17 +42217,6 @@ const docTemplate = `{
                 },
                 "updatedby": {
                     "type": "string"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -48226,6 +48250,17 @@ const docTemplate = `{
                 }
             }
         },
+        "smlaicloudplatform_internal_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode": {
             "type": "object",
             "required": [
@@ -48448,7 +48483,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -48545,6 +48580,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },

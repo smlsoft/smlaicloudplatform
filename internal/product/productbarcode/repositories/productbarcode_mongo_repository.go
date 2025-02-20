@@ -32,6 +32,7 @@ type IProductBarcodeRepository interface {
 	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
 	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	FindByGuid(ctx context.Context, shopID string, guid string) (models.ProductBarcodeDoc, error)
+	FindByItemCode(ctx context.Context, shopID string, itemCode string) ([]models.ProductBarcodeDoc, error)
 	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.ProductBarcodeDoc, error)
 	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 
@@ -253,6 +254,23 @@ func (repo ProductBarcodeRepository) FindByBarcode(ctx context.Context, shopID s
 
 	if err != nil {
 		return models.ProductBarcodeDoc{}, err
+	}
+
+	return result, nil
+}
+
+func (repo ProductBarcodeRepository) FindByItemCode(ctx context.Context, shopID string, itemcode string) ([]models.ProductBarcodeDoc, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"itemcode":  itemcode,
+	}
+
+	result, err := repo.Find(ctx, shopID, filters)
+
+	if err != nil {
+		return []models.ProductBarcodeDoc{}, err
 	}
 
 	return result, nil

@@ -7,6 +7,8 @@ import (
 	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	"smlaicloudplatform/internal/product/product/models"
 	"smlaicloudplatform/internal/product/product/repositories"
+	barcodeModel "smlaicloudplatform/internal/product/productbarcode/models"
+	productBarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
 	"smlaicloudplatform/internal/utils"
 	"strings"
 	"time"
@@ -24,17 +26,19 @@ type IProductHttpService interface {
 }
 
 type ProductHttpService struct {
-	repo           repositories.IProductPGRepository
-	repomg         creditorRepo.CreditorRepository
-	contextTimeout time.Duration
+	repo                 repositories.IProductPGRepository
+	repomgCreditror      creditorRepo.CreditorRepository
+	repomgProductBarcode productBarcodeRepo.ProductBarcodeRepository
+	contextTimeout       time.Duration
 }
 
 // ✅ **สร้าง Service**
-func NewProductHttpService(repo repositories.IProductPGRepository, repomg creditorRepo.CreditorRepository) *ProductHttpService {
+func NewProductHttpService(repo repositories.IProductPGRepository, repomgCreditror creditorRepo.CreditorRepository, repomgProductBarcode productBarcodeRepo.ProductBarcodeRepository) *ProductHttpService {
 	return &ProductHttpService{
-		repo:           repo,
-		repomg:         repomg,
-		contextTimeout: 15 * time.Second,
+		repo:                 repo,
+		repomgCreditror:      repomgCreditror,
+		repomgProductBarcode: repomgProductBarcode,
+		contextTimeout:       15 * time.Second,
 	}
 }
 
@@ -52,19 +56,50 @@ func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.Pr
 	ctx, cancel := svc.getContextTimeout()
 	defer cancel()
 
+	// ✅ ดึงข้อมูล Product จาก PostgreSQL
 	product, err := svc.repo.Get(ctx, shopID, code)
 	if err != nil {
 		return nil, err
 	}
 
-	// ✅ ดึง manufacturer ถ้ามี manufacturerguid และไม่เป็นค่าว่าง
+	// ✅ ดึงข้อมูล Manufacturer ถ้ามีค่า `ManufacturerGUID`
 	if product.ManufacturerGUID != nil && strings.TrimSpace(*product.ManufacturerGUID) != "" {
-		findDoc, err := svc.repomg.FindByGuid(ctx, shopID, *product.ManufacturerGUID)
+		findDoc, err := svc.repomgCreditror.FindByGuid(ctx, shopID, *product.ManufacturerGUID)
 		if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
 			product.ManufacturerCode = &findDoc.Code
 			product.ManufacturerName = *findDoc.Names
 		}
 	}
+
+	// ✅ ดึงข้อมูล Barcode จาก MongoDB
+	barcodes, err := svc.repomgProductBarcode.FindByItemCode(ctx, shopID, product.Code)
+	if err != nil || barcodes == nil {
+		// ถ้าไม่เจอข้อมูล หรือเกิดข้อผิดพลาด ให้ตั้งค่า barcodes = []
+		barcodes = []barcodeModel.ProductBarcodeDoc{}
+	}
+
+	tempBarcodes := []models.Barcodes{}
+	for _, barcode := range barcodes {
+		tempPrices := []models.ProductPrice{}
+		if barcode.Prices != nil { // ตรวจสอบก่อน loop
+			for _, price := range *barcode.Prices {
+				tempPrices = append(tempPrices, models.ProductPrice{
+					KeyNumber: price.KeyNumber,
+					Price:     price.Price,
+				})
+			}
+		}
+
+		tempBarcodes = append(tempBarcodes, models.Barcodes{
+			Barcode:       barcode.Barcode,
+			ItemUnitCode:  barcode.ItemUnitCode,
+			ItemUnitNames: barcode.ItemUnitNames,
+			Prices:        &tempPrices,
+			GuidFixed:     barcode.GuidFixed,
+		})
+	}
+
+	product.Barcodes = tempBarcodes // ✅ กำหนดค่า Barcodes ที่เป็น `[]` ถ้าไม่มีข้อมูล
 
 	return product, nil
 }

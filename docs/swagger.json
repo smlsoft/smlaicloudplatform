@@ -37747,6 +37747,32 @@
                 }
             }
         },
+        "models.Barcodes": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductPrice"
+                    }
+                }
+            }
+        },
         "models.BarcodesModifyReqesut": {
             "type": "object"
         },
@@ -41747,7 +41773,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -42118,6 +42144,12 @@
         "models.ProductPg": {
             "type": "object",
             "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
@@ -42151,6 +42183,9 @@
                 "itemtype": {
                     "type": "integer"
                 },
+                "manufacturercode": {
+                    "type": "string"
+                },
                 "manufacturerguid": {
                     "type": "string"
                 },
@@ -42177,17 +42212,6 @@
                 },
                 "updatedby": {
                     "type": "string"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -48221,6 +48245,17 @@
                 }
             }
         },
+        "smlaicloudplatform_internal_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode": {
             "type": "object",
             "required": [
@@ -48443,7 +48478,7 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductPrice"
                     }
                 },
                 "producttype": {
@@ -48540,6 +48575,17 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },

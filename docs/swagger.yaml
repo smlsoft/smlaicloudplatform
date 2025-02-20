@@ -227,6 +227,23 @@ definitions:
     required:
     - barcode
     type: object
+  models.Barcodes:
+    properties:
+      barcode:
+        type: string
+      guidfixed:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      prices:
+        items:
+          $ref: '#/definitions/smlaicloudplatform_internal_product_product_models.ProductPrice'
+        type: array
+    type: object
   models.BarcodesModifyReqesut:
     type: object
   models.BookBank:
@@ -2924,7 +2941,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductType'
@@ -3177,6 +3194,10 @@ definitions:
     type: object
   models.ProductPg:
     properties:
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcodes'
+        type: array
       code:
         type: string
       createdat:
@@ -3199,6 +3220,8 @@ definitions:
         type: string
       itemtype:
         type: integer
+      manufacturercode:
+        type: string
       manufacturerguid:
         type: string
       manufacturername:
@@ -3217,13 +3240,6 @@ definitions:
         type: string
       updatedby:
         type: string
-    type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   models.ProductRestaurant:
     properties:
@@ -7273,6 +7289,13 @@ definitions:
           type: string
         type: array
     type: object
+  smlaicloudplatform_internal_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode:
     properties:
       barcode:
@@ -7420,7 +7443,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductPrice'
         type: array
       producttype:
         $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.ProductType'
@@ -7488,6 +7511,13 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+    type: object
+  smlaicloudplatform_internal_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlaicloudplatform_internal_product_productbarcode_models.ProductType:
     properties:

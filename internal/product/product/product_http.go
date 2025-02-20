@@ -11,6 +11,7 @@ import (
 	"smlaicloudplatform/internal/product/product/models"
 	"smlaicloudplatform/internal/product/product/repositories"
 	"smlaicloudplatform/internal/product/product/services"
+	productBarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
 	"smlaicloudplatform/internal/utils"
 	"smlaicloudplatform/pkg/microservice"
 	"strings"
@@ -29,9 +30,11 @@ type ProductHttp struct {
 func NewProductHttp(ms *microservice.Microservice, cfg config.IConfig) ProductHttp {
 	pst := ms.Persister(cfg.PersisterConfig())
 	pstmg := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 	repo := repositories.NewProductPGRepository(pst)
-	repomg := creditorepo.NewCreditorRepository(pstmg)
-	svc := services.NewProductHttpService(repo, *repomg)
+	repomgCreditor := creditorepo.NewCreditorRepository(pstmg)
+	repomgProductBarcode := productBarcodeRepo.NewProductBarcodeRepository(pstmg, cache)
+	svc := services.NewProductHttpService(repo, *repomgCreditor, *repomgProductBarcode)
 
 	return ProductHttp{
 		ms:  ms,

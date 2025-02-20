@@ -22,10 +22,24 @@ type ProductPg struct {
 	GroupName                models.JSONB            `json:"groupname" gorm:"-"`
 	ManufacturerCode         *string                 `json:"manufacturercode" gorm:"-"`
 	ManufacturerName         []models.NameX          `json:"manufacturername" gorm:"-"`
+	Barcodes                 []Barcodes              `json:"barcodes" gorm:"-"`
 	CreatedAt                time.Time               `json:"createdat" gorm:"column:createdat"`
 	UpdatedAt                time.Time               `json:"updatedat" gorm:"column:updatedat"`
 	CreatedBy                string                  `json:"createdby" gorm:"column:createdby"`
 	UpdatedBy                string                  `json:"updatedby" gorm:"column:updatedby"`
+}
+
+type Barcodes struct {
+	GuidFixed     string          `json:"guidfixed" gorm:"-"`
+	ItemUnitCode  string          `json:"itemunitcode" gorm:"-"`
+	ItemUnitNames *[]models.NameX `json:"itemunitnames" gorm:"-"`
+	Barcode       string          `json:"barcode" gorm:"-"`
+	Prices        *[]ProductPrice `json:"prices" gorm:"-"`
+}
+
+type ProductPrice struct {
+	KeyNumber int     `json:"keynumber" gorm:"-"`
+	Price     float64 `json:"price" gorm:"-"`
 }
 
 func (ProductPg) TableName() string {
