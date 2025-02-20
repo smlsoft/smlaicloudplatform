@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"path/filepath"
 	"smlaicloudplatform/internal/config"
+	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 	common "smlaicloudplatform/internal/models"
+	productmaster "smlaicloudplatform/internal/product/product/repositories"
 	product_repositories "smlaicloudplatform/internal/product/productbarcode/repositories"
 	product_serrvices "smlaicloudplatform/internal/product/productbarcode/services"
 	productcategory_repositories "smlaicloudplatform/internal/product/productcategory/repositories"
@@ -34,20 +36,22 @@ func NewProductImportHttp(ms *microservice.Microservice, cfg config.IConfig) Pro
 	cache := ms.Cacher(cfg.CacherConfig())
 	producer := ms.Producer(cfg.MQConfig())
 	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
+	pstPg := ms.Persister(cfg.PersisterConfig())
 
 	repo := product_repositories.NewProductBarcodeRepository(pst, cache)
 	repoMq := product_repositories.NewProductBarcodeMessageQueueRepository(producer)
 	repoCh := product_repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
-
+	creditorRepo := creditorRepo.NewCreditorRepository(pst)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 
+	repoMaster := productmaster.NewProductPGRepository(pstPg)
 	productcategoryRepo := productcategory_repositories.NewProductCategoryRepository(pst)
 	productcategorySvc := productcategory_services.NewProductCategoryHttpService(productcategoryRepo, masterSyncCacheRepo)
 
 	unitRepo := productunit_repo.NewUnitRepository(pst)
 
 	chRepo := repositories.NewProductImportClickHouseRepository(pstClickHouse)
-	stockBalanceSvc := product_serrvices.NewProductBarcodeHttpService(repo, repoMq, repoCh, productcategorySvc, masterSyncCacheRepo)
+	stockBalanceSvc := product_serrvices.NewProductBarcodeHttpService(repo, repoMaster, *creditorRepo, repoMq, repoCh, productcategorySvc, masterSyncCacheRepo)
 
 	svc := services.NewProductImportService(chRepo, repo, stockBalanceSvc, unitRepo, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
 

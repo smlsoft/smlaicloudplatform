@@ -23,6 +23,8 @@ import (
 	productcategoryRepo "smlaicloudplatform/internal/product/productcategory/repositories"
 	productcategoryService "smlaicloudplatform/internal/product/productcategory/services"
 
+	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
+	productmaster "smlaicloudplatform/internal/product/product/repositories"
 	productbarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
 	productbarcodeService "smlaicloudplatform/internal/product/productbarcode/services"
 
@@ -58,6 +60,7 @@ type MasterSyncHttp struct {
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) MasterSyncHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	pstPg := ms.Persister(cfg.PersisterConfig())
 	// pstPg := ms.Persister(cfg.PersisterConfig())
 	// prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
@@ -78,9 +81,11 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	svcProductCategory := productcategoryService.NewProductCategoryHttpService(productcategoryRepo.NewProductCategoryRepository(pst), masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductCategory)
 
+	repoMaster := productmaster.NewProductPGRepository(pstPg)
 	// Product Barcode
 	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst, cache)
-	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(repoProductBarcode, nil, nil, nil, masterSyncCacheRepo)
+	creditorRepo := creditorRepo.NewCreditorRepository(pst)
+	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(repoProductBarcode, repoMaster, *creditorRepo, nil, nil, nil, masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit

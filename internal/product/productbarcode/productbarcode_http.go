@@ -8,8 +8,10 @@ import (
 	"net/http"
 	"net/url"
 	"smlaicloudplatform/internal/config"
+	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 	common "smlaicloudplatform/internal/models"
+	productmaster "smlaicloudplatform/internal/product/product/repositories"
 	"smlaicloudplatform/internal/product/productbarcode/models"
 	"smlaicloudplatform/internal/product/productbarcode/repositories"
 	"smlaicloudplatform/internal/product/productbarcode/services"
@@ -37,11 +39,14 @@ type ProductBarcodeHttp struct {
 
 func NewProductBarcodeHttp(ms *microservice.Microservice, cfg config.IConfig) ProductBarcodeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	pstPg := ms.Persister(cfg.PersisterConfig())
 	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewProductBarcodeRepository(pst, cache)
+	repoMaster := productmaster.NewProductPGRepository(pstPg)
+	creditorRepo := creditorRepo.NewCreditorRepository(pst)
 	clickHouseRepo := repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repositories.NewProductBarcodeMessageQueueRepository(prod)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
@@ -49,7 +54,7 @@ func NewProductBarcodeHttp(ms *microservice.Microservice, cfg config.IConfig) Pr
 	productcategoryRepo := productcategory_repositories.NewProductCategoryRepository(pst)
 	productcategorySvc := productcategory_services.NewProductCategoryHttpService(productcategoryRepo, masterSyncCacheRepo)
 
-	svc := services.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, productcategorySvc, masterSyncCacheRepo)
+	svc := services.NewProductBarcodeHttpService(repo, repoMaster, *creditorRepo, mqRepo, clickHouseRepo, productcategorySvc, masterSyncCacheRepo)
 
 	return ProductBarcodeHttp{
 		ms:  ms,

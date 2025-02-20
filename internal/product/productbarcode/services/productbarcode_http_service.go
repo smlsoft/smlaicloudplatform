@@ -6,8 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 	common "smlaicloudplatform/internal/models"
+	productmaster "smlaicloudplatform/internal/product/product/repositories"
 	"smlaicloudplatform/internal/product/productbarcode/models"
 	"smlaicloudplatform/internal/product/productbarcode/repositories"
 	productcategory_models "smlaicloudplatform/internal/product/productcategory/models"
@@ -17,6 +19,7 @@ import (
 	"smlaicloudplatform/internal/utils/importdata"
 	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/samber/lo"
@@ -57,17 +60,21 @@ type IProductBarcodeHttpService interface {
 }
 
 type ProductBarcodeHttpService struct {
-	repo          repositories.IProductBarcodeRepository
-	chRepo        repositories.IProductBarcodeClickhouseRepository
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
-	mqRepo        repositories.IProductBarcodeMessageQueueRepository
-	categorySvc   productcategory_services.IProductCategoryHttpService
+	repo            repositories.IProductBarcodeRepository
+	repoMaster      productmaster.IProductPGRepository
+	repomgCreditror creditorRepo.CreditorRepository
+	chRepo          repositories.IProductBarcodeClickhouseRepository
+	syncCacheRepo   mastersync.IMasterSyncCacheRepository
+	mqRepo          repositories.IProductBarcodeMessageQueueRepository
+	categorySvc     productcategory_services.IProductCategoryHttpService
 	services.ActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity]
 	contextTimeout time.Duration
 }
 
 func NewProductBarcodeHttpService(
 	repo repositories.IProductBarcodeRepository,
+	repoMaster productmaster.IProductPGRepository,
+	repomgCreditror creditorRepo.CreditorRepository,
 	mqRepo repositories.IProductBarcodeMessageQueueRepository,
 	chRepo repositories.IProductBarcodeClickhouseRepository,
 	categorySvc productcategory_services.IProductCategoryHttpService,
@@ -77,12 +84,14 @@ func NewProductBarcodeHttpService(
 	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &ProductBarcodeHttpService{
-		repo:           repo,
-		chRepo:         chRepo,
-		syncCacheRepo:  syncCacheRepo,
-		mqRepo:         mqRepo,
-		categorySvc:    categorySvc,
-		contextTimeout: contextTimeout,
+		repo:            repo,
+		repoMaster:      repoMaster,
+		repomgCreditror: repomgCreditror,
+		chRepo:          chRepo,
+		syncCacheRepo:   syncCacheRepo,
+		mqRepo:          mqRepo,
+		categorySvc:     categorySvc,
+		contextTimeout:  contextTimeout,
 	}
 	insSvc.ActivityService = services.NewActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity](repo)
 	return insSvc
@@ -450,13 +459,68 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 	defer ctxCancel()
 
 	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
-
 	if err != nil {
 		return models.ProductBarcodeInfo{}, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
 		return models.ProductBarcodeInfo{}, errors.New("document not found")
+	}
+
+	// ✅ ตรวจสอบว่า ItemGuid ไม่ใช่ค่าว่างก่อนดึงข้อมูลจาก Master
+	if strings.TrimSpace(findDoc.ItemGuid) != "" {
+		findMasterDoc, err := svc.repoMaster.Get(ctx, shopID, findDoc.ItemGuid)
+		if err != nil {
+			fmt.Printf("Error fetching master data: %v\n", err)
+		} else {
+			// ✅ ตรวจสอบค่า `findMasterDoc.Names` ก่อนใช้งาน
+			tempName := []common.NameX{}
+			if findMasterDoc.Names != nil {
+				for _, name := range findMasterDoc.Names {
+					tempName = append(tempName, common.NameX{
+						Name: name.Name,
+						Code: name.Code,
+					})
+				}
+			}
+
+			// ✅ ตรวจสอบค่า `findMasterDoc.GroupName` ก่อนใช้งาน
+			tempGroupNames := []common.NameX{}
+			if findMasterDoc.GroupName != nil {
+				for _, name := range findMasterDoc.GroupName {
+					tempGroupNames = append(tempGroupNames, common.NameX{
+						Name: name.Name,
+						Code: name.Code,
+					})
+				}
+			}
+
+			// ✅ กำหนดค่าให้ findDoc โดยเช็คค่าว่างก่อนใช้งาน
+			findDoc.ItemCode = findMasterDoc.Code
+			findDoc.Names = &tempName
+
+			if findMasterDoc.ManufacturerGUID != nil && strings.TrimSpace(*findMasterDoc.ManufacturerGUID) != "" {
+				findManu, err := svc.repomgCreditror.FindByGuid(ctx, shopID, *findMasterDoc.ManufacturerGUID)
+				if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
+					findDoc.ManufacturerGUID = *&findManu.GuidFixed
+					findDoc.ManufacturerCode = findManu.Code
+					findDoc.ManufacturerNames = findManu.Names
+				}
+			} else {
+				findDoc.ManufacturerCode = ""
+				findDoc.ManufacturerNames = &[]common.NameX{}
+				findDoc.ManufacturerGUID = ""
+			}
+
+			if findMasterDoc.GroupCode != nil {
+				findDoc.GroupCode = *findMasterDoc.GroupCode
+			} else {
+				findDoc.GroupCode = ""
+			}
+
+			findDoc.GroupNames = &tempGroupNames
+			findDoc.ItemType = findMasterDoc.ItemType
+		}
 	}
 
 	return findDoc.ProductBarcodeInfo, nil
