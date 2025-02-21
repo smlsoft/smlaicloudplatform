@@ -599,6 +599,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // @Param		branchcode		query	string		false  "branch code ex. b1,b2"
 // @Param		isalacarte		query	boolean		false  "is A La Carte"
 // @Param		isusesubbarcodes		query	boolean		false  "is use sub barcodes"
+// @Param		ismainbarcode		query	boolean		false  "is main barcode"
 // @Param		isbom		query	boolean		false  "is use BOM"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		itemtype		query	int8		false  "item type"

@@ -17128,6 +17128,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
+                        "description": "is main barcode",
+                        "name": "ismainbarcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
                         "description": "is use BOM",
                         "name": "isbom",
                         "in": "query"

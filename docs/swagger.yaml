@@ -18772,6 +18772,10 @@ paths:
         in: query
         name: isusesubbarcodes
         type: boolean
+      - description: is main barcode
+        in: query
+        name: ismainbarcode
+        type: boolean
       - description: is use BOM
         in: query
         name: isbom

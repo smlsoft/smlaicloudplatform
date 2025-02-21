@@ -89,19 +89,36 @@ func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.Pr
 				})
 			}
 		}
+		var condition bool
+		var divideValue, standValue, qty float64
+		if barcode.RefBarcodes != nil && len(*barcode.RefBarcodes) > 0 { // 🔥 ต้อง Dereference `*RefBarcodes`
+			refBarcode := (*barcode.RefBarcodes)[0] // ดึงค่าตัวแรกออกมาใช้งาน
+			condition = refBarcode.Condition
+			divideValue = refBarcode.DivideValue
+			standValue = refBarcode.StandValue
+			qty = refBarcode.Qty
+		} else {
+			condition = false
+			divideValue = 1
+			standValue = 1
+			qty = 1
+		}
 
-		tempBarcodes = append(tempBarcodes, models.Barcodes{
-			Barcode:       barcode.Barcode,
-			ItemUnitCode:  barcode.ItemUnitCode,
-			ItemUnitNames: barcode.ItemUnitNames,
-			Prices:        &tempPrices,
-			GuidFixed:     barcode.GuidFixed,
-			Condition:     barcode.Condition,
-			DivideValue:   barcode.DivideValue,
-			StandValue:    barcode.StandValue,
-			Qty:           barcode.Qty,
-			IsMainBarcode: barcode.IsMainBarcode,
-		})
+		// ✅ ตรวจสอบ `ItemType`
+		if barcode.ItemType == 0 {
+			tempBarcodes = append(tempBarcodes, models.Barcodes{
+				Barcode:       barcode.Barcode,
+				ItemUnitCode:  barcode.ItemUnitCode,
+				ItemUnitNames: barcode.ItemUnitNames,
+				Prices:        &tempPrices,
+				GuidFixed:     barcode.GuidFixed,
+				Condition:     condition,
+				DivideValue:   divideValue,
+				StandValue:    standValue,
+				Qty:           qty,
+				IsMainBarcode: barcode.IsMainBarcode,
+			})
+		}
 	}
 
 	product.Barcodes = tempBarcodes // ✅ กำหนดค่า Barcodes ที่เป็น `[]` ถ้าไม่มีข้อมูล
