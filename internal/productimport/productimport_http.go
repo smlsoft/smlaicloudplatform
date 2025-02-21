@@ -15,6 +15,7 @@ import (
 	productcategory_repositories "smlaicloudplatform/internal/product/productcategory/repositories"
 	productcategory_services "smlaicloudplatform/internal/product/productcategory/services"
 	productunit_repo "smlaicloudplatform/internal/product/unit/repositories"
+	unitmaster "smlaicloudplatform/internal/product/unit/repositories"
 	"smlaicloudplatform/internal/productimport/models"
 	"smlaicloudplatform/internal/productimport/repositories"
 	"smlaicloudplatform/internal/productimport/services"
@@ -39,6 +40,7 @@ func NewProductImportHttp(ms *microservice.Microservice, cfg config.IConfig) Pro
 	pstPg := ms.Persister(cfg.PersisterConfig())
 
 	repo := product_repositories.NewProductBarcodeRepository(pst, cache)
+	unitmaster := unitmaster.NewUnitPGRepository(pstPg)
 	repoMq := product_repositories.NewProductBarcodeMessageQueueRepository(producer)
 	repoCh := product_repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	creditorRepo := creditorRepo.NewCreditorRepository(pst)
@@ -51,7 +53,7 @@ func NewProductImportHttp(ms *microservice.Microservice, cfg config.IConfig) Pro
 	unitRepo := productunit_repo.NewUnitRepository(pst)
 
 	chRepo := repositories.NewProductImportClickHouseRepository(pstClickHouse)
-	stockBalanceSvc := product_serrvices.NewProductBarcodeHttpService(repo, repoMaster, *creditorRepo, repoMq, repoCh, productcategorySvc, masterSyncCacheRepo)
+	stockBalanceSvc := product_serrvices.NewProductBarcodeHttpService(repo, repoMaster, unitmaster, *creditorRepo, repoMq, repoCh, productcategorySvc, masterSyncCacheRepo)
 
 	svc := services.NewProductImportService(chRepo, repo, stockBalanceSvc, unitRepo, utils.RandStringBytesMaskImprSrcUnsafe, utils.NewGUID, time.Now)
 

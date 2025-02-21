@@ -14,6 +14,7 @@ import (
 	"smlaicloudplatform/internal/product/productbarcode/repositories"
 	productcategory_models "smlaicloudplatform/internal/product/productcategory/models"
 	productcategory_services "smlaicloudplatform/internal/product/productcategory/services"
+	unitmaster "smlaicloudplatform/internal/product/unit/repositories"
 	"smlaicloudplatform/internal/services"
 	"smlaicloudplatform/internal/utils"
 	"smlaicloudplatform/internal/utils/importdata"
@@ -62,6 +63,7 @@ type IProductBarcodeHttpService interface {
 type ProductBarcodeHttpService struct {
 	repo            repositories.IProductBarcodeRepository
 	repoMaster      productmaster.IProductPGRepository
+	repoUnit        unitmaster.IUnitPGRepository
 	repomgCreditror creditorRepo.CreditorRepository
 	chRepo          repositories.IProductBarcodeClickhouseRepository
 	syncCacheRepo   mastersync.IMasterSyncCacheRepository
@@ -74,6 +76,7 @@ type ProductBarcodeHttpService struct {
 func NewProductBarcodeHttpService(
 	repo repositories.IProductBarcodeRepository,
 	repoMaster productmaster.IProductPGRepository,
+	repoUnit unitmaster.IUnitPGRepository,
 	repomgCreditror creditorRepo.CreditorRepository,
 	mqRepo repositories.IProductBarcodeMessageQueueRepository,
 	chRepo repositories.IProductBarcodeClickhouseRepository,
@@ -86,6 +89,7 @@ func NewProductBarcodeHttpService(
 	insSvc := &ProductBarcodeHttpService{
 		repo:            repo,
 		repoMaster:      repoMaster,
+		repoUnit:        repoUnit,
 		repomgCreditror: repomgCreditror,
 		chRepo:          chRepo,
 		syncCacheRepo:   syncCacheRepo,
@@ -502,7 +506,7 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 			if findMasterDoc.ManufacturerGUID != nil && strings.TrimSpace(*findMasterDoc.ManufacturerGUID) != "" {
 				findManu, err := svc.repomgCreditror.FindByGuid(ctx, shopID, *findMasterDoc.ManufacturerGUID)
 				if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
-					findDoc.ManufacturerGUID = *&findManu.GuidFixed
+					findDoc.ManufacturerGUID = findManu.GuidFixed
 					findDoc.ManufacturerCode = findManu.Code
 					findDoc.ManufacturerNames = findManu.Names
 				}
@@ -523,6 +527,23 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 		}
 	}
 
+	if strings.TrimSpace(findDoc.ItemUnitCode) != "" {
+		unit, err := svc.repoUnit.FindByUnitCode(ctx, shopID, findDoc.ItemUnitCode)
+		if err != nil || unit == nil {
+			findDoc.ItemUnitNames = &[]common.NameX{}
+		}
+
+		namex := []common.NameX{}
+		for _, name := range unit.Names {
+			namex = append(namex, common.NameX{
+				Name: name.Name,
+				Code: name.Code,
+			})
+		}
+
+		findDoc.ItemUnitNames = &namex // ✅ กำหนดค่าเฉพาะเมื่อ unit มีข้อมูล
+	}
+
 	return findDoc.ProductBarcodeInfo, nil
 }
 
@@ -539,6 +560,79 @@ func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, 
 
 	if findDoc.ID == primitive.NilObjectID {
 		return models.ProductBarcodeInfo{}, errors.New("document not found")
+	}
+
+	// ✅ ตรวจสอบว่า ItemGuid ไม่ใช่ค่าว่างก่อนดึงข้อมูลจาก Master
+	if strings.TrimSpace(findDoc.ItemGuid) != "" {
+		findMasterDoc, err := svc.repoMaster.Get(ctx, shopID, findDoc.ItemGuid)
+		if err != nil {
+			fmt.Printf("Error fetching master data: %v\n", err)
+		} else {
+			// ✅ ตรวจสอบค่า `findMasterDoc.Names` ก่อนใช้งาน
+			tempName := []common.NameX{}
+			if findMasterDoc.Names != nil {
+				for _, name := range findMasterDoc.Names {
+					tempName = append(tempName, common.NameX{
+						Name: name.Name,
+						Code: name.Code,
+					})
+				}
+			}
+
+			// ✅ ตรวจสอบค่า `findMasterDoc.GroupName` ก่อนใช้งาน
+			tempGroupNames := []common.NameX{}
+			if findMasterDoc.GroupName != nil {
+				for _, name := range findMasterDoc.GroupName {
+					tempGroupNames = append(tempGroupNames, common.NameX{
+						Name: name.Name,
+						Code: name.Code,
+					})
+				}
+			}
+
+			// ✅ กำหนดค่าให้ findDoc โดยเช็คค่าว่างก่อนใช้งาน
+			findDoc.ItemCode = findMasterDoc.Code
+			findDoc.Names = &tempName
+
+			if findMasterDoc.ManufacturerGUID != nil && strings.TrimSpace(*findMasterDoc.ManufacturerGUID) != "" {
+				findManu, err := svc.repomgCreditror.FindByGuid(ctx, shopID, *findMasterDoc.ManufacturerGUID)
+				if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
+					findDoc.ManufacturerGUID = findManu.GuidFixed
+					findDoc.ManufacturerCode = findManu.Code
+					findDoc.ManufacturerNames = findManu.Names
+				}
+			} else {
+				findDoc.ManufacturerCode = ""
+				findDoc.ManufacturerNames = &[]common.NameX{}
+				findDoc.ManufacturerGUID = ""
+			}
+
+			if findMasterDoc.GroupCode != nil {
+				findDoc.GroupCode = *findMasterDoc.GroupCode
+			} else {
+				findDoc.GroupCode = ""
+			}
+
+			findDoc.GroupNames = &tempGroupNames
+			findDoc.ItemType = findMasterDoc.ItemType
+		}
+	}
+
+	if strings.TrimSpace(findDoc.ItemUnitCode) != "" {
+		unit, err := svc.repoUnit.FindByUnitCode(ctx, shopID, findDoc.ItemUnitCode)
+		if err != nil || unit == nil {
+			findDoc.ItemUnitNames = &[]common.NameX{}
+		}
+
+		namex := []common.NameX{}
+		for _, name := range unit.Names {
+			namex = append(namex, common.NameX{
+				Name: name.Name,
+				Code: name.Code,
+			})
+		}
+
+		findDoc.ItemUnitNames = &namex // ✅ กำหนดค่าเฉพาะเมื่อ unit มีข้อมูล
 	}
 
 	return findDoc.ProductBarcodeInfo, nil
@@ -704,6 +798,27 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, 0, err
+	}
+
+	//getunitname from unit
+
+	for i := range docList {
+		if docList[i].ItemUnitCode != "" {
+			unit, err := svc.repoUnit.FindByUnitCode(ctx, shopID, docList[i].ItemUnitCode)
+			if err != nil || unit == nil {
+				continue // ✅ ถ้า error หรือ unit == nil ให้ข้าม iteration นี้
+			}
+
+			namex := []common.NameX{}
+			for _, name := range unit.Names {
+				namex = append(namex, common.NameX{
+					Name: name.Name,
+					Code: name.Code,
+				})
+			}
+
+			docList[i].ItemUnitNames = &namex // ✅ กำหนดค่าเฉพาะเมื่อ unit มีข้อมูล
+		}
 	}
 
 	return docList, total, nil

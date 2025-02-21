@@ -27,6 +27,7 @@ import (
 	productmaster "smlaicloudplatform/internal/product/product/repositories"
 	productbarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
 	productbarcodeService "smlaicloudplatform/internal/product/productbarcode/services"
+	unitmaster "smlaicloudplatform/internal/product/unit/repositories"
 
 	bankmasterRepo "smlaicloudplatform/internal/payment/bankmaster/repositories"
 	bankmasterService "smlaicloudplatform/internal/payment/bankmaster/services"
@@ -64,7 +65,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	// pstPg := ms.Persister(cfg.PersisterConfig())
 	// prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
-
+	unitmaster := unitmaster.NewUnitPGRepository(pstPg)
 	activityModuleManager := NewActivityModuleManager(pst)
 
 	masterSyncCacheRepo := repositories.NewMasterSyncCacheRepository(cache)
@@ -85,7 +86,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	// Product Barcode
 	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst, cache)
 	creditorRepo := creditorRepo.NewCreditorRepository(pst)
-	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(repoProductBarcode, repoMaster, *creditorRepo, nil, nil, nil, masterSyncCacheRepo)
+	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(repoProductBarcode, repoMaster, unitmaster, *creditorRepo, nil, nil, nil, masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit

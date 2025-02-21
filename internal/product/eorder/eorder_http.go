@@ -14,6 +14,7 @@ import (
 	productmaster "smlaicloudplatform/internal/product/product/repositories"
 	category_repositories "smlaicloudplatform/internal/product/productcategory/repositories"
 	category_services "smlaicloudplatform/internal/product/productcategory/services"
+	unitmaster "smlaicloudplatform/internal/product/unit/repositories"
 	"smlaicloudplatform/internal/utils/requestfilter"
 	"smlaicloudplatform/pkg/microservice"
 	"time"
@@ -62,6 +63,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	creditorRepo := creditorRepo.NewCreditorRepository(pst)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	repoMaster := productmaster.NewProductPGRepository(pstPg)
+	unitmaster := unitmaster.NewUnitPGRepository(pstPg)
 	repoCategory := category_repositories.NewProductCategoryRepository(pst)
 	svcCategory := category_services.NewProductCategoryHttpService(repoCategory, masterSyncCacheRepo)
 
@@ -69,7 +71,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	clickHouseRepo := product_repo.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := product_repo.NewProductBarcodeMessageQueueRepository(prod)
 
-	svcProduct := product_services.NewProductBarcodeHttpService(repo, repoMaster, *creditorRepo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
+	svcProduct := product_services.NewProductBarcodeHttpService(repo, repoMaster, unitmaster, *creditorRepo, mqRepo, clickHouseRepo, nil, masterSyncCacheRepo)
 
 	repoShop := shop.NewShopRepository(pst)
 	repoTable := table.NewTableRepository(pst)
