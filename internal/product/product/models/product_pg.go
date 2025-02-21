@@ -35,6 +35,11 @@ type Barcodes struct {
 	ItemUnitNames *[]models.NameX `json:"itemunitnames" gorm:"-"`
 	Barcode       string          `json:"barcode" gorm:"-"`
 	Prices        *[]ProductPrice `json:"prices" gorm:"-"`
+	Condition     bool            `json:"condition" gorm:"-"`
+	DivideValue   float64         `json:"dividevalue" gorm:"-"`
+	StandValue    float64         `json:"standvalue" gorm:"-"`
+	Qty           float64         `json:"qty" gorm:"-"`
+	IsMainBarcode bool            `json:"ismainbarcode" gorm:"-"`
 }
 
 type ProductPrice struct {

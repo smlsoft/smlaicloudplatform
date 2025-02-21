@@ -35,6 +35,7 @@ type ProductBarcodeBase struct {
 	DivideValue      float64 `json:"dividevalue" bson:"dividevalue"`
 	StandValue       float64 `json:"standvalue" bson:"standvalue"`
 	IsUseSubBarcodes bool    `json:"isusesubbarcodes" bson:"isusesubbarcodes"`
+	IsMainBarcode    bool    `json:"ismainbarcode" bson:"ismainbarcode"`
 
 	ItemType     int8   `json:"itemtype" bson:"itemtype"`
 	MaterialType int8   `json:"materialtype" bson:"materialtype"`

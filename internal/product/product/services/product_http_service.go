@@ -96,6 +96,11 @@ func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.Pr
 			ItemUnitNames: barcode.ItemUnitNames,
 			Prices:        &tempPrices,
 			GuidFixed:     barcode.GuidFixed,
+			Condition:     barcode.Condition,
+			DivideValue:   barcode.DivideValue,
+			StandValue:    barcode.StandValue,
+			Qty:           barcode.Qty,
+			IsMainBarcode: barcode.IsMainBarcode,
 		})
 	}
 
