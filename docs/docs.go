@@ -37758,8 +37758,17 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
                 "guidfixed": {
                     "type": "string"
+                },
+                "ismainbarcode": {
+                    "type": "boolean"
                 },
                 "itemunitcode": {
                     "type": "string"
@@ -37775,6 +37784,12 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductPrice"
                     }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
                 }
             }
         },
@@ -41699,6 +41714,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "isdividend": {
+                    "type": "boolean"
+                },
+                "ismainbarcode": {
                     "type": "boolean"
                 },
                 "isonlystaff": {
@@ -48404,6 +48422,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "isdividend": {
+                    "type": "boolean"
+                },
+                "ismainbarcode": {
                     "type": "boolean"
                 },
                 "isonlystaff": {

@@ -231,8 +231,14 @@ definitions:
     properties:
       barcode:
         type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
       guidfixed:
         type: string
+      ismainbarcode:
+        type: boolean
       itemunitcode:
         type: string
       itemunitnames:
@@ -243,6 +249,10 @@ definitions:
         items:
           $ref: '#/definitions/smlaicloudplatform_internal_product_product_models.ProductPrice'
         type: array
+      qty:
+        type: number
+      standvalue:
+        type: number
     type: object
   models.BarcodesModifyReqesut:
     type: object
@@ -2888,6 +2898,8 @@ definitions:
       isdiscountpointofpurchase:
         type: boolean
       isdividend:
+        type: boolean
+      ismainbarcode:
         type: boolean
       isonlystaff:
         type: boolean
@@ -7390,6 +7402,8 @@ definitions:
       isdiscountpointofpurchase:
         type: boolean
       isdividend:
+        type: boolean
+      ismainbarcode:
         type: boolean
       isonlystaff:
         type: boolean

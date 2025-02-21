@@ -937,6 +937,11 @@ func (h ProductBarcodeHttp) searchFilter(queryParam func(string) string) map[str
 			Field: "isusesubbarcodes",
 			Type:  requestfilter.FieldTypeBoolean,
 		},
+		{
+			Param: "ismainbarcode",
+			Field: "ismainbarcode",
+			Type:  requestfilter.FieldTypeBoolean,
+		},
 	})
 
 	if temp, ok := filters["branches.code"]; ok {
