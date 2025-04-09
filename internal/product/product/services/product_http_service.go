@@ -3,39 +3,43 @@ package services
 import (
 	"context"
 	"errors"
-	"math"
 	creditorRepo "smlaicloudplatform/internal/debtaccount/creditor/repositories"
 	"smlaicloudplatform/internal/product/product/models"
 	"smlaicloudplatform/internal/product/product/repositories"
 	barcodeModel "smlaicloudplatform/internal/product/productbarcode/models"
 	productBarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
+	unitRepo "smlaicloudplatform/internal/product/unit/repositories"
 	"smlaicloudplatform/internal/utils"
-	"strings"
+	micromodels "smlaicloudplatform/pkg/microservice/models"
 	"time"
 
 	"github.com/smlsoft/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IProductHttpService interface {
 	GetModuleName() string
-	GetProduct(shopID string, code string) (*models.ProductPg, error)
-	ProductList(shopID string, name string, page int, pageSize int) ([]models.ProductPg, mongopagination.PaginationData, error)
-	Create(doc *models.ProductPg) error
-	Update(shopID string, code string, doc *models.ProductPg) error
-	Delete(shopID string, code string) error
+	GetProduct(shopID string, code string) (*models.ProductDoc, error)
+	ProductList(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error)
+	Create(doc *models.ProductDoc) error
+	Update(shopID string, code string, authUsername string, doc *models.ProductDoc) (models.ProductDoc, error)
+	Delete(shopID string, guid string, authUsername string) error
 }
 
 type ProductHttpService struct {
-	repo                 repositories.IProductPGRepository
+	repo                 repositories.IProductRepository
+	repoUnit             unitRepo.IUnitRepository
 	repomgCreditror      creditorRepo.CreditorRepository
 	repomgProductBarcode productBarcodeRepo.ProductBarcodeRepository
 	contextTimeout       time.Duration
 }
 
 // ✅ **สร้าง Service**
-func NewProductHttpService(repo repositories.IProductPGRepository, repomgCreditror creditorRepo.CreditorRepository, repomgProductBarcode productBarcodeRepo.ProductBarcodeRepository) *ProductHttpService {
+func NewProductHttpService(repo repositories.IProductRepository, repoUnit unitRepo.IUnitRepository, repomgCreditror creditorRepo.CreditorRepository, repomgProductBarcode productBarcodeRepo.ProductBarcodeRepository) *ProductHttpService {
 	return &ProductHttpService{
 		repo:                 repo,
+		repoUnit:             repoUnit,
 		repomgCreditror:      repomgCreditror,
 		repomgProductBarcode: repomgProductBarcode,
 		contextTimeout:       15 * time.Second,
@@ -52,22 +56,22 @@ func (svc ProductHttpService) GetModuleName() string {
 }
 
 // ✅ **GetProduct (ดึงข้อมูล Product)**
-func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.ProductPg, error) {
+func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.ProductDoc, error) {
 	ctx, cancel := svc.getContextTimeout()
 	defer cancel()
 
 	// ✅ ดึงข้อมูล Product จาก PostgreSQL
-	product, err := svc.repo.Get(ctx, shopID, code)
+	product, err := svc.repo.FindByGuid(ctx, shopID, code)
 	if err != nil {
 		return nil, err
 	}
 
 	// ✅ ดึงข้อมูล Manufacturer ถ้ามีค่า `ManufacturerGUID`
-	if product.ManufacturerGUID != nil && strings.TrimSpace(*product.ManufacturerGUID) != "" {
-		findDoc, err := svc.repomgCreditror.FindByGuid(ctx, shopID, *product.ManufacturerGUID)
+	if product.ManufacturerGUID != "" {
+		findDoc, err := svc.repomgCreditror.FindByGuid(ctx, shopID, product.ManufacturerGUID)
 		if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
-			product.ManufacturerCode = &findDoc.Code
-			product.ManufacturerName = *findDoc.Names
+			product.ManufacturerCode = findDoc.Code
+			product.ManufacturerNames = findDoc.Names
 		}
 	}
 
@@ -123,34 +127,27 @@ func (svc ProductHttpService) GetProduct(shopID string, code string) (*models.Pr
 
 	product.Barcodes = tempBarcodes // ✅ กำหนดค่า Barcodes ที่เป็น `[]` ถ้าไม่มีข้อมูล
 
-	return product, nil
+	return &product, nil
 }
 
-// ✅ **ProductList (ค้นหา Product ตามชื่อ + Pagination)**
-func (svc ProductHttpService) ProductList(shopID string, name string, page int, pageSize int) ([]models.ProductPg, mongopagination.PaginationData, error) {
-	ctx, cancel := svc.getContextTimeout()
-	defer cancel()
+func (svc ProductHttpService) ProductList(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
-	// ✅ ดึงข้อมูลจาก `repo.ProductList()`
-	products, totalRecords, err := svc.repo.ProductList(ctx, shopID, name, page, pageSize)
+	searchInFields := []string{
+		"names.name",
+		"code",
+		"groupcode",
+		"groupnames.name",
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
+
 	if err != nil {
-		return nil, mongopagination.PaginationData{}, err
+		return []models.ProductInfo{}, pagination, err
 	}
 
-	// ✅ คำนวณ pagination
-	totalPages := int(math.Ceil(float64(totalRecords) / float64(pageSize)))
-
-	// ✅ สร้าง `PaginationData`
-	pagination := mongopagination.PaginationData{
-		Total:     totalRecords,
-		Page:      int64(page),
-		PerPage:   int64(pageSize),
-		Prev:      int64(max(1, page-1)),
-		Next:      int64(min(page+1, totalPages)),
-		TotalPage: int64(totalPages),
-	}
-
-	return products, pagination, nil
+	return docList, pagination, nil
 }
 
 // ✅ ฟังก์ชันช่วยคำนวณค่า Min/Max
@@ -169,7 +166,7 @@ func min(a, b int) int {
 }
 
 // ✅ **Create (สร้าง Product ใหม่)**
-func (svc ProductHttpService) Create(doc *models.ProductPg) error {
+func (svc ProductHttpService) Create(doc *models.ProductDoc) error {
 	ctx, cancel := svc.getContextTimeout()
 	defer cancel()
 
@@ -182,17 +179,6 @@ func (svc ProductHttpService) Create(doc *models.ProductPg) error {
 		doc.GuidFixed = utils.NewGUID() // 🔥 สร้าง GUID ใหม่
 	}
 
-	// ✅ ตรวจสอบค่าที่เป็น "" และตั้งค่าให้เป็น nil
-	if doc.GroupGuid != nil && *doc.GroupGuid == "" {
-		doc.GroupGuid = nil
-	}
-	if doc.UnitGuid != nil && *doc.UnitGuid == "" {
-		doc.UnitGuid = nil
-	}
-	if doc.ManufacturerGUID != nil && *doc.ManufacturerGUID == "" {
-		doc.ManufacturerGUID = nil
-	}
-
 	// ✅ กำหนดค่าเริ่มต้นให้ `itemtype` หากไม่ได้ส่งมา
 	if doc.ItemType == 0 {
 		doc.ItemType = 0
@@ -203,7 +189,8 @@ func (svc ProductHttpService) Create(doc *models.ProductPg) error {
 	doc.UpdatedAt = time.Now()
 
 	// ✅ เรียก `Create()`
-	err := svc.repo.Create(ctx, doc)
+	_, err := svc.repo.Create(ctx, *doc)
+
 	if err != nil {
 		return err
 	}
@@ -212,36 +199,59 @@ func (svc ProductHttpService) Create(doc *models.ProductPg) error {
 }
 
 // ✅ **Update (อัปเดต Product)**
-func (svc ProductHttpService) Update(shopID string, code string, doc *models.ProductPg) error {
+func (svc ProductHttpService) Update(shopID string, code string, authUsername string, doc *models.ProductDoc) (models.ProductDoc, error) {
 	ctx, cancel := svc.getContextTimeout()
 	defer cancel()
 
 	if shopID == "" || code == "" {
-		return errors.New("ShopID and Code are required")
+		return models.ProductDoc{}, errors.New("ShopID and Code are required")
 	}
 
-	// ✅ ตั้งค่า UpdatedAt
-	doc.UpdatedAt = time.Now()
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, code)
+
+	if err != nil {
+		return models.ProductDoc{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		findDoc, err = svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", code)
+		if err != nil {
+			return models.ProductDoc{}, err
+		}
+
+		if findDoc.ID == primitive.NilObjectID {
+			return models.ProductDoc{}, errors.New("document not found")
+		}
+	}
+	docData := findDoc
+	docData.ProductData = doc.ProductData
+	docData.Code = doc.Code
+
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
 	// ✅ เรียก Repository เพื่ออัปเดตข้อมูล
-	err := svc.repo.Update(ctx, shopID, code, doc)
-	if err != nil {
-		return err
+	errx := svc.repo.Update(ctx, shopID, code, docData)
+	if errx != nil {
+		return models.ProductDoc{}, errx
 	}
 
-	return nil
+	return docData, nil
 }
 
 // ✅ **Delete (ลบ Product)**
-func (svc ProductHttpService) Delete(shopID string, code string) error {
+func (svc ProductHttpService) Delete(shopID string, guid string, user string) error {
 	ctx, cancel := svc.getContextTimeout()
 	defer cancel()
 
-	if shopID == "" || code == "" {
+	if shopID == "" || guid == "" {
 		return errors.New("ShopID and Code are required")
 	}
 
-	err := svc.repo.Delete(ctx, shopID, code)
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": guid},
+	}
+	err := svc.repo.Delete(ctx, shopID, user, deleteFilterQuery)
 	if err != nil {
 		return err
 	}

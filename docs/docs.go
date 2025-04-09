@@ -2896,33 +2896,35 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Search dimensions with pagination",
+                "description": "get list step",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Dimension"
                 ],
-                "summary": "Search dimensions",
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "description": "disabled",
+                        "name": "disabled",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "Keyword for search",
+                        "description": "Search Value",
                         "name": "q",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Items per page",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -2931,28 +2933,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/models.DimensionPg"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -2969,25 +2953,21 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create a new dimension with details and associated items",
+                "description": "Create Dimension",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Dimension"
                 ],
-                "summary": "Create a new dimension",
                 "parameters": [
                     {
-                        "description": "Dimension data with items",
+                        "description": "Dimension",
                         "name": "Dimension",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.DimensionPg"
+                            "$ref": "#/definitions/models.Dimension"
                         }
                     }
                 ],
@@ -2995,25 +2975,49 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.DimensionPg"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Dimension",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dimension"
+                ],
+                "parameters": [
+                    {
+                        "description": "Dimension GUIDs",
+                        "name": "Dimension",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -3025,29 +3029,90 @@ const docTemplate = `{
                 }
             }
         },
-        "/dimension/{guidfixed}": {
+        "/dimension/list": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Get dimension details by GUID",
+                "description": "search limit offset",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Dimension"
                 ],
-                "summary": "Get dimension details",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "disabled",
+                        "name": "disabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/dimension/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Dimension info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dimension"
+                ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Dimension GUID",
-                        "name": "guidfixed",
+                        "description": "Dimension guidfixed",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -3056,31 +3121,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.DimensionPg"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -3091,64 +3138,42 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update an existing dimension by GUID, including associated items",
+                "description": "Update Dimension",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Dimension"
                 ],
-                "summary": "Update an existing dimension",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Dimension GUID",
-                        "name": "guidfixed",
+                        "description": "Dimension ID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Updated dimension data with items",
+                        "description": "Dimension",
                         "name": "Dimension",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.DimensionPg"
+                            "$ref": "#/definitions/models.Dimension"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.DimensionPg"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -3159,22 +3184,18 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete a dimension by GUID along with associated items",
+                "description": "Delete Dimension",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Dimension"
                 ],
-                "summary": "Delete a dimension",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Dimension GUID",
-                        "name": "guidfixed",
+                        "description": "Dimension ID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -3183,19 +3204,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -15392,7 +15407,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/models.ProductPg"
+                                                "$ref": "#/definitions/models.ProductInfo"
                                             }
                                         }
                                     }
@@ -15438,7 +15453,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductPg"
+                            "$ref": "#/definitions/models.ProductDoc"
                         }
                     }
                 ],
@@ -15454,7 +15469,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -18268,6 +18283,444 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup GUIDs",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/by-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Product Group by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/save": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/order-type": {
             "get": {
                 "security": [
@@ -19468,7 +19921,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/product/{code}": {
+        "/product/{guid}": {
             "get": {
                 "security": [
                     {
@@ -19489,8 +19942,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Product Code",
-                        "name": "code",
+                        "description": "Product guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     }
@@ -19507,7 +19960,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19534,7 +19987,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update an existing product by code",
+                "description": "Update an existing product by guid",
                 "consumes": [
                     "application/json"
                 ],
@@ -19548,8 +20001,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Product Code",
-                        "name": "code",
+                        "description": "Product Guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     },
@@ -19559,7 +20012,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductPg"
+                            "$ref": "#/definitions/models.ProductDoc"
                         }
                     }
                 ],
@@ -19575,7 +20028,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19602,7 +20055,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete a product by code",
+                "description": "Delete a product by guid",
                 "consumes": [
                     "application/json"
                 ],
@@ -19617,7 +20070,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Product Code",
-                        "name": "code",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     }
@@ -19631,330 +20084,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/productgroup": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "ค้นหารายการ Product Group",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductGroup"
-                ],
-                "summary": "Search Product Groups",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "คำค้นหา (optional)",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "หมายเลขหน้า (default: 1)",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "จำนวนรายการต่อหน้า (default: 10)",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/models.ProductGroupPg"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "สร้าง Product Group ใหม่",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductGroup"
-                ],
-                "summary": "Create Product Group",
-                "parameters": [
-                    {
-                        "description": "รายละเอียด Product Group",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.ProductGroupPg"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.ProductGroupPg"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/productgroup/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "ดึงข้อมูล Product Group ตามรหัส",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductGroup"
-                ],
-                "summary": "Get Product Group",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "รหัส Product Group",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.ProductGroupPg"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "อัปเดตข้อมูล Product Group",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductGroup"
-                ],
-                "summary": "Update Product Group",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "รหัส Product Group",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "ข้อมูล Product Group ที่ต้องการอัปเดต",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.ProductGroupPg"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.ProductGroupPg"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "ลบ Product Group ตามรหัส",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProductGroup"
-                ],
-                "summary": "Delete Product Group",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "รหัส Product Group",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
                         }
@@ -36034,34 +36163,36 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Search units with pagination",
+                "description": "get struct array by ID",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Unit"
                 ],
-                "summary": "Search units",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "keyword",
+                        "description": "Search Value",
                         "name": "q",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
+                        "description": "page ",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Items per page",
+                        "description": "liumit ",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "unitcode filter ex. \\",
+                        "name": "unitcode",
                         "in": "query"
                     }
                 ],
@@ -36069,28 +36200,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/models.UnitPg"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -36107,25 +36220,21 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create a new unit with details",
+                "description": "Create Unit",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Unit"
                 ],
-                "summary": "Create a new unit",
                 "parameters": [
                     {
-                        "description": "Unit data",
+                        "description": "Unit",
                         "name": "Unit",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UnitPg"
+                            "$ref": "#/definitions/models.Unit"
                         }
                     }
                 ],
@@ -36133,23 +36242,129 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.UnitPg"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit GUIDs",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Unit"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/by-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get unit by unit code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
                         }
@@ -36163,16 +36378,119 @@ const docTemplate = `{
                 }
             }
         },
-        "/unit/{id}": {
+        "/unit/list": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Get unit details by ID",
+                "description": "search limit offset",
                 "consumes": [
                     "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang ex. en,th",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "unitcode filter ex. \\",
+                        "name": "unitcode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/master": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get master Unit by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/uploadfile": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Upload an Excel file to import units",
+                "consumes": [
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -36180,7 +36498,57 @@ const docTemplate = `{
                 "tags": [
                     "Unit"
                 ],
-                "summary": "Get unit details",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Excel file containing unit data",
+                        "name": "excelfile",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Existing unit codes: [EA, PACK, BOX]",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "file is required",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "failed to read file or internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
                 "parameters": [
                     {
                         "type": "string",
@@ -36194,31 +36562,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.UnitPg"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -36229,17 +36579,13 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update an existing unit by ID",
+                "description": "Update Unit",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Unit"
                 ],
-                "summary": "Update an existing unit",
                 "parameters": [
                     {
                         "type": "string",
@@ -36249,44 +36595,26 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Updated unit data",
+                        "description": "Unit",
                         "name": "Unit",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UnitPg"
+                            "$ref": "#/definitions/models.Unit"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ApiResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.UnitPg"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -36297,17 +36625,13 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete a unit by ID",
+                "description": "Delete Unit",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Unit"
                 ],
-                "summary": "Delete a unit",
                 "parameters": [
                     {
                         "type": "string",
@@ -36321,19 +36645,59 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -38703,48 +39067,16 @@ const docTemplate = `{
                 }
             }
         },
-        "models.DimensionItemPg": {
+        "models.Dimension": {
             "type": "object",
             "properties": {
-                "dimension_guid": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "isdisabled": {
-                    "type": "boolean"
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.DimensionPg": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
                 "isdisabled": {
                     "type": "boolean"
                 },
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.DimensionItemPg"
+                        "$ref": "#/definitions/models.DimensionItem"
                     }
                 },
                 "names": {
@@ -38752,15 +39084,23 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "shopid": {
+                }
+            }
+        },
+        "models.DimensionItem": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
                     "type": "string"
                 },
-                "updatedat": {
-                    "type": "string"
+                "isdisabled": {
+                    "type": "boolean"
                 },
-                "updatedby": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -42015,23 +42355,61 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ProductGroupPg": {
+        "models.ProductDoc": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
-                "createdat": {
+                "dimensions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension"
+                    }
+                },
+                "groupcode": {
                     "type": "string"
                 },
-                "createdby": {
-                    "type": "string"
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "guidfixed": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "manufacturercode": {
+                    "type": "string"
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -42039,11 +42417,11 @@ const docTemplate = `{
                 "shopid": {
                     "type": "string"
                 },
-                "updatedat": {
+                "unitguid": {
                     "type": "string"
                 },
-                "updatedby": {
-                    "type": "string"
+                "vattype": {
+                    "type": "integer"
                 }
             }
         },
@@ -42112,6 +42490,70 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductInfo": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "dimensions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension"
+                    }
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "manufacturercode": {
+                    "type": "string"
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitguid": {
+                    "type": "string"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ProductOption": {
             "type": "object",
             "required": [
@@ -42167,80 +42609,6 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
-                }
-            }
-        },
-        "models.ProductPg": {
-            "type": "object",
-            "properties": {
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcodes"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "dimensions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.DimensionPg"
-                    }
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupguid": {
-                    "type": "string"
-                },
-                "groupname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "manufacturercode": {
-                    "type": "string"
-                },
-                "manufacturerguid": {
-                    "type": "string"
-                },
-                "manufacturername": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "unitguid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "updatedby": {
-                    "type": "string"
                 }
             }
         },
@@ -47345,34 +47713,38 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UnitPg": {
+        "models.Unit": {
             "type": "object",
+            "required": [
+                "names",
+                "unitcode"
+            ],
             "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "shopid": {
-                    "type": "string"
-                },
                 "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "unitname1": {
                     "type": "string"
                 },
-                "updatedat": {
+                "unitname2": {
                     "type": "string"
                 },
-                "updatedby": {
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
                     "type": "string"
                 }
             }
@@ -48274,6 +48646,43 @@ const docTemplate = `{
                 }
             }
         },
+        "smlaicloudplatform_internal_product_product_models.ProductDimension": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "item": {
+                    "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimensionItem"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_product_models.ProductDimensionItem": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "smlaicloudplatform_internal_product_product_models.ProductPrice": {
             "type": "object",
             "properties": {
@@ -48632,6 +49041,25 @@ const docTemplate = `{
                 },
                 "names": {
                     "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_productgroup_models.ProductGroup": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }

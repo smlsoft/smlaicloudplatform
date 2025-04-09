@@ -407,10 +407,6 @@ func main() {
 		creditorpayment_consumer.MigrationDatabase(ms, cfg)
 		debtorpayment_consumer.MigrationDatabase(ms, cfg)
 		warehouse.MigrationDatabase(ms, cfg)
-		unit.MigrationDatabase(ms, cfg)
-		productgroup.MigrationDatabase(ms, cfg)
-		dimension.MigrationDatabase(ms, cfg)
-		products.MigrationDatabase(ms, cfg)
 
 		// debt account
 		creditor.MigrationDatabase(ms, cfg)
