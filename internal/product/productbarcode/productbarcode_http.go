@@ -40,14 +40,14 @@ type ProductBarcodeHttp struct {
 
 func NewProductBarcodeHttp(ms *microservice.Microservice, cfg config.IConfig) ProductBarcodeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	pstPg := ms.Persister(cfg.PersisterConfig())
+
 	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewProductBarcodeRepository(pst, cache)
-	repoMaster := productmaster.NewProductPGRepository(pstPg)
-	unitmaster := unitmaster.NewUnitPGRepository(pstPg)
+	repoMaster := productmaster.NewProductRepository(pst)
+	unitmaster := unitmaster.NewUnitRepository(pst)
 	creditorRepo := creditorRepo.NewCreditorRepository(pst)
 	clickHouseRepo := repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repositories.NewProductBarcodeMessageQueueRepository(prod)

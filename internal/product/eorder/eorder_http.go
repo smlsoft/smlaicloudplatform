@@ -59,11 +59,11 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	prod := ms.Producer(cfg.MQConfig())
-	pstPg := ms.Persister(cfg.PersisterConfig())
+
 	creditorRepo := creditorRepo.NewCreditorRepository(pst)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	repoMaster := productmaster.NewProductPGRepository(pstPg)
-	unitmaster := unitmaster.NewUnitPGRepository(pstPg)
+	repoMaster := productmaster.NewProductRepository(pst)
+	unitmaster := unitmaster.NewUnitRepository(pst)
 	repoCategory := category_repositories.NewProductCategoryRepository(pst)
 	svcCategory := category_services.NewProductCategoryHttpService(repoCategory, masterSyncCacheRepo)
 

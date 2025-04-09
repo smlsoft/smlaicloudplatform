@@ -62,8 +62,8 @@ type IProductBarcodeHttpService interface {
 
 type ProductBarcodeHttpService struct {
 	repo            repositories.IProductBarcodeRepository
-	repoMaster      productmaster.IProductPGRepository
-	repoUnit        unitmaster.IUnitPGRepository
+	repoMaster      productmaster.IProductRepository
+	repoUnit        unitmaster.IUnitRepository
 	repomgCreditror creditorRepo.CreditorRepository
 	chRepo          repositories.IProductBarcodeClickhouseRepository
 	syncCacheRepo   mastersync.IMasterSyncCacheRepository
@@ -75,8 +75,8 @@ type ProductBarcodeHttpService struct {
 
 func NewProductBarcodeHttpService(
 	repo repositories.IProductBarcodeRepository,
-	repoMaster productmaster.IProductPGRepository,
-	repoUnit unitmaster.IUnitPGRepository,
+	repoMaster productmaster.IProductRepository,
+	repoUnit unitmaster.IUnitRepository,
 	repomgCreditror creditorRepo.CreditorRepository,
 	mqRepo repositories.IProductBarcodeMessageQueueRepository,
 	chRepo repositories.IProductBarcodeClickhouseRepository,
@@ -473,14 +473,14 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 
 	// ✅ ตรวจสอบว่า ItemGuid ไม่ใช่ค่าว่างก่อนดึงข้อมูลจาก Master
 	if strings.TrimSpace(findDoc.ItemGuid) != "" {
-		findMasterDoc, err := svc.repoMaster.Get(ctx, shopID, findDoc.ItemGuid)
+		findMasterDoc, err := svc.repoMaster.FindByGuid(ctx, shopID, findDoc.ItemGuid)
 		if err != nil {
 			fmt.Printf("Error fetching master data: %v\n", err)
 		} else {
 			// ✅ ตรวจสอบค่า `findMasterDoc.Names` ก่อนใช้งาน
 			tempName := []common.NameX{}
 			if findMasterDoc.Names != nil {
-				for _, name := range findMasterDoc.Names {
+				for _, name := range *findMasterDoc.Names {
 					tempName = append(tempName, common.NameX{
 						Name: name.Name,
 						Code: name.Code,
@@ -490,8 +490,8 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 
 			// ✅ ตรวจสอบค่า `findMasterDoc.GroupName` ก่อนใช้งาน
 			tempGroupNames := []common.NameX{}
-			if findMasterDoc.GroupName != nil {
-				for _, name := range findMasterDoc.GroupName {
+			if findMasterDoc.GroupNames != nil {
+				for _, name := range *findMasterDoc.GroupNames {
 					tempGroupNames = append(tempGroupNames, common.NameX{
 						Name: name.Name,
 						Code: name.Code,
@@ -503,8 +503,8 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 			findDoc.ItemCode = findMasterDoc.Code
 			findDoc.Names = &tempName
 
-			if findMasterDoc.ManufacturerGUID != nil && strings.TrimSpace(*findMasterDoc.ManufacturerGUID) != "" {
-				findManu, err := svc.repomgCreditror.FindByGuid(ctx, shopID, *findMasterDoc.ManufacturerGUID)
+			if findMasterDoc.ManufacturerGUID != "" {
+				findManu, err := svc.repomgCreditror.FindByGuid(ctx, shopID, findMasterDoc.ManufacturerGUID)
 				if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
 					findDoc.ManufacturerGUID = findManu.GuidFixed
 					findDoc.ManufacturerCode = findManu.Code
@@ -516,8 +516,8 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 				findDoc.ManufacturerGUID = ""
 			}
 
-			if findMasterDoc.GroupCode != nil {
-				findDoc.GroupCode = *findMasterDoc.GroupCode
+			if findMasterDoc.GroupCode != "" {
+				findDoc.GroupCode = findMasterDoc.GroupCode
 			} else {
 				findDoc.GroupCode = ""
 			}
@@ -527,20 +527,20 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 		}
 	}
 
-	if strings.TrimSpace(findDoc.ItemUnitCode) != "" {
-		unit, err := svc.repoUnit.FindByUnitCode(ctx, shopID, findDoc.ItemUnitCode)
-		if err != nil || unit == nil {
+	if strings.TrimSpace(findDoc.ItemUnitGuid) != "" {
+		unit, err := svc.repoUnit.FindByGuid(ctx, shopID, findDoc.ItemUnitGuid)
+		if err != nil {
 			findDoc.ItemUnitNames = &[]common.NameX{}
 		}
 
 		namex := []common.NameX{}
-		for _, name := range unit.Names {
+		for _, name := range *unit.Names {
 			namex = append(namex, common.NameX{
 				Name: name.Name,
 				Code: name.Code,
 			})
 		}
-
+		findDoc.ItemUnitCode = unit.UnitCode
 		findDoc.ItemUnitNames = &namex // ✅ กำหนดค่าเฉพาะเมื่อ unit มีข้อมูล
 	}
 
@@ -564,14 +564,14 @@ func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, 
 
 	// ✅ ตรวจสอบว่า ItemGuid ไม่ใช่ค่าว่างก่อนดึงข้อมูลจาก Master
 	if strings.TrimSpace(findDoc.ItemGuid) != "" {
-		findMasterDoc, err := svc.repoMaster.Get(ctx, shopID, findDoc.ItemGuid)
+		findMasterDoc, err := svc.repoMaster.FindByGuid(ctx, shopID, findDoc.ItemGuid)
 		if err != nil {
 			fmt.Printf("Error fetching master data: %v\n", err)
 		} else {
 			// ✅ ตรวจสอบค่า `findMasterDoc.Names` ก่อนใช้งาน
 			tempName := []common.NameX{}
 			if findMasterDoc.Names != nil {
-				for _, name := range findMasterDoc.Names {
+				for _, name := range *findMasterDoc.Names {
 					tempName = append(tempName, common.NameX{
 						Name: name.Name,
 						Code: name.Code,
@@ -581,8 +581,8 @@ func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, 
 
 			// ✅ ตรวจสอบค่า `findMasterDoc.GroupName` ก่อนใช้งาน
 			tempGroupNames := []common.NameX{}
-			if findMasterDoc.GroupName != nil {
-				for _, name := range findMasterDoc.GroupName {
+			if findMasterDoc.GroupNames != nil {
+				for _, name := range *findMasterDoc.GroupNames {
 					tempGroupNames = append(tempGroupNames, common.NameX{
 						Name: name.Name,
 						Code: name.Code,
@@ -594,8 +594,8 @@ func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, 
 			findDoc.ItemCode = findMasterDoc.Code
 			findDoc.Names = &tempName
 
-			if findMasterDoc.ManufacturerGUID != nil && strings.TrimSpace(*findMasterDoc.ManufacturerGUID) != "" {
-				findManu, err := svc.repomgCreditror.FindByGuid(ctx, shopID, *findMasterDoc.ManufacturerGUID)
+			if findMasterDoc.ManufacturerGUID != "" {
+				findManu, err := svc.repomgCreditror.FindByGuid(ctx, shopID, findMasterDoc.ManufacturerGUID)
 				if err == nil { // ไม่คืนค่า error ถ้าไม่เจอข้อมูล
 					findDoc.ManufacturerGUID = findManu.GuidFixed
 					findDoc.ManufacturerCode = findManu.Code
@@ -607,8 +607,8 @@ func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, 
 				findDoc.ManufacturerGUID = ""
 			}
 
-			if findMasterDoc.GroupCode != nil {
-				findDoc.GroupCode = *findMasterDoc.GroupCode
+			if findMasterDoc.GroupCode != "" {
+				findDoc.GroupCode = findMasterDoc.GroupCode
 			} else {
 				findDoc.GroupCode = ""
 			}
@@ -618,20 +618,20 @@ func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, 
 		}
 	}
 
-	if strings.TrimSpace(findDoc.ItemUnitCode) != "" {
-		unit, err := svc.repoUnit.FindByUnitCode(ctx, shopID, findDoc.ItemUnitCode)
-		if err != nil || unit == nil {
+	if strings.TrimSpace(findDoc.ItemUnitGuid) != "" {
+		unit, err := svc.repoUnit.FindByGuid(ctx, shopID, findDoc.ItemUnitGuid)
+		if err != nil {
 			findDoc.ItemUnitNames = &[]common.NameX{}
 		}
 
 		namex := []common.NameX{}
-		for _, name := range unit.Names {
+		for _, name := range *unit.Names {
 			namex = append(namex, common.NameX{
 				Name: name.Name,
 				Code: name.Code,
 			})
 		}
-
+		findDoc.ItemUnitCode = unit.UnitCode
 		findDoc.ItemUnitNames = &namex // ✅ กำหนดค่าเฉพาะเมื่อ unit มีข้อมูล
 	}
 
@@ -803,20 +803,20 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 	//getunitname from unit
 
 	for i := range docList {
-		if docList[i].ItemUnitCode != "" {
-			unit, err := svc.repoUnit.FindByUnitCode(ctx, shopID, docList[i].ItemUnitCode)
-			if err != nil || unit == nil {
+		if docList[i].ItemUnitGuid != "" {
+			unit, err := svc.repoUnit.FindByGuid(ctx, shopID, docList[i].ItemUnitGuid)
+			if err != nil {
 				continue // ✅ ถ้า error หรือ unit == nil ให้ข้าม iteration นี้
 			}
 
 			namex := []common.NameX{}
-			for _, name := range unit.Names {
+			for _, name := range *unit.Names {
 				namex = append(namex, common.NameX{
 					Name: name.Name,
 					Code: name.Code,
 				})
 			}
-
+			docList[i].ItemUnitCode = unit.UnitCode
 			docList[i].ItemUnitNames = &namex // ✅ กำหนดค่าเฉพาะเมื่อ unit มีข้อมูล
 		}
 	}

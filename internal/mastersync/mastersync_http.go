@@ -61,11 +61,11 @@ type MasterSyncHttp struct {
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) MasterSyncHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	pstPg := ms.Persister(cfg.PersisterConfig())
+
 	// pstPg := ms.Persister(cfg.PersisterConfig())
 	// prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
-	unitmaster := unitmaster.NewUnitPGRepository(pstPg)
+	unitmaster := unitmaster.NewUnitRepository(pst)
 	activityModuleManager := NewActivityModuleManager(pst)
 
 	masterSyncCacheRepo := repositories.NewMasterSyncCacheRepository(cache)
@@ -82,7 +82,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	svcProductCategory := productcategoryService.NewProductCategoryHttpService(productcategoryRepo.NewProductCategoryRepository(pst), masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductCategory)
 
-	repoMaster := productmaster.NewProductPGRepository(pstPg)
+	repoMaster := productmaster.NewProductRepository(pst)
 	// Product Barcode
 	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst, cache)
 	creditorRepo := creditorRepo.NewCreditorRepository(pst)
