@@ -863,45 +863,29 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
     type: object
-  models.DimensionItemPg:
+  models.Dimension:
     properties:
-      dimension_guid:
-        type: string
-      guidfixed:
-        type: string
-      isdisabled:
-        type: boolean
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      shopid:
-        type: string
-    type: object
-  models.DimensionPg:
-    properties:
-      createdat:
-        type: string
-      createdby:
-        type: string
-      guidfixed:
-        type: string
       isdisabled:
         type: boolean
       items:
         items:
-          $ref: '#/definitions/models.DimensionItemPg'
+          $ref: '#/definitions/models.DimensionItem'
         type: array
       names:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      shopid:
+    type: object
+  models.DimensionItem:
+    properties:
+      guidfixed:
         type: string
-      updatedat:
-        type: string
-      updatedby:
-        type: string
+      isdisabled:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.DocumentFormate:
     properties:
@@ -3146,27 +3130,6 @@ definitions:
         type: integer
     required:
     - names
-    type: object
-  models.ProductGroupPg:
-    properties:
-      code:
-        type: string
-      createdat:
-        type: string
-      createdby:
-        type: string
-      guidfixed:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      shopid:
-        type: string
-      updatedat:
-        type: string
-      updatedby:
-        type: string
     type: object
   models.ProductImage:
     properties:
@@ -6716,26 +6679,30 @@ definitions:
       success:
         type: boolean
     type: object
-  models.UnitPg:
+  models.Unit:
     properties:
-      createdat:
-        type: string
-      createdby:
-        type: string
-      guidfixed:
-        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
-      shopid:
-        type: string
+        uniqueItems: true
       unitcode:
+        maxLength: 100
         type: string
-      updatedat:
+      unitname1:
         type: string
-      updatedby:
+      unitname2:
         type: string
+      unitname3:
+        type: string
+      unitname4:
+        type: string
+      unitname5:
+        type: string
+    required:
+    - names
+    - unitcode
     type: object
   models.UserLoginPhoneNumberRequest:
     properties:
@@ -7608,6 +7575,19 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+    type: object
+  smlaicloudplatform_internal_product_productgroup_models.ProductGroup:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   smlaicloudplatform_internal_product_producttype_models.ProductType:
     properties:
@@ -9782,75 +9762,129 @@ paths:
       tags:
       - Debtor
   /dimension:
-    get:
+    delete:
       consumes:
       - application/json
-      description: Search dimensions with pagination
+      description: Delete Dimension
       parameters:
-      - description: Keyword for search
-        in: query
-        name: q
-        type: string
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Items per page
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
+      - description: Dimension GUIDs
+        in: body
+        name: Dimension
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/models.DimensionPg'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Search dimensions
+      tags:
+      - Dimension
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: disabled
+        in: query
+        name: disabled
+        type: boolean
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       tags:
       - Dimension
     post:
       consumes:
       - application/json
-      description: Create a new dimension with details and associated items
+      description: Create Dimension
       parameters:
-      - description: Dimension data with items
+      - description: Dimension
         in: body
         name: Dimension
         required: true
         schema:
-          $ref: '#/definitions/models.DimensionPg'
-      produces:
-      - application/json
+          $ref: '#/definitions/models.Dimension'
       responses:
         "201":
           description: Created
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.DimensionPg'
-              type: object
-        "400":
-          description: Bad Request
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+  /dimension/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Dimension
+      parameters:
+      - description: Dimension ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+    get:
+      consumes:
+      - application/json
+      description: get Dimension info by guidfixed
+      parameters:
+      - description: Dimension guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
         "401":
@@ -9859,114 +9893,76 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Create a new dimension
-      tags:
-      - Dimension
-  /dimension/{guidfixed}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a dimension by GUID along with associated items
-      parameters:
-      - description: Dimension GUID
-        in: path
-        name: guidfixed
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      summary: Delete a dimension
-      tags:
-      - Dimension
-    get:
-      consumes:
-      - application/json
-      description: Get dimension details by GUID
-      parameters:
-      - description: Dimension GUID
-        in: path
-        name: guidfixed
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.DimensionPg'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      summary: Get dimension details
       tags:
       - Dimension
     put:
       consumes:
       - application/json
-      description: Update an existing dimension by GUID, including associated items
+      description: Update Dimension
       parameters:
-      - description: Dimension GUID
+      - description: Dimension ID
         in: path
-        name: guidfixed
+        name: id
         required: true
         type: string
-      - description: Updated dimension data with items
+      - description: Dimension
         in: body
         name: Dimension
         required: true
         schema:
-          $ref: '#/definitions/models.DimensionPg'
-      produces:
+          $ref: '#/definitions/models.Dimension'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Dimension
+  /dimension/list:
+    get:
+      consumes:
       - application/json
+      description: search limit offset
+      parameters:
+      - description: disabled
+        in: query
+        name: disabled
+        type: boolean
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.DimensionPg'
-              type: object
-        "400":
-          description: Bad Request
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Update an existing dimension
       tags:
       - Dimension
   /documentimage:
@@ -19474,6 +19470,277 @@ paths:
       - AccessToken: []
       tags:
       - ProductCategory
+  /product/group:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductGroup
+      parameters:
+      - description: ProductGroup GUIDs
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    post:
+      consumes:
+      - application/json
+      description: Create ProductGroup
+      parameters:
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductGroup
+      parameters:
+      - description: ProductGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: ProductGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    put:
+      consumes:
+      - application/json
+      description: Update ProductGroup
+      parameters:
+      - description: ProductGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create ProductGroup
+      parameters:
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/by-code:
+    get:
+      consumes:
+      - application/json
+      description: get Product Group by code array
+      parameters:
+      - description: 'Code filter, json array encode '
+        in: query
+        name: codes
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /product/group/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/save:
+    post:
+      consumes:
+      - application/json
+      description: Save ProductGroup
+      parameters:
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          $ref: '#/definitions/smlaicloudplatform_internal_product_productgroup_models.ProductGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
   /product/order-type:
     delete:
       consumes:
@@ -20219,202 +20486,6 @@ paths:
       - AccessToken: []
       tags:
       - ProductType
-  /productgroup:
-    get:
-      consumes:
-      - application/json
-      description: ค้นหารายการ Product Group
-      parameters:
-      - description: คำค้นหา (optional)
-        in: query
-        name: q
-        type: string
-      - description: 'หมายเลขหน้า (default: 1)'
-        in: query
-        name: page
-        type: integer
-      - description: 'จำนวนรายการต่อหน้า (default: 10)'
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/models.ProductGroupPg'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      summary: Search Product Groups
-      tags:
-      - ProductGroup
-    post:
-      consumes:
-      - application/json
-      description: สร้าง Product Group ใหม่
-      parameters:
-      - description: รายละเอียด Product Group
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.ProductGroupPg'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.ProductGroupPg'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      summary: Create Product Group
-      tags:
-      - ProductGroup
-  /productgroup/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: ลบ Product Group ตามรหัส
-      parameters:
-      - description: รหัส Product Group
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      summary: Delete Product Group
-      tags:
-      - ProductGroup
-    get:
-      consumes:
-      - application/json
-      description: ดึงข้อมูล Product Group ตามรหัส
-      parameters:
-      - description: รหัส Product Group
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.ProductGroupPg'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      summary: Get Product Group
-      tags:
-      - ProductGroup
-    put:
-      consumes:
-      - application/json
-      description: อัปเดตข้อมูล Product Group
-      parameters:
-      - description: รหัส Product Group
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: ข้อมูล Product Group ที่ต้องการอัปเดต
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.ProductGroupPg'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.ProductGroupPg'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      summary: Update Product Group
-      tags:
-      - ProductGroup
   /productimport:
     post:
       consumes:
@@ -30437,191 +30508,343 @@ paths:
       tags:
       - TransportChannel
   /unit:
-    get:
+    delete:
       consumes:
       - application/json
-      description: Search units with pagination
+      description: Delete Unit
       parameters:
-      - description: keyword
-        in: query
-        name: q
-        type: string
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Items per page
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
+      - description: Unit GUIDs
+        in: body
+        name: Unit
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/models.UnitPg'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Search units
+      tags:
+      - Unit
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: 'page '
+        in: query
+        name: page
+        type: integer
+      - description: 'liumit '
+        in: query
+        name: limit
+        type: integer
+      - description: unitcode filter ex. \
+        in: query
+        name: unitcode
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       tags:
       - Unit
     post:
       consumes:
       - application/json
-      description: Create a new unit with details
+      description: Create Unit
       parameters:
-      - description: Unit data
+      - description: Unit
         in: body
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/models.UnitPg'
-      produces:
-      - application/json
+          $ref: '#/definitions/models.Unit'
       responses:
         "201":
           description: Created
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.UnitPg'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Create a new unit
       tags:
       - Unit
   /unit/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete a unit by ID
+      description: Delete Unit
       parameters:
       - description: Unit ID
         in: path
         name: id
         required: true
         type: string
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "400":
-          description: Bad Request
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Delete a unit
       tags:
       - Unit
     get:
       consumes:
       - application/json
-      description: Get unit details by ID
+      description: get struct array by ID
       parameters:
       - description: Unit ID
         in: path
         name: id
         required: true
         type: string
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.UnitPg'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
             $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
+        "401":
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Get unit details
+      tags:
+      - Unit
+    patch:
+      consumes:
+      - application/json
+      description: Update Unit
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Unit
+        in: body
+        name: Unit
+        required: true
+        schema:
+          $ref: '#/definitions/models.Unit'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       tags:
       - Unit
     put:
       consumes:
       - application/json
-      description: Update an existing unit by ID
+      description: Update Unit
       parameters:
       - description: Unit ID
         in: path
         name: id
         required: true
         type: string
-      - description: Updated unit data
+      - description: Unit
         in: body
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/models.UnitPg'
-      produces:
+          $ref: '#/definitions/models.Unit'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /unit/bulk:
+    post:
+      consumes:
       - application/json
+      description: Create Unit
+      parameters:
+      - description: Unit
+        in: body
+        name: Unit
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Unit'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /unit/by-code:
+    get:
+      consumes:
+      - application/json
+      description: get unit by unit code array
+      parameters:
+      - description: 'Code filter, json array encode '
+        in: query
+        name: codes
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ApiResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.UnitPg'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
             $ref: '#/definitions/models.ApiResponse'
-        "404":
-          description: Not Found
+        "401":
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Update an existing unit
+      tags:
+      - Unit
+  /unit/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang ex. en,th
+        in: query
+        name: lang
+        type: string
+      - description: unitcode filter ex. \
+        in: query
+        name: unitcode
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /unit/master:
+    get:
+      consumes:
+      - application/json
+      description: get master Unit by code array
+      parameters:
+      - description: 'Code filter, json array encode '
+        in: query
+        name: codes
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /unit/uploadfile:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an Excel file to import units
+      parameters:
+      - description: Excel file containing unit data
+        in: formData
+        name: excelfile
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Existing unit codes: [EA, PACK, BOX]'
+          schema:
+            type: string
+        "400":
+          description: file is required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: failed to read file or internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - AccessToken: []
       tags:
       - Unit
   /upload/images:
