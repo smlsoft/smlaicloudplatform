@@ -20,6 +20,7 @@ type ProductBarcodeBase struct {
 	Names           *[]models.NameX  `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	XSorts          *[]models.XSort  `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 	ItemGuid        string           `json:"itemguid" bson:"itemguid"`
+	ItemUnitGuid    string           `json:"itemunitguid" bson:"itemunitguid"`
 	ItemUnitCode    string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames   *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames"`
 	ItemUnitSize    float64          `json:"itemunitsize" bson:"itemunitsize"`

@@ -37,16 +37,15 @@ func NewProductImportHttp(ms *microservice.Microservice, cfg config.IConfig) Pro
 	cache := ms.Cacher(cfg.CacherConfig())
 	producer := ms.Producer(cfg.MQConfig())
 	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
-	pstPg := ms.Persister(cfg.PersisterConfig())
 
 	repo := product_repositories.NewProductBarcodeRepository(pst, cache)
-	unitmaster := unitmaster.NewUnitPGRepository(pstPg)
+	unitmaster := unitmaster.NewUnitRepository(pst)
 	repoMq := product_repositories.NewProductBarcodeMessageQueueRepository(producer)
 	repoCh := product_repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	creditorRepo := creditorRepo.NewCreditorRepository(pst)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 
-	repoMaster := productmaster.NewProductPGRepository(pstPg)
+	repoMaster := productmaster.NewProductRepository(pst)
 	productcategoryRepo := productcategory_repositories.NewProductCategoryRepository(pst)
 	productcategorySvc := productcategory_services.NewProductCategoryHttpService(productcategoryRepo, masterSyncCacheRepo)
 
