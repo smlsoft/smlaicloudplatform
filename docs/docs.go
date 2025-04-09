@@ -15392,7 +15392,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/models.ProductPg"
+                                                "$ref": "#/definitions/models.ProductInfo"
                                             }
                                         }
                                     }
@@ -15438,7 +15438,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductPg"
+                            "$ref": "#/definitions/models.ProductDoc"
                         }
                     }
                 ],
@@ -15454,7 +15454,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19468,7 +19468,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/product/{code}": {
+        "/product/{guid}": {
             "get": {
                 "security": [
                     {
@@ -19489,8 +19489,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Product Code",
-                        "name": "code",
+                        "description": "Product guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     }
@@ -19507,7 +19507,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19534,7 +19534,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update an existing product by code",
+                "description": "Update an existing product by guid",
                 "consumes": [
                     "application/json"
                 ],
@@ -19548,8 +19548,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Product Code",
-                        "name": "code",
+                        "description": "Product Guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     },
@@ -19559,7 +19559,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductPg"
+                            "$ref": "#/definitions/models.ProductDoc"
                         }
                     }
                 ],
@@ -19575,7 +19575,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19602,7 +19602,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete a product by code",
+                "description": "Delete a product by guid",
                 "consumes": [
                     "application/json"
                 ],
@@ -19617,7 +19617,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Product Code",
-                        "name": "code",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     }
@@ -42015,6 +42015,76 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductDoc": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "dimensions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension"
+                    }
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "manufacturercode": {
+                    "type": "string"
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "unitguid": {
+                    "type": "string"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ProductGroupPg": {
             "type": "object",
             "properties": {
@@ -42112,6 +42182,70 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ProductInfo": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "dimensions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension"
+                    }
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "manufacturercode": {
+                    "type": "string"
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitguid": {
+                    "type": "string"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ProductOption": {
             "type": "object",
             "required": [
@@ -42167,80 +42301,6 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
-                }
-            }
-        },
-        "models.ProductPg": {
-            "type": "object",
-            "properties": {
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcodes"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "dimensions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.DimensionPg"
-                    }
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupguid": {
-                    "type": "string"
-                },
-                "groupname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "manufacturercode": {
-                    "type": "string"
-                },
-                "manufacturerguid": {
-                    "type": "string"
-                },
-                "manufacturername": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "unitguid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "updatedby": {
-                    "type": "string"
                 }
             }
         },
@@ -48270,6 +48330,43 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_product_models.ProductDimension": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "item": {
+                    "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimensionItem"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_product_models.ProductDimensionItem": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
                     }
                 }
             }

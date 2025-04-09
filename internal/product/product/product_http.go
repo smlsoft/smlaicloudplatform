@@ -12,7 +12,9 @@ import (
 	"smlaicloudplatform/internal/product/product/repositories"
 	"smlaicloudplatform/internal/product/product/services"
 	productBarcodeRepo "smlaicloudplatform/internal/product/productbarcode/repositories"
+	unitRepo "smlaicloudplatform/internal/product/unit/repositories"
 	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
 	"smlaicloudplatform/pkg/microservice"
 	"strings"
 	"time"
@@ -28,13 +30,14 @@ type ProductHttp struct {
 
 // ✅ **สร้าง New ProductHttp**
 func NewProductHttp(ms *microservice.Microservice, cfg config.IConfig) ProductHttp {
-	pst := ms.Persister(cfg.PersisterConfig())
+
 	pstmg := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
-	repo := repositories.NewProductPGRepository(pst)
+	repo := repositories.NewProductRepository(pstmg)
+	repoUnit := unitRepo.NewUnitRepository(pstmg)
 	repomgCreditor := creditorepo.NewCreditorRepository(pstmg)
 	repomgProductBarcode := productBarcodeRepo.NewProductBarcodeRepository(pstmg, cache)
-	svc := services.NewProductHttpService(repo, *repomgCreditor, *repomgProductBarcode)
+	svc := services.NewProductHttpService(repo, repoUnit, *repomgCreditor, *repomgProductBarcode)
 
 	return ProductHttp{
 		ms:  ms,
@@ -47,9 +50,9 @@ func NewProductHttp(ms *microservice.Microservice, cfg config.IConfig) ProductHt
 func (h ProductHttp) RegisterHttp() {
 	h.ms.GET("/product", h.SearchProduct)
 	h.ms.POST("/product", h.CreateProduct)
-	h.ms.GET("/product/:code", h.InfoProduct)
-	h.ms.PUT("/product/:code", h.UpdateProduct)
-	h.ms.DELETE("/product/:code", h.DeleteProduct)
+	h.ms.GET("/product/:guid", h.InfoProduct)
+	h.ms.PUT("/product/:guid", h.UpdateProduct)
+	h.ms.DELETE("/product/:guid", h.DeleteProduct)
 }
 
 // @Summary		Search products
@@ -60,7 +63,7 @@ func (h ProductHttp) RegisterHttp() {
 // @Param		q query string false "Keyword to search"
 // @Param		page query int false "Page number"
 // @Param		limit query int false "Items per page"
-// @Success		200 {object} common.ApiResponse{data=[]models.ProductPg}
+// @Success		200 {object} common.ApiResponse{data=[]models.ProductInfo}
 // @Failure		400 {object} common.ApiResponse
 // @Failure		401 {object} common.AuthResponseFailed
 // @Security	AccessToken
@@ -70,7 +73,10 @@ func (h ProductHttp) SearchProduct(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	products, pagination, err := h.svc.ProductList(shopID, pageable.Query, pageable.Page, pageable.Limit)
+	filters := h.searchFilter(ctx.QueryParam)
+
+	docList, pagination, err := h.svc.ProductList(shopID, filters, pageable)
+
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
@@ -78,9 +84,10 @@ func (h ProductHttp) SearchProduct(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success:    true,
+		Data:       docList,
 		Pagination: pagination,
-		Data:       products,
 	})
+
 	return nil
 }
 
@@ -89,8 +96,8 @@ func (h ProductHttp) SearchProduct(ctx microservice.IContext) error {
 // @Tags		Product
 // @Accept 		json
 // @Produce 	json
-// @Param		Product body models.ProductPg true "Product data"
-// @Success		201 {object} common.ApiResponse{data=models.ProductPg}
+// @Param		Product body models.ProductDoc true "Product data"
+// @Success		201 {object} common.ApiResponse{data=models.ProductDoc}
 // @Failure		400 {object} common.ApiResponse
 // @Failure		401 {object} common.AuthResponseFailed
 // @Security	AccessToken
@@ -106,7 +113,7 @@ func (h ProductHttp) CreateProduct(ctx microservice.IContext) error {
 	}
 
 	// ✅ แปลง JSON เป็น struct
-	newProduct := &models.ProductPg{}
+	newProduct := &models.ProductDoc{}
 	err := json.Unmarshal([]byte(input), newProduct)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, "Invalid JSON format: "+err.Error())
@@ -150,14 +157,14 @@ func (h ProductHttp) CreateProduct(ctx microservice.IContext) error {
 // @Tags		Product
 // @Accept 		json
 // @Produce 	json
-// @Param		code path string true "Product Code"
-// @Success		200 {object} common.ApiResponse{data=models.ProductPg}
+// @Param		guid path string true "Product guid"
+// @Success		200 {object} common.ApiResponse{data=models.ProductDoc}
 // @Failure		400 {object} common.ApiResponse
 // @Failure		404 {object} common.ApiResponse
 // @Security	AccessToken
-// @Router		/product/{code} [get]
+// @Router		/product/{guid} [get]
 func (h ProductHttp) InfoProduct(ctx microservice.IContext) error {
-	code := strings.TrimSpace(ctx.Param("code"))
+	code := strings.TrimSpace(ctx.Param("guid"))
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -180,19 +187,19 @@ func (h ProductHttp) InfoProduct(ctx microservice.IContext) error {
 }
 
 // @Summary		Update an existing product
-// @Description Update an existing product by code
+// @Description Update an existing product by guid
 // @Tags		Product
 // @Accept 		json
 // @Produce 	json
-// @Param		code path string true "Product Code"
-// @Param		Product body models.ProductPg true "Updated product data"
-// @Success		200 {object} common.ApiResponse{data=models.ProductPg}
+// @Param		guid path string true "Product Guid"
+// @Param		Product body models.ProductDoc true "Updated product data"
+// @Success		200 {object} common.ApiResponse{data=models.ProductDoc}
 // @Failure		400 {object} common.ApiResponse
 // @Failure		404 {object} common.ApiResponse
 // @Security	AccessToken
-// @Router		/product/{code} [put]
+// @Router		/product/{guid} [put]
 func (h ProductHttp) UpdateProduct(ctx microservice.IContext) error {
-	code := strings.TrimSpace(ctx.Param("code"))
+	code := strings.TrimSpace(ctx.Param("guid"))
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -208,7 +215,7 @@ func (h ProductHttp) UpdateProduct(ctx microservice.IContext) error {
 	}
 
 	// ✅ แปลง JSON เป็น struct
-	updateData := &models.ProductPg{}
+	updateData := &models.ProductDoc{}
 	err := json.Unmarshal([]byte(input), updateData)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, "Invalid JSON format: "+err.Error())
@@ -222,7 +229,7 @@ func (h ProductHttp) UpdateProduct(ctx microservice.IContext) error {
 	fmt.Println("Updating Product:", updateData)
 
 	// ✅ อัปเดต Product
-	err = h.svc.Update(shopID, code, updateData)
+	docData, err := h.svc.Update(shopID, code, userInfo.Username, updateData)
 	if err != nil {
 		ctx.ResponseError(http.StatusInternalServerError, err.Error())
 		return err
@@ -231,24 +238,24 @@ func (h ProductHttp) UpdateProduct(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Message: "Product updated successfully",
-		Data:    updateData,
+		Data:    docData,
 	})
 	return nil
 }
 
 // @Summary		Delete a product
-// @Description Delete a product by code
+// @Description Delete a product by guid
 // @Tags		Product
 // @Accept 		json
 // @Produce 	json
-// @Param		code path string true "Product Code"
+// @Param		guid path string true "Product Code"
 // @Success		200 {object} common.ApiResponse
 // @Failure		400 {object} common.ApiResponse
 // @Failure		404 {object} common.ApiResponse
 // @Security	AccessToken
-// @Router		/product/{code} [delete]
+// @Router		/product/{guid} [delete]
 func (h ProductHttp) DeleteProduct(ctx microservice.IContext) error {
-	code := strings.TrimSpace(ctx.Param("code"))
+	code := strings.TrimSpace(ctx.Param("guid"))
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -257,7 +264,7 @@ func (h ProductHttp) DeleteProduct(ctx microservice.IContext) error {
 		return errors.New("Product Code is required")
 	}
 
-	err := h.svc.Delete(shopID, code)
+	err := h.svc.Delete(shopID, code, userInfo.Username)
 	if err != nil {
 		ctx.ResponseError(http.StatusInternalServerError, err.Error())
 		return err
@@ -268,4 +275,21 @@ func (h ProductHttp) DeleteProduct(ctx microservice.IContext) error {
 		Message: "Product deleted successfully",
 	})
 	return nil
+}
+
+func (h ProductHttp) searchFilter(queryParam func(string) string) map[string]interface{} {
+	filters := requestfilter.GenerateFilters(queryParam, []requestfilter.FilterRequest{
+		{
+			Param: "code",
+			Field: "code",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "names",
+			Field: "names.name",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	return filters
 }

@@ -15387,7 +15387,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/models.ProductPg"
+                                                "$ref": "#/definitions/models.ProductInfo"
                                             }
                                         }
                                     }
@@ -15433,7 +15433,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductPg"
+                            "$ref": "#/definitions/models.ProductDoc"
                         }
                     }
                 ],
@@ -15449,7 +15449,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19463,7 +19463,7 @@
                 }
             }
         },
-        "/product/{code}": {
+        "/product/{guid}": {
             "get": {
                 "security": [
                     {
@@ -19484,8 +19484,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Product Code",
-                        "name": "code",
+                        "description": "Product guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     }
@@ -19502,7 +19502,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19529,7 +19529,7 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "Update an existing product by code",
+                "description": "Update an existing product by guid",
                 "consumes": [
                     "application/json"
                 ],
@@ -19543,8 +19543,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Product Code",
-                        "name": "code",
+                        "description": "Product Guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     },
@@ -19554,7 +19554,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ProductPg"
+                            "$ref": "#/definitions/models.ProductDoc"
                         }
                     }
                 ],
@@ -19570,7 +19570,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ProductPg"
+                                            "$ref": "#/definitions/models.ProductDoc"
                                         }
                                     }
                                 }
@@ -19597,7 +19597,7 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete a product by code",
+                "description": "Delete a product by guid",
                 "consumes": [
                     "application/json"
                 ],
@@ -19612,7 +19612,7 @@
                     {
                         "type": "string",
                         "description": "Product Code",
-                        "name": "code",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     }
@@ -42010,6 +42010,76 @@
                 }
             }
         },
+        "models.ProductDoc": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "dimensions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension"
+                    }
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "manufacturercode": {
+                    "type": "string"
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "unitguid": {
+                    "type": "string"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ProductGroupPg": {
             "type": "object",
             "properties": {
@@ -42107,6 +42177,70 @@
                 }
             }
         },
+        "models.ProductInfo": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcodes"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "dimensions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension"
+                    }
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "manufacturercode": {
+                    "type": "string"
+                },
+                "manufacturerguid": {
+                    "type": "string"
+                },
+                "manufacturernames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitguid": {
+                    "type": "string"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ProductOption": {
             "type": "object",
             "required": [
@@ -42162,80 +42296,6 @@
                 },
                 "price": {
                     "type": "number"
-                }
-            }
-        },
-        "models.ProductPg": {
-            "type": "object",
-            "properties": {
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcodes"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "createdby": {
-                    "type": "string"
-                },
-                "dimensions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.DimensionPg"
-                    }
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupguid": {
-                    "type": "string"
-                },
-                "groupname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "manufacturercode": {
-                    "type": "string"
-                },
-                "manufacturerguid": {
-                    "type": "string"
-                },
-                "manufacturername": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "unitguid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "updatedby": {
-                    "type": "string"
                 }
             }
         },
@@ -48265,6 +48325,43 @@
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_product_models.ProductDimension": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "item": {
+                    "$ref": "#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimensionItem"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlaicloudplatform_internal_product_product_models.ProductDimensionItem": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
                     }
                 }
             }

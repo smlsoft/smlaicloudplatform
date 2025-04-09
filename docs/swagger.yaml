@@ -3100,6 +3100,53 @@ definitions:
     - names
     - refunitnames
     type: object
+  models.ProductDoc:
+    properties:
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcodes'
+        type: array
+      code:
+        type: string
+      dimensions:
+        items:
+          $ref: '#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension'
+        type: array
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      guidfixed:
+        type: string
+      id:
+        type: string
+      itemtype:
+        type: integer
+      manufacturercode:
+        type: string
+      manufacturerguid:
+        type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      shopid:
+        type: string
+      unitguid:
+        type: string
+      vattype:
+        type: integer
+    required:
+    - names
+    type: object
   models.ProductGroupPg:
     properties:
       code:
@@ -3164,6 +3211,49 @@ definitions:
     required:
     - languangecode
     type: object
+  models.ProductInfo:
+    properties:
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcodes'
+        type: array
+      code:
+        type: string
+      dimensions:
+        items:
+          $ref: '#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimension'
+        type: array
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      guidfixed:
+        type: string
+      itemtype:
+        type: integer
+      manufacturercode:
+        type: string
+      manufacturerguid:
+        type: string
+      manufacturernames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      unitguid:
+        type: string
+      vattype:
+        type: integer
+    required:
+    - names
+    type: object
   models.ProductOption:
     properties:
       choices:
@@ -3203,55 +3293,6 @@ definitions:
         type: array
       price:
         type: number
-    type: object
-  models.ProductPg:
-    properties:
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcodes'
-        type: array
-      code:
-        type: string
-      createdat:
-        type: string
-      createdby:
-        type: string
-      dimensions:
-        items:
-          $ref: '#/definitions/models.DimensionPg'
-        type: array
-      groupcode:
-        type: string
-      groupguid:
-        type: string
-      groupname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      guidfixed:
-        type: string
-      itemtype:
-        type: integer
-      manufacturercode:
-        type: string
-      manufacturerguid:
-        type: string
-      manufacturername:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      shopid:
-        type: string
-      unitguid:
-        type: string
-      updatedat:
-        type: string
-      updatedby:
-        type: string
     type: object
   models.ProductRestaurant:
     properties:
@@ -7299,6 +7340,30 @@ definitions:
       permissions:
         items:
           type: string
+        type: array
+    type: object
+  smlaicloudplatform_internal_product_product_models.ProductDimension:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      item:
+        $ref: '#/definitions/smlaicloudplatform_internal_product_product_models.ProductDimensionItem'
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  smlaicloudplatform_internal_product_product_models.ProductDimensionItem:
+    properties:
+      guidfixed:
+        type: string
+      isdisabled:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
         type: array
     type: object
   smlaicloudplatform_internal_product_product_models.ProductPrice:
@@ -17515,7 +17580,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.ProductPg'
+                    $ref: '#/definitions/models.ProductInfo'
                   type: array
               type: object
         "400":
@@ -17541,7 +17606,7 @@ paths:
         name: Product
         required: true
         schema:
-          $ref: '#/definitions/models.ProductPg'
+          $ref: '#/definitions/models.ProductDoc'
       produces:
       - application/json
       responses:
@@ -17552,7 +17617,7 @@ paths:
             - $ref: '#/definitions/models.ApiResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/models.ProductPg'
+                  $ref: '#/definitions/models.ProductDoc'
               type: object
         "400":
           description: Bad Request
@@ -18231,15 +18296,15 @@ paths:
       - AccessToken: []
       tags:
       - SectionDepartment
-  /product/{code}:
+  /product/{guid}:
     delete:
       consumes:
       - application/json
-      description: Delete a product by code
+      description: Delete a product by guid
       parameters:
       - description: Product Code
         in: path
-        name: code
+        name: guid
         required: true
         type: string
       produces:
@@ -18267,9 +18332,9 @@ paths:
       - application/json
       description: Get product details by code
       parameters:
-      - description: Product Code
+      - description: Product guid
         in: path
-        name: code
+        name: guid
         required: true
         type: string
       produces:
@@ -18282,7 +18347,7 @@ paths:
             - $ref: '#/definitions/models.ApiResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/models.ProductPg'
+                  $ref: '#/definitions/models.ProductDoc'
               type: object
         "400":
           description: Bad Request
@@ -18300,11 +18365,11 @@ paths:
     put:
       consumes:
       - application/json
-      description: Update an existing product by code
+      description: Update an existing product by guid
       parameters:
-      - description: Product Code
+      - description: Product Guid
         in: path
-        name: code
+        name: guid
         required: true
         type: string
       - description: Updated product data
@@ -18312,7 +18377,7 @@ paths:
         name: Product
         required: true
         schema:
-          $ref: '#/definitions/models.ProductPg'
+          $ref: '#/definitions/models.ProductDoc'
       produces:
       - application/json
       responses:
@@ -18323,7 +18388,7 @@ paths:
             - $ref: '#/definitions/models.ApiResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/models.ProductPg'
+                  $ref: '#/definitions/models.ProductDoc'
               type: object
         "400":
           description: Bad Request

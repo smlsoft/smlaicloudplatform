@@ -19,7 +19,9 @@ type Product struct {
 	ManufacturerNames        *[]models.NameX    `json:"manufacturernames" bson:"manufacturernames"`
 	Dimensions               []ProductDimension `json:"dimensions" bson:"dimensions"`
 	VatType                  int8               `json:"vattype" bson:"vattype"`
-	Barcodes                 []string           `json:"barcodes,omitempty"`
+	Barcodes                 []Barcodes         `json:"barcodes,omitempty"`
+	ItemType                 int8               `json:"itemtype" bson:"itemtype"`
+	UnitGuid                 string             `json:"unitguid" bson:"unitguid"`
 }
 
 type ProductDimension struct {
