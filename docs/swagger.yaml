@@ -2903,6 +2903,8 @@ definitions:
         type: integer
       itemunitcode:
         type: string
+      itemunitguid:
+        type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
@@ -7173,6 +7175,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      branchnumber:
+        type: string
       businesstype:
         $ref: '#/definitions/models.BranchBusinessType'
       businesstypes:
@@ -7454,6 +7458,8 @@ definitions:
       itemtype:
         type: integer
       itemunitcode:
+        type: string
+      itemunitguid:
         type: string
       itemunitnames:
         items:
