@@ -22,6 +22,7 @@ type Branch struct {
 	BusinessType             BranchBusinessType `json:"businesstype" bson:"businesstype"`
 	BusinessTypes            *[]string          `json:"businesstypes" bson:"businesstypes"`
 	VatRate                  float64            `json:"vatrate" bson:"vatrate"`
+	BranchNumber             string             `json:"branchnumber" bson:"branchnumber"`
 	IsHeadOffice             bool               `json:"isheadoffice" bson:"isheadoffice"`
 	IsTaxByAddress           bool               `json:"istaxbyaddress" bson:"istaxbyaddress"`
 	TaxAddress               []models.NameX     `json:"taxaddress" bson:"taxaddress"`

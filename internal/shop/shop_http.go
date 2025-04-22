@@ -9,6 +9,9 @@ import (
 	"smlaicloudplatform/internal/logger"
 	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 	common "smlaicloudplatform/internal/models"
+	branch_model "smlaicloudplatform/internal/organization/branch/models"
+	branch_repositories "smlaicloudplatform/internal/organization/branch/repositories"
+	branch_services "smlaicloudplatform/internal/organization/branch/services"
 	businesstype_models "smlaicloudplatform/internal/organization/businesstype/models"
 	businesstype_repositories "smlaicloudplatform/internal/organization/businesstype/repositories"
 	businesstype_services "smlaicloudplatform/internal/organization/businesstype/services"
@@ -19,6 +22,7 @@ import (
 	"smlaicloudplatform/internal/shop/models"
 	"smlaicloudplatform/internal/utils"
 	"smlaicloudplatform/pkg/microservice"
+
 	"time"
 
 	warehouse_models "smlaicloudplatform/internal/warehouse/models"
@@ -39,6 +43,7 @@ type ShopHttp struct {
 	ms                  *microservice.Microservice
 	cfg                 config.IConfig
 	service             IShopService
+	serviceBranch       branch_services.IBranchHttpService
 	serviceCompany      company_services.ICompanyHttpService
 	serviceWarehouse    warehouse_services.IWarehouseHttpService
 	servicebusinessType businesstype_services.IBusinessTypeHttpService
@@ -58,12 +63,13 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3*time.Hour, 24*30*time.Hour)
 
 	repoBrach := company_repositories.NewCompanyRepository(pst)
-
+	repoBranch := branch_repositories.NewBranchRepository(pst)
 	repoDepartment := deparment_repositories.NewDepartmentRepository(pst)
 	repoBusinessType := businesstype_repositories.NewBusinessTypeRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	serviceCompany := company_services.NewCompanyHttpService(repoBrach, repoDepartment, repoBusinessType, masterSyncCacheRepo)
+	serviceBranch := branch_services.NewBranchHttpService(repoBranch, repoDepartment, repoBusinessType, masterSyncCacheRepo)
 
 	serviceBusinessType := businesstype_services.NewBusinessTypeHttpService(repoBusinessType, masterSyncCacheRepo)
 
@@ -75,6 +81,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 		ms:                  ms,
 		cfg:                 cfg,
 		service:             service,
+		serviceBranch:       serviceBranch,
 		serviceCompany:      serviceCompany,
 		serviceWarehouse:    svcWarehouse,
 		servicebusinessType: serviceBusinessType,
@@ -205,6 +212,76 @@ func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models
 		return err
 	}
 
+	branchDefault := branch_model.Branch{}
+
+	if len(shopReq.Settings.LanguageConfigs) > 0 {
+		primaryLanguageConfigs := shopReq.Settings.LanguageConfigs[0]
+
+		for _, langConf := range shopReq.Settings.LanguageConfigs {
+			if langConf.IsDefault {
+				primaryLanguageConfigs = langConf
+				break
+			}
+		}
+
+		for _, tempName := range shopReq.Names {
+			if *tempName.Code == primaryLanguageConfigs.Code {
+				branchDefault.CompanyNames = &[]common.NameX{
+					{
+						Code: tempName.Code,
+						Name: tempName.Name,
+					},
+				}
+
+				break
+			}
+		}
+
+	}
+
+	branchDefault.Code = "00000"
+
+	branchMainCodeTH := "th"
+	branchMainNameTH := "สำนักงานใหญ่"
+
+	branchMainCodeEN := "en"
+	branchMainNameEN := "Head Office"
+
+	branchDefault.IsHeadOffice = true
+	branchDefault.BranchNumber = "00000"
+
+	branchDefault.Names = &[]common.NameX{
+		{
+			Code: &branchMainCodeTH,
+			Name: &branchMainNameTH,
+		},
+		{
+			Code: &branchMainCodeEN,
+			Name: &branchMainNameEN,
+		},
+	}
+
+	branchDefault.BusinessType.GuidFixed = businessTypeGUIDFixed
+	branchDefault.BusinessType.Code = businessTypeDefault.Code
+	branchDefault.BusinessType.Names = businessTypeDefault.Names
+
+	branchGUIDFixed, err := h.serviceBranch.CreateBranch(shopID, authUsername, branchDefault)
+
+	if err != nil {
+
+		err = h.serviceBranch.DeleteBranch(shopID, branchGUIDFixed, authUsername)
+
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Branch " + err.Error())
+		}
+
+		err = h.servicebusinessType.DeleteBusinessType(shopID, businessTypeGUIDFixed, authUsername)
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback BusinessType " + err.Error())
+		}
+		return err
+	}
+
 	companyDefault := company_model.Company{}
 
 	if len(shopReq.Settings.LanguageConfigs) > 0 {
@@ -237,11 +314,18 @@ func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models
 	companyGUIDFixed, err := h.serviceCompany.CreateCompany(shopID, authUsername, companyDefault)
 
 	if err != nil {
+		err = h.serviceCompany.DeleteCompany(shopID, companyGUIDFixed, authUsername)
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Company " + err.Error())
+		}
+		err = h.serviceBranch.DeleteBranch(shopID, branchGUIDFixed, authUsername)
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Branch " + err.Error())
+		}
 		err = h.servicebusinessType.DeleteBusinessType(shopID, businessTypeGUIDFixed, authUsername)
 		if err != nil {
 			logger.GetLogger().Error("HTTP:: Error Rollback BusinessType " + err.Error())
 		}
-		return err
 	}
 
 	warehouseDefault := warehouse_models.Warehouse{}
@@ -264,20 +348,25 @@ func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models
 		},
 	}
 
-	_, err = h.serviceWarehouse.CreateWarehouse(shopID, authUsername, warehouseDefault)
+	warehouseGUIDFixed, err := h.serviceWarehouse.CreateWarehouse(shopID, authUsername, warehouseDefault)
 
 	if err != nil {
 
 		err = h.serviceCompany.DeleteCompany(shopID, companyGUIDFixed, authUsername)
-
 		if err != nil {
 			logger.GetLogger().Error("HTTP:: Error Rollback Company " + err.Error())
 		}
-
+		err = h.serviceBranch.DeleteBranch(shopID, branchGUIDFixed, authUsername)
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Branch " + err.Error())
+		}
 		err = h.servicebusinessType.DeleteBusinessType(shopID, businessTypeGUIDFixed, authUsername)
-
 		if err != nil {
 			logger.GetLogger().Error("HTTP:: Error Rollback BusinessType " + err.Error())
+		}
+		err = h.serviceWarehouse.DeleteWarehouse(shopID, warehouseGUIDFixed, authUsername)
+		if err != nil {
+			logger.GetLogger().Error("HTTP:: Error Rollback Warehouse " + err.Error())
 		}
 
 		return err

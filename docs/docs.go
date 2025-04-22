@@ -42092,6 +42092,9 @@ const docTemplate = `{
                 "itemunitcode": {
                     "type": "string"
                 },
+                "itemunitguid": {
+                    "type": "string"
+                },
                 "itemunitnames": {
                     "type": "array",
                     "items": {
@@ -48445,6 +48448,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "branchnumber": {
+                    "type": "string"
+                },
                 "businesstype": {
                     "$ref": "#/definitions/models.BranchBusinessType"
                 },
@@ -48867,6 +48873,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitguid": {
                     "type": "string"
                 },
                 "itemunitnames": {

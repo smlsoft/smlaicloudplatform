@@ -42087,6 +42087,9 @@
                 "itemunitcode": {
                     "type": "string"
                 },
+                "itemunitguid": {
+                    "type": "string"
+                },
                 "itemunitnames": {
                     "type": "array",
                     "items": {
@@ -48440,6 +48443,9 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "branchnumber": {
+                    "type": "string"
+                },
                 "businesstype": {
                     "$ref": "#/definitions/models.BranchBusinessType"
                 },
@@ -48862,6 +48868,9 @@
                     "type": "integer"
                 },
                 "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitguid": {
                     "type": "string"
                 },
                 "itemunitnames": {
