@@ -250,6 +250,7 @@ func (svc SaleInvoiceService) PrepareDetail(details []trans_models.Detail, produ
 		if _, ok := productBarcodeDict[tempDetail.Barcode]; ok {
 			tempDetail = svc.parser.ParseProductBarcode(tempDetail, tempProduct)
 		}
+		tempDetail.Discount = (details)[i].Discount
 
 		(details)[i] = tempDetail
 	}
