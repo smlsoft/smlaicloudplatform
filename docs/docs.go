@@ -47857,6 +47857,12 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "branch": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
@@ -48514,6 +48520,9 @@ const docTemplate = `{
                 "longitude": {
                     "type": "number"
                 },
+                "machinetype": {
+                    "type": "integer"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -48954,6 +48963,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "replacementbarcode": {
+                    "type": "string"
                 },
                 "restaurant": {
                     "$ref": "#/definitions/models.ProductRestaurant"
