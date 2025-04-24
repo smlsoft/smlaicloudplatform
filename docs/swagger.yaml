@@ -7392,6 +7392,10 @@ definitions:
         items:
           $ref: '#/definitions/smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode'
         type: array
+      branch:
+        items:
+          type: string
+        type: array
       businesstypes:
         items:
           $ref: '#/definitions/models.ProductBarcodeBusinessType'

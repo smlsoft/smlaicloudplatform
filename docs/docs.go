@@ -48775,6 +48775,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/smlaicloudplatform_internal_product_productbarcode_models.BOMProductBarcode"
                     }
                 },
+                "branch": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "businesstypes": {
                     "type": "array",
                     "items": {
