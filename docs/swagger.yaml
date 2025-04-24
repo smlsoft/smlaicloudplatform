@@ -6776,6 +6776,10 @@ definitions:
     type: object
   models.Warehouse:
     properties:
+      branch:
+        items:
+          type: string
+        type: array
       code:
         type: string
       location:
@@ -7219,6 +7223,8 @@ definitions:
         type: string
       longitude:
         type: number
+      machinetype:
+        type: integer
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -7513,6 +7519,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      replacementbarcode:
+        type: string
       restaurant:
         $ref: '#/definitions/models.ProductRestaurant'
       standvalue:

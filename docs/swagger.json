@@ -47852,6 +47852,12 @@
                 "names"
             ],
             "properties": {
+                "branch": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
@@ -48509,6 +48515,9 @@
                 "longitude": {
                     "type": "number"
                 },
+                "machinetype": {
+                    "type": "integer"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -48949,6 +48958,9 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "replacementbarcode": {
+                    "type": "string"
                 },
                 "restaurant": {
                     "$ref": "#/definitions/models.ProductRestaurant"
