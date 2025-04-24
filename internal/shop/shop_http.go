@@ -249,6 +249,7 @@ func (h ShopHttp) initialShop(shopID string, authUsername string, shopReq models
 
 	branchDefault.IsHeadOffice = true
 	branchDefault.BranchNumber = "00000"
+	branchDefault.MachineType = 2
 
 	branchDefault.Names = &[]common.NameX{
 		{

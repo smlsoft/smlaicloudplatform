@@ -20,6 +20,7 @@ type Warehouse struct {
 	Code                     string          `json:"code" bson:"code"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Location                 *[]Location     `json:"location" bson:"location" validate:"omitempty,unique=Code,dive"`
+	Branch                   *[]string       `json:"branch" bson:"branch"`
 }
 
 type Location struct {
