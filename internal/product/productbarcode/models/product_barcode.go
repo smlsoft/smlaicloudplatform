@@ -122,6 +122,7 @@ type RefProductBarcode struct {
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
 	ProductBarcodeBase       `bson:"inline"`
+	Branch                   *[]string                     `json:"branch" bson:"branch"`
 	ReplacementBarcode       string                        `json:"replacementbarcode" bson:"replacementbarcode"`
 	RefBarcodes              *[]RefProductBarcode          `json:"refbarcodes" bson:"refbarcodes"`
 	BOM                      *[]BOMProductBarcode          `json:"bom" bson:"bom"`
