@@ -154,9 +154,10 @@ const (
 )
 
 type ShopUserBase struct {
-	Username string   `json:"username" bson:"username"`
-	ShopID   string   `json:"shopid" bson:"shopid"`
-	Role     UserRole `json:"role" bson:"role"`
+	Username string    `json:"username" bson:"username"`
+	ShopID   string    `json:"shopid" bson:"shopid"`
+	Role     UserRole  `json:"role" bson:"role"`
+	Branch   *[]string `json:"branch" bson:"branch"`
 }
 
 type ShopUser struct {
