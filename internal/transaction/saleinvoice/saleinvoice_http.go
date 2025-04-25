@@ -17,6 +17,7 @@ import (
 	"smlaicloudplatform/internal/utils"
 	"smlaicloudplatform/internal/utils/requestfilter"
 	"smlaicloudplatform/pkg/microservice"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -592,6 +593,15 @@ func (h SaleInvoiceHttp) searchFilter(queryParam func(string) string) map[string
 			Type:  requestfilter.FieldTypeString,
 		},
 	})
+
+	if branchCode := queryParam("branchcode"); branchCode != "" && strings.Contains(branchCode, ",") {
+		// Split the branch codes by comma
+		branchCodes := strings.Split(branchCode, ",")
+		// Set up an "$in" query for MongoDB
+		filters["branch.code"] = map[string]interface{}{
+			"$in": branchCodes,
+		}
+	}
 
 	return filters
 }
