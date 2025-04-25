@@ -20,7 +20,14 @@ type Warehouse struct {
 	Code                     string          `json:"code" bson:"code"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Location                 *[]Location     `json:"location" bson:"location" validate:"omitempty,unique=Code,dive"`
-	Branch                   *[]string       `json:"branch" bson:"branch"`
+	IgnoreBranches           *[]Branch       `json:"ignorebranches" bson:"ignorebranches"`
+}
+
+type Branch struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
+	IsIgnore           bool            `json:"isignore" bson:"isignore"`
 }
 
 type Location struct {

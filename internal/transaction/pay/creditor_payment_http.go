@@ -13,6 +13,7 @@ import (
 	"smlaicloudplatform/internal/utils"
 	"smlaicloudplatform/internal/utils/requestfilter"
 	"smlaicloudplatform/pkg/microservice"
+	"strings"
 )
 
 type IPayHttp interface{}
@@ -366,6 +367,15 @@ func (h PayHttp) SearchPayStep(ctx microservice.IContext) error {
 			Type:  requestfilter.FieldTypeString,
 		},
 	})
+
+	if branchCode := ctx.QueryParam("branchcode"); branchCode != "" && strings.Contains(branchCode, ",") {
+		// Split the branch codes by comma
+		branchCodes := strings.Split(branchCode, ",")
+		// Set up an "$in" query for MongoDB
+		filters["branch.code"] = map[string]interface{}{
+			"$in": branchCodes,
+		}
+	}
 
 	docList, total, err := h.svc.SearchPayStep(shopID, lang, filters, pageableStep)
 

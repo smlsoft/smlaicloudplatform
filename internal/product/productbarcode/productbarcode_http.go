@@ -548,6 +548,8 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 
 	filters := h.searchFilter(ctx.QueryParam)
 
+	//branch not in ignorebranch
+
 	docList, pagination, err := h.svc.SearchProductBarcode(shopID, filters, pageable)
 
 	if err != nil {

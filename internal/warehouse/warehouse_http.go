@@ -7,10 +7,13 @@ import (
 	mastersync "smlaicloudplatform/internal/mastersync/repositories"
 	common "smlaicloudplatform/internal/models"
 	"smlaicloudplatform/internal/utils"
+	"smlaicloudplatform/internal/utils/requestfilter"
 	"smlaicloudplatform/internal/warehouse/models"
 	"smlaicloudplatform/internal/warehouse/repositories"
 	"smlaicloudplatform/internal/warehouse/services"
 	"smlaicloudplatform/pkg/microservice"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IWarehouseHttp interface{}
@@ -569,7 +572,9 @@ func (h WarehouseHttp) SearchWarehousePage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchWarehouse(shopID, map[string]interface{}{}, pageable)
+	filters := h.searchFilter(ctx.QueryParam)
+
+	docList, pagination, err := h.svc.SearchWarehouse(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -788,4 +793,32 @@ func (h WarehouseHttp) SaveBulk(ctx microservice.IContext) error {
 	)
 
 	return nil
+}
+
+func (h WarehouseHttp) searchFilter(queryParam func(string) string) map[string]interface{} {
+	filters := requestfilter.GenerateFilters(queryParam, []requestfilter.FilterRequest{
+
+		{
+			Param: "branchcode",
+			Field: "branches.code",
+			Type:  requestfilter.FieldTypeString,
+		},
+	})
+
+	if temp, ok := filters["branches.code"]; ok {
+		if tempBson, ok := temp.(bson.M); ok {
+			if tempIn, ok := tempBson["$in"]; ok {
+				filters["ignorebranches.code"] = bson.M{
+					"$nin": tempIn,
+				}
+			}
+		} else {
+			filters["ignorebranches.code"] = bson.M{
+				"$ne": temp,
+			}
+		}
+		delete(filters, "branches.code")
+	}
+
+	return filters
 }
